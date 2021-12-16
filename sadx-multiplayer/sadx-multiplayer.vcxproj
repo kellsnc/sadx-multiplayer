@@ -92,11 +92,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="camera.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="mod.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="splitscreen.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="camera.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="pch.cpp">

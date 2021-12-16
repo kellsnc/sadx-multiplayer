@@ -1,12 +1,16 @@
 #include "pch.h"
 #include <SADXModLoader.h>
 #include "splitscreen.h"
+#include "camera.h"
+
+unsigned int player_count = 2;
 
 extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
-		SplitScreen_Init();
+		InitSplitScreen();
+		InitCamera();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()

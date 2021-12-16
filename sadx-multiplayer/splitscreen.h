@@ -1,3 +1,5 @@
 #pragma once
 
-void SplitScreen_Init();
+extern unsigned int current_screen;
+void __cdecl DisplayTask_r();
+void InitSplitScreen();

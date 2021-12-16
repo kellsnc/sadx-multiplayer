@@ -3,19 +3,17 @@
 #include <Trampoline.h>
 #include <d3d8types.h>
 #include <d3d8.h>
-
-#define TARGET_DYNAMIC(name) ((decltype(name##_r)*)name##_t->Target())
+#include "mod.h"
+#include "splitscreen.h"
 
 VoidFunc(DisplayTask, 0x40B540);
 DataPointer(IDirect3DDevice8*, Direct3D_Device, 0x03D128B0);
 DataPointer(D3DVIEWPORT8, Direct3D_ViewPort, 0x03D12780);
 
-static int player_count = 2;
+unsigned int current_screen;
 
 Trampoline* DisplayTask_t = nullptr;
 Trampoline* LoopTask_t = nullptr;
-
-void __cdecl DisplayTask_r();
 
 void ChangeViewPort(int x, int y, int w, int h)
 {
@@ -27,17 +25,39 @@ void DrawTwoScreens()
 {
     ChangeViewPort(0, 0, HorizontalResolution / 2, VerticalResolution);
     
+    current_screen = 0;
     TARGET_DYNAMIC(DisplayTask)();
 
     ChangeViewPort(HorizontalResolution / 2, 0, HorizontalResolution / 2, VerticalResolution);
 
-    // Temporary second camera pos;
-    njPushMatrix(_nj_unit_matrix_);
-    njTranslate(0, 20, 50, 0); 
-    njRotateX(0, 0x8000);
-    njRotateY(0, 0x4000);
+    current_screen = 1;
     TARGET_DYNAMIC(DisplayTask)();
-    njPopMatrixEx();
+}
+
+void DrawFourScreens()
+{
+    int half_w = HorizontalResolution / 2;
+    int half_h = VerticalResolution / 2;
+
+    ChangeViewPort(0, 0, half_w, half_h);
+
+    current_screen = 0;
+    TARGET_DYNAMIC(DisplayTask)();
+
+    ChangeViewPort(half_w, 0, half_w, half_h);
+
+    current_screen = 1;
+    TARGET_DYNAMIC(DisplayTask)();
+
+    ChangeViewPort(0, half_h, half_w, half_h);
+
+    current_screen = 2;
+    TARGET_DYNAMIC(DisplayTask)();
+
+    ChangeViewPort(half_w, half_h, half_w, half_h);
+
+    current_screen = 3;
+    TARGET_DYNAMIC(DisplayTask)();
 }
 
 void __cdecl DisplayTask_r()
@@ -49,6 +69,7 @@ void __cdecl DisplayTask_r()
         D3DVIEWPORT8 orig;
         Direct3D_Device->GetViewport(&orig);
 
+        //DrawTwoScreens();
         DrawTwoScreens();
 
         Direct3D_ViewPort = orig;
@@ -84,7 +105,7 @@ void __cdecl LoopTask_r()
     }
 }
 
-void SplitScreen_Init()
+void InitSplitScreen()
 {
     LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
     WriteCall((void*)((int)(LoopTask_t->Target()) + 3), RunObjectIndex); // Repair LoopTask_t
