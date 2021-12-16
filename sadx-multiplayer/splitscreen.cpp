@@ -62,7 +62,7 @@ void DrawFourScreens()
 
 void __cdecl DisplayTask_r()
 {
-    if (player_count > 0)
+    if (IsMultiplayerEnabled())
     {
         // If multiplayer is enabled, split screen:
 
@@ -85,7 +85,7 @@ void __cdecl DisplayTask_r()
 
 void __cdecl LoopTask_r()
 {
-    if (player_count > 0)
+    if (IsMultiplayerEnabled())
     {
         // If multiplayer is enabled, run only logic and display everything afterwards:
 

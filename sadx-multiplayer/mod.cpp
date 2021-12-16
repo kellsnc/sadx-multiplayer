@@ -5,6 +5,11 @@
 
 unsigned int player_count = 2;
 
+bool IsMultiplayerEnabled()
+{
+	return player_count != 0;
+}
+
 extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
