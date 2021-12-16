@@ -1,11 +1,12 @@
 #include "pch.h"
 #include <SADXModLoader.h>
+#include "splitscreen.h"
 
 extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
-		
+		SplitScreen_Init();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()
