@@ -1,0 +1,3 @@
+[submodule "sadx-mod-loader"]
+	path = sadx-mod-loader
+	url = https://github.com/X-Hax/sadx-mod-loader
