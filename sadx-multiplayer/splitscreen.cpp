@@ -1,11 +1,5 @@
 #include "pch.h"
-#include <SADXModLoader.h>
-#include <Trampoline.h>
-#include <d3d8types.h>
-#include <d3d8.h>
-#include "mod.h"
-#include "sadx_utils.h"
-#include "splitscreen.h"
+
 
 DataPointer(IDirect3DDevice8*, Direct3D_Device, 0x03D128B0);
 DataPointer(D3DVIEWPORT8, Direct3D_ViewPort, 0x03D12780);

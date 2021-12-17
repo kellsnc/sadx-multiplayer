@@ -1,8 +1,5 @@
 #include "pch.h"
-#include <SADXModLoader.h>
-#include "splitscreen.h"
-#include "camera.h"
-#include "patches/patches.h"
+
 
 const HelperFunctions* gHelperFunctions;
 unsigned int player_count = 2;
