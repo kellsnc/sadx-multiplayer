@@ -8,5 +8,10 @@ struct IUnknown;
 #include <Trampoline.h>
 #include <d3d8types.h>
 #include <d3d8.h>
+#include "mod.h"
+#include "sadx_utils.h"
+#include "splitscreen.h"
+#include "camera.h"
+#include "patches/patches.h"
 
 #endif //PCH_H
