@@ -5,4 +5,5 @@
 
 bool IsMultiplayerEnabled();
 
+extern const HelperFunctions* gHelperFunctions;
 extern unsigned int player_count;
