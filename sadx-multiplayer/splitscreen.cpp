@@ -76,9 +76,9 @@ void ResetViewPort()
 void __cdecl late_exec_r()
 {
     // Draw for each screen
-    for (int i = 0; i < player_count; ++i)
+    for (int i = player_count; i > 0; --i)
     {
-        if (playertp[i] && ChangeViewPort(i))
+        if (playertp[i] && ChangeViewPort(i - 1))
         {
             TARGET_DYNAMIC(late_exec)();
         }
@@ -156,9 +156,9 @@ void __cdecl DisplayTask_r()
     {
         // If multiplayer is enabled, split screen:
 
-        for (int i = 0; i < (player_count <= 2 ? 2 : 4); ++i)
+        for (int i = (player_count <= 2 ? 2 : 4); i > 0; --i)
         {
-            DrawScreen(i);
+            DrawScreen(i - 1);
         }
 
         ResetViewPort();
