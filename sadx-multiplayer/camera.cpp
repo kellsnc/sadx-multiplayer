@@ -56,7 +56,7 @@ void __cdecl CameraDisplay_r(task* tp)
 {
 	if (IsMultiplayerEnabled())
 	{
-		ApplyMultiCamera(tp->twp, current_screen);
+		ApplyMultiCamera(tp->twp, numScreen);
 	}
 	else
 	{
@@ -68,7 +68,7 @@ void __cdecl CameraPause_r(task* tp)
 {
 	if (IsMultiplayerEnabled())
 	{
-		ApplyMultiCamera(tp->twp, current_screen);
+		ApplyMultiCamera(tp->twp, numScreen);
 	}
 	else
 	{

@@ -1,5 +1,5 @@
 #pragma once
 
-extern unsigned int current_screen;
+extern unsigned int numScreen;
 void __cdecl DisplayTask_r();
 void InitSplitScreen();
