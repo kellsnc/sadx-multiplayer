@@ -21,17 +21,30 @@ void ChangeViewPort(int x, int y, int w, int h)
     Direct3D_Device->SetViewport(&Direct3D_ViewPort);
 }
 
+void DrawScreen(int num)
+{
+    if (playertp[num])
+    {
+        // If player exists, draw all objects into viewport:
+
+        current_screen = num;
+        TARGET_DYNAMIC(DisplayTask)();
+    }
+    else
+    {
+        // If player is not there, draw a black screen and skip:
+
+        DrawRect_DrawNowMaybe(0, 0, HorizontalResolution, VerticalResolution, 1000000.0f, 0xFF000000);
+    }
+}
+
 void DrawTwoScreens()
 {
     ChangeViewPort(0, 0, HorizontalResolution / 2, VerticalResolution);
-    
-    current_screen = 0;
-    TARGET_DYNAMIC(DisplayTask)();
+    DrawScreen(0);
 
     ChangeViewPort(HorizontalResolution / 2, 0, HorizontalResolution / 2, VerticalResolution);
-
-    current_screen = 1;
-    TARGET_DYNAMIC(DisplayTask)();
+    DrawScreen(1);
 }
 
 void DrawFourScreens()
@@ -40,24 +53,16 @@ void DrawFourScreens()
     int half_h = VerticalResolution / 2;
 
     ChangeViewPort(0, 0, half_w, half_h);
-
-    current_screen = 0;
-    TARGET_DYNAMIC(DisplayTask)();
+    DrawScreen(0);
 
     ChangeViewPort(half_w, 0, half_w, half_h);
-
-    current_screen = 1;
-    TARGET_DYNAMIC(DisplayTask)();
+    DrawScreen(1);
 
     ChangeViewPort(0, half_h, half_w, half_h);
-
-    current_screen = 2;
-    TARGET_DYNAMIC(DisplayTask)();
+    DrawScreen(2);
 
     ChangeViewPort(half_w, half_h, half_w, half_h);
-
-    current_screen = 3;
-    TARGET_DYNAMIC(DisplayTask)();
+    DrawScreen(3);
 }
 
 void __cdecl DisplayTask_r()
@@ -69,8 +74,14 @@ void __cdecl DisplayTask_r()
         D3DVIEWPORT8 orig;
         Direct3D_Device->GetViewport(&orig);
 
-        //DrawTwoScreens();
-        DrawTwoScreens();
+        if (player_count <= 2)
+        {
+            DrawTwoScreens();
+        }
+        else
+        {
+            DrawFourScreens();
+        }
 
         Direct3D_ViewPort = orig;
         Direct3D_Device->SetViewport(&orig);
