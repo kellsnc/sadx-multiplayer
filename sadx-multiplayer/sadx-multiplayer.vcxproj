@@ -98,11 +98,13 @@
     <ClInclude Include="patches\patches.h" />
     <ClInclude Include="patches\player_patches.h" />
     <ClInclude Include="pch.h" />
+    <ClInclude Include="players.h" />
     <ClInclude Include="sadx_utils.h" />
     <ClInclude Include="splitscreen.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="death-zones.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="patches\patches.cpp" />
@@ -111,6 +113,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="players.cpp" />
     <ClCompile Include="splitscreen.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

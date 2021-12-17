@@ -45,6 +45,9 @@
     <ClInclude Include="sadx_utils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="players.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -67,6 +70,12 @@
     </ClCompile>
     <ClCompile Include="patches\patches.cpp">
       <Filter>Fichiers sources\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="death-zones.cpp">
+      <Filter>Fichiers sources\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="players.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

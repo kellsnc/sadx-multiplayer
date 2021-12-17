@@ -18,3 +18,4 @@ DataPointer(Uint8, ucInputStatus, 0x909FB0);
 DataArray(Uint8, ucInputStatusForEachPlayer, 0x909FB4, 4);
 DataArray(SONIC_INPUT, input_data, 0x3B0E368, 8);
 DataArray(SONIC_INPUT, input_dataG, 0x3B0E7A0, 8);
+VoidFunc(FreeQueueSound, 0x424460);

@@ -68,6 +68,7 @@ void __cdecl GetPlayersInputData_r()
 	}
 }
 
+
 void InitPlayerPatches()
 {
 	PGetRotation_t = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
