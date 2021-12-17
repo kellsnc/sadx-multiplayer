@@ -1,5 +1,7 @@
 #include "pch.h"
-
+#include "camera.h"
+#include "splitscreen.h"
+#include "patches/patches.h"
 
 const HelperFunctions* gHelperFunctions;
 unsigned int player_count = 2;

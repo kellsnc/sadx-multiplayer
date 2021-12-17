@@ -1,7 +1,4 @@
 #include "pch.h"
-#include <math.h>
-#include "mod.h"
-#include "sadx_utils.h"
 #include "camera.h"
 
 Trampoline* PGetRotation_t = nullptr;
