@@ -2,6 +2,7 @@
 #include <SADXModLoader.h>
 #include "splitscreen.h"
 #include "camera.h"
+#include "patches/patches.h"
 
 unsigned int player_count = 2;
 
@@ -16,6 +17,7 @@ extern "C"
 	{
 		InitSplitScreen();
 		InitCamera();
+		InitPatches();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()

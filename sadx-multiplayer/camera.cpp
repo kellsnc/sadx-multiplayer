@@ -3,10 +3,9 @@
 #include <SADXModLoader.h>
 #include <Trampoline.h>
 #include "mod.h"
-#include "camera.h"
+#include "sadx_utils.h"
 #include "splitscreen.h"
-
-TaskFunc(Camera, 0x438090);
+#include "camera.h"
 
 Trampoline* CameraPause_t = nullptr;
 Trampoline* CameraDisplay_t = nullptr;
@@ -14,6 +13,30 @@ Trampoline* Camera_t = nullptr;
 
 NJS_VECTOR MultiCamPos[PLAYER_MAX];
 Angle3 MultiCamAng[PLAYER_MAX];
+
+NJS_VECTOR* GetCameraPosition(int pnum)
+{
+	if (IsMultiplayerEnabled() && pnum < player_count && playertp[pnum])
+	{
+		return &MultiCamPos[pnum];
+	}
+	else
+	{
+		return &camera_twp->pos;
+	}
+}
+
+Angle3* GetCameraAngle(int pnum)
+{
+	if (IsMultiplayerEnabled() && pnum < player_count && playertp[pnum])
+	{
+		return &MultiCamAng[pnum];
+	}
+	else
+	{
+		return &camera_twp->ang;
+	}
+}
 
 void ApplyMultiCamera(taskwk* twp, int pnum)
 {

@@ -4,13 +4,11 @@
 #include <d3d8types.h>
 #include <d3d8.h>
 #include "mod.h"
+#include "sadx_utils.h"
 #include "splitscreen.h"
 
-VoidFunc(DisplayTask, 0x40B540);
 DataPointer(IDirect3DDevice8*, Direct3D_Device, 0x03D128B0);
 DataPointer(D3DVIEWPORT8, Direct3D_ViewPort, 0x03D12780);
-FunctionPointer(void, ds_DrawBoxFill2D, (float x, float y, float x2, float y2, float pri, int argb), 0x4071C0);
-DataPointer(int, loop_count, 0x3B1117C);
 
 unsigned int numScreen;
 signed int numViewPort;
@@ -76,9 +74,9 @@ void ResetViewPort()
 void __cdecl late_exec_r()
 {
     // Draw for each screen
-    for (int i = player_count; i > 0; --i)
+    for (int i = 0; i < (player_count <= 2 ? 2 : 4); ++i)
     {
-        if (playertp[i] && ChangeViewPort(i - 1))
+        if (playertp[i] && ChangeViewPort(i))
         {
             TARGET_DYNAMIC(late_exec)();
         }

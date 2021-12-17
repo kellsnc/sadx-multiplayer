@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Fichiers sources\patches">
+      <UniqueIdentifier>{cc801893-1f44-492e-94ec-d5e076ae1452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\patches">
+      <UniqueIdentifier>{d8c52fc9-5a7a-4c37-8308-02373df1419d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -28,6 +34,15 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="mod.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="patches\player_patches.h">
+      <Filter>Fichiers d%27en-tête\patches</Filter>
+    </ClInclude>
+    <ClInclude Include="patches\patches.h">
+      <Filter>Fichiers d%27en-tête\patches</Filter>
+    </ClInclude>
+    <ClInclude Include="sadx_utils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
@@ -46,6 +61,12 @@
     </ClCompile>
     <ClCompile Include="camera.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\player_patches.cpp">
+      <Filter>Fichiers sources\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patches.cpp">
+      <Filter>Fichiers sources\patches</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
