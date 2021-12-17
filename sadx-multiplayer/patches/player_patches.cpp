@@ -19,9 +19,9 @@ void __cdecl GetPlayersInputData_r()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-        auto controller = ControllerPointers[i];
-        float lx = (controller->LeftStickX << 8);
-        float ly = (controller->LeftStickY << 8);
+        auto controller = per[i];
+        float lx = (controller->x1 << 8); // left stick x
+        float ly = (controller->y1 << 8); // left stick y
 
         int ang;
         float strk;

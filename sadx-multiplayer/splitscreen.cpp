@@ -13,10 +13,11 @@ DataPointer(D3DVIEWPORT8, Direct3D_ViewPort, 0x03D12780);
 unsigned int numScreen;
 signed int numViewPort;
 
-Trampoline* DisplayTask_t = nullptr;
-Trampoline* LoopTask_t = nullptr;
-Trampoline* late_exec_t = nullptr;
-Trampoline* late_setOdr_t = nullptr;
+Trampoline* DisplayTask_t    = nullptr;
+Trampoline* LoopTask_t       = nullptr;
+Trampoline* late_exec_t      = nullptr;
+Trampoline* late_setOdr_t    = nullptr;
+Trampoline* njDrawSprite2D_t = nullptr;
 
 struct ScreenRatio
 {
@@ -191,6 +192,22 @@ void __cdecl LoopTask_r()
     }
 }
 
+// Do not affect HUD elements
+void __cdecl njDrawSprite2D_r(NJS_SPRITE* sp, int n, double pri, unsigned int atr)
+{
+    if (IsMultiplayerEnabled() && numViewPort != -1)
+    {
+        int backup = numViewPort;
+        ResetViewPort();
+        TARGET_DYNAMIC(njDrawSprite2D)(sp, n, pri, atr);
+        ChangeViewPort(backup);
+    }
+    else
+    {
+        TARGET_DYNAMIC(njDrawSprite2D)(sp, n, pri, atr);
+    }
+}
+
 void InitSplitScreen()
 {
     LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
@@ -200,4 +217,6 @@ void InitSplitScreen()
 
     late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
     late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_asm);
+
+    njDrawSprite2D_t = new Trampoline(0x77E050, 0x77E058, njDrawSprite2D_r);
 }

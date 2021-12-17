@@ -4,6 +4,7 @@
 #include "camera.h"
 #include "patches/patches.h"
 
+const HelperFunctions* gHelperFunctions;
 unsigned int player_count = 2;
 
 bool IsMultiplayerEnabled()
@@ -15,6 +16,7 @@ extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
+		gHelperFunctions = &helperFunctions;
 		InitSplitScreen();
 		InitCamera();
 		InitPatches();

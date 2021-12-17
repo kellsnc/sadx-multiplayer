@@ -18,3 +18,5 @@ DataPointer(Uint8, ucInputStatus, 0x909FB0);
 DataArray(Uint8, ucInputStatusForEachPlayer, 0x909FB4, 4);
 DataArray(SONIC_INPUT, input_data, 0x3B0E368, 8);
 DataArray(SONIC_INPUT, input_dataG, 0x3B0E7A0, 8);
+DataArray(PDS_PERIPHERAL*, per, 0x3B0E77C, 8);
+DataArray(PDS_PERIPHERAL, perG, 0x3B0E7F0, 8);
