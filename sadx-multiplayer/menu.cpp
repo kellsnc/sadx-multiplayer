@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "menu.h"
+#include "multi.h"
 
 #define ReplacePVM(C, D) helperFunctions.ReplaceFile("system\\" C ".pvm", "system\\" D ".pvmx")
 
@@ -38,8 +40,8 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 	TARGET_DYNAMIC(MainMenuExecSub)(wkp);
 }
 
-void init_MultiMenu();
-void __cdecl Menu_Init(const HelperFunctions& helperFunctions) {
+void __cdecl Menu_Init(const HelperFunctions& helperFunctions)
+{
 	ResizeTextureList(&ava_title_e_TEXLIST, 12);
 	MainMenuExecSub_t = new Trampoline(0x50B630, 0x50B638, MainMenuExecSub_r);
 	DialogPrm[4].PnlPrmPtr = PanelPrmTitleMenu_r;

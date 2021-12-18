@@ -22,6 +22,9 @@
     <Filter Include="Fichiers sources\gui">
       <UniqueIdentifier>{2f104537-9a30-4b0d-aa0f-95a9241a525a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers d%27en-tête\gui">
+      <UniqueIdentifier>{562c4e22-0b8d-45db-a9b8-e536455ee975}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -54,7 +57,13 @@
     <ClInclude Include="patches\deathzones.h">
       <Filter>Fichiers d%27en-tête\patches</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+        <ClInclude Include="menu.h">
+      <Filter>Fichiers d%27en-tête\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="multi.h">
+      <Filter>Fichiers d%27en-tête\gui</Filter>
+    </ClInclude>
+        <ClInclude Include="utils.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
