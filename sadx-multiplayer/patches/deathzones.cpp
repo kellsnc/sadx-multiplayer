@@ -1,65 +1,59 @@
 #include "pch.h"
 #include "deathzones.h"
 
-
-void __cdecl sub_440C80_r(task* obj)
+void __cdecl GamePlayerMissed_r(task* tp)
 {
-	char pNum = obj->twp->scl.y;
-	anywk* dz = obj->awp;
+	auto awp = tp->awp;
+	auto pNum = awp->work.ul[1];
 
-	if (GetDebugMode())
+	if (++awp->work.ul[0] > 0x78)
 	{
-		CheckThingButThenDeleteObject((ObjectMaster*)obj);
-		return;
+		if (!GetDebugMode() && playertp[pNum])
+		{
+			task* ptp = tp->ptp;
+
+			if (GetLives_r(pNum) <= 0)
+			{
+				SetChangeGameMode(2);
+				TempEraseSound();
+			}
+			else
+			{
+				SetLives_r(pNum, -1);
+				SetPlayerInitialPosition(playertwp[pNum]);
+			}
+		}
+
+		FreeTask(tp);
 	}
-
-	task* parent = obj->ptp;
-	if (parent)
-	{
-		parent->twp->flag |= 4u;
-	}
-
-	if (GetLives_r(pNum) <= 0)
-		StartLevelCutscene(2);
-	else {
-		EntityData1* player = EntityData1Ptrs[pNum];
-		SetLives_r(pNum, -1);
-		MovePlayerToStartPoint(player);
-		parent->twp->flag &= ~4u;
-	}
-
-	CheckThingButThenDeleteObject((ObjectMaster*)obj);
-
 }
 
-void __cdecl KillPlayer_r(unsigned __int8 pID)
+void __cdecl KillPlayer_r(unsigned __int8 pNum)
 {
-	EntityData1* data; // esi
-
-	data = EntityData1Ptrs[pID];
 	if (!GetDebugMode())
 	{
-		data->Status | 0x1000;
-		data->NextAction = 50;
-		CharObj2Ptrs[pID]->Powerups |= 0x4000u;
-		task* dz = CreateElementalTask(LoadObj_Data1 | LoadObj_UnknownB, 0, sub_440C80_r);
-		dz->twp->scl.y = pID;
+		playertwp[pNum]->flag |= 0x1000;
+		playerpwp[pNum]->item |= Powerups_Dead;
+		SetInputP(pNum, 50);
+
+		auto tp = CreateElementalTask(LoadObj_UnknownB, 0, GamePlayerMissed_r);
+		tp->awp->work.ul[1] = pNum;
 	}
 }
 
-void PlayCharacterDeathSound_r(task* obj, int pNum)
+void ExecFallingDownP_r(task* tp, int pNum)
 {
+	auto ptwp = playertwp[pNum];
+	auto ppwp = playerpwp[pNum];
 
-	int pNumCopy = (unsigned __int8)pNum;
-	EntityData1* player = EntityData1Ptrs[pNumCopy];
-	CharObj2* co2 = CharObj2Ptrs[pNumCopy];
+	auto ctp = CreateChildTask(LoadObj_UnknownB, GamePlayerMissed_r, tp);
+	ctp->awp->work.ul[1] = pNum;
 
-	CreateChildTask(LoadObj_Data1 | LoadObj_UnknownB, sub_440C80_r, obj);
-	//CameraSetEventCameraFunc((CamFuncPtr)sub_464DF0, 0, 0);
+	CameraSetEventCameraFunc(CameraStay, 0, 0);
 
-	if (!co2 || (co2->Powerups & 0x4000) == 0)
+	if (!ppwp || !(ppwp->item & Powerups_Dead))
 	{
-		switch (pNumCopy)
+		switch (TASKWK_CHARID(ptwp))
 		{
 		case Characters_Sonic:
 			if (MetalSonicFlag)
@@ -68,91 +62,92 @@ void PlayCharacterDeathSound_r(task* obj, int pNum)
 			}
 			else
 			{
-				PlaySound(1503, 0, 0, 0);
+				dsPlay_oneshot(1503, 0, 0, 0);
 			}
 			break;
 		case Characters_Tails:
-			PlaySound(1465, 0, 0, 0);
+			dsPlay_oneshot(1465, 0, 0, 0);
 
-			if (player)
+			if (ptwp)
 			{
-				player->Status |= 0x10u;
-				player->NextAction = 24;
+				ptwp->flag |= 0x10u;
+				SetInputP(pNum, 24);
 			}
 			break;
 		case Characters_Knuckles:
-			PlaySound(1453, 0, 0, 0);
+			dsPlay_oneshot(1453, 0, 0, 0);
 
-			if (player)
+			if (ptwp)
 			{
-				player->Status |= 0x10u;
-				player->NextAction = 24;
+				ptwp->flag |= 0x10u;
+				SetInputP(pNum, 24);
 			}
 			break;
 		case Characters_Amy:
-			PlaySound(1396, 0, 0, 0);
+			dsPlay_oneshot(1396, 0, 0, 0);
 			break;
 		case Characters_Gamma:
-			PlaySound(1433, 0, 0, 0);
+			dsPlay_oneshot(1433, 0, 0, 0);
 			break;
 		case Characters_Big:
-			PlaySound(1412, 0, 0, 0);
+			dsPlay_oneshot(1412, 0, 0, 0);
 			break;
-		default:
-			return;
 		}
 	}
 }
 
-void __cdecl DeathZoneHandler_r(ObjectMaster* obj)
+void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 {
-	Mysterious64Bytes dyncolthing;
-	uint16_t levelact = CurrentAct | CurrentLevel;
+	LoopTaskC(tp);
 
-	DeathZone* dz = *DeathZoneList[levelact];
+	if (tp->ctp)
+	{
+		return;
+	}
 
-	if (dz && (!obj->Child && (obj->Data1->Status & Status_Hurt) == 0)) {
-		while (dz->Characters) {
+	auto dz = *KillingCollisionModelsListList[HIBYTE(GetStageNumber())];
 
-			for (uint8_t i = 0; i < PLAYER_MAX; i++) {
+	if (dz)
+	{
+		zxsdwstr carry;
 
-				if (!EntityData1Ptrs[i])
+		while (dz->character) {
+
+			for (int i = 0; i < PLAYER_MAX; i++)
+			{
+				auto ptwp = playertwp[i];
+
+				if (ptwp == nullptr)
+				{
 					continue;
+				}
+				
+				carry.pos = ptwp->pos;
 
-				dyncolthing.Position = EntityData1Ptrs[i]->Position;
-
-				if (TestObjectIntersect(&dyncolthing, dz->Model)) {
-					if (!dyncolthing.struct_v3_a.SomeFlag)
+				if (GetZxShadowOnFDPolygon(&carry, dz->object))
+				{
+					if (!carry.lower.findflag)
 					{
-						if (dyncolthing.struct_v3_b.SomeFlag)
+						if (carry.upper.findflag)
 						{
-							if (fabs(dyncolthing.Position.y - dyncolthing.struct_v3_b.Distance) <= 30.0)
+							if (fabs(carry.pos.y - carry.upper.onpos) <= 30.0f)
 							{
-								PlayCharacterDeathSound_r((task*)obj, i); // also run the death cutscene
+								ExecFallingDownP_r(tp, i); // also run the death cutscene
 								continue;
 							}
 						}
 					}
-
 				}
 			}
 
 			++dz;
-
 		}
 	}
-
-
-	if (obj->Child)
-	{
-		RunObjectChildren(obj);
-	}
-
 }
 
-//serie of hacks to not reset the game if player 1 die and make every players able to die
-void init_DeathPatches() {
+// Series of hacks to not reset the game if player 1 dies and make every players able to die
+void init_DeathPatches()
+{
 	WriteJump((void*)0x440CD0, KillPlayer_r);
-	WriteJump(DeathZoneHandler, DeathZoneHandler_r); //also manage player death
-	return;
+	WriteJump(DeathZoneHandler, KillPlayerFallingDownStageP_r); // Manage player death
 }
