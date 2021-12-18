@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "deathzones.h"
 
 void __cdecl sub_440C80_r(task* obj)
 {

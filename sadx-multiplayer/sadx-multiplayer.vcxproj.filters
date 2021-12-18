@@ -48,6 +48,9 @@
     <ClInclude Include="players.h">
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
+    <ClInclude Include="patches\deathzones.h">
+      <Filter>Fichiers d%27en-tête\patches</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -71,11 +74,11 @@
     <ClCompile Include="patches\patches.cpp">
       <Filter>Fichiers sources\patches</Filter>
     </ClCompile>
-    <ClCompile Include="death-zones.cpp">
-      <Filter>Fichiers sources\patches</Filter>
-    </ClCompile>
     <ClCompile Include="players.cpp">
       <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\deathzones.cpp">
+      <Filter>Fichiers sources\patches</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
