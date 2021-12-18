@@ -106,7 +106,9 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="menu.cpp" />
     <ClCompile Include="mod.cpp" />
+    <ClCompile Include="multi.cpp" />
     <ClCompile Include="patches\deathzones.cpp" />
     <ClCompile Include="patches\patches.cpp" />
     <ClCompile Include="patches\player_patches.cpp" />

@@ -19,6 +19,9 @@
     <Filter Include="Fichiers d%27en-tête\patches">
       <UniqueIdentifier>{d8c52fc9-5a7a-4c37-8308-02373df1419d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Fichiers sources\gui">
+      <UniqueIdentifier>{2f104537-9a30-4b0d-aa0f-95a9241a525a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -79,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="patches\deathzones.cpp">
       <Filter>Fichiers sources\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="multi.cpp">
+      <Filter>Fichiers sources\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="menu.cpp">
+      <Filter>Fichiers sources\gui</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

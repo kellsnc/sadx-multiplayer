@@ -13,5 +13,6 @@ struct IUnknown;
 #include "mod.h"
 #include "sadx_utils.h"
 #include "players.h"
+#include "IniFile.hpp"
 
 #endif //PCH_H

@@ -7,3 +7,4 @@ bool IsMultiplayerEnabled();
 
 extern const HelperFunctions* gHelperFunctions;
 extern unsigned int player_count;
+void __cdecl Menu_Init(const HelperFunctions& helperFunctions);

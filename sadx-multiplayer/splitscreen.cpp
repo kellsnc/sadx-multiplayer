@@ -219,6 +219,7 @@ void InitSplitScreen()
     DisplayTask_t = new Trampoline(0x40B540, 0x40B546, DisplayTask_r);
     WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
 
+
     late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
     late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_asm);
 

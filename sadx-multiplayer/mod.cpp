@@ -8,6 +8,9 @@ unsigned int player_count = 2;
 
 bool IsMultiplayerEnabled()
 {
+	if (!IsIngame())
+		return 0;
+
 	return player_count != 0;
 }
 
@@ -20,6 +23,7 @@ extern "C"
 		InitCamera();
 		InitPatches();
 		initPlayerHack();
+		Menu_Init(helperFunctions);
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()
