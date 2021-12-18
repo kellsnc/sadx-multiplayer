@@ -21,3 +21,6 @@ DataArray(SONIC_INPUT, input_dataG, 0x3B0E7A0, 8);
 VoidFunc(FreeQueueSound, 0x424460);
 DataArray(PDS_PERIPHERAL*, per, 0x3B0E77C, 8);
 DataArray(PDS_PERIPHERAL, perG, 0x3B0E7F0, 8);
+VoidFunc(sub_464DF0, 0x464DF0);
+ObjectFunc(sub_425B30, 0x425B30);
+ObjectFunc(sub_425BB0, 0x425BB0);

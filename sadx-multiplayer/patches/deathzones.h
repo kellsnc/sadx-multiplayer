@@ -2,3 +2,4 @@
 
 void init_DeathPatches();
 void InitPlayerPatches();
+

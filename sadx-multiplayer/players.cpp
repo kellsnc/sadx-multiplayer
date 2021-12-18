@@ -1,15 +1,21 @@
 #include "pch.h"
 
-
 static Sint16 rings[8];
 static char lives[8];
 
-ObjectFunc(sub_425B30, 0x425B30);
-ObjectFunc(sub_425BB0, 0x425BB0);
 
 __int16 GetLives_r(char pNum)
 {
     return lives[pNum];
+}
+
+void __cdecl ResetLives_r()
+{
+    Lives = 4;
+
+    for (uint8_t i = 0; i < PLAYER_MAX; i++) {
+        lives[i] = 4;
+    }
 }
 
 void __cdecl SetLives_r(char pNum, __int16 live)
@@ -27,6 +33,9 @@ void __cdecl SetLives_r(char pNum, __int16 live)
     {
         LoadObject(LoadObj_UnknownB, 6, sub_425B30);
     }
+
+    if (!pNum)
+        Lives = lives[pNum];
 }
 
 __int16 GetRings_r(char pNum)
@@ -57,4 +66,9 @@ void RingsLives_OnFrames() {
 
     rings[0] = Rings;
     lives[0] = Lives;
+}
+
+void __cdecl initPlayerHack() {
+    WriteJump(ResetLives, ResetLives_r);
+    return;
 }

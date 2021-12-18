@@ -19,6 +19,7 @@ extern "C"
 		InitSplitScreen();
 		InitCamera();
 		InitPatches();
+		initPlayerHack();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()
@@ -26,10 +27,10 @@ extern "C"
 	//	
 	//}
 
-	//__declspec(dllexport) void __cdecl OnFrame()
-	//{
-	//	
-	//}
+	__declspec(dllexport) void __cdecl OnFrame()
+	{
+		RingsLives_OnFrames();
+	}
 
 	//__declspec(dllexport) void __cdecl OnInput()
 	//{
