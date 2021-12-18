@@ -22,6 +22,7 @@ DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
 FunctionPointer(void, ds_DrawBoxFill2D, (float x, float y, float x2, float y2, float pri, int argb), 0x4071C0);
 FunctionPointer(BOOL, GetZxShadowOnFDPolygon, (zxsdwstr* carry, NJS_OBJECT* object), 0x456510);
 FunctionPointer(void, SetChangeGameMode, (__int16 mode), 0x413C90);
+FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 DataPointer(int, loop_count, 0x3B1117C);
 DataPointer(Uint8, ucInputStatus, 0x909FB0);

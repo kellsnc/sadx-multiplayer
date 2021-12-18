@@ -7,11 +7,11 @@ DataPointer(D3DVIEWPORT8, Direct3D_ViewPort, 0x03D12780);
 unsigned int numScreen;
 signed int numViewPort;
 
-Trampoline* DisplayTask_t    = nullptr;
-Trampoline* LoopTask_t       = nullptr;
-Trampoline* late_exec_t      = nullptr;
-Trampoline* late_setOdr_t    = nullptr;
-Trampoline* njDrawSprite2D_t = nullptr;
+Trampoline* DisplayTask_t         = nullptr;
+Trampoline* LoopTask_t            = nullptr;
+Trampoline* late_exec_t           = nullptr;
+Trampoline* late_setOdr_t         = nullptr;
+Trampoline* njDrawQuadTextureEx_t = nullptr;
 
 struct ScreenRatio
 {
@@ -32,6 +32,11 @@ ScreenRatio ScreenRatio4[]
     { 0.5f, 0.5f, 0.5f, 0.5f }
 };
 
+ScreenRatio* GetScreenRatio(int num)
+{
+    return player_count <= 2 ? &ScreenRatio2[num] : &ScreenRatio4[num];
+}
+
 // Change the viewport
 bool ChangeViewPort(int num)
 {
@@ -45,12 +50,12 @@ bool ChangeViewPort(int num)
         return true;
     }
 
-    auto& ratio = player_count <= 2 ? ScreenRatio2[num] : ScreenRatio4[num];
+    auto ratio = GetScreenRatio(num);
 
-    Direct3D_ViewPort.X = ratio.x * HorizontalResolution;
-    Direct3D_ViewPort.Y = ratio.y * VerticalResolution;
-    Direct3D_ViewPort.Width = ratio.w * HorizontalResolution;
-    Direct3D_ViewPort.Height = ratio.h * VerticalResolution;
+    Direct3D_ViewPort.X = ratio->x * HorizontalResolution;
+    Direct3D_ViewPort.Y = ratio->y * VerticalResolution;
+    Direct3D_ViewPort.Width = ratio->w * HorizontalResolution;
+    Direct3D_ViewPort.Height = ratio->h * VerticalResolution;
     Direct3D_Device->SetViewport(&Direct3D_ViewPort);
     
     numViewPort = num;
@@ -186,19 +191,24 @@ void __cdecl LoopTask_r()
     }
 }
 
-// Do not affect HUD elements
-void __cdecl njDrawSprite2D_r(NJS_SPRITE* sp, int n, double pri, unsigned int atr)
+void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
 {
     if (IsMultiplayerEnabled() && numViewPort != -1)
     {
-        int backup = numViewPort;
-        ResetViewPort();
-        TARGET_DYNAMIC(njDrawSprite2D)(sp, n, pri, atr);
-        ChangeViewPort(backup);
+        auto ratio = GetScreenRatio(numScreen);
+
+        quad->x = quad->x * ratio->w + HorizontalResolution * ratio->x;
+        quad->y = quad->y * ratio->h + VerticalResolution * ratio->y;
+        quad->vx1 *= ratio->w;
+        quad->vy1 *= ratio->h;
+        quad->vx2 *= ratio->w;
+        quad->vy2 *= ratio->h;
+
+        TARGET_DYNAMIC(njDrawQuadTextureEx)(quad);
     }
     else
     {
-        TARGET_DYNAMIC(njDrawSprite2D)(sp, n, pri, atr);
+        TARGET_DYNAMIC(njDrawQuadTextureEx)(quad);
     }
 }
 
@@ -212,5 +222,5 @@ void InitSplitScreen()
     late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
     late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_asm);
 
-    njDrawSprite2D_t = new Trampoline(0x77E050, 0x77E058, njDrawSprite2D_r);
+    njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
 }
