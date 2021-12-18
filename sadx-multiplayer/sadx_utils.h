@@ -296,3 +296,34 @@ static inline void ChgSubModeToStay_0(ModeSelPrmType* a1, task* a2)
 		call ChgSubModePtr
 	}
 }
+
+struct MSGC
+{
+	unsigned __int8 kind;
+	__int16 x;
+	__int16 y;
+	unsigned __int16 width;
+	unsigned __int16 height;
+	unsigned __int16 buf_width;
+	unsigned __int16 buf_height;
+	unsigned __int16 buf_width2;
+	unsigned __int16 buf_height2;
+	__int16 lx;
+	__int16 ly;
+	__int16 sx;
+	__int16 sy;
+	unsigned __int16 color;
+	NJS_COLOR fc;
+	NJS_COLOR bc;
+	float scale;
+	void* bitmap;
+	unsigned int globalindex;
+	NJS_TEXLIST texlist;
+	NJS_TEXNAME texname;
+	int msgc_flag;
+};
+
+DataPointer(MSGC, stru_3ABDC18, 0x3ABDC18);
+VoidFunc(sub_40BC80, 0x40BC80);
+FunctionPointer(void, SetMessageSettings, (MSGC* a1, __int16 x, __int16 y, int width, int height, int globalindex), 0x40E430);
+FunctionPointer(void, MSG_LoadTexture2, (MSGC* a1), 0x40D2A0);

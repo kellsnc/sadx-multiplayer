@@ -6,13 +6,13 @@ NJS_TEXNAME multicharTex[7];
 NJS_TEXLIST multichar_Texlist = { arrayptrandlength(multicharTex) };
 
 NJS_TEXANIM MultiTexAnim[]{
-	{ 128, 128, 0, 0, 0, 0, 255, 255, 0, 0x20 },
-	{ 128, 128, 0, 0, 0, 0, 255, 255, 1, 0x20 },
-	{ 128, 128, 0, 0, 0, 0, 255, 255, 2, 0x20 },
-	{ 128, 128, 0, 0, 0, 0, 255, 255, 3, 0x20 },
-	{ 128, 128, 0, 0, 0, 0, 255, 255, 4, 0x20 },
-	{ 128, 128, 0, 0, 0, 0, 255, 255, 5, 0x20 },
-	{ 128, 128, 0, 0, 0, 0, 255, 255, 6, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, 0, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, 1, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, 2, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, 3, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, 4, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, 5, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, 6, 0x20 },
 };
 
 NJS_SPRITE MultiTexSprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim };
@@ -25,33 +25,45 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		return;
 	}
 
+	char posX = 60;
+	int startposX = 220;
+
+
 	if (!MissedFrames && TrialActStelTp)
 	{
 		auto wk = (TrialActSelWk*)tp->awp;
 
 		if (wk->BaseCol != 0)
 		{
-
+			gHelperFunctions->PushScaleUI(uiscale::Align_Center, false, 1.0f, 1.0f);
 			SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
 			SetDefaultAlphaBlend();
-			MultiTexSprite.p.x = 0;
-			MultiTexSprite.p.y = 300;
+			MultiTexSprite.p.x = startposX;
+			MultiTexSprite.p.y = 150;
 			njDrawSprite2D_DrawNow(&MultiTexSprite, 0, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			MultiTexSprite.p.x += 120;
+			MultiTexSprite.p.x += posX;
 			njDrawSprite2D_DrawNow(&MultiTexSprite, 1, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			MultiTexSprite.p.x += 120;
+			MultiTexSprite.p.x += posX;
 			njDrawSprite2D_DrawNow(&MultiTexSprite, 2, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
-			MultiTexSprite.p.x = 0;
-			MultiTexSprite.p.y += 130;
+			//second line
+			MultiTexSprite.p.x = startposX;
+			MultiTexSprite.p.y += 70;
 			njDrawSprite2D_DrawNow(&MultiTexSprite, 3, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			MultiTexSprite.p.x += 120;
+			MultiTexSprite.p.x += posX;
 			njDrawSprite2D_DrawNow(&MultiTexSprite, 4, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			MultiTexSprite.p.x += 120;
+			MultiTexSprite.p.x += posX;
 			njDrawSprite2D_DrawNow(&MultiTexSprite, 5, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			ClampGlobalColorThing_Thing();
 
+			DrawSADXText("MULTIPLAYER", 0, 24, 120, 40);
+			//DrawSADXText("Select your character", 0, 24, 140, 40);
+			ClampGlobalColorThing_Thing();
+			gHelperFunctions->PopScaleUI();
 		}
+
+
+		float a1 = wk->BaseZ - 2.0;
+		DrawTiledBG_AVA_BACK(a1);
 	}
 }
 

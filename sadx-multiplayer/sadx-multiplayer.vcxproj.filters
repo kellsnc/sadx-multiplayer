@@ -54,6 +54,9 @@
     <ClInclude Include="patches\deathzones.h">
       <Filter>Fichiers d%27en-tête\patches</Filter>
     </ClInclude>
+    <ClInclude Include="utils.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -88,6 +91,9 @@
     </ClCompile>
     <ClCompile Include="menu.cpp">
       <Filter>Fichiers sources\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

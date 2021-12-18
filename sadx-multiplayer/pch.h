@@ -14,5 +14,6 @@ struct IUnknown;
 #include "sadx_utils.h"
 #include "players.h"
 #include "IniFile.hpp"
+#include "utils.h"
 
 #endif //PCH_H
