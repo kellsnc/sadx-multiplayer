@@ -12,7 +12,7 @@ __int16 GetLives_r(char pNum)
     return lives[pNum];
 }
 
-void __cdecl GiveLives_r(char pNum, char live)
+void __cdecl SetLives_r(char pNum, __int16 live)
 {
     if (live > 0)
     {
@@ -45,7 +45,7 @@ void __cdecl AddRings_r(char pNum, Sint16 amount)
     result = rings[pNum] / 100;
     if (calcRing < result)
     {
-        GiveLives_r(pNum, result - calcRing);
+        SetLives_r(pNum, result - calcRing);
     }
     if (GetLevelType() == 1)
     {
