@@ -66,9 +66,6 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		return;
 	}
 
-	char posX = 60;
-	int startposX = 200;
-	char range = 4;
 
 	if (!MissedFrames && TrialActStelTp)
 	{
@@ -79,22 +76,13 @@ void __cdecl MultiMenuExec_Display(task* tp)
 			gHelperFunctions->PushScaleUI(uiscale::Align_Center, false, 1.0f, 1.0f);
 			SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
 			SetDefaultAlphaBlend();
-			MultiTexSprite.p.x = startposX;
-			MultiTexSprite.p.y = 150;
 
-	
 			DrawCursor();
 
 			for (uint8_t i = 0; i < 8; i++) {
-
-				if (i == range)
-				{
-					MultiTexSprite.p.x = startposX;
-					MultiTexSprite.p.y += 70;
-				}
-
+				MultiTexSprite.p.x = cursorPosArray[i].x;
+				MultiTexSprite.p.y = cursorPosArray[i].y;
 				njDrawSprite2D_DrawNow(&MultiTexSprite, i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-				MultiTexSprite.p.x += posX;
 			}
 
 
