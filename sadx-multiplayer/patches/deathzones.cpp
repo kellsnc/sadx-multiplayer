@@ -25,6 +25,7 @@ void __cdecl sub_440C80_r(task* obj)
 		EntityData1* player = EntityData1Ptrs[pNum];
 		SetLives_r(pNum, -1);
 		MovePlayerToStartPoint(player);
+		parent->twp->flag &= ~4u;
 	}
 
 	CheckThingButThenDeleteObject((ObjectMaster*)obj);
@@ -103,22 +104,55 @@ void PlayCharacterDeathSound_r(task* obj, int pNum)
 	}
 }
 
-static void __declspec(naked) PlayCharacterDeathSoundASM()
+void __cdecl DeathZoneHandler_r(ObjectMaster* obj)
 {
-	__asm
-	{
-		push[esp + 04h]
-		push eax
-		call PlayCharacterDeathSound_r
-		pop eax
-		add esp, 4
-		retn
+	Mysterious64Bytes dyncolthing;
+	uint16_t levelact = CurrentAct | CurrentLevel;
+
+	DeathZone* dz = *DeathZoneList[levelact];
+
+	if (dz && (!obj->Child && (obj->Data1->Status & Status_Hurt) == 0)) {
+		while (dz->Characters) {
+
+			for (uint8_t i = 0; i < PLAYER_MAX; i++) {
+
+				if (!EntityData1Ptrs[i])
+					continue;
+
+				dyncolthing.Position = EntityData1Ptrs[i]->Position;
+
+				if (TestObjectIntersect(&dyncolthing, dz->Model)) {
+					if (!dyncolthing.struct_v3_a.SomeFlag)
+					{
+						if (dyncolthing.struct_v3_b.SomeFlag)
+						{
+							if (fabs(dyncolthing.Position.y - dyncolthing.struct_v3_b.Distance) <= 30.0)
+							{
+								PlayCharacterDeathSound_r((task*)obj, i); // also run the death cutscene
+								continue;
+							}
+						}
+					}
+
+				}
+			}
+
+			++dz;
+
+		}
 	}
+
+
+	if (obj->Child)
+	{
+		RunObjectChildren(obj);
+	}
+
 }
 
 //serie of hacks to not reset the game if player 1 die and make every players able to die
 void init_DeathPatches() {
 	WriteJump((void*)0x440CD0, KillPlayer_r);
-	WriteJump((void*)0x446AF0, PlayCharacterDeathSoundASM); //also manage player death
+	WriteJump(DeathZoneHandler, DeathZoneHandler_r); //also manage player death
 	return;
 }

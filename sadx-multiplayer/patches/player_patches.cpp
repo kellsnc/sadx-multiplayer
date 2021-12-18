@@ -6,6 +6,11 @@ Trampoline* GetPlayersInputData_t = nullptr;
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
+    if (!IsIngame())
+    {
+        return 	TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
+    }
+
 	auto backup = camera_twp->ang;
 	camera_twp->ang = *GetCameraAngle(TASKWK_PLAYERID(twp));
 	TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
