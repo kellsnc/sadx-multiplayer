@@ -3,20 +3,60 @@
 
 extern bool MultiMenuEnabled;
 
-NJS_TEXNAME multicharTex[7];
+uint8_t cursor = 0;
+
+NJS_TEXNAME multicharTex[10];
 NJS_TEXLIST multichar_Texlist = { arrayptrandlength(multicharTex) };
 
+enum CharacterMenu {
+	sonicIcon,
+	eggIcon,
+	tailsIcon,
+	knuxIcon,
+	tikalIcon,
+	amyIcon,
+	e102Icon,
+	bigIcon,
+	msIcon,
+	cursorIcon
+};
+
 NJS_TEXANIM MultiTexAnim[]{
-	{ 64, 64, 0, 0, 0, 0, 255, 255, 0, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, 1, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, 2, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, 3, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, 4, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, 5, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, 6, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, sonicIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, eggIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, tailsIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, knuxIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, tikalIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, amyIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, bigIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, e102Icon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, bigIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, msIcon, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, cursorIcon, 0x20 },
+};
+
+NJS_POINT2 cursorPosArray[8]{
+	{ 200, 150 },
+	{ 260, 150 },
+	{ 320, 150 },
+	{ 380, 150 },
+	{ 200, 220 },
+	{ 260, 220 },
+	{ 320, 220 },
+	{ 380, 220 },
+
 };
 
 NJS_SPRITE MultiTexSprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim };
+NJS_SPRITE MultiCursorSprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim };
+
+void DrawCursor() {
+
+	MultiCursorSprite.p.x = cursorPosArray[cursor].x;
+	MultiCursorSprite.p.y = cursorPosArray[cursor].y;
+
+	njDrawSprite2D_DrawNow(&MultiCursorSprite, cursorIcon +1, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+}
 
 void __cdecl MultiMenuExec_Display(task* tp)
 {
@@ -27,8 +67,8 @@ void __cdecl MultiMenuExec_Display(task* tp)
 	}
 
 	char posX = 60;
-	int startposX = 220;
-
+	int startposX = 200;
+	char range = 4;
 
 	if (!MissedFrames && TrialActStelTp)
 	{
@@ -41,20 +81,22 @@ void __cdecl MultiMenuExec_Display(task* tp)
 			SetDefaultAlphaBlend();
 			MultiTexSprite.p.x = startposX;
 			MultiTexSprite.p.y = 150;
-			njDrawSprite2D_DrawNow(&MultiTexSprite, 0, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			MultiTexSprite.p.x += posX;
-			njDrawSprite2D_DrawNow(&MultiTexSprite, 1, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			MultiTexSprite.p.x += posX;
-			njDrawSprite2D_DrawNow(&MultiTexSprite, 2, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
-			//second line
-			MultiTexSprite.p.x = startposX;
-			MultiTexSprite.p.y += 70;
-			njDrawSprite2D_DrawNow(&MultiTexSprite, 3, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			MultiTexSprite.p.x += posX;
-			njDrawSprite2D_DrawNow(&MultiTexSprite, 4, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-			MultiTexSprite.p.x += posX;
-			njDrawSprite2D_DrawNow(&MultiTexSprite, 5, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	
+			DrawCursor();
+
+			for (uint8_t i = 0; i < 8; i++) {
+
+				if (i == range)
+				{
+					MultiTexSprite.p.x = startposX;
+					MultiTexSprite.p.y += 70;
+				}
+
+				njDrawSprite2D_DrawNow(&MultiTexSprite, i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+				MultiTexSprite.p.x += posX;
+			}
+
 
 			DrawSADXText("MULTIPLAYER", 0, 24, 120, 40);
 			ClampGlobalColorThing_Thing();
@@ -75,21 +117,28 @@ bool MultiMenu_CheckMoveInput(int button, char pNum)
 		switch (button)
 		{
 		case Buttons_Up:
-
+			cursor -= 4;
 			break;
 		case Buttons_Down:
-
+			cursor += 4;
 			break;
 		case Buttons_Left:
-
+			cursor--;
 			break;
 		case Buttons_Right:
-
+			cursor++;
 			break;
 		default:
 			return false;
 		}
 
+		if (cursor < sonicIcon)
+			cursor = bigIcon;
+
+		if (cursor > msIcon)
+			cursor = sonicIcon;
+
+		PlayMenuBipSound();
 
 	}
 
