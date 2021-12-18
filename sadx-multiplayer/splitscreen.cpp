@@ -202,21 +202,6 @@ void __cdecl njDrawSprite2D_r(NJS_SPRITE* sp, int n, double pri, unsigned int at
     }
 }
 
-Trampoline* njProjectScreen_t = nullptr;
-
-void __fastcall njProjectScreen_r(NJS_MATRIX_CONST_PTR m, const NJS_VECTOR* p3, NJS_POINT2* p2)
-{
-    TARGET_DYNAMIC(njProjectScreen)(m, p3, p2);
-
-    if (IsMultiplayerEnabled())
-    {
-        auto& ratio = player_count <= 2 ? ScreenRatio2[numScreen] : ScreenRatio4[numScreen];
-        p2->x = p2->x * ratio.w + HorizontalResolution * ratio.x;
-        p2->y = p2->y * ratio.h + HorizontalResolution * ratio.y;
-    }
-   
-}
-
 void InitSplitScreen()
 {
     LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
@@ -228,5 +213,4 @@ void InitSplitScreen()
     late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_asm);
 
     njDrawSprite2D_t = new Trampoline(0x77E050, 0x77E058, njDrawSprite2D_r);
-    njProjectScreen_t = new Trampoline(0x788700, 0x788705, njProjectScreen_r);
 }
