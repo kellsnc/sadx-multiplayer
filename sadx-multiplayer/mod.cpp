@@ -5,11 +5,11 @@
 #include "patches/patches.h"
 
 const HelperFunctions* gHelperFunctions;
-unsigned int player_count = 2;
+unsigned int player_count = 4;
 
 bool IsMultiplayerEnabled()
 {
-	return IsIngame() && player_count != 0;
+	return (IsIngame() || IsGamePaused()) && player_count != 0;
 }
 
 extern "C"
