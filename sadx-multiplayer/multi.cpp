@@ -57,7 +57,6 @@ void __cdecl MultiMenuExec_Display(task* tp)
 			njDrawSprite2D_DrawNow(&MultiTexSprite, 5, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
 			DrawSADXText("MULTIPLAYER", 0, 24, 120, 40);
-			//DrawSADXText("Select your character", 0, 24, 140, 40);
 			ClampGlobalColorThing_Thing();
 			gHelperFunctions->PopScaleUI();
 		}
