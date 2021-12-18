@@ -95,6 +95,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="mod.h" />
+    <ClInclude Include="patches\deathzones.h" />
     <ClInclude Include="patches\patches.h" />
     <ClInclude Include="patches\player_patches.h" />
     <ClInclude Include="pch.h" />
@@ -104,9 +105,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
-    <ClCompile Include="death-zones.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="mod.cpp" />
+    <ClCompile Include="patches\deathzones.cpp" />
     <ClCompile Include="patches\patches.cpp" />
     <ClCompile Include="patches\player_patches.cpp" />
     <ClCompile Include="pch.cpp">

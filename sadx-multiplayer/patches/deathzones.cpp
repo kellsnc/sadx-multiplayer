@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "deathzones.h"
 
 VoidFunc(sub_464DF0, 0x464DF0);
 
