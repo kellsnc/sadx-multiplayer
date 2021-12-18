@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "camera.h"
 #include "splitscreen.h"
+#include "menu.h"
 #include "patches/patches.h"
 
 const HelperFunctions* gHelperFunctions;
@@ -8,10 +9,7 @@ unsigned int player_count = 2;
 
 bool IsMultiplayerEnabled()
 {
-	if (!IsIngame())
-		return 0;
-
-	return player_count != 0;
+	return IsIngame() && player_count != 0;
 }
 
 extern "C"

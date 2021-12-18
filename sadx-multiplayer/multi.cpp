@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "multi.h"
 
 extern bool MultiMenuEnabled;
 
