@@ -1,7 +1,26 @@
 #include "pch.h"
 
-static int rings[8];
-static int lives[8];
+static int rings[8]{};
+static int lives[8]{};
+static int score[8]{};
+
+void ResetScoreM()
+{
+    for (auto& s : score)
+    {
+        s = 0;
+    }
+}
+
+int GetScoreM(int pNum)
+{
+    return score[pNum];
+}
+
+void AddScoreM(int pNum, int amount)
+{
+    score[pNum] += amount;
+}
 
 void __cdecl ResetLivesM()
 {

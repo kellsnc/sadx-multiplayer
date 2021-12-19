@@ -1,5 +1,9 @@
 #pragma once
 
+void ResetScoreM();
+int GetScoreM(int pNum);
+void AddScoreM(int pNum, int amount);
+
 void __cdecl ResetLivesM();
 void SetLivesM(int pNum, int amount);
 int GetLivesM(int pNum);
