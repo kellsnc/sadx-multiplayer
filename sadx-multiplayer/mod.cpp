@@ -5,7 +5,7 @@
 #include "patches/patches.h"
 
 const HelperFunctions* gHelperFunctions;
-unsigned int player_count = 4;
+unsigned int player_count = 2;
 
 bool IsMultiplayerEnabled()
 {

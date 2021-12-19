@@ -1,80 +1,114 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="mod.cpp" />
-    <ClCompile Include="patches\deathzones.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="players.cpp" />
-    <ClCompile Include="splitscreen.cpp" />
-    <ClCompile Include="utils.cpp" />
-    <ClCompile Include="patches\patches.cpp">
-      <Filter>patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\player_patches.cpp">
-      <Filter>patches</Filter>
-    </ClCompile>
-    <ClCompile Include="multi.cpp">
-      <Filter>gui</Filter>
-    </ClCompile>
-    <ClCompile Include="menu.cpp">
-      <Filter>gui</Filter>
-    </ClCompile>
+    <Filter Include="Fichiers sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Fichiers de ressources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Fichiers sources\patches">
+      <UniqueIdentifier>{cc801893-1f44-492e-94ec-d5e076ae1452}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\patches">
+      <UniqueIdentifier>{d8c52fc9-5a7a-4c37-8308-02373df1419d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers sources\gui">
+      <UniqueIdentifier>{2f104537-9a30-4b0d-aa0f-95a9241a525a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Fichiers d%27en-tête\gui">
+      <UniqueIdentifier>{562c4e22-0b8d-45db-a9b8-e536455ee975}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="menu.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
-      <Filter>Header FIles</Filter>
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="pch.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="mod.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="patches\deathzones.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="multi.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="patches\player_patches.h">
-      <Filter>Header FIles\patches</Filter>
-    </ClInclude>
-    <ClInclude Include="patches\patches.h">
-      <Filter>Header FIles\patches</Filter>
-    </ClInclude>
-    <ClInclude Include="players.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="sadx_utils.h">
-      <Filter>Header FIles</Filter>
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="splitscreen.h">
-      <Filter>Header FIles</Filter>
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="camera.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="mod.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="patches\player_patches.h">
+      <Filter>Fichiers d%27en-tête\patches</Filter>
+    </ClInclude>
+    <ClInclude Include="patches\patches.h">
+      <Filter>Fichiers d%27en-tête\patches</Filter>
+    </ClInclude>
+    <ClInclude Include="sadx_utils.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="players.h">
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="patches\deathzones.h">
+      <Filter>Fichiers d%27en-tête\patches</Filter>
+    </ClInclude>
+    <ClInclude Include="menu.h">
+      <Filter>Fichiers d%27en-tête\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="multi.h">
+      <Filter>Fichiers d%27en-tête\gui</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
-      <Filter>Header FIles</Filter>
+      <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="multihud.h">
+      <Filter>Fichiers d%27en-tête\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="patches">
-      <UniqueIdentifier>{f7f1aa64-91c4-404c-b268-0b44e95f29b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="gui">
-      <UniqueIdentifier>{25de92dc-4f93-442a-bf74-5037f998a674}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles">
-      <UniqueIdentifier>{56f53c80-d906-4456-a067-cd34f6124b33}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\patches">
-      <UniqueIdentifier>{4fd68244-9b97-4a33-b141-2347ad87cfcc}</UniqueIdentifier>
-    </Filter>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="mod.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="splitscreen.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\player_patches.cpp">
+      <Filter>Fichiers sources\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patches.cpp">
+      <Filter>Fichiers sources\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="players.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\deathzones.cpp">
+      <Filter>Fichiers sources\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="multi.cpp">
+      <Filter>Fichiers sources\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="menu.cpp">
+      <Filter>Fichiers sources\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="multihud.cpp">
+      <Filter>Fichiers sources\gui</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
