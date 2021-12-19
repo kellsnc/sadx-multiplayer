@@ -13,3 +13,4 @@ void __cdecl initPlayerHack();
 void __cdecl SetCurrentCharacter(char pnum, char character);
 __int16 __cdecl GetCurrentCharacter(char pnum);
 void ResetCharactersArray();
+void RemovePlayersDamage();

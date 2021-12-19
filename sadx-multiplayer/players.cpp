@@ -1,8 +1,8 @@
 #include "pch.h"
 
-static int rings[8];
-static int lives[8];
-static __int16 characters[8] = { -1, -1, -1, -1, -1, -1, -1, -1 }; //don't remove the -1 or it will break test spawn
+static int rings[PLAYER_MAX];
+static int lives[PLAYER_MAX];
+static __int16 characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
 ObjectFuncPtr charfuncs[] = {
     Sonic_Main,
@@ -16,7 +16,7 @@ ObjectFuncPtr charfuncs[] = {
 };
 
 void ResetCharactersArray() {
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < PLAYER_MAX; i++) {
         characters[i] = -1;
     }
 }
@@ -112,13 +112,25 @@ __int16 __cdecl GetCurrentCharacter(char pnum)
 
 void Load_MultipleCharacters() {
 
-    for (uint8_t i = 1; i < 8; i++) {
+    player_count = 0;
 
-        if (characters[i] != -1)
+    LoadCharacter();
+    player_count++; //count player one
+
+ 
+    for (uint8_t i = 1; i < PLAYER_MAX; i++) {
+
+        if (characters[i] > -1) {
             LoadCharObj(i, characters[i]);
+            player_count++;
+        }
     }
 
-    return LoadCharacter();
+    if (TailsAI_ptr) //temporary so we can make test 
+        player_count++;
+
+
+    return;
 }
 void __cdecl initPlayerHack()
 {

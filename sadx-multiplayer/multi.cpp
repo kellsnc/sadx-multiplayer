@@ -3,12 +3,12 @@
 
 extern bool MultiMenuEnabled;
 
-uint8_t cursor[8];
+uint8_t cursor[PLAYER_MAX];
 
 NJS_TEXNAME multicharTex[10];
 NJS_TEXLIST multichar_Texlist = { arrayptrandlength(multicharTex) };
 
-int playerReady[8];
+int playerReady[PLAYER_MAX];
 
 enum playReadyState {
 	disconnected,
@@ -79,22 +79,10 @@ NJS_SPRITE MultiCursorSprite[8] = {
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
 };
 
-void DrawCursor(char pnum) {
-
-	if (playerReady[pnum] < pressedStart)
-		return;
-
-	SetMaterialAndSpriteColor_Float(1, CursorColor[pnum].x, CursorColor[pnum].y, CursorColor[pnum].z);
-	MultiCursorSprite[pnum].p.x = cursorPosArray[cursor[pnum]].x;
-	MultiCursorSprite[pnum].p.y = cursorPosArray[cursor[pnum]].y;
-
-	njDrawSprite2D_DrawNow(&MultiCursorSprite[pnum], cursorIcon + 1, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-	ClampGlobalColorThing_Thing();
-}
 
 bool isAlreadySelected(char pnum, char character) {
 
-	for (uint8_t i = 0; i < 8; i++) {
+	for (uint8_t i = 0; i < PLAYER_MAX; i++) {
 
 		if (i == pnum)
 			continue;
@@ -111,7 +99,7 @@ bool isEveryoneReady() {
 	char countRDY = 0;
 	char countNotRDY = 0;
 
-	for (uint8_t i = 0; i < 8; i++) {
+	for (uint8_t i = 0; i < PLAYER_MAX; i++) {
 
 		if (playerReady[i] <= disconnected) {
 			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Disconnected.", i);
@@ -146,7 +134,7 @@ void StartMulti_Game(TrialActSelWk* wk) {
 	LastAct = CurrentAct;
 
 	CurrentCharacter = cursor[0];
-;
+
 	CurrentLevel = 1;
 	CurrentAct = 0;
 
@@ -160,6 +148,29 @@ void StartMulti_Game(TrialActSelWk* wk) {
 
 	wk->Stat = ADVA_STAT_FADEOUT;
 	wk->T = 0.0f;
+}
+
+void DrawCharacterPortrait(char i) {
+
+	SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
+	MultiTexSprite.p.x = cursorPosArray[i].x;
+	MultiTexSprite.p.y = cursorPosArray[i].y;
+	njDrawSprite2D_DrawNow(&MultiTexSprite, i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	return;
+}
+
+
+void DrawCursor(char pnum) {
+
+	if (playerReady[pnum] < pressedStart || pnum > PLAYER_MAX)
+		return;
+
+	SetMaterialAndSpriteColor_Float(1, CursorColor[pnum].x, CursorColor[pnum].y, CursorColor[pnum].z);
+	MultiCursorSprite[pnum].p.x = cursorPosArray[cursor[pnum]].x;
+	MultiCursorSprite[pnum].p.y = cursorPosArray[cursor[pnum]].y;
+
+	njDrawSprite2D_DrawNow(&MultiCursorSprite[pnum], cursorIcon + 1, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	ClampGlobalColorThing_Thing();
 }
 
 void __cdecl MultiMenuExec_Display(task* tp)
@@ -181,14 +192,11 @@ void __cdecl MultiMenuExec_Display(task* tp)
 
 			for (uint8_t i = 0; i < 8; i++) {
 				DrawCursor(i);
-				SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
-				MultiTexSprite.p.x = cursorPosArray[i].x;
-				MultiTexSprite.p.y = cursorPosArray[i].y;
-				njDrawSprite2D_DrawNow(&MultiTexSprite, i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+				DrawCharacterPortrait(i);
 			}
 
 
-			DrawSADXText("MULTIPLAYER", 0, 24, 120, 40);
+			DrawSADXText("MULTIPLAYER - BATTLE", 0, 24, 120, 40);
 			ClampGlobalColorThing_Thing();
 			gHelperFunctions->PopScaleUI();
 		}
@@ -202,12 +210,9 @@ void __cdecl MultiMenuExec_Display(task* tp)
 bool MultiMenu_CheckMoveInput(int button, char pNum)
 {
 	//lock control if player has the character selected.
-	if (pNum > 0 && playerReady[pNum] < pressedStart || playerReady[pNum] >= ready)
-		return false;
 
 	if ((PressedButtons[pNum] & button) != 0)
 	{
-
 		switch (button)
 		{
 		case Buttons_Up:
@@ -244,6 +249,25 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 
 	for (uint8_t i = 0; i < PLAYER_MAX; i++) {
 
+		if (MenuSelectButtonsPressed_r(i))
+		{
+			PlayMenuEnterSound();
+
+			if (playerReady[i] < ready)
+				playerReady[i]++;
+
+
+			if (playerReady[i] >= ready)
+			{
+				SetCurrentCharacter(i, cursor[i]);
+				continue;
+			}
+
+		}
+
+		if (playerReady[i] <= disconnected)
+			continue;
+
 		if (MenuBackButtonsPressed_r(i))
 		{
 			PlayMenuBackSound();
@@ -260,42 +284,24 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 				SetCurrentCharacter(i, -1);
 				playerReady[i]--;
 			}
-
-			return;
 		}
 
 
-		if (MenuSelectButtonsPressed_r(i))
-		{
-			if (isAlreadySelected(i, cursor[i]))
-			{
-				PlayMenuBackSound();
-				return;
-			}
+		if (playerReady[i] >= ready || playerReady[i] <= disconnected)
+			continue;
 
-			PlayMenuEnterSound();
-
-			if (playerReady[i] < ready)
-				playerReady[i]++;
-
-			if (playerReady[i] >= ready)
-			{
-				SetCurrentCharacter(i, cursor[i]);
-			}
-
-		}
 
 		if (MultiMenu_CheckMoveInput(Buttons_Up, i))
-			return;
+			continue;
 
 		if (MultiMenu_CheckMoveInput(Buttons_Down, i))
-			return;
+			continue;
 
 		if (MultiMenu_CheckMoveInput(Buttons_Left, i))
-			return;
+			continue;
 
 		if (MultiMenu_CheckMoveInput(Buttons_Right, i))
-			return;
+			continue;
 	}
 
 	return;
@@ -316,6 +322,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	{
 		memset(playerReady, 0, sizeof(playerReady));
 		ResetCharactersArray();
+		player_count = 0;
 		MusicList[MusicIDs_Trial].Name = "btl_sel";
 		PlayMenuMusicID(4);
 		PlayVoice(40);
