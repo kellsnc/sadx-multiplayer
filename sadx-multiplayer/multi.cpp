@@ -29,6 +29,18 @@ enum CharacterMenu {
 	cursorIcon
 };
 
+
+NJS_VECTOR CursorColor[8] = {
+	{ 1, 1, 1},
+	{ 0.145, 0.501, 0.894 }, //light blue
+	{0.423, 0.894, 0.047}, //light green
+	{ 0.894, 0.701, 0.047}, //yellow
+	{ 0.976, 0.525, 0.862}, //pink 
+	{ 0.584, 0.074, 0.560}, //purple
+	{ 0.070, 0.047, 0.894}, //dark blue
+	{ 0.521, 0, 0}, //dark red
+};
+
 NJS_TEXANIM MultiTexAnim[]{
 	{ 64, 64, 0, 0, 0, 0, 255, 255, sonicIcon, 0x20 },
 	{ 64, 64, 0, 0, 0, 0, 255, 255, eggIcon, 0x20 },
@@ -66,15 +78,19 @@ NJS_SPRITE MultiCursorSprite[8] = {
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-
 };
 
 void DrawCursor(char pnum) {
 
+	if (playerReady[pnum] < pressedStart)
+		return;
+
+	SetMaterialAndSpriteColor_Float(1, CursorColor[pnum].x, CursorColor[pnum].y, CursorColor[pnum].z);
 	MultiCursorSprite[pnum].p.x = cursorPosArray[cursor[pnum]].x;
 	MultiCursorSprite[pnum].p.y = cursorPosArray[cursor[pnum]].y;
 
 	njDrawSprite2D_DrawNow(&MultiCursorSprite[pnum], cursorIcon + 1, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	ClampGlobalColorThing_Thing();
 }
 
 struct MenuCharStruct {
@@ -113,7 +129,7 @@ bool isEveryoneReady() {
 			countNotRDY++;
 	}
 
-	if (countNotRDY <= 0 && countRDY >= 1)
+	if (countNotRDY <= 0 && countRDY >= 2)
 		return true;
 
 	return false;
@@ -155,7 +171,6 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		return;
 	}
 
-
 	if (!MissedFrames && TrialActStelTp)
 	{
 		auto wk = (TrialActSelWk*)tp->awp;
@@ -163,13 +178,11 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		if (wk->BaseCol != 0)
 		{
 			gHelperFunctions->PushScaleUI(uiscale::Align_Center, false, 1.0f, 1.0f);
-			SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
 			SetDefaultAlphaBlend();
-
-
 
 			for (uint8_t i = 0; i < 8; i++) {
 				DrawCursor(i);
+				SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
 				MultiTexSprite.p.x = cursorPosArray[i].x;
 				MultiTexSprite.p.y = cursorPosArray[i].y;
 				njDrawSprite2D_DrawNow(&MultiTexSprite, i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
@@ -189,8 +202,9 @@ void __cdecl MultiMenuExec_Display(task* tp)
 
 bool MultiMenu_CheckMoveInput(int button, char pNum)
 {
-	if (pNum > 0 && playerReady[pNum] < pressedStart)
-		return;
+	//lock control if player has the character selected.
+	if (pNum > 0 && playerReady[pNum] < pressedStart || playerReady[pNum] >= ready)
+		return false;
 
 	if ((PressedButtons[pNum] & button) != 0)
 	{
@@ -234,11 +248,18 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 
 		if (MenuBackButtonsPressed_r(i))
 		{
-			CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU); // force back to lead to menu
-			PlayMenuBackSound();
-			PlayMenuBackSound();
-			wk->Stat = ADVA_STAT_FADEOUT;
-			wk->T = 0.0;
+			if (i == 0 && playerReady[0] == pressedStart) {
+				CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU); // force back to lead to menu
+				PlayMenuBackSound();
+				PlayMenuBackSound();
+				wk->Stat = ADVA_STAT_FADEOUT;
+				wk->T = 0.0;
+				return;
+			}
+
+			if (playerReady[i] >= pressedStart)
+				playerReady[i]--;
+
 			return;
 		}
 
@@ -247,9 +268,9 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 		{
 			PlayMenuEnterSound();
 
-
 			if (playerReady[i] < ready)
 				playerReady[i]++;
+
 		}
 
 
@@ -289,6 +310,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		PlayMenuMusicID(4);
 		PlayVoice(40);
 		LoadPVM("multichar", &multichar_Texlist);
+		playerReady[0] = pressedStart;
 
 		wk->Stat = ADVA_STAT_FADEIN;
 		wk->T = 0.0f;
