@@ -1,22 +1,18 @@
 #include "pch.h"
 #include "splitscreen.h"
+#include "multihud.h"
 
 DataPointer(IDirect3DDevice8*, Direct3D_Device, 0x03D128B0);
 DataPointer(D3DVIEWPORT8, Direct3D_ViewPort, 0x03D12780);
 
-unsigned int numScreen;
-signed int numViewPort;
+unsigned int numScreen = 0;
+signed int numViewPort = -1;
 
 Trampoline* DisplayTask_t         = nullptr;
 Trampoline* LoopTask_t            = nullptr;
 Trampoline* late_exec_t           = nullptr;
 Trampoline* late_setOdr_t         = nullptr;
 Trampoline* njDrawQuadTextureEx_t = nullptr;
-
-struct ScreenRatio
-{
-    float x, y, w, h;
-};
 
 ScreenRatio ScreenRatio2[]
 {
@@ -142,7 +138,7 @@ void DrawScreen(int num)
         {
             // If player is not there, draw a black screen and skip:
 
-            ds_DrawBoxFill2D(0, 0, HorizontalResolution, VerticalResolution, 1000000.0f, 0xFF000000);
+            DrawWaitScreen(num);
         }
     }
 }
@@ -219,9 +215,8 @@ void InitSplitScreen()
     DisplayTask_t = new Trampoline(0x40B540, 0x40B546, DisplayTask_r);
     WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
 
-
     late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
     late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_asm);
 
-    njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+    //njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
 }

@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "splitscreen.h"
 #include "menu.h"
+#include "multihud.h"
 #include "patches/patches.h"
 
 const HelperFunctions* gHelperFunctions;
@@ -9,7 +10,7 @@ unsigned int player_count = 2;
 
 bool IsMultiplayerEnabled()
 {
-	return IsIngame() && player_count != 0;
+	return (IsIngame() || IsGamePaused()) && player_count != 0;
 }
 
 extern "C"
@@ -22,6 +23,7 @@ extern "C"
 		InitPatches();
 		initPlayerHack();
 		Menu_Init(helperFunctions);
+		MultiHudInit();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()

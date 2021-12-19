@@ -12,14 +12,14 @@ void __cdecl GamePlayerMissed_r(task* tp)
 		{
 			task* ptp = tp->ptp;
 
-			if (GetLives_r(pNum) <= 0)
+			if (GetLivesM(pNum) <= 0)
 			{
 				SetChangeGameMode(2);
 				TempEraseSound();
 			}
 			else
 			{
-				SetLives_r(pNum, -1);
+				SetLivesM(pNum, -1);
 				SetPlayerInitialPosition(playertwp[pNum]);
 			}
 		}

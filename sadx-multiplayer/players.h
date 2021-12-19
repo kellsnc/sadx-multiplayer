@@ -1,6 +1,12 @@
 #pragma once
 
+void __cdecl ResetLivesM();
+void SetLivesM(int pNum, int amount);
+int GetLivesM(int pNum);
+
+void AddRingsM(int pNum, int amount);
+int GetRingsM(int pNum);
+
 void RingsLives_OnFrames();
-void __cdecl SetLives_r(char pNum, __int16 live);
-__int16 GetLives_r(char pNum);
+
 void __cdecl initPlayerHack();
