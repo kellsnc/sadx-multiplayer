@@ -1,6 +1,7 @@
 #pragma once
 
 extern unsigned int numScreen;
+extern signed int numViewPort;
 
 struct ScreenRatio
 {
@@ -8,5 +9,7 @@ struct ScreenRatio
 };
 
 ScreenRatio* GetScreenRatio(int num);
+bool ChangeViewPort(int num);
+void ResetViewPort();
 void __cdecl DisplayTask_r();
 void InitSplitScreen();

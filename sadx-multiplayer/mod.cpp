@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "camera.h"
 #include "splitscreen.h"
-#include "drawqueue.h"
 #include "menu.h"
 #include "multihud.h"
 #include "patches/patches.h"
@@ -20,7 +19,6 @@ extern "C"
 	{
 		gHelperFunctions = &helperFunctions;
 		InitSplitScreen();
-		InitDrawQueue();
 		InitCamera();
 		InitPatches();
 		initPlayerHack();
@@ -63,10 +61,10 @@ extern "C"
 	//	
 	//}
 
-	__declspec(dllexport) void __cdecl OnRenderSceneEnd()
-	{
-		RunDrawQueue();
-	}
+	//__declspec(dllexport) void __cdecl OnRenderSceneEnd()
+	//{
+	//	
+	//}
 
 	//__declspec(dllexport) void __cdecl OnExit()
 	//{

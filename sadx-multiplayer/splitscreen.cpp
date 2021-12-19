@@ -33,17 +33,31 @@ ScreenRatio* GetScreenRatio(int num)
     return player_count <= 2 ? &ScreenRatio2[num] : &ScreenRatio4[num];
 }
 
+// Set full screen viewport
+void ResetViewPort()
+{
+    Direct3D_ViewPort = { 0, 0, (unsigned long)HorizontalResolution, (unsigned long)VerticalResolution, 0.0f, 1.0f };
+    Direct3D_Device->SetViewport(&Direct3D_ViewPort);
+    numViewPort = -1;
+}
+
 // Change the viewport
 bool ChangeViewPort(int num)
 {
-    if (num > player_count || num > PLAYER_MAX)
-    {
-        return false;
-    }
-
     if (num == numViewPort)
     {
         return true;
+    }
+
+    if (num == -1)
+    {
+        ResetViewPort();
+        return true;
+    }
+
+    if (num < 0 || num > player_count || num > PLAYER_MAX)
+    {
+        return false;
     }
 
     auto ratio = GetScreenRatio(num);
@@ -56,14 +70,6 @@ bool ChangeViewPort(int num)
     
     numViewPort = num;
     return true;
-}
-
-// Set full screen viewport
-void ResetViewPort()
-{
-    Direct3D_ViewPort = { 0, 0, (unsigned long)HorizontalResolution, (unsigned long)VerticalResolution, 0.0f, 1.0f };
-    Direct3D_Device->SetViewport(&Direct3D_ViewPort);
-    numViewPort = -1;
 }
 
 // Adapt viewport to queued draw calls (late_exec draw all queued entries)
@@ -104,7 +110,7 @@ void* __cdecl late_setOdr_original(__int16 sz, int odr, int no, int flgs)
 
 void* __cdecl late_setOdr_r(__int16 sz, int odr, int no, int flgs)
 {
-    return numScreen == 0 ? late_setOdr_original(sz, odr, no, flgs) : nullptr;
+    return (numViewPort < 1) ? late_setOdr_original(sz, odr, no, flgs) : nullptr;
 }
 
 static void __declspec(naked) late_setOdr_asm()
@@ -133,6 +139,7 @@ void DrawScreen(int num)
 
             numScreen = num;
             TARGET_DYNAMIC(DisplayTask)(); // call all object display subs
+            DisplayMultiHud(num);
         }
         else
         {
@@ -187,6 +194,14 @@ void __cdecl LoopTask_r()
     }
 }
 
+void __cdecl njDrawSprite2D_vp0_r(NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE atr)
+{
+    int backup = numViewPort;
+    ChangeViewPort(-1);
+    njDrawSprite2D_DrawNow(sp, n, pri, atr);
+    ChangeViewPort(backup);
+}
+
 void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
 {
     if (IsMultiplayerEnabled() && numViewPort != -1)
@@ -218,5 +233,6 @@ void InitSplitScreen()
     late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
     late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_asm);
 
+    WriteCall((void*)0x408AAC, njDrawSprite2D_vp0_r);
     //njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
 }

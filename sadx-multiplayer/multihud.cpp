@@ -2,43 +2,103 @@
 #include "multihud.h"
 #include "splitscreen.h"
 
+Trampoline* DisplayScore_t = nullptr;
+Trampoline* DisplayTimer_t = nullptr;
+Trampoline* DisplayPauseMenu_t = nullptr;
+
 NJS_TEXNAME MULTIHUD_TEXNAME[3]{};
 NJS_TEXLIST MULTIHUD_TEXLIST = { arrayptrandlength(MULTIHUD_TEXNAME) };
 
+enum MHudTex
+{
+    MHudTex_Cream,
+    MHudTex_Cheese,
+    MHudTex_Alphabet,
+    MHudTex_Black,
+    MHudTex_Score,
+    MHudTex_Time,
+    MHudTex_Ring
+};
+
+enum MHudSprt
+{
+    MHudSprt_Cream = 0,
+    MHudSprt_Cheese = 12,
+    MHudSprt_Alphabet = 14,
+    MHudSprt_Black = 27,
+    MHudSprt_Score,
+    MHudSprt_Time,
+    MHudSprt_Ring
+};
+
 NJS_TEXANIM MULTIHUD_TEXANIMS[]{
-    { 32, 32, 0, 16, 0, 0, 64, 85, 0, 0x20 },
-    { 32, 32, 0, 16, 64, 0, 128, 85, 0, 0x20 },
-    { 32, 32, 0, 16, 128, 0, 192, 85, 0, 0x20 },
-    { 32, 32, 0, 16, 192, 0, 255, 85, 0, 0x20 },
-    { 32, 32, 0, 16, 0, 86, 64, 170, 0, 0x20 },
-    { 32, 32, 0, 16, 64, 86, 128, 170, 0, 0x20 },
-    { 32, 32, 0, 16, 128, 86, 192, 170, 0, 0x20 },
-    { 32, 32, 0, 16, 192, 86, 255, 170, 0, 0x20 },
-    { 32, 32, 0, 16, 0, 171, 64, 255, 0, 0x20 },
-    { 32, 32, 0, 16, 64, 171, 128, 255, 0, 0x20 },
-    { 32, 32, 0, 16, 128, 171, 192, 255, 0, 0x20 },
-    { 32, 32, 0, 16, 192, 171, 255, 255, 0, 0x20 },
-    { 16, 16, 0, 16, 0, 0, 124, 255, 1, 0x20 },
-    { 16, 16, 0, 16, 127, 0, 255, 255, 1, 0x20 },
-    { 16, 16, 0, 8, 0, 0, 64, 64, 2, 0x20 },
-    { 16, 16, 0, 8, 64, 0, 128, 64, 2, 0x20 },
-    { 16, 16, 0, 8, 128, 0, 192, 64, 2, 0x20 },
-    { 16, 16, 0, 8, 192, 0, 255, 64, 2, 0x20 },
-    { 16, 16, 0, 8, 0, 64, 64, 128, 2, 0x20 },
-    { 16, 16, 0, 8, 64, 64, 128, 128, 2, 0x20 },
-    { 16, 16, 0, 8, 128, 64, 192, 128, 2, 0x20 },
-    { 16, 16, 0, 8, 192, 64, 255, 128, 2, 0x20 },
-    { 16, 16, 0, 8, 0, 128, 64, 192, 2, 0x20 },
-    { 16, 16, 0, 8, 64, 128, 128, 192, 2, 0x20 },
-    { 16, 16, 0, 8, 128, 128, 192, 192, 2, 0x20 },
-    { 16, 16, 0, 8, 192, 128, 255, 192, 2, 0x20 },
-    { 16, 16, 0, 8, 0, 192, 64, 255, 2, 0x20 },
-    { 1, 1, 0, 0, 0, 0, 255, 255, 3, 0x20 }
+    { 32, 32, 0, 16, 0, 0, 64, 85, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 64, 0, 128, 85, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 128, 0, 192, 85, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 192, 0, 255, 85, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 0, 86, 64, 170, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 64, 86, 128, 170, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 128, 86, 192, 170, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 192, 86, 255, 170, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 0, 171, 64, 255, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 64, 171, 128, 255, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 128, 171, 192, 255, MHudTex_Cream, 0x20 },
+    { 32, 32, 0, 16, 192, 171, 255, 255, MHudTex_Cream, 0x20 },
+    { 16, 16, 0, 16, 0, 0, 124, 255, MHudTex_Cheese, 0x20 },
+    { 16, 16, 0, 16, 127, 0, 255, 255, MHudTex_Cheese, 0x20 },
+    { 16, 16, 0, 8, 0, 0, 64, 64, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 64, 0, 128, 64, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 128, 0, 192, 64, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 192, 0, 255, 64, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 0, 64, 64, 128, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 64, 64, 128, 128, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 128, 64, 192, 128, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 192, 64, 255, 128, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 0, 128, 64, 192, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 64, 128, 128, 192, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 128, 128, 192, 192, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 192, 128, 255, 192, MHudTex_Alphabet, 0x20 },
+    { 16, 16, 0, 8, 0, 192, 64, 255, MHudTex_Alphabet, 0x20 },
+    { 1, 1, 0, 0, 0, 0, 255, 255, MHudTex_Black, 0x20 },
+    { 64, 24, 0, 0, 0, 0, 255, 255, MHudTex_Score, 0x20 },
+    { 55, 24, 0, 0, 0, 0, 255, 255, MHudTex_Time, 0x20 },
+    { 24, 24, 0, 0, 0, 0, 255, 255, MHudTex_Ring, 0x20 }
 };
 
 NJS_SPRITE MULTIHUD_SPRITE = { {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f, 0, &MULTIHUD_TEXLIST, MULTIHUD_TEXANIMS };
 
+NJS_TEXANIM MULTIHUDDIGIT_TEXANIMS[] {
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 0, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 1, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 2, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 3, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 4, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 5, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 6, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 7, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 8, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 9, 0x20 },
+    { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 10, 0x20 },
+    { 0x40, 0x40, 0, 0, 0, 0, 0x100, 0x100, 11, 0x20 },
+    { 0x20, 0x20, 0, 0x20, 0, 0, 0x100, 0x100, 12, 0x20 },
+    { 0x20, 0x20, 0, 0x20, 0, 0, 0x100, 0x100, 13, 0x20 },
+    { 0x20, 0x20, 0, 0x20, 0, 0, 0x100, 0x100, 14, 0x20 },
+    { 0x20, 0x20, 0, 0x20, 0, 0, 0x100, 0x100, 15, 0x20 },
+    { 0x20, 0x20, 0, 0x20, 0, 0, 0x100, 0x100, 16, 0x20 },
+    { 0x20, 0x20, 0, 0x20, 0, 0, 0x100, 0x100, 17, 0x20 },
+    { 0x20, 0x20, 0, 0x20, 0, 0, 0x100, 0x100, 18, 0x20 },
+    { 0x20, 0x20, 0, 0x20, 0, 0, 0x100, 0x100, 19, 0x20 },
+    { 0x10, 0x10, 0, 0, 0, 0, 0x100, 0x100, 20, 0x20 },
+    { 0x10, 0x10, 0, 0, 0, 0, 0x100, 0x100, 21, 0x20 },
+    { 0x10, 0x10, 0, 0, 0, 0, 0x100, 0x100, 22, 0x20 },
+    { 0x10, 0x10, 0, 0, 0, 0, 0x100, 0x100, 23, 0x20 }
+};
+
+NJS_SPRITE MULTIHUDDIGIT_SPRITE = { {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f, 0, &Hud_RingTimeLife_TEXLIST, MULTIHUDDIGIT_TEXANIMS };
+
 static const int waittextseq[] = { 10, 0, 4, 12, 4, 6, 3, -1, 2, 7, 9, -1, 8, 5, 0, 11, 1, 9 };
+
+static int ringtimer[PLAYER_MAX]{};
 
 void LoadMultiHudPVM()
 {
@@ -52,11 +112,21 @@ void DrawWaitScreen(int num)
 {
     LoadMultiHudPVM();
 
+    if (MissedFrames)
+    {
+        return;
+    }
+
     // Draw black screen
     MULTIHUD_SPRITE.p.x = MULTIHUD_SPRITE.p.y = 0.0f;
     MULTIHUD_SPRITE.sx = HorizontalResolution;
     MULTIHUD_SPRITE.sy = VerticalResolution;
     njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, 27, 1000000.0f, 0);
+
+    if (IsGamePaused())
+    {
+        return;
+    }
 
     // Get subscreen information
     auto ratio = GetScreenRatio(num);
@@ -69,15 +139,15 @@ void DrawWaitScreen(int num)
     MULTIHUD_SPRITE.p.y = 240.0f * (VerticalStretch * ratio->h) + VerticalResolution * ratio->y;
 
     // Draw Cream
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, (GameTimer / 5) % 12, 1000000.0f, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cream + (GameTimer / 5) % 12, 0.0f, NJD_SPRITE_ALPHA);
 
     // Move right
     MULTIHUD_SPRITE.p.x += 30 * scale;
     float x = MULTIHUD_SPRITE.p.x; // backup position
-    MULTIHUD_SPRITE.p.x += njSin(GameTimer * 300) * 2.5f; // slide left and right
+    MULTIHUD_SPRITE.p.x += njSin(GameTimer * 300) * 2.5f; // slide chao left and right
 
     // Draw Chao
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, 12 + (GameTimer / 5) % 2, 1000000.0f, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cheese + (GameTimer / 5) % 2, 0.0f, NJD_SPRITE_ALPHA);
 
     // Restore position and move right
     MULTIHUD_SPRITE.p.x = x + 20 * scale;
@@ -91,14 +161,157 @@ void DrawWaitScreen(int num)
         SetMaterialAndSpriteColor_Float(1.0f - (fabs(njSin(GameTimer * 500 + i * 500)) * 0.5f), 1.0f, 1.0f, 1.0f); // color ramp
 
         // Draw letter
-        if (waittextseq[i] != -1) njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, 14 + waittextseq[i], 1000000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+        if (waittextseq[i] != -1) njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Alphabet + waittextseq[i], 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
     }
 
     ClampGlobalColorThing_Thing();
 }
 
-Trampoline* DisplayScore_t = nullptr;
-Trampoline* DisplayTimer_t = nullptr;
+void MultiHudScore(int num, float scale)
+{
+    MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x + 195.0f * scale;
+    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 2.0f * scale;
+
+    int score = GetScoreM(num);
+
+    for (int i = 0; i < 8; ++i)
+    {
+        if (score <= 0)
+        {
+            SetMaterialAndSpriteColor_Float(0.8f, 0.8f, 0.8f, 0.8f);
+            njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 0, 0, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+        }
+        else
+        {
+            njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, score % 10, -1.501, NJD_SPRITE_ALPHA);
+            score /= 10;
+        }
+
+        MULTIHUDDIGIT_SPRITE.p.x -= 18.0f * scale;
+    }
+}
+
+void MultiHudTime(int num, float scale)
+{
+    MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x + 60.0f * scale;
+    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 2.0f * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeMinutes / 10, -1.501, NJD_SPRITE_ALPHA);
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeMinutes % 10, -1.501, NJD_SPRITE_ALPHA);
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 10, -1.501, NJD_SPRITE_ALPHA);
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeSeconds / 10, -1.501, NJD_SPRITE_ALPHA);
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeSeconds % 10, -1.501, NJD_SPRITE_ALPHA);
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 10, -1.501, NJD_SPRITE_ALPHA);
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    int timerms = (TimeFrames * 1.6666666f);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, timerms % 10, -1.501, NJD_SPRITE_ALPHA);
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, timerms % 10, -1.501, NJD_SPRITE_ALPHA);
+}
+
+void MultiHudRings(int num, float scale)
+{
+    MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x;
+    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 1.5 * scale;
+
+    int count = GetRingsM(num) + 123;
+    
+    float color = 1.0f;
+
+    if (count == 0)
+    {
+        if (!IsGamePaused())
+        {
+            ringtimer[num] += 1024;
+        }
+
+        float sin = njSin(ringtimer[num]);
+        color -= sin * sin;
+    }
+
+    SetMaterialAndSpriteColor_Float(1.0f, 1.0f, color, color);
+    
+    MULTIHUDDIGIT_SPRITE.p.x += 25.0f * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 1000 / 100, 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+    MULTIHUDDIGIT_SPRITE.p.x += 18.0f * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 100 / 10, 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+    MULTIHUDDIGIT_SPRITE.p.x += 18.0f * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 10, 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+}
+
+void MultiHudLives(int num, float scale)
+{
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TASKWK_CHARID(playertwp[num]) + 12, 0, NJD_SPRITE_ALPHA);
+
+    if (HideHud >= 0)
+    {
+        int count = GetRingsM(num);
+
+        MULTIHUDDIGIT_SPRITE.p.y -= 25.0f * scale;
+        MULTIHUDDIGIT_SPRITE.p.x += 35.0f * scale;
+        njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 100 / 10, 0.0f, NJD_SPRITE_ALPHA);
+        MULTIHUDDIGIT_SPRITE.p.x += 18.0f * scale;
+        njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 10, 0.0f, NJD_SPRITE_ALPHA);
+    }
+}
+
+void DisplayMultiHud(int num)
+{
+    LoadMultiHudPVM();
+
+    if (MissedFrames || IsGamePaused())
+    {
+        return;
+    }
+
+    int backup = numViewPort;
+    ChangeViewPort(-1);
+
+    SetMaterialAndSpriteColor_Float(1.0f, 1.0f, 1.0f, 1.0f);
+
+    auto ratio = GetScreenRatio(num);
+
+    float scale = HorizontalStretch * ratio->w;
+    float scaleY = VerticalStretch * ratio->h;
+
+    SetDefaultAlphaBlend();
+
+    MULTIHUD_SPRITE.sx = MULTIHUD_SPRITE.sy = scale;
+    MULTIHUDDIGIT_SPRITE.sx = MULTIHUDDIGIT_SPRITE.sy = scale;
+
+    float x = MULTIHUD_SPRITE.p.x = 16.0f * scale + HorizontalResolution * ratio->x;
+    MULTIHUD_SPRITE.p.y = 16.0f * scaleY + VerticalResolution * ratio->y;
+    njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
+    MultiHudScore(num, scale);
+
+    if (numScreen == 0)
+    {
+        MULTIHUD_SPRITE.p.x = x;
+        MULTIHUD_SPRITE.p.y += 24 * scale;
+        njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Time, 0, NJD_SPRITE_ALPHA);
+        MultiHudTime(num, scale);
+    }
+
+    MULTIHUD_SPRITE.p.x = x;
+    MULTIHUD_SPRITE.p.y += 24 * scale;
+    njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Ring, 0, NJD_SPRITE_ALPHA);
+    MultiHudRings(num, scale);
+
+    if (HideLives >= 0)
+    {
+        MULTIHUDDIGIT_SPRITE.p.x = x;
+        MULTIHUDDIGIT_SPRITE.p.y = VerticalResolution * ratio->h - 16.0f * scaleY;
+        MultiHudLives(num, scale);
+    }
+
+    ClampGlobalColorThing_Thing();
+
+    ChangeViewPort(backup);
+}
 
 void __cdecl DisplayScore_r()
 {
