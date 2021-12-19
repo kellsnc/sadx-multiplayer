@@ -1,25 +1,41 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="mod.cpp" />
-    <ClCompile Include="patches\deathzones.cpp" />
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="players.cpp" />
-    <ClCompile Include="splitscreen.cpp" />
-    <ClCompile Include="utils.cpp" />
     <ClCompile Include="patches\patches.cpp">
-      <Filter>patches</Filter>
+      <Filter>Source Files\patches</Filter>
     </ClCompile>
     <ClCompile Include="patches\player_patches.cpp">
-      <Filter>patches</Filter>
+      <Filter>Source Files\patches</Filter>
     </ClCompile>
     <ClCompile Include="multi.cpp">
-      <Filter>gui</Filter>
+      <Filter>Source Files\gui</Filter>
     </ClCompile>
     <ClCompile Include="menu.cpp">
-      <Filter>gui</Filter>
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\deathzones.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dllmain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="mod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="players.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="splitscreen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="utils.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -64,17 +80,20 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="patches">
-      <UniqueIdentifier>{f7f1aa64-91c4-404c-b268-0b44e95f29b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="gui">
-      <UniqueIdentifier>{25de92dc-4f93-442a-bf74-5037f998a674}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header FIles">
       <UniqueIdentifier>{56f53c80-d906-4456-a067-cd34f6124b33}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header FIles\patches">
       <UniqueIdentifier>{4fd68244-9b97-4a33-b141-2347ad87cfcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{faefacd9-04d6-4834-aa7c-a6f104e4eb1e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gui">
+      <UniqueIdentifier>{25de92dc-4f93-442a-bf74-5037f998a674}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches">
+      <UniqueIdentifier>{f7f1aa64-91c4-404c-b268-0b44e95f29b7}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
