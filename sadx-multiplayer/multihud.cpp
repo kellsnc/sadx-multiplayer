@@ -96,3 +96,28 @@ void DrawWaitScreen(int num)
 
     ClampGlobalColorThing_Thing();
 }
+
+Trampoline* DisplayScore_t = nullptr;
+Trampoline* DisplayTimer_t = nullptr;
+
+void __cdecl DisplayScore_r()
+{
+    if (!IsMultiplayerEnabled())
+    {
+        TARGET_DYNAMIC(DisplayScore)();
+    }
+}
+
+void __cdecl DisplayTimer_r()
+{
+    if (!IsMultiplayerEnabled())
+    {
+        TARGET_DYNAMIC(DisplayTimer)();
+    }
+}
+
+void MultiHudInit()
+{
+    DisplayScore_t = new Trampoline(0x425F90, 0x425F95, DisplayScore_r);
+    DisplayTimer_t = new Trampoline(0x427F50, 0x427F55, DisplayTimer_r);
+}

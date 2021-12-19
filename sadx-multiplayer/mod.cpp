@@ -2,6 +2,7 @@
 #include "camera.h"
 #include "splitscreen.h"
 #include "menu.h"
+#include "multihud.h"
 #include "patches/patches.h"
 
 const HelperFunctions* gHelperFunctions;
@@ -22,6 +23,7 @@ extern "C"
 		InitPatches();
 		initPlayerHack();
 		Menu_Init(helperFunctions);
+		MultiHudInit();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()
