@@ -8,13 +8,13 @@ uint8_t cursor[8];
 NJS_TEXNAME multicharTex[10];
 NJS_TEXLIST multichar_Texlist = { arrayptrandlength(multicharTex) };
 
+int playerReady[8];
+
 enum playReadyState {
 	disconnected,
 	pressedStart,
 	ready
 };
-
-int playerReady[8];
 
 enum CharacterMenu {
 	sonicIcon,
@@ -28,7 +28,6 @@ enum CharacterMenu {
 	msIcon,
 	cursorIcon
 };
-
 
 NJS_VECTOR CursorColor[8] = {
 	{ 1, 1, 1},
@@ -93,27 +92,19 @@ void DrawCursor(char pnum) {
 	ClampGlobalColorThing_Thing();
 }
 
-struct MenuCharStruct {
-	NJS_TEXLIST texture;
-	NJS_ACTION* action;
-};
+bool isAlreadySelected(char pnum, char character) {
 
-DataPointer(NJS_ACTION, stru_8F83F4, 0x8F83F4);
-DataPointer(NJS_ACTION, stru_89E254, 0x89E254);
+	for (uint8_t i = 0; i < 8; i++) {
 
-MenuCharStruct Multi_MenuCharArray[]{
+		if (i == pnum)
+			continue;
 
-	{ SONIC_TEXLIST, SONIC_ACTIONS[0]},
-	{ EGGMAN_TEXLIST, &stru_89E254 },
-	{ MILES_TEXLIST, MILES_ACTIONS[0] },
-	{ KNUCKLES_TEXLIST, KNUCKLES_ACTIONS[0]},
-	{ TIKAL_TEXLIST,  &stru_8F83F4 },
-	{ AMY_TEXLIST, AMY_ACTIONS[0]},
-	{ E102_TEXLIST, E102_ACTIONS[0] },
-	{ BIG_TEXLIST, BIG_ACTIONS[0]  },
+		if ((char)GetCurrentCharacter(i) == character)
+			return true;
+	}
 
-};
-
+	return false;
+}
 
 bool isEveryoneReady() {
 
@@ -122,11 +113,21 @@ bool isEveryoneReady() {
 
 	for (uint8_t i = 0; i < 8; i++) {
 
-		if (playerReady[i] == ready)
+		if (playerReady[i] <= disconnected) {
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Disconnected.", i);
+		}
+
+		if (playerReady[i] == ready) {
 			countRDY++;
 
-		if (playerReady[i] == pressedStart)
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d READY!", i);
+		}
+
+		if (playerReady[i] == pressedStart) {
 			countNotRDY++;
+
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Select character...", i);
+		}
 	}
 
 	if (countNotRDY <= 0 && countRDY >= 2)
@@ -134,8 +135,6 @@ bool isEveryoneReady() {
 
 	return false;
 }
-
-
 
 
 void StartMulti_Game(TrialActSelWk* wk) {
@@ -147,9 +146,9 @@ void StartMulti_Game(TrialActSelWk* wk) {
 	LastAct = CurrentAct;
 
 	CurrentCharacter = cursor[0];
+;
 	CurrentLevel = 1;
 	CurrentAct = 0;
-
 
 	SeqTp->awp[1].work.ul[0] = 100;
 
@@ -245,20 +244,22 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 
 	for (uint8_t i = 0; i < PLAYER_MAX; i++) {
 
-
 		if (MenuBackButtonsPressed_r(i))
 		{
+			PlayMenuBackSound();
+
 			if (i == 0 && playerReady[0] == pressedStart) {
 				CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU); // force back to lead to menu
-				PlayMenuBackSound();
 				PlayMenuBackSound();
 				wk->Stat = ADVA_STAT_FADEOUT;
 				wk->T = 0.0;
 				return;
 			}
 
-			if (playerReady[i] >= pressedStart)
+			if (playerReady[i] >= pressedStart) {
+				SetCurrentCharacter(i, -1);
 				playerReady[i]--;
+			}
 
 			return;
 		}
@@ -266,13 +267,23 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 
 		if (MenuSelectButtonsPressed_r(i))
 		{
+			if (isAlreadySelected(i, cursor[i]))
+			{
+				PlayMenuBackSound();
+				return;
+			}
+
 			PlayMenuEnterSound();
 
 			if (playerReady[i] < ready)
 				playerReady[i]++;
 
-		}
+			if (playerReady[i] >= ready)
+			{
+				SetCurrentCharacter(i, cursor[i]);
+			}
 
+		}
 
 		if (MultiMenu_CheckMoveInput(Buttons_Up, i))
 			return;
@@ -285,8 +296,6 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 
 		if (MultiMenu_CheckMoveInput(Buttons_Right, i))
 			return;
-
-
 	}
 
 	return;
@@ -306,11 +315,14 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	if (SeqTp->awp->work.ul[1] == ADVA_MODE_TRIALACT_SEL && wk->Stat == ADVA_STAT_REQWAIT)
 	{
 		memset(playerReady, 0, sizeof(playerReady));
+		ResetCharactersArray();
 		MusicList[MusicIDs_Trial].Name = "btl_sel";
 		PlayMenuMusicID(4);
 		PlayVoice(40);
 		LoadPVM("multichar", &multichar_Texlist);
 		playerReady[0] = pressedStart;
+		SetDebugFontSize(13.0f * (unsigned short)VerticalResolution / 480.0f);
+		SetDebugFontColor(0x8e8e8e);
 
 		wk->Stat = ADVA_STAT_FADEIN;
 		wk->T = 0.0f;
