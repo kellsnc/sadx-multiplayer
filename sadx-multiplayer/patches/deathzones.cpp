@@ -1,6 +1,11 @@
 #include "pch.h"
 #include "deathzones.h"
 
+void __cdecl GamePlayerMissedFree(task* tp)
+{
+	BYTEn(tp->ptp->twp->counter.l, tp->awp->work.ul[1]) = FALSE;
+}
+
 void __cdecl GamePlayerMissed_r(task* tp)
 {
 	auto awp = tp->awp;
@@ -10,8 +15,6 @@ void __cdecl GamePlayerMissed_r(task* tp)
 	{
 		if (!GetDebugMode() && playertp[pNum])
 		{
-			task* ptp = tp->ptp;
-
 			if (GetLivesM(pNum) <= 0)
 			{
 				SetChangeGameMode(2);
@@ -46,7 +49,10 @@ void ExecFallingDownP_r(task* tp, int pNum)
 	auto ptwp = playertwp[pNum];
 	auto ppwp = playerpwp[pNum];
 
+	BYTEn(tp->twp->counter.l, pNum) = TRUE;
+
 	auto ctp = CreateChildTask(LoadObj_UnknownB, GamePlayerMissed_r, tp);
+	ctp->dest = GamePlayerMissedFree;
 	ctp->awp->work.ul[1] = pNum;
 
 	CameraSetEventCameraFunc(CameraStay, 0, 0);
@@ -100,31 +106,26 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 {
 	LoopTaskC(tp);
 
-	if (tp->ctp)
-	{
-		return;
-	}
-
 	auto dz = *KillingCollisionModelsListList[HIBYTE(GetStageNumber())];
 
 	if (dz)
 	{
-		zxsdwstr carry;
+		for (int i = 0; i < PLAYER_MAX; i++)
+		{
+			auto ptwp = playertwp[i];
 
-		while (dz->character) {
-
-			for (int i = 0; i < PLAYER_MAX; i++)
+			if (ptwp == nullptr || BYTEn(tp->twp->counter.l, i) == TRUE)
 			{
-				auto ptwp = playertwp[i];
+				continue;
+			}
+			zxsdwstr carry;
+			carry.pos = ptwp->pos;
 
-				if (ptwp == nullptr)
-				{
-					continue;
-				}
-				
-				carry.pos = ptwp->pos;
+			auto dz_ = dz;
 
-				if (GetZxShadowOnFDPolygon(&carry, dz->object))
+			while (dz_->character)
+			{
+				if (GetZxShadowOnFDPolygon(&carry, dz_->object))
 				{
 					if (!carry.lower.findflag)
 					{
@@ -133,14 +134,14 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 							if (fabs(carry.pos.y - carry.upper.onpos) <= 30.0f)
 							{
 								ExecFallingDownP_r(tp, i); // also run the death cutscene
-								continue;
+								break;
 							}
 						}
 					}
 				}
-			}
 
-			++dz;
+				++dz_;
+			}
 		}
 	}
 }
