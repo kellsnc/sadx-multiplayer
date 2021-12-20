@@ -112,18 +112,7 @@ void DrawWaitScreen(int num)
 {
     LoadMultiHudPVM();
 
-    if (MissedFrames)
-    {
-        return;
-    }
-
-    // Draw black screen
-    MULTIHUD_SPRITE.p.x = MULTIHUD_SPRITE.p.y = 0.0f;
-    MULTIHUD_SPRITE.sx = HorizontalResolution;
-    MULTIHUD_SPRITE.sy = VerticalResolution;
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, 27, 1000000.0f, 0);
-
-    if (IsGamePaused())
+    if (MissedFrames || IsGamePaused())
     {
         return;
     }

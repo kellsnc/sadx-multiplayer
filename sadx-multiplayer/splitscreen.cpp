@@ -28,13 +28,20 @@ Trampoline* njDrawCircle2D_t = nullptr;
 Trampoline* njDrawLine2D_t = nullptr;
 Trampoline* njDrawQuadTextureEx_t = nullptr;
 
-ScreenRatio ScreenRatio2[]
+const ScreenRatio ScreenRatio2[]
 {
     { 0.0f, 0.0f, 0.5f, 1.0f },
     { 0.5f, 0.0f, 0.5f, 1.0f }
 };
 
-ScreenRatio ScreenRatio4[]
+const ScreenRatio ScreenRatio3[]
+{
+    { 0.0f, 0.0f, 1.0f, 0.5f },
+    { 0.0f, 0.5f, 0.5f, 0.5f },
+    { 0.5f, 0.5f, 0.5f, 0.5f }
+};
+
+const ScreenRatio ScreenRatio4[]
 {
     { 0.0f, 0.0f, 0.5f, 0.5f },
     { 0.5f, 0.0f, 0.5f, 0.5f },
@@ -42,9 +49,16 @@ ScreenRatio ScreenRatio4[]
     { 0.5f, 0.5f, 0.5f, 0.5f }
 };
 
-ScreenRatio* GetScreenRatio(int num)
+const ScreenRatio* ScreenRatios[]
 {
-    return player_count <= 2 ? &ScreenRatio2[num] : &ScreenRatio4[num];
+    ScreenRatio2,
+    ScreenRatio3,
+    ScreenRatio4
+};
+
+const ScreenRatio* GetScreenRatio(int num)
+{
+    return &ScreenRatios[player_count - 2][num];
 }
 
 // Set full screen viewport
@@ -92,7 +106,7 @@ void __cdecl late_exec_r()
     if (IsMultiplayerEnabled())
     {
         // Draw for each screen
-        for (int i = 0; i < (player_count <= 2 ? 2 : 4); ++i)
+        for (int i = 0; i < player_count; ++i)
         {
             if (playertp[i] && ChangeViewPort(i))
             {
@@ -185,7 +199,7 @@ void __cdecl DisplayTask_r()
     {
         // If multiplayer is enabled, split screen:
 
-        for (int i = (player_count <= 2 ? 2 : 4); i > 0; --i)
+        for (int i = player_count; i > 0; --i)
         {
             DrawScreen(i - 1);
         }

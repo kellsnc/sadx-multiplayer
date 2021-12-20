@@ -165,7 +165,7 @@ void Load_MultipleCharacters()
         player_count++;
 
 #ifdef _DEBUG
-    player_count = 2;
+    player_count = 3;
 #endif
 }
 

@@ -8,7 +8,7 @@ struct ScreenRatio
     float x, y, w, h;
 };
 
-ScreenRatio* GetScreenRatio(int num);
+const ScreenRatio* GetScreenRatio(int num);
 bool ChangeViewPort(int num);
 void ResetViewPort();
 void __cdecl DisplayTask_r();
