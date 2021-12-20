@@ -12,6 +12,11 @@ Trampoline* DisplayTask_t         = nullptr;
 Trampoline* LoopTask_t            = nullptr;
 Trampoline* late_exec_t           = nullptr;
 Trampoline* late_setOdr_t         = nullptr;
+
+Trampoline* njDrawTexture_t = nullptr;
+Trampoline* njDrawTriangle2D_t = nullptr;
+Trampoline* njDrawCircle2D_t = nullptr;
+Trampoline* njDrawLine2D_t = nullptr;
 Trampoline* njDrawQuadTextureEx_t = nullptr;
 
 ScreenRatio ScreenRatio2[]
@@ -208,15 +213,83 @@ void __cdecl LoopTask_r()
     }
 }
 
-void __cdecl njDrawSprite2D_vp0_r(NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE atr)
+void __cdecl njDrawTexture_r(NJS_TEXTURE_VTX* tex, Int count, Uint32 gbix, Int flgs)
 {
-    int backup = numViewPort;
-    ChangeViewPort(-1);
-    njDrawSprite2D_DrawNow(sp, n, pri, atr);
-    ChangeViewPort(backup);
+    if (IsMultiplayerEnabled())
+    {
+        int backup = numViewPort;
+        ChangeViewPort(-1);
+        TARGET_DYNAMIC(njDrawTexture)(tex, count, gbix, flgs);
+        ChangeViewPort(backup);
+    }
+    else
+    {
+        TARGET_DYNAMIC(njDrawTexture)(tex, count, gbix, flgs);
+    }
+}
+
+void __cdecl njDrawTriangle2D_r(NJS_POINT2COL* p, Int n, Float pri, Uint32 attr)
+{
+    if (IsMultiplayerEnabled())
+    {
+        int backup = numViewPort;
+        ChangeViewPort(-1);
+        TARGET_DYNAMIC(njDrawTriangle2D)(p, n, pri, attr);
+        ChangeViewPort(backup);
+    }
+    else
+    {
+        TARGET_DYNAMIC(njDrawTriangle2D)(p, n, pri, attr);
+    }
+}
+
+void __cdecl njDrawLine2D_r(NJS_POINT2COL* p, Int n, Float pri, Uint32 attr)
+{
+    if (IsMultiplayerEnabled())
+    {
+        int backup = numViewPort;
+        ChangeViewPort(-1);
+        TARGET_DYNAMIC(njDrawLine2D)(p, n, pri, attr);
+        ChangeViewPort(backup);
+    }
+    else
+    {
+        TARGET_DYNAMIC(njDrawLine2D)(p, n, pri, attr);
+    }
+}
+
+void __cdecl njDrawCircle2D_r(NJS_POINT2COL* p, Int n, Float pri, Uint32 attr)
+{
+    if (IsMultiplayerEnabled())
+    {
+        int backup = numViewPort;
+        ChangeViewPort(-1);
+        TARGET_DYNAMIC(njDrawCircle2D)(p, n, pri, attr);
+        ChangeViewPort(backup);
+    }
+    else
+    {
+        TARGET_DYNAMIC(njDrawCircle2D)(p, n, pri, attr);
+    }
 }
 
 void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
+{
+    if (IsMultiplayerEnabled())
+    {
+        int backup = numViewPort;
+        ChangeViewPort(-1);
+        TARGET_DYNAMIC(njDrawQuadTextureEx)(quad);
+        ChangeViewPort(backup);
+    }
+    else
+    {
+        TARGET_DYNAMIC(njDrawQuadTextureEx)(quad);
+    }
+}
+
+// Draw into viewport with scaling
+void __cdecl njDrawQuadTextureEx_scale(NJS_QUAD_TEXTURE_EX* quad)
 {
     if (IsMultiplayerEnabled() && numViewPort != -1)
     {
@@ -247,6 +320,10 @@ void InitSplitScreen()
     late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
     late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_asm);
 
-    WriteCall((void*)0x408AAC, njDrawSprite2D_vp0_r);
-    //njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+    // Draw GUI things into whole frame
+    njDrawTexture_t = new Trampoline(0x77DC70, 0x77DC79, njDrawTexture_r);
+    njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+    njDrawTriangle2D_t = new Trampoline(0x77E9F0, 0x77E9F8, njDrawTriangle2D_r);
+    njDrawCircle2D_t = new Trampoline(0x77DFC0, 0x77DFC7, njDrawCircle2D_r);
+    njDrawLine2D_t = new Trampoline(0x77DF40, 0x77DF49, njDrawLine2D_r);
 }
