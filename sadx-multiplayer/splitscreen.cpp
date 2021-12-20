@@ -75,16 +75,23 @@ bool ChangeViewPort(int num)
 // Adapt viewport to queued draw calls (late_exec draw all queued entries)
 void __cdecl late_exec_r()
 {
-    // Draw for each screen
-    for (int i = 0; i < (player_count <= 2 ? 2 : 4); ++i)
+    if (IsMultiplayerEnabled())
     {
-        if (playertp[i] && ChangeViewPort(i))
+        // Draw for each screen
+        for (int i = 0; i < (player_count <= 2 ? 2 : 4); ++i)
         {
-            TARGET_DYNAMIC(late_exec)();
+            if (playertp[i] && ChangeViewPort(i))
+            {
+                TARGET_DYNAMIC(late_exec)();
+            }
         }
-    }
 
-    ResetViewPort();
+        ResetViewPort();
+    }
+    else
+    {
+        TARGET_DYNAMIC(late_exec)();
+    }
 }
 
 // Only queue draw calls once (late_setOdr allocates a queue entry)
@@ -110,7 +117,14 @@ void* __cdecl late_setOdr_original(__int16 sz, int odr, int no, int flgs)
 
 void* __cdecl late_setOdr_r(__int16 sz, int odr, int no, int flgs)
 {
-    return (numViewPort < 1) ? late_setOdr_original(sz, odr, no, flgs) : nullptr;
+    if (IsMultiplayerEnabled())
+    {
+        return (numViewPort < 1) ? late_setOdr_original(sz, odr, no, flgs) : nullptr;
+    }
+    else
+    {
+        return late_setOdr_original(sz, odr, no, flgs);
+    }
 }
 
 static void __declspec(naked) late_setOdr_asm()
