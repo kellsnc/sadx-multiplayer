@@ -1,36 +1,43 @@
 #include "pch.h"
 
+unsigned int player_count = 0;
+
 static int rings[PLAYER_MAX];
 static int lives[PLAYER_MAX];
 static int score[PLAYER_MAX];
-static __int16 characters[PLAYER_MAX] = { -1, -1, -1, -1 };
+static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
-ObjectFuncPtr charfuncs[] = {
-    Sonic_Main,
-    Eggman_Main,
-    Tails_Main,
-    Knuckles_Main,
-    Tikal_Main,
-    Amy_Main,
-    Gamma_Main,
-    Big_Main
+TaskFuncPtr charfuncs[] = {
+    (TaskFuncPtr)Sonic_Main,
+    (TaskFuncPtr)Eggman_Main,
+    (TaskFuncPtr)Tails_Main,
+    (TaskFuncPtr)Knuckles_Main,
+    (TaskFuncPtr)Tikal_Main,
+    (TaskFuncPtr)Amy_Main,
+    (TaskFuncPtr)Gamma_Main,
+    (TaskFuncPtr)Big_Main
 };
 
-void ResetCharactersArray() {
-    for (int i = 0; i < PLAYER_MAX; i++) {
+bool IsMultiplayerEnabled()
+{
+    return (IsIngame() || IsGamePaused()) && player_count > 1;
+}
+
+void ResetCharactersArray()
+{
+    for (int i = 0; i < PLAYER_MAX; i++)
+    {
         characters[i] = -1;
     }
 }
 
 void LoadCharObj(char pnum, char character)
 {
-    ObjectMaster* player = nullptr;
-    player = LoadObject((LoadObj)(LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), 1, charfuncs[character]);
-    player->Data1->CharID = character;
-    player->Data1->CharIndex = pnum;
-    EntityData1Ptrs[pnum] = player->Data1;
-    EntityData2Ptrs[pnum] = (EntityData2*)player->Data2;
-    return;
+    task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
+    TASKWK_CHARID(tp->twp) = character;
+    TASKWK_PLAYERID(tp->twp) = pnum;
+    playertwp[pnum] = tp->twp;
+    playermwp[pnum] = (motionwk2*)tp->mwp;
 }
 
 void ResetScoreM()
@@ -116,12 +123,12 @@ void RingsLives_OnFrames()
 {
     rings[0] = Rings;
     lives[0] = Lives;
+    score[0] = Score + EnemyBonus;
 }
 
 void __cdecl SetCurrentCharacter(char pnum, char character)
 {
     characters[pnum] = character;
-    return;
 }
 
 __int16 __cdecl GetCurrentCharacter(char pnum)
@@ -129,17 +136,17 @@ __int16 __cdecl GetCurrentCharacter(char pnum)
     return characters[pnum];
 }
 
-void Load_MultipleCharacters() {
-
+void Load_MultipleCharacters()
+{
     player_count = 0;
 
     LoadCharacter();
     player_count++; //count player one
 
-
-    for (uint8_t i = 1; i < PLAYER_MAX; i++) {
-
-        if (characters[i] > -1) {
+    for (int i = 1; i < PLAYER_MAX; i++)
+    {
+        if (characters[i] > -1)
+        {
             LoadCharObj(i, characters[i]);
             player_count++;
         }
@@ -147,14 +154,10 @@ void Load_MultipleCharacters() {
 
     if (TailsAI_ptr) //temporary so we can make test 
         player_count++;
-
-
-    return;
 }
+
 void __cdecl initPlayerHack()
 {
     WriteJump(ResetLives, ResetLivesM);
     WriteCall((void*)0x415A25, Load_MultipleCharacters);
-    return;
 }
-

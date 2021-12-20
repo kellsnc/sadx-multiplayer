@@ -82,7 +82,7 @@ NJS_SPRITE MultiCursorSprite[8] = {
 
 bool isAlreadySelected(char pnum, char character) {
 
-	for (uint8_t i = 0; i < PLAYER_MAX; i++) {
+	for (int i = 0; i < PLAYER_MAX; i++) {
 
 		if (i == pnum)
 			continue;
@@ -99,7 +99,7 @@ bool isEveryoneReady() {
 	char countRDY = 0;
 	char countNotRDY = 0;
 
-	for (uint8_t i = 0; i < PLAYER_MAX; i++) {
+	for (int i = 0; i < PLAYER_MAX; i++) {
 
 		if (playerReady[i] <= disconnected) {
 			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Disconnected.", i);
@@ -190,7 +190,7 @@ void __cdecl MultiMenuExec_Display(task* tp)
 			gHelperFunctions->PushScaleUI(uiscale::Align_Center, false, 1.0f, 1.0f);
 			SetDefaultAlphaBlend();
 
-			for (uint8_t i = 0; i < 8; i++) {
+			for (int i = 0; i < 8; i++) {
 				DrawCursor(i);
 				DrawCharacterPortrait(i);
 			}
@@ -247,7 +247,7 @@ bool MultiMenu_CheckMoveInput(int button, char pNum)
 void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 {
 
-	for (uint8_t i = 0; i < PLAYER_MAX; i++) {
+	for (int i = 0; i < PLAYER_MAX; i++) {
 
 		if (MenuSelectButtonsPressed_r(i))
 		{

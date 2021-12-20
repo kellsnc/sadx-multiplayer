@@ -1,5 +1,8 @@
 #pragma once
 
+extern unsigned int player_count;
+bool IsMultiplayerEnabled();
+
 void ResetScoreM();
 int GetScoreM(int pNum);
 void AddScoreM(int pNum, int amount);
