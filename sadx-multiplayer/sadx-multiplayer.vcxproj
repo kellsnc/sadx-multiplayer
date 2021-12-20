@@ -96,13 +96,13 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="mod.h" />
-    <ClInclude Include="multi.h" />
+    <ClInclude Include="menu_multi.h" />
     <ClInclude Include="multihud.h" />
     <ClInclude Include="patches\deathzones.h" />
     <ClInclude Include="patches\patches.h" />
     <ClInclude Include="patches\player_patches.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="players.h" />
+    <ClInclude Include="multiplayer.h" />
     <ClInclude Include="sadx_utils.h" />
     <ClInclude Include="splitscreen.h" />
     <ClInclude Include="utils.h" />
@@ -112,7 +112,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="mod.cpp" />
-    <ClCompile Include="multi.cpp" />
+    <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="multihud.cpp" />
     <ClCompile Include="patches\deathzones.cpp" />
     <ClCompile Include="patches\patches.cpp" />
@@ -121,7 +121,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="players.cpp" />
+    <ClCompile Include="multiplayer.cpp" />
     <ClCompile Include="splitscreen.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>

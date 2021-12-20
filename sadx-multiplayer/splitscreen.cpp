@@ -2,6 +2,15 @@
 #include "splitscreen.h"
 #include "multihud.h"
 
+/*
+
+Splitscreen
+Series of hacks to make splitscreen possible
+- Prevents display subs from running in the exec subs
+- Draw all display subs for each viewport; matrix and projection are calculated in camera.cpp
+
+*/
+
 DataPointer(IDirect3DDevice8*, Direct3D_Device, 0x03D128B0);
 DataPointer(D3DVIEWPORT8, Direct3D_ViewPort, 0x03D12780);
 

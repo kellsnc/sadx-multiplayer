@@ -1,5 +1,14 @@
 #include "pch.h"
 
+/*
+
+Multiplayer manager
+- Extends player variables
+- Load available players
+- GameStates
+
+*/
+
 unsigned int player_count = 0;
 
 static int rings[PLAYER_MAX];

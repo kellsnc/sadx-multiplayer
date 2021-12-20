@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "menu.h"
-#include "multi.h"
+#include "menu_multi.h"
 
 #define ReplacePVM(C, D) helperFunctions.ReplaceFile("system\\" C ".pvm", "system\\" D ".pvmx")
 

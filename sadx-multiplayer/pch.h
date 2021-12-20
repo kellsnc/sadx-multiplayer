@@ -7,13 +7,14 @@ struct IUnknown;
 #include <math.h>
 #include <d3d8types.h>
 #include <d3d8.h>
+
 #include <SADXModLoader.h>
 #include <Trampoline.h>
+#include <IniFile.hpp>
 
 #include "mod.h"
 #include "sadx_utils.h"
-#include "players.h"
-#include "IniFile.hpp"
 #include "utils.h"
+#include "multiplayer.h"
 
 #endif //PCH_H
