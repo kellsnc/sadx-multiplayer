@@ -13,3 +13,14 @@ void DrawSADXText(const char* text, __int16 x, __int16 y, int width, int height)
 
 	//MSG_LoadTexture2(subthing);
 }
+
+__int32 MenuSelectButtonsPressed_r(char pnum)
+{
+	return PressedButtons[pnum] & (Buttons_Start | Buttons_A);
+
+}
+
+__int32 MenuBackButtonsPressed_r(char pnum)
+{
+	return PressedButtons[pnum] & (Buttons_X | Buttons_B);
+}

@@ -15,8 +15,6 @@ PanelPrmType PanelPrmTitleMenu_r[]
 	{ 4.0f, 90.0f, 11 }
 };
 
-
-
 Trampoline* MainMenuExecSub_t;
 
 void MainMenuExecSub_r(TitleMenuWk* wkp)
