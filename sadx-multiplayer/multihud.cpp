@@ -132,11 +132,11 @@ void DrawWaitScreen(int num)
     auto ratio = GetScreenRatio(num);
 
     // Start position and scale
+    float scaleY = VerticalStretch * ratio->h;
     float scale = HorizontalStretch * ratio->w;
-    MULTIHUD_SPRITE.sx = scale;
-    MULTIHUD_SPRITE.sy = scale;
+    MULTIHUD_SPRITE.sx = MULTIHUD_SPRITE.sy = scale;
     MULTIHUD_SPRITE.p.x = 140.0f * scale + HorizontalResolution * ratio->x;
-    MULTIHUD_SPRITE.p.y = 240.0f * (VerticalStretch * ratio->h) + VerticalResolution * ratio->y;
+    MULTIHUD_SPRITE.p.y = 240.0f * scaleY + VerticalResolution * ratio->y;
 
     // Draw Cream
     njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cream + (GameTimer / 5) % 12, 0.0f, NJD_SPRITE_ALPHA);
@@ -275,8 +275,8 @@ void DisplayMultiHud(int num)
 
     auto ratio = GetScreenRatio(num);
 
-    float scale = HorizontalStretch * ratio->w;
     float scaleY = VerticalStretch * ratio->h;
+    float scale = min(HorizontalStretch * ratio->w, scaleY);
 
     SetDefaultAlphaBlend();
 
