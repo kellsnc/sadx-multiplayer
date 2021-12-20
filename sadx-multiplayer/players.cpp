@@ -31,7 +31,7 @@ void ResetCharactersArray()
     }
 }
 
-void LoadCharObj(char pnum, char character)
+void LoadCharObj(int pnum, int character)
 {
     task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
     TASKWK_CHARID(tp->twp) = character;
@@ -126,12 +126,12 @@ void RingsLives_OnFrames()
     score[0] = Score + EnemyBonus;
 }
 
-void __cdecl SetCurrentCharacter(char pnum, char character)
+void SetCurrentCharacter(int pnum, int character)
 {
     characters[pnum] = character;
 }
 
-__int16 __cdecl GetCurrentCharacter(char pnum)
+int GetCurrentCharacter(int pnum)
 {
     return characters[pnum];
 }
@@ -154,6 +154,10 @@ void Load_MultipleCharacters()
 
     if (TailsAI_ptr) //temporary so we can make test 
         player_count++;
+
+#ifdef _DEBUG
+    player_count = 2;
+#endif
 }
 
 void __cdecl initPlayerHack()
