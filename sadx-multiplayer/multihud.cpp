@@ -218,7 +218,7 @@ void MultiHudRings(int num, float scale)
     MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x;
     MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 1.5 * scale;
 
-    int count = GetRingsM(num) + 123;
+    int count = GetRingsM(num);
     
     float color = 1.0f;
 
