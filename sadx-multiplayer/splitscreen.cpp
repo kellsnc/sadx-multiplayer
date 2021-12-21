@@ -1,6 +1,12 @@
 #include "pch.h"
+#include <d3d8types.h>
+#include <d3d8.h>
+#include <SADXModLoader.h>
+#include <Trampoline.h>
 #include "splitscreen.h"
 #include "multihud.h"
+#include "d3d8vars.h"
+#include "drawqueue.h"
 
 /*
 
@@ -11,16 +17,13 @@ Series of hacks to make splitscreen possible
 
 */
 
-DataPointer(IDirect3DDevice8*, Direct3D_Device, 0x03D128B0);
-DataPointer(D3DVIEWPORT8, Direct3D_ViewPort, 0x03D12780);
+
 
 unsigned int numScreen = 0;
 signed int numViewPort = -1;
 
 Trampoline* DisplayTask_t         = nullptr;
 Trampoline* LoopTask_t            = nullptr;
-Trampoline* late_exec_t           = nullptr;
-Trampoline* late_setOdr_t         = nullptr;
 
 Trampoline* njDrawTexture_t = nullptr;
 Trampoline* njDrawTriangle2D_t = nullptr;
@@ -74,7 +77,7 @@ bool ChangeViewPort(int num)
 {
     if (num == numViewPort)
     {
-        return true;
+        return false;
     }
 
     if (num == -1)
@@ -98,76 +101,6 @@ bool ChangeViewPort(int num)
     
     numViewPort = num;
     return true;
-}
-
-// Adapt viewport to queued draw calls (late_exec draw all queued entries)
-void __cdecl late_exec_r()
-{
-    if (IsMultiplayerEnabled())
-    {
-        // Draw for each screen
-        for (int i = 0; i < player_count; ++i)
-        {
-            if (playertp[i] && ChangeViewPort(i))
-            {
-                TARGET_DYNAMIC(late_exec)();
-            }
-        }
-
-        ResetViewPort();
-    }
-    else
-    {
-        TARGET_DYNAMIC(late_exec)();
-    }
-}
-
-// Only queue draw calls once (late_setOdr allocates a queue entry)
-void* __cdecl late_setOdr_original(__int16 sz, int odr, int no, int flgs)
-{
-    const auto late_setOdr_ptr = late_setOdr_t->Target();
-
-    void* result;
-
-    __asm
-    {
-        push dword ptr[flgs]
-        push dword ptr[no]
-        push[odr]
-        movzx ax, [sz]
-        call late_setOdr_ptr
-        add esp, 12
-        mov result, eax
-    }
-
-    return result;
-}
-
-void* __cdecl late_setOdr_r(__int16 sz, int odr, int no, int flgs)
-{
-    if (IsMultiplayerEnabled())
-    {
-        return (numViewPort < 1) ? late_setOdr_original(sz, odr, no, flgs) : nullptr;
-    }
-    else
-    {
-        return late_setOdr_original(sz, odr, no, flgs);
-    }
-}
-
-static void __declspec(naked) late_setOdr_asm()
-{
-    __asm
-    {
-        push[esp + 0Ch]
-        push[esp + 0Ch]
-        push[esp + 0Ch]
-        movzx eax, ax
-        push eax
-        call late_setOdr_r
-        add esp, 16
-        retn
-    }
 }
 
 // Draw every task in subscreen
@@ -340,13 +273,12 @@ void InitSplitScreen()
     DisplayTask_t = new Trampoline(0x40B540, 0x40B546, DisplayTask_r);
     WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
 
-    late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
-    late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_asm);
-
     // Draw GUI things into whole frame
-    njDrawTexture_t = new Trampoline(0x77DC70, 0x77DC79, njDrawTexture_r);
-    njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
-    njDrawTriangle2D_t = new Trampoline(0x77E9F0, 0x77E9F8, njDrawTriangle2D_r);
-    njDrawCircle2D_t = new Trampoline(0x77DFC0, 0x77DFC7, njDrawCircle2D_r);
-    njDrawLine2D_t = new Trampoline(0x77DF40, 0x77DF49, njDrawLine2D_r);
+    //njDrawTexture_t = new Trampoline(0x77DC70, 0x77DC79, njDrawTexture_r);
+    //njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_scale);
+    //njDrawTriangle2D_t = new Trampoline(0x77E9F0, 0x77E9F8, njDrawTriangle2D_r);
+    //njDrawCircle2D_t = new Trampoline(0x77DFC0, 0x77DFC7, njDrawCircle2D_r);
+    //njDrawLine2D_t = new Trampoline(0x77DF40, 0x77DF49, njDrawLine2D_r);
+
+    DrawQueue_Init();
 }

@@ -40,6 +40,9 @@
     <ClCompile Include="multihud.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
+    <ClCompile Include="drawqueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -83,6 +86,12 @@
     </ClInclude>
     <ClInclude Include="menu_multi.h">
       <Filter>Header FIles\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="drawqueue.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="d3d8vars.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

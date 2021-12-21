@@ -16,6 +16,150 @@ struct zxsdwstr
 	xssunit upper;
 };
 
+struct LATE_LNK
+{
+	LATE_LNK* lnk;
+	LATE_LNK* last;
+};
+
+struct LATE_RQ
+{
+	LATE_RQ* lnk;
+	float zkey;
+	unsigned __int8 typ;
+	unsigned __int8 alpMd;
+	unsigned __int16 no;
+	NJS_TEXLIST* texLst;
+	NJS_ARGB argb;
+	unsigned int ctrl3dFlg;
+	unsigned int atrAnd;
+	unsigned int atrOr;
+	unsigned int etc;
+};
+
+struct LATE_DRAWTEX_RQ
+{
+	LATE_RQ cmn;
+	NJS_MATRIX mtx;
+	NJS_TEXTURE_VTX* vtx;
+	int num;
+	int ind;
+	int tf;
+};
+
+struct LATE_ACT_RQ
+{
+	LATE_RQ cmn;
+	NJS_MATRIX mtx;
+	NJS_ACTION* act;
+	float frm;
+};
+
+struct LATE_ACTLNK_RQ
+{
+	LATE_RQ cmn;
+	NJS_MATRIX mtx;
+	float frm;
+	NJS_ACTION_LINK actlnk;
+	NJS_MOTION_LINK motlnk;
+};
+
+struct LATE_PO2D_RQ
+{
+	LATE_RQ cmn;
+	NJS_POINT2COL p2c;
+	NJS_MATRIX mtx;
+	unsigned int atr;
+	int texNum;
+	float pri;
+};
+
+struct LATE_S3D_RQ
+{
+	LATE_RQ cmn;
+	NJS_SPRITE spr;
+	unsigned int atr;
+	unsigned int dmy;
+	NJS_MATRIX mtx;
+};
+
+struct LATE_PO3D_RQ
+{
+	LATE_RQ cmn;
+	NJS_POINT3COL p3c;
+	NJS_MATRIX mtx;
+	unsigned int atr;
+	int texNum;
+};
+
+struct LATE_SHPMOT_RQ
+{
+	LATE_RQ cmn;
+	NJS_MATRIX mtx;
+	float frm;
+	NJS_OBJECT* obj;
+	NJS_MOTION* mot;
+	NJS_MOTION* shp;
+	int flgs;
+	float clpScl;
+	void* drwMdl;
+};
+
+struct LATE_OBJ_RQ
+{
+	LATE_RQ cmn;
+	NJS_MATRIX mtx;
+};
+
+struct LATE_BOX2D_RQ
+{
+	LATE_RQ cmn;
+	float x;
+	float y;
+	float x2;
+	float y2;
+	float pri;
+	unsigned int argb;
+};
+
+struct LATE_S2D_RQ
+{
+	LATE_RQ cmn;
+	NJS_SPRITE spr;
+	unsigned int atr;
+	float pri;
+	NJS_MATRIX mtx;
+};
+
+struct LATE_FUNC_RQ
+{
+	LATE_RQ cmn;
+	NJS_MATRIX mtx;
+	void(__cdecl* fnc)(void*);
+	void* arg;
+};
+
+union LATE_RQ_T
+{
+	LATE_S3D_RQ s3d;
+	LATE_S2D_RQ s2d;
+	LATE_OBJ_RQ obj;
+	LATE_ACT_RQ act;
+	LATE_PO2D_RQ po2d;
+	LATE_PO3D_RQ po3d;
+	LATE_SHPMOT_RQ shpmot;
+	LATE_BOX2D_RQ box2d;
+	LATE_DRAWTEX_RQ tex;
+	LATE_FUNC_RQ func;
+	LATE_RQ rq;
+};
+
+struct ___stcFogEmu
+{
+	unsigned __int8 u8Emulation;
+	unsigned __int8 u8FogSplitCnt;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -43,7 +187,36 @@ FunctionPointer(void, PlayMenuMusicID, (int id), 0x505990);
 FunctionPointer(void, CmnAdvaModeProcedure, (int id), 0x505B40);
 FunctionPointer(int, GetFadeOutColFromT, (float t), 0x506E10);
 FunctionPointer(int, GetFadeInColFromT, (float t), 0x506E40);
+FunctionPointer(void, ___dsDrawObject, (NJS_OBJECT* obj), 0x408530);
+FunctionPointer(void, njSetZCompare, (Uint8 index), 0x77ED00);
+FunctionPointer(void, njSetZUpdateMode, (DWORD enable), 0x77ED20);
+DataPointer(Angle, ds_perspective_value, 0x3AB98EC);
+FunctionPointer(void, ___SAnjDrawPolygon2D, (NJS_POINT2COL* p, int n, float pri, NJD_DRAW attr), 0x4010D0);
+FunctionPointer(void, njDrawPolygon3D, (NJS_POINT3COL* p, int n, NJD_DRAW  attr), 0x77EAD0);
+DataPointer(NJS_TEXLIST*, njds_texList, 0x3ABD950);
+DataPointer(int, lig_curGjPaletteNo___, 0x3B12208);
+FunctionPointer(void, lig_setGjPaletteNo___, (int no), 0x412160);
+FunctionPointer(void, lig_resetGjPaletteNo___, (signed int no), 0x412400);
+DataPointer(NJS_ARGB, cur_argb, 0x3AB9864);
+DataPointer(bool, gu8FogEnbale, 0x3ABDCFE);
+DataPointer(int, late_execMode, 0x3AB98AC);
+VoidFunc(npSetZCompare, 0x401420);
+DataPointer(___stcFogEmu, gFogEmu, 0x909EB4);
 
+static const void* const DrawActionBPtr = (void*)0x406C40;
+static inline void DrawActionB(NJS_ACTION* action, float frame, int flgs, float clpScl, void* drwMdlFnc)
+{
+	__asm
+	{
+		push[drwMdlFnc]
+		push[clpScl]
+		push dword ptr[flgs]
+		push[frame]
+		mov eax, [action]
+		call DrawActionBPtr
+		add esp, 16
+	}
+}
 
 struct __declspec(align(4)) PanelPrmType
 {

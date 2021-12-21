@@ -93,6 +93,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="d3d8vars.h" />
+    <ClInclude Include="drawqueue.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="mod.h" />
@@ -110,6 +112,7 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="drawqueue.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="menu_multi.cpp" />
