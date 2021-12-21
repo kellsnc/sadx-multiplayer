@@ -74,14 +74,6 @@ void __cdecl SpLoopOnlyDisplay_r()
     }
 }
 
-// Set full screen viewport
-void ResetViewPort()
-{
-    Direct3D_ViewPort = { 0, 0, (unsigned long)HorizontalResolution, (unsigned long)VerticalResolution, 0.0f, 1.0f };
-    Direct3D_Device->SetViewport(&Direct3D_ViewPort);
-    numViewPort = -1;
-}
-
 // Change the viewport
 bool ChangeViewPort(int num)
 {
@@ -92,7 +84,10 @@ bool ChangeViewPort(int num)
 
     if (num == -1)
     {
-        ResetViewPort();
+        // Reset
+        Direct3D_ViewPort = { 0, 0, (unsigned long)HorizontalResolution, (unsigned long)VerticalResolution, 0.0f, 1.0f };
+        Direct3D_Device->SetViewport(&Direct3D_ViewPort);
+        numViewPort = -1;
         return true;
     }
 
@@ -148,7 +143,7 @@ void __cdecl DisplayTask_r()
             DrawScreen(i - 1);
         }
 
-        ResetViewPort();
+        ChangeViewPort(-1);
     }
     else
     {

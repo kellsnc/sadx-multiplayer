@@ -10,6 +10,5 @@ struct ScreenRatio
 
 const ScreenRatio* GetScreenRatio(int num);
 bool ChangeViewPort(int num);
-void ResetViewPort();
 void __cdecl DisplayTask_r();
 void InitSplitScreen();
