@@ -257,7 +257,7 @@ std::vector<CUSTOM_LATE_RQ> custom_late_zentry;
 
 bool compare(CUSTOM_LATE_RQ i1, CUSTOM_LATE_RQ i2)
 {
-    return (i1.data.rq.zkey > i2.data.rq.zkey && i1.GetDrawOrder() < i2.GetDrawOrder());
+    return (i1.data.rq.zkey > i2.data.rq.zkey && i1.GetDrawOrder() > i2.GetDrawOrder());
 }
 
 void __cdecl late_exec_r()

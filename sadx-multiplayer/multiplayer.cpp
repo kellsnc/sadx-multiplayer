@@ -29,7 +29,7 @@ TaskFuncPtr charfuncs[] = {
 
 bool IsMultiplayerEnabled()
 {
-    return (IsIngame() || IsGamePaused()) && player_count > 1;
+    return (GameMode != GameModes_Menu) && player_count > 1;
 }
 
 void ResetCharactersArray()
