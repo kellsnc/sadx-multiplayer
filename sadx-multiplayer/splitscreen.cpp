@@ -17,18 +17,12 @@ Series of hacks to make splitscreen possible
 
 */
 
-
-
 unsigned int numScreen = 0;
 signed int numViewPort = -1;
 
+Trampoline* SpLoopOnlyDisplay_t   = nullptr;
 Trampoline* DisplayTask_t         = nullptr;
 Trampoline* LoopTask_t            = nullptr;
-
-Trampoline* njDrawTexture_t = nullptr;
-Trampoline* njDrawTriangle2D_t = nullptr;
-Trampoline* njDrawCircle2D_t = nullptr;
-Trampoline* njDrawLine2D_t = nullptr;
 Trampoline* njDrawQuadTextureEx_t = nullptr;
 
 const ScreenRatio ScreenRatio2[]
@@ -63,8 +57,6 @@ const ScreenRatio* GetScreenRatio(int num)
 {
     return &ScreenRatios[player_count - 2][num];
 }
-
-Trampoline* SpLoopOnlyDisplay_t = nullptr;
 
 void __cdecl SpLoopOnlyDisplay_r()
 {
