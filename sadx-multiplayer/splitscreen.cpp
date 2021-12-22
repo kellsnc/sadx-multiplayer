@@ -28,7 +28,7 @@ void __cdecl DisplayTask_r();
 namespace SplitScreen
 {
     unsigned int numScreen = 0;
-    signed int numViewPort = -1;
+    signed int numViewPort, backupNumViewPort = -1;
 
     const ScreenRatio ScreenRatio2[]
     {
@@ -61,6 +61,16 @@ namespace SplitScreen
     const ScreenRatio* GetScreenRatio(int num)
     {
         return &ScreenRatios[player_count - 2][num];
+    }
+
+    void SaveViewPort()
+    {
+        backupNumViewPort = numViewPort;
+    }
+
+    void RestoreViewPort()
+    {
+        ChangeViewPort(backupNumViewPort);
     }
 
     signed int GetCurrentViewPortNum()
@@ -226,11 +236,11 @@ void InitSplitScreen()
     LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
     WriteCall((void*)((int)(LoopTask_t->Target()) + 3), RunObjectIndex); // Repair LoopTask_t
     DisplayTask_t = new Trampoline(0x40B540, 0x40B546, DisplayTask_r);
-    WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
+    //WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
     SpLoopOnlyDisplay_t = new Trampoline(0x456CD0, 0x456CD9, SpLoopOnlyDisplay_r);
     WriteCall((void*)((int)(SpLoopOnlyDisplay_t->Target()) + 4), ___njFogDisable); // Repair SpLoopOnlyDisplay_t
 
-    njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+    //njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
 
     DrawQueue_Init();
 }

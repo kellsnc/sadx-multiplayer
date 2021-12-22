@@ -117,6 +117,9 @@ void DrawWaitScreen(int num)
         return;
     }
 
+    SplitScreen::SaveViewPort();
+    SplitScreen::ChangeViewPort(-1);
+
     // Get subscreen information
     auto ratio = SplitScreen::GetScreenRatio(num);
 
@@ -154,6 +157,7 @@ void DrawWaitScreen(int num)
     }
 
     ClampGlobalColorThing_Thing();
+    SplitScreen::RestoreViewPort();
 }
 
 void MultiHudScore(int num, float scale)
@@ -257,7 +261,7 @@ void DisplayMultiHud(int num)
         return;
     }
 
-    int backup = SplitScreen::numViewPort;
+    SplitScreen::SaveViewPort();
     SplitScreen::ChangeViewPort(-1);
 
     SetMaterialAndSpriteColor_Float(1.0f, 1.0f, 1.0f, 1.0f);
@@ -298,8 +302,7 @@ void DisplayMultiHud(int num)
     }
 
     ClampGlobalColorThing_Thing();
-
-    SplitScreen::ChangeViewPort(backup);
+    SplitScreen::RestoreViewPort();
 }
 
 void __cdecl DisplayScore_r()
