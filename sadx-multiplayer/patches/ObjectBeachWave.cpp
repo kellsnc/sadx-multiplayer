@@ -1,5 +1,4 @@
 #include "pch.h"
-#include "ObjectBeachWave.h"
 #include "splitscreen.h"
 
 void __cdecl ObjectBeachWave_act1_disp_j(task* tp)
