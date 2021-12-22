@@ -59,24 +59,9 @@ const ScreenRatio* GetScreenRatio(int num)
     return &ScreenRatios[player_count - 2][num];
 }
 
-void __cdecl SpLoopOnlyDisplay_r()
+bool IsScreenEnabled(int num)
 {
-    if (!IsMultiplayerEnabled())
-    {
-        TARGET_DYNAMIC(SpLoopOnlyDisplay)();
-    }
-    else
-    {
-        for (int i = 0; i < player_count; ++i)
-        {
-            if (playertp[i])
-            {
-                ChangeViewPort(i);
-                ApplyMultiCamera(camera_twp, i);
-                TARGET_DYNAMIC(SpLoopOnlyDisplay)();
-            }
-        }
-    }
+    return playertp[num] != nullptr;
 }
 
 // Change the viewport
@@ -113,12 +98,32 @@ bool ChangeViewPort(int num)
     return true;
 }
 
+void __cdecl SpLoopOnlyDisplay_r()
+{
+    if (!IsMultiplayerEnabled())
+    {
+        TARGET_DYNAMIC(SpLoopOnlyDisplay)();
+    }
+    else
+    {
+        for (int i = 0; i < player_count; ++i)
+        {
+            if (IsScreenEnabled(i))
+            {
+                ChangeViewPort(i);
+                ApplyMultiCamera(camera_twp, i);
+                TARGET_DYNAMIC(SpLoopOnlyDisplay)();
+            }
+        }
+    }
+}
+
 // Draw every task in subscreen
 void DrawScreen(int num)
 {
     if (ChangeViewPort(num))
     {
-        if (playertp[num])
+        if (IsScreenEnabled(num))
         {
             // If player exists, draw all objects into viewport:
 
