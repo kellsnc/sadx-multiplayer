@@ -1,14 +1,18 @@
 #pragma once
 
-extern unsigned int numScreen;
-extern signed int numViewPort;
 
-struct ScreenRatio
+namespace SplitScreen
 {
-    float x, y, w, h;
-};
+	struct ScreenRatio
+	{
+		float x, y, w, h;
+	};
 
-const ScreenRatio* GetScreenRatio(int num);
-bool ChangeViewPort(int num);
-void __cdecl DisplayTask_r();
+	extern unsigned int numScreen;
+	extern signed int numViewPort;
+
+	const ScreenRatio* GetScreenRatio(int num);
+	bool ChangeViewPort(int num);
+}
+
 void InitSplitScreen();

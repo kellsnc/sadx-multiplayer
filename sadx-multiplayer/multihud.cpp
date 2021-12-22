@@ -118,7 +118,7 @@ void DrawWaitScreen(int num)
     }
 
     // Get subscreen information
-    auto ratio = GetScreenRatio(num);
+    auto ratio = SplitScreen::GetScreenRatio(num);
 
     // Start position and scale
     float scaleY = VerticalStretch * ratio->h;
@@ -257,12 +257,12 @@ void DisplayMultiHud(int num)
         return;
     }
 
-    int backup = numViewPort;
-    ChangeViewPort(-1);
+    int backup = SplitScreen::numViewPort;
+    SplitScreen::ChangeViewPort(-1);
 
     SetMaterialAndSpriteColor_Float(1.0f, 1.0f, 1.0f, 1.0f);
 
-    auto ratio = GetScreenRatio(num);
+    auto ratio = SplitScreen::GetScreenRatio(num);
 
     float scaleY = VerticalStretch * ratio->h;
     float scale = min(HorizontalStretch * ratio->w, scaleY);
@@ -277,7 +277,7 @@ void DisplayMultiHud(int num)
     njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
     MultiHudScore(num, scale);
 
-    if (numScreen == 0)
+    if (SplitScreen::numScreen == 0)
     {
         MULTIHUD_SPRITE.p.x = x;
         MULTIHUD_SPRITE.p.y += 24 * scale;
@@ -299,7 +299,7 @@ void DisplayMultiHud(int num)
 
     ClampGlobalColorThing_Thing();
 
-    ChangeViewPort(backup);
+    SplitScreen::ChangeViewPort(backup);
 }
 
 void __cdecl DisplayScore_r()

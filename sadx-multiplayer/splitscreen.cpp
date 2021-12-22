@@ -18,84 +18,99 @@ Series of hacks to make splitscreen possible
 
 */
 
-unsigned int numScreen = 0;
-signed int numViewPort = -1;
-
 Trampoline* SpLoopOnlyDisplay_t   = nullptr;
 Trampoline* DisplayTask_t         = nullptr;
 Trampoline* LoopTask_t            = nullptr;
 Trampoline* njDrawQuadTextureEx_t = nullptr;
 
-const ScreenRatio ScreenRatio2[]
-{
-    { 0.0f, 0.0f, 0.5f, 1.0f },
-    { 0.5f, 0.0f, 0.5f, 1.0f }
-};
+void __cdecl DisplayTask_r();
 
-const ScreenRatio ScreenRatio3[]
+namespace SplitScreen
 {
-    { 0.0f, 0.0f, 1.0f, 0.5f },
-    { 0.0f, 0.5f, 0.5f, 0.5f },
-    { 0.5f, 0.5f, 0.5f, 0.5f }
-};
+    unsigned int numScreen = 0;
+    signed int numViewPort = -1;
 
-const ScreenRatio ScreenRatio4[]
-{
-    { 0.0f, 0.0f, 0.5f, 0.5f },
-    { 0.5f, 0.0f, 0.5f, 0.5f },
-    { 0.0f, 0.5f, 0.5f, 0.5f },
-    { 0.5f, 0.5f, 0.5f, 0.5f }
-};
-
-const ScreenRatio* ScreenRatios[]
-{
-    ScreenRatio2,
-    ScreenRatio3,
-    ScreenRatio4
-};
-
-const ScreenRatio* GetScreenRatio(int num)
-{
-    return &ScreenRatios[player_count - 2][num];
-}
-
-bool IsScreenEnabled(int num)
-{
-    return playertp[num] != nullptr;
-}
-
-// Change the viewport
-bool ChangeViewPort(int num)
-{
-    if (num == numViewPort)
+    const ScreenRatio ScreenRatio2[]
     {
-        return false;
+        { 0.0f, 0.0f, 0.5f, 1.0f },
+        { 0.5f, 0.0f, 0.5f, 1.0f }
+    };
+
+    const ScreenRatio ScreenRatio3[]
+    {
+        { 0.0f, 0.0f, 1.0f, 0.5f },
+        { 0.0f, 0.5f, 0.5f, 0.5f },
+        { 0.5f, 0.5f, 0.5f, 0.5f }
+    };
+
+    const ScreenRatio ScreenRatio4[]
+    {
+        { 0.0f, 0.0f, 0.5f, 0.5f },
+        { 0.5f, 0.0f, 0.5f, 0.5f },
+        { 0.0f, 0.5f, 0.5f, 0.5f },
+        { 0.5f, 0.5f, 0.5f, 0.5f }
+    };
+
+    const ScreenRatio* ScreenRatios[]
+    {
+        ScreenRatio2,
+        ScreenRatio3,
+        ScreenRatio4
+    };
+
+    const ScreenRatio* GetScreenRatio(int num)
+    {
+        return &ScreenRatios[player_count - 2][num];
     }
 
-    if (num == -1)
+    signed int GetCurrentViewPortNum()
     {
-        // Reset
-        Direct3D_ViewPort = { 0, 0, (unsigned long)HorizontalResolution, (unsigned long)VerticalResolution, 0.0f, 1.0f };
+        return numViewPort;
+    }
+
+    unsigned int GetCurrentScreenNum()
+    {
+        return numScreen;
+    }
+
+    bool IsScreenEnabled(int num)
+    {
+        return playertp[num] != nullptr;
+    }
+
+    // Change the viewport (-1 is whole screen)
+    bool ChangeViewPort(int num)
+    {
+        if (num == numViewPort)
+        {
+            return false;
+        }
+
+        if (num == -1)
+        {
+            // Reset
+            Direct3D_ViewPort = { 0, 0, (unsigned long)HorizontalResolution, (unsigned long)VerticalResolution, 0.0f, 1.0f };
+            Direct3D_Device->SetViewport(&Direct3D_ViewPort);
+            numViewPort = -1;
+            return true;
+        }
+
+        if (num < 0 || num > player_count || num > PLAYER_MAX)
+        {
+            return false;
+        }
+
+        auto ratio = GetScreenRatio(num);
+
+        Direct3D_ViewPort.X = ratio->x * HorizontalResolution;
+        Direct3D_ViewPort.Y = ratio->y * VerticalResolution;
+        Direct3D_ViewPort.Width = ratio->w * HorizontalResolution;
+        Direct3D_ViewPort.Height = ratio->h * VerticalResolution;
         Direct3D_Device->SetViewport(&Direct3D_ViewPort);
-        numViewPort = -1;
+
+        numViewPort = num;
         return true;
     }
-
-    if (num < 0 || num > player_count || num > PLAYER_MAX)
-    {
-        return false;
-    }
-
-    auto ratio = GetScreenRatio(num);
-
-    Direct3D_ViewPort.X = ratio->x * HorizontalResolution;
-    Direct3D_ViewPort.Y = ratio->y * VerticalResolution;
-    Direct3D_ViewPort.Width = ratio->w * HorizontalResolution;
-    Direct3D_ViewPort.Height = ratio->h * VerticalResolution;
-    Direct3D_Device->SetViewport(&Direct3D_ViewPort);
-    
-    numViewPort = num;
-    return true;
 }
 
 void __cdecl SpLoopOnlyDisplay_r()
@@ -108,9 +123,9 @@ void __cdecl SpLoopOnlyDisplay_r()
     {
         for (int i = 0; i < player_count; ++i)
         {
-            if (IsScreenEnabled(i))
+            if (SplitScreen::IsScreenEnabled(i))
             {
-                ChangeViewPort(i);
+                SplitScreen::ChangeViewPort(i);
                 ApplyMultiCamera(camera_twp, i);
                 TARGET_DYNAMIC(SpLoopOnlyDisplay)();
             }
@@ -119,15 +134,15 @@ void __cdecl SpLoopOnlyDisplay_r()
 }
 
 // Draw every task in subscreen
-void DrawScreen(int num)
+static void DrawScreen(int num)
 {
-    if (ChangeViewPort(num))
+    if (SplitScreen::ChangeViewPort(num))
     {
-        if (IsScreenEnabled(num))
+        if (SplitScreen::IsScreenEnabled(num))
         {
             // If player exists, draw all objects into viewport:
 
-            numScreen = num;
+            SplitScreen::numScreen = num;
             TARGET_DYNAMIC(DisplayTask)(); // call all object display subs
             DisplayMultiHud(num);
         }
@@ -152,7 +167,7 @@ void __cdecl DisplayTask_r()
             DrawScreen(i - 1);
         }
 
-        ChangeViewPort(-1);
+        SplitScreen::ChangeViewPort(-1);
     }
     else
     {
@@ -187,9 +202,9 @@ void __cdecl LoopTask_r()
 // Draw into viewport with scaling
 void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
 {
-    if (IsMultiplayerEnabled() && numViewPort != -1)
+    if (IsMultiplayerEnabled() && SplitScreen::numViewPort != -1)
     {
-        auto ratio = GetScreenRatio(numScreen);
+        auto ratio = SplitScreen::GetScreenRatio(SplitScreen::numScreen);
 
         quad->x = quad->x * ratio->w + HorizontalResolution * ratio->x;
         quad->y = quad->y * ratio->h + VerticalResolution * ratio->y;

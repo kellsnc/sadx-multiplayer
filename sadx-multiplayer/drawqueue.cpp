@@ -113,7 +113,7 @@ struct CUSTOM_LATE_RQ
 
     void Draw()
     {
-        if (ChangeViewPort(viewport))
+        if (SplitScreen::ChangeViewPort(viewport))
         {
             ApplyMultiCamera(camera_twp, viewport);
         }
@@ -249,7 +249,7 @@ struct CUSTOM_LATE_RQ
 
         this->data.rq.typ |= CurrentLightType << 6;
 
-        this->viewport = numViewPort;
+        this->viewport = SplitScreen::numViewPort;
     }
 };
 
@@ -310,7 +310,7 @@ void __cdecl late_exec_r()
 
         custom_late_zentry.clear();
 
-        ChangeViewPort(-1);
+        SplitScreen::ChangeViewPort(-1);
         njSetMatrix(0, orig_matrix);
         njds_texList = 0;
         ___njSetConstantMaterial(&cur_argb);
