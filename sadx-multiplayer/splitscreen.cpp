@@ -7,6 +7,7 @@
 #include "multihud.h"
 #include "d3d8vars.h"
 #include "drawqueue.h"
+#include "camera.h"
 
 /*
 
@@ -64,6 +65,18 @@ void __cdecl SpLoopOnlyDisplay_r()
     {
         TARGET_DYNAMIC(SpLoopOnlyDisplay)();
     }
+    else
+    {
+        for (int i = 0; i < player_count; ++i)
+        {
+            if (playertp[i])
+            {
+                ChangeViewPort(i);
+                ApplyMultiCamera(camera_twp, i);
+                TARGET_DYNAMIC(SpLoopOnlyDisplay)();
+            }
+        }
+    }
 }
 
 // Change the viewport
@@ -111,7 +124,6 @@ void DrawScreen(int num)
 
             numScreen = num;
             TARGET_DYNAMIC(DisplayTask)(); // call all object display subs
-            TARGET_DYNAMIC(SpLoopOnlyDisplay)(); // run particules as well
             DisplayMultiHud(num);
         }
         else
