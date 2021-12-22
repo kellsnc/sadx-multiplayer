@@ -85,21 +85,18 @@ struct CUSTOM_LATE_RQ
             njSetTexture(data.rq.texLst);
         }
 
-        if ((data.rq.no & 0x7FFF) > 0)
+        if ((data.rq.typ & QueuedModelFlags_FogEnabled))
         {
-            if ((data.rq.typ & QueuedModelFlags_FogEnabled))
+            if (gu8FogEnbale == FALSE)
             {
-                if (gu8FogEnbale == FALSE)
-                {
-                    ___njFogEnable();
-                }
+                ___njFogEnable();
             }
-            else
+        }
+        else
+        {
+            if (gu8FogEnbale == TRUE)
             {
-                if (gu8FogEnbale == TRUE)
-                {
-                    ___njFogDisable();
-                }
+                ___njFogDisable();
             }
         }
 
@@ -113,14 +110,19 @@ struct CUSTOM_LATE_RQ
 
     void Draw()
     {
+        int no = data.rq.no & 0x7FFF;
+
+        if (no < 0)
+        {
+            return;
+        }
+
         if (SplitScreen::ChangeViewPort(viewport))
         {
             ApplyMultiCamera(camera_twp, viewport);
         }
 
         SetDrawParams();
-
-        int no = data.rq.no & 0x7FFF;
 
         switch (data.rq.typ & 0xF)
         {
