@@ -3,8 +3,8 @@
 
 Trampoline* PGetRotation_t = nullptr;
 Trampoline* GetPlayersInputData_t = nullptr;
-Trampoline* InitCharacterVars_t = nullptr;
-Trampoline* Load2PTails_t = nullptr;
+Trampoline* PInitialize_t = nullptr;
+Trampoline* NpcMilesSet_t = nullptr;
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
@@ -74,45 +74,34 @@ void __cdecl GetPlayersInputData_r()
 	}
 }
 
-void RemovePlayersDamage(char id) {
+void RemovePlayersDamage(int no)
+{
+	auto twp = playertwp[no];
 
-	EntityData1* data = EntityData1Ptrs[id];
-
-	if (!data)
-		return;
-
-	if (data->CollisionInfo)
+	if (twp && twp->cwp)
 	{
-		if (data->CollisionInfo->nbInfo) {
-			for (int8_t i = 0; i < data->CollisionInfo->nbInfo; i++) {
+		for (int i = 0; i < twp->cwp->nbInfo; i++) {
 
-				EntityData1Ptrs[i]->CollisionInfo->CollisionArray[i].damage &= ~0x20u;
-			}
+			twp->cwp->info[i].damage &= ~0x20u;
 		}
 	}
-
 }
 
-void InitCharactersVars_r(int ID, ObjectMaster* character) {
-
-	FunctionPointer(void, original, (int ID, ObjectMaster * character), InitCharacterVars_t->Target());
-	original(ID, character);
-
-	if (IsMultiplayerEnabled()) {
-		RemovePlayersDamage(ID);
-	}
-}
-
-
-void __cdecl Load2PTails_r(ObjectMaster* obj)
+void PInitialize_r(int no, ObjectMaster* tp)
 {
+	TARGET_DYNAMIC(PInitialize)(no, tp);
+
 	if (IsMultiplayerEnabled())
 	{
-		return;
+		RemovePlayersDamage(no);
 	}
-	else
+}
+
+void __cdecl NpcMilesSet_r(ObjectMaster* obj)
+{
+	if (!IsMultiplayerEnabled())
 	{
-		TARGET_DYNAMIC(Load2PTails);
+		TARGET_DYNAMIC(NpcMilesSet);
 	}
 }
 
@@ -120,9 +109,8 @@ void InitPlayerPatches()
 {
 	PGetRotation_t = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
 	WriteJump((void*)0x40F170, GetPlayersInputData_r);
-	InitCharacterVars_t = new Trampoline((int)InitCharacterVars, (int)InitCharacterVars + 0x5, InitCharactersVars_r);
+	PInitialize_t = new Trampoline(0x442750, 0x442755, PInitialize_r);
 
-	//To do enable this when mod is ready
-
-	//Load2PTails_t = new Trampoline((int)Load2PTails, (int)Load2PTails + 0x5, Load2PTails_r); 
+	//To do: enable this when mod is ready
+	//NpcMilesSet_t = new Trampoline((int)NpcMilesSet, (int)NpcMilesSet + 0x5, Load2PTails_r); 
 }
