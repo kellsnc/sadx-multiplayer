@@ -43,6 +43,9 @@
     <ClCompile Include="drawqueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="patches\ObjectBeachWave.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

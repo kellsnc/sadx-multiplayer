@@ -118,6 +118,7 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="multihud.cpp" />
     <ClCompile Include="patches\deathzones.cpp" />
+    <ClCompile Include="patches\ObjectBeachWave.cpp" />
     <ClCompile Include="patches\patches.cpp" />
     <ClCompile Include="patches\player_patches.cpp" />
     <ClCompile Include="pch.cpp">
