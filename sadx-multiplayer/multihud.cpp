@@ -131,7 +131,7 @@ void DrawWaitScreen(int num)
     MULTIHUD_SPRITE.p.y = 240.0f * scaleY + VerticalResolution * ratio->y;
 
     // Draw Cream
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cream + (GameTimer / 5) % 12, 0.0f, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cream + (GameTimer / 5) % 12, -1000.0f, NJD_SPRITE_ALPHA);
 
     // Move right
     MULTIHUD_SPRITE.p.x += 30 * scale;
@@ -139,7 +139,7 @@ void DrawWaitScreen(int num)
     MULTIHUD_SPRITE.p.x += njSin(GameTimer * 300) * 2.5f; // slide chao left and right
 
     // Draw Chao
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cheese + (GameTimer / 5) % 2, 0.0f, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cheese + (GameTimer / 5) % 2, -1000.0f, NJD_SPRITE_ALPHA);
 
     // Restore position and move right
     MULTIHUD_SPRITE.p.x = x + 20 * scale;
@@ -153,7 +153,7 @@ void DrawWaitScreen(int num)
         SetMaterialAndSpriteColor_Float(1.0f - (fabs(njSin(GameTimer * 500 + i * 500)) * 0.5f), 1.0f, 1.0f, 1.0f); // color ramp
 
         // Draw letter
-        if (waittextseq[i] != -1) njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Alphabet + waittextseq[i], 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+        if (waittextseq[i] != -1) njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Alphabet + waittextseq[i], -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
     }
 
     ClampGlobalColorThing_Thing();
