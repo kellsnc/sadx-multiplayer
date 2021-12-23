@@ -112,5 +112,5 @@ void InitPlayerPatches()
 	PInitialize_t = new Trampoline(0x442750, 0x442755, PInitialize_r);
 
 	//To do: enable this when mod is ready
-	//NpcMilesSet_t = new Trampoline((int)NpcMilesSet, (int)NpcMilesSet + 0x5, Load2PTails_r); 
+	//NpcMilesSet_t = new Trampoline(0x47ED60, 0x47ED65, NpcMilesSet_r);
 }
