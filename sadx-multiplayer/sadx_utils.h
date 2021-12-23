@@ -204,6 +204,7 @@ VoidFunc(npSetZCompare, 0x401420);
 DataPointer(___stcFogEmu, gFogEmu, 0x909EB4);
 FunctionPointer(BOOL, GetPlayerPosition, (unsigned __int8 pno, char frame, NJS_VECTOR* pos, Rotation3* ang), 0x4419C0);
 DataPointer(BOOL, cameraready, 0x3B2CBB8);
+TaskFunc(RingDoneDisplayer, 0x44FC80);
 
 static const void* const DrawActionBPtr = (void*)0x406C40;
 static inline void DrawActionB(NJS_ACTION* action, float frame, int flgs, float clpScl, void* drwMdlFnc)

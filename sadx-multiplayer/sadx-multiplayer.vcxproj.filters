@@ -46,6 +46,9 @@
     <ClCompile Include="patches\ObjectBeachWave.cpp">
       <Filter>Source Files\patches</Filter>
     </ClCompile>
+    <ClCompile Include="patches\objects.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -95,6 +98,9 @@
     </ClInclude>
     <ClInclude Include="d3d8vars.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="patches\objects.h">
+      <Filter>Header FIles\patches</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

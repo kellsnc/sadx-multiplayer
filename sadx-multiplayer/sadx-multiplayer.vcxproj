@@ -101,6 +101,7 @@
     <ClInclude Include="menu_multi.h" />
     <ClInclude Include="multihud.h" />
     <ClInclude Include="patches\deathzones.h" />
+    <ClInclude Include="patches\objects.h" />
     <ClInclude Include="patches\patches.h" />
     <ClInclude Include="patches\player_patches.h" />
     <ClInclude Include="pch.h" />
@@ -119,6 +120,7 @@
     <ClCompile Include="multihud.cpp" />
     <ClCompile Include="patches\deathzones.cpp" />
     <ClCompile Include="patches\ObjectBeachWave.cpp" />
+    <ClCompile Include="patches\objects.cpp" />
     <ClCompile Include="patches\patches.cpp" />
     <ClCompile Include="patches\player_patches.cpp" />
     <ClCompile Include="pch.cpp">

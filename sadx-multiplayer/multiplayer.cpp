@@ -64,7 +64,15 @@ int GetScoreM(int pNum)
 
 void AddScoreM(int pNum, int amount)
 {
-    score[pNum] += amount;
+    if (pNum == 0)
+    {
+        EnemyBonus += amount;
+        score[0] = EnemyBonus;
+    }
+    else
+    {
+        score[pNum] += amount;
+    }
 }
 
 void __cdecl ResetLivesM()
@@ -89,6 +97,7 @@ void SetLivesM(int pNum, int amount)
         PlaySound(743, 0, 0, 0);
     }
 
+    lives[0] = Lives;
     lives[pNum] += amount;
 
     if ((lives[pNum] < 0 && amount > 0) || amount == CHAR_MAX)
@@ -101,8 +110,7 @@ void SetLivesM(int pNum, int amount)
         LoadObject(LoadObj_UnknownB, 6, sub_425B30);
     }
 
-    if (!pNum)
-        Lives = lives[pNum];
+    Lives = lives[0];
 }
 
 int GetRingsM(int pNum)
@@ -112,11 +120,22 @@ int GetRingsM(int pNum)
 
 void AddRingsM(int pNum, int amount)
 {
-    int origc = rings[pNum] / 100;
-    rings[pNum] += amount;
+    int origc, newc = 0;
 
-    int newc = rings[pNum] / 100;
-
+    if (pNum == 0)
+    {
+        origc = Rings / 100;
+        Rings += amount;
+        newc = Rings / 100;
+        rings[0] = Rings;
+    }
+    else
+    {
+        origc = rings[pNum] / 100;
+        rings[pNum] += amount;
+        newc = rings[pNum] / 100;
+    }
+    
     if (origc < newc)
     {
         SetLivesM(pNum, newc - origc);
@@ -132,7 +151,7 @@ void RingsLives_OnFrames()
 {
     rings[0] = Rings;
     lives[0] = Lives;
-    score[0] = Score + EnemyBonus;
+    score[0] = EnemyBonus;
 }
 
 void SetCurrentCharacter(int pnum, int character)
