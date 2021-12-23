@@ -125,11 +125,7 @@ namespace SplitScreen
 
 void __cdecl SpLoopOnlyDisplay_r()
 {
-    if (!IsMultiplayerEnabled())
-    {
-        TARGET_DYNAMIC(SpLoopOnlyDisplay)();
-    }
-    else
+    if (IsMultiplayerEnabled())
     {
         for (int i = 0; i < player_count; ++i)
         {
@@ -140,6 +136,12 @@ void __cdecl SpLoopOnlyDisplay_r()
                 TARGET_DYNAMIC(SpLoopOnlyDisplay)();
             }
         }
+
+        SplitScreen::ChangeViewPort(-1);
+    }
+    else
+    {
+        TARGET_DYNAMIC(SpLoopOnlyDisplay)();
     }
 }
 
@@ -172,9 +174,9 @@ void __cdecl DisplayTask_r()
     {
         // If multiplayer is enabled, split screen:
 
-        for (int i = player_count; i > 0; --i)
+        for (int i = 0; i < player_count; ++i)
         {
-            DrawScreen(i - 1);
+            DrawScreen(i);
         }
 
         SplitScreen::ChangeViewPort(-1);
@@ -192,14 +194,19 @@ void __cdecl LoopTask_r()
 {
     if (IsMultiplayerEnabled())
     {
-        // If multiplayer is enabled, run only logic and display everything afterwards for each screen:
+        // When unpaused run logic (which also runs display) for first screen, then only run display for the other screens.
 
-        int backup = loop_count;
-        loop_count = 1; // Prevent display subs from running
+        SplitScreen::ChangeViewPort(0);
+        SplitScreen::numScreen = 0;
         TARGET_DYNAMIC(LoopTask)();
-        loop_count = backup;
+        DisplayMultiHud(0);
 
-        DisplayTask();
+        for (int i = 1; i < player_count; ++i)
+        {
+            DrawScreen(i);
+        }
+
+        SplitScreen::ChangeViewPort(-1);
     }
     else
     {
@@ -236,11 +243,11 @@ void InitSplitScreen()
     LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
     WriteCall((void*)((int)(LoopTask_t->Target()) + 3), RunObjectIndex); // Repair LoopTask_t
     DisplayTask_t = new Trampoline(0x40B540, 0x40B546, DisplayTask_r);
-    //WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
+    WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
     SpLoopOnlyDisplay_t = new Trampoline(0x456CD0, 0x456CD9, SpLoopOnlyDisplay_r);
     WriteCall((void*)((int)(SpLoopOnlyDisplay_t->Target()) + 4), ___njFogDisable); // Repair SpLoopOnlyDisplay_t
 
-    //njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+    njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
 
     DrawQueue_Init();
 }

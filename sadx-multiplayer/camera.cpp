@@ -35,7 +35,7 @@ Angle3* GetCameraAngle(int pnum)
 
 void ApplyMultiCamera(taskwk* twp, int pnum)
 {
-	if (!playertwp[pnum])
+	if (!twp || !playertwp[pnum])
 	{
 		return;
 	}
@@ -96,15 +96,20 @@ void __cdecl CameraPause_r(task* tp)
 
 void __cdecl Camera_r(task* tp)
 {
-	Camera_Data1 = (EntityData1*)tp->twp;
+	camera_twp = tp->twp;
 	
-	// If multiplayer is enabled, do camera logic in display to be per-character
+	// If multiplayer is enabled, run custom cameras
 	if (IsMultiplayerEnabled())
 	{
+		cameraready = TRUE;
+
 		for (int i = 0; i < player_count; ++i)
 		{
 			MultiCamera(i);
 		}
+
+		// in exec, apply camera for first player
+		ApplyMultiCamera(tp->twp, 0);
 	}
 	else
 	{

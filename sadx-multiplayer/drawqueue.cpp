@@ -248,7 +248,6 @@ void __cdecl late_exec_r()
         njSetMatrix(0, orig_matrix);
         njds_texList = 0;
         ___njSetConstantMaterial(&cur_argb);
-        ___dsSetPalette(0);
 
         if (lig_curGjPaletteNo___ != _lig_curGjPaletteNo___)
         {
@@ -276,7 +275,6 @@ void __cdecl late_exec_r()
     else
     {
         TARGET_DYNAMIC(late_exec)();
-        SplitScreen::ChangeViewPort(-1);
     }
 }
 
