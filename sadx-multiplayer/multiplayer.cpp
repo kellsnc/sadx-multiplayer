@@ -102,11 +102,11 @@ int GetNumPlayerM(int pNum)
 {
     if (IsMultiplayerEnabled())
     {
-        return GetNumPlayer();
+        return lives[pNum];
     }
     else
     {
-        return lives[pNum];
+        return GetNumPlayer();
     }
 }
 
