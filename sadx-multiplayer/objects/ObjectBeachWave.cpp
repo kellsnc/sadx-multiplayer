@@ -35,7 +35,7 @@ void __cdecl ObjectBeachWave_act1_r(task* tp)
 	for (int i = 1; i < player_count; ++i)
 	{
 		auto tp2 = CreateElementalTask(LoadObj_UnknownA | LoadObj_Data1, LEV_6, ObjectBeachWave_act1_exec_multi);
-		tp2->twp->btimer = 1;
+		tp2->twp->btimer = i; // screen ID, only display for that screen
 		tp2->twp->pos.y = -1.5f;
 		tp2->exec = ObjectBeachWave_act1_exec_multi;
 		tp2->disp = ObjectBeachWave_act1_disp_j;

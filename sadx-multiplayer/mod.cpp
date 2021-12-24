@@ -3,7 +3,7 @@
 #include "splitscreen.h"
 #include "menu.h"
 #include "multihud.h"
-#include "patches/patches.h"
+#include "patches.h"
 
 const HelperFunctions* gHelperFunctions;
 
