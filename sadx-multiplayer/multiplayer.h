@@ -3,20 +3,20 @@
 extern unsigned int player_count;
 bool IsMultiplayerEnabled();
 
-void ResetScoreM();
-int GetScoreM(int pNum);
-void AddScoreM(int pNum, int amount);
+void ResetEnemyScoreM();
+int GetEnemyScoreM(int pNum);
+void AddEnemyScoreM(int pNum, int amount);
 
-void __cdecl ResetLivesM();
-void SetLivesM(int pNum, int amount);
-int GetLivesM(int pNum);
+void __cdecl ResetNumPlayerM();
+void AddNumPlayerM(int pNum, int amount);
+int GetNumPlayerM(int pNum);
 
-void AddRingsM(int pNum, int amount);
-int GetRingsM(int pNum);
+void AddNumRingM(int pNum, int amount);
+int GetNumRingM(int pNum);
 
-void RingsLives_OnFrames();
+void UpdatePlayersInfo();
 
-void __cdecl initPlayerHack();
+void __cdecl InitMultiplayer();
 void SetCurrentCharacter(int pnum, int character);
 int GetCurrentCharacter(int pnum);
 void ResetCharactersArray();

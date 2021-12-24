@@ -165,7 +165,7 @@ void MultiHudScore(int num, float scale)
     MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x + 195.0f * scale;
     MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 2.0f * scale;
 
-    int score = GetScoreM(num);
+    int score = GetEnemyScoreM(num);
 
     for (int i = 0; i < 8; ++i)
     {
@@ -211,7 +211,7 @@ void MultiHudRings(int num, float scale)
     MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x;
     MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 1.5 * scale;
 
-    int count = GetRingsM(num);
+    int count = GetNumRingM(num);
     
     float color = 1.0f;
 
@@ -242,7 +242,7 @@ void MultiHudLives(int num, float scale)
 
     if (HideHud >= 0)
     {
-        int count = GetRingsM(num);
+        int count = GetNumPlayerM(num);
 
         MULTIHUDDIGIT_SPRITE.p.y -= 25.0f * scale;
         MULTIHUDDIGIT_SPRITE.p.x += 35.0f * scale;

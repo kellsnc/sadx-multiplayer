@@ -208,6 +208,14 @@ DataPointer(BOOL, cameraready, 0x3B2CBB8);
 TaskFunc(RingDoneDisplayer, 0x44FC80);
 FunctionPointer(BOOL, CheckItemExplosion, (NJS_POINT3* pos), 0x4C0550);
 DataPointer(int, slEnemyScore, 0x3B0F104);
+VoidFunc(InitActionScore, 0x427EF0);
+FunctionPointer(void, AddNumRing, (Sint16 amount), 0x425BE0);
+FunctionPointer(Sint16, GetNumRing, (), 0x425CC0);
+FunctionPointer(int, ResetNumPlayer, (), 0x425AF0);
+FunctionPointer(int, GetNumPlayer, (), 0x425FE0);
+FunctionPointer(void, AddNumPlayer, (__int16 lives), 0x425B60);
+DataPointer(char, scNumPlayer, 0x3B0EF34);
+DataPointer(Sint16, ssNumRing, 0x3B0F0E4);
 
 static const void* const DrawActionBPtr = (void*)0x406C40;
 static inline void DrawActionB(NJS_ACTION* action, float frame, int flgs, float clpScl, void* drwMdlFnc)

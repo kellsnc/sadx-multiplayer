@@ -22,7 +22,7 @@ void __cdecl Ring_r(task* tp)
 				if (!(playerpwp[pID]->item & 0x4000))
 				{
 					twp->mode = 2;
-					AddRingsM(pID, 1);
+					AddNumRingM(pID, 1);
 					dsPlay_oneshot(7, 0, 0, 0);
 					tp->disp = RingDoneDisplayer;
 					return;
@@ -53,7 +53,7 @@ BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 			int pID = TASKWK_PLAYERID(player);
 
 			ewp->flag |= 0x1000u;
-			AddScoreM(pID, 10);
+			AddEnemyScoreM(pID, 10);
 
 			if ((twp->cwp->hit_cwp->info[twp->cwp->hit_num].attr & 0x1000) != 0)
 			{
@@ -101,7 +101,7 @@ void __cdecl EBuyon_ScorePatch(task* tp)
 
 		if (player)
 		{
-			AddScoreM(TASKWK_PLAYERID(player), 100);
+			AddEnemyScoreM(TASKWK_PLAYERID(player), 100);
 		}
 	}
 	else

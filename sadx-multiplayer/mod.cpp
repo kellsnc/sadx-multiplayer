@@ -15,8 +15,8 @@ extern "C"
 		InitSplitScreen();
 		InitCamera();
 		InitPatches();
-		initPlayerHack();
-		Menu_Init(helperFunctions);
+		InitMultiplayer();
+		InitMenu(helperFunctions);
 		MultiHudInit();
 	}
 
@@ -27,7 +27,7 @@ extern "C"
 
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
-		RingsLives_OnFrames();
+		UpdatePlayersInfo();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInput()

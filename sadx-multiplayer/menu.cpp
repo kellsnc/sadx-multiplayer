@@ -40,7 +40,7 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 	TARGET_DYNAMIC(MainMenuExecSub)(wkp);
 }
 
-void __cdecl Menu_Init(const HelperFunctions& helperFunctions)
+void __cdecl InitMenu(const HelperFunctions& helperFunctions)
 {
 	ResizeTextureList(&ava_title_e_TEXLIST, 12);
 	MainMenuExecSub_t = new Trampoline(0x50B630, 0x50B638, MainMenuExecSub_r);

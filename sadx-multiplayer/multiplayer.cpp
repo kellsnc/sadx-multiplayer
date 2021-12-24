@@ -49,35 +49,48 @@ void LoadCharObj(int pnum, int character)
     playermwp[pnum] = (motionwk2*)tp->mwp;
 }
 
-void ResetScoreM()
+void ResetEnemyScoreM()
 {
+    InitActionScore();
+
     for (auto& s : score)
     {
         s = 0;
     }
 }
 
-int GetScoreM(int pNum)
+int GetEnemyScoreM(int pNum)
 {
-    return score[pNum];
-}
-
-void AddScoreM(int pNum, int amount)
-{
-    if (pNum == 0)
+    if (IsMultiplayerEnabled())
     {
-        slEnemyScore += amount;
-        score[0] = slEnemyScore;
+        return score[pNum];
     }
     else
     {
-        score[pNum] += amount;
+        return slEnemyScore;
     }
 }
 
-void __cdecl ResetLivesM()
+void AddEnemyScoreM(int pNum, int add)
 {
-    Lives = 4;
+    if (IsMultiplayerEnabled())
+    {
+        score[pNum] += add;
+
+        if (pNum == 0)
+        {
+            slEnemyScore = score[0];
+        }
+    }
+    else
+    {
+        AddEnemyScore(add);
+    }
+}
+
+void __cdecl ResetNumPlayerM()
+{
+    scNumPlayer = 4;
 
     for (int i = 0; i < PLAYER_MAX; i++)
     {
@@ -85,73 +98,98 @@ void __cdecl ResetLivesM()
     }
 }
 
-int GetLivesM(int pNum)
+int GetNumPlayerM(int pNum)
 {
-    return lives[pNum];
-}
-
-void SetLivesM(int pNum, int amount)
-{
-    if (amount > 0)
+    if (IsMultiplayerEnabled())
     {
-        PlaySound(743, 0, 0, 0);
-    }
-
-    lives[0] = Lives;
-    lives[pNum] += amount;
-
-    if ((lives[pNum] < 0 && amount > 0) || amount == CHAR_MAX)
-    {
-        lives[pNum] = CHAR_MAX;
-    }
-
-    if (GetLevelType() == 1)
-    {
-        LoadObject(LoadObj_UnknownB, 6, sub_425B30);
-    }
-
-    Lives = lives[0];
-}
-
-int GetRingsM(int pNum)
-{
-    return rings[pNum];
-}
-
-void AddRingsM(int pNum, int amount)
-{
-    int origc, newc = 0;
-
-    if (pNum == 0)
-    {
-        origc = Rings / 100;
-        Rings += amount;
-        newc = Rings / 100;
-        rings[0] = Rings;
+        return GetNumPlayer();
     }
     else
     {
-        origc = rings[pNum] / 100;
-        rings[pNum] += amount;
-        newc = rings[pNum] / 100;
-    }
-    
-    if (origc < newc)
-    {
-        SetLivesM(pNum, newc - origc);
-    }
-
-    if (GetLevelType() == 1)
-    {
-        LoadObject(LoadObj_UnknownB, 6, sub_425BB0);
+        return lives[pNum];
     }
 }
 
-void RingsLives_OnFrames()
+void AddNumPlayerM(int pNum, int Number)
 {
-    rings[0] = Rings;
-    lives[0] = Lives;
-    score[0] = EnemyBonus;
+    if (IsMultiplayerEnabled())
+    {
+        if (Number > 0)
+        {
+            PlaySound(743, 0, 0, 0);
+        }
+
+        lives[pNum] += Number;
+
+        if ((lives[pNum] < 0 && Number > 0) || Number >= CHAR_MAX)
+        {
+            lives[pNum] = CHAR_MAX;
+        }
+
+        if (GetLevelType() == 1)
+        {
+            LoadObject(LoadObj_UnknownB, 6, sub_425B30);
+        }
+
+        if (pNum == 0)
+        {
+            scNumPlayer = lives[0];
+        }
+    }
+    else
+    {
+        AddNumPlayer(Number);
+    }
+}
+
+int GetNumRingM(int pNum)
+{
+    if (IsMultiplayerEnabled())
+    {
+        return rings[pNum];
+    }
+    else
+    {
+        return GetNumRing();
+    }
+}
+
+void AddNumRingM(int pNum, int add)
+{
+    if (IsMultiplayerEnabled())
+    {
+        int origc, newc = 0;
+
+        origc = rings[pNum] / 100;
+        rings[pNum] += add;
+        newc = rings[pNum] / 100;
+
+        if (pNum == 0)
+        {
+            ssNumRing = rings[0];
+        }
+
+        if (origc < newc)
+        {
+            AddNumPlayerM(pNum, newc - origc);
+        }
+
+        if (GetLevelType() == 1)
+        {
+            LoadObject(LoadObj_UnknownB, 6, sub_425BB0);
+        }
+    }
+    else
+    {
+        AddNumRing(add);
+    }
+}
+
+void UpdatePlayersInfo()
+{
+    rings[0] = ssNumRing;
+    lives[0] = scNumPlayer;
+    score[0] = slEnemyScore;
 }
 
 void SetCurrentCharacter(int pnum, int character)
@@ -188,8 +226,8 @@ void Load_MultipleCharacters()
 #endif
 }
 
-void __cdecl initPlayerHack()
+void __cdecl InitMultiplayer()
 {
-    WriteJump(ResetLives, ResetLivesM);
+    WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteCall((void*)0x415A25, Load_MultipleCharacters);
 }
