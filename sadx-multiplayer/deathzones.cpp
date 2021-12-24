@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "deathzones.h"
 
+Trampoline* KillPlayer_t                  = nullptr;
+Trampoline* KillPlayerFallingDownStageP_t = nullptr;
+
 void __cdecl GamePlayerMissedFree(task* tp)
 {
 	BYTEn(tp->ptp->twp->counter.l, tp->awp->work.ul[1]) = FALSE;
@@ -13,7 +16,7 @@ void __cdecl GamePlayerMissed_r(task* tp)
 
 	if (++awp->work.ul[0] > 0x78)
 	{
-		if (!GetDebugMode() && playertp[pNum])
+		if (!CheckEditMode() && playertp[pNum])
 		{
 			if (GetNumPlayerM(pNum) <= 0)
 			{
@@ -24,6 +27,9 @@ void __cdecl GamePlayerMissed_r(task* tp)
 			{
 				AddNumPlayerM(pNum, -1);
 				SetPlayerInitialPosition(playertwp[pNum]);
+				SetInputP(pNum, 24);
+				playertwp[pNum]->mode = 1;
+				playerpwp[pNum]->item &= ~Powerups_Dead;
 			}
 		}
 
@@ -33,14 +39,21 @@ void __cdecl GamePlayerMissed_r(task* tp)
 
 void __cdecl KillPlayer_r(unsigned __int8 pNum)
 {
-	if (!GetDebugMode())
+	if (IsMultiplayerEnabled())
 	{
-		playertwp[pNum]->flag |= 0x1000;
-		playerpwp[pNum]->item |= Powerups_Dead;
-		SetInputP(pNum, 50);
+		if (!CheckEditMode())
+		{
+			playertwp[pNum]->flag |= 0x1000;
+			playerpwp[pNum]->item |= Powerups_Dead;
+			SetInputP(pNum, 50);
 
-		auto tp = CreateElementalTask(LoadObj_UnknownB, 0, GamePlayerMissed_r);
-		tp->awp->work.ul[1] = pNum;
+			auto tp = CreateElementalTask(LoadObj_UnknownB, 0, GamePlayerMissed_r);
+			tp->awp->work.ul[1] = pNum;
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(KillPlayer)(pNum);
 	}
 }
 
@@ -104,6 +117,12 @@ void ExecFallingDownP_r(task* tp, int pNum)
 
 void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 {
+	if (!IsMultiplayerEnabled())
+	{
+		TARGET_DYNAMIC(KillPlayerFallingDownStageP)(tp);
+		return;
+	}
+
 	LoopTaskC(tp);
 
 	auto dz = *KillingCollisionModelsListList[HIBYTE(GetStageNumber())];
@@ -147,8 +166,8 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 }
 
 // Series of hacks to not reset the game if player 1 dies and make every players able to die
-void init_DeathPatches()
+void InitDeathPatches()
 {
-	WriteJump((void*)0x440CD0, KillPlayer_r);
-	WriteJump(DeathZoneHandler, KillPlayerFallingDownStageP_r); // Manage player death
+	KillPlayer_t                  = new Trampoline(0x440CD0, 0x440CD7, KillPlayer_r);
+	KillPlayerFallingDownStageP_t = new Trampoline(0x44AE80, 0x44AE88, KillPlayerFallingDownStageP_r);
 }

@@ -160,6 +160,17 @@ struct ___stcFogEmu
 	unsigned __int8 u8FogSplitCnt;
 };
 
+struct OBJECT_SAVEPOINT_DATA
+{
+	int flag;
+	Angle3 ang;
+	Angle3 ang_spd;
+	task* tp[2];
+	float materiral[3];
+	int write_timer;
+	__int16 kiseki_timer;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -216,6 +227,13 @@ FunctionPointer(int, GetNumPlayer, (), 0x425FE0);
 FunctionPointer(void, AddNumPlayer, (__int16 lives), 0x425B60);
 DataPointer(char, scNumPlayer, 0x3B0EF34);
 DataPointer(Sint16, ssNumRing, 0x3B0F0E4);
+DataArray(OBJ_CONDITION, objStatusEntry, 0x3C4E460, 1024);
+DataPointer(__int16, numStatusEntry, 0x3C4E454);
+DataPointer(_OBJ_ITEMTABLE*, pObjItemTable, 0x3C4E448);
+DataPointer(BOOL, boolOneShot, 0x3C52464);
+DataPointer(OBJECT_SAVEPOINT_DATA*, savepoint_data, 0x3B42F7C);
+FunctionPointer(void, updateContinueData, (NJS_POINT3* pos, Angle3* ang), 0x44EE70);
+FunctionPointer(bool, CheckEditMode, (), 0x4258F0);
 
 static const void* const DrawActionBPtr = (void*)0x406C40;
 static inline void DrawActionB(NJS_ACTION* action, float frame, int flgs, float clpScl, void* drwMdlFnc)

@@ -4,6 +4,7 @@
 #include "menu.h"
 #include "multihud.h"
 #include "patches.h"
+#include "deathzones.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -15,6 +16,7 @@ extern "C"
 		InitSplitScreen();
 		InitCamera();
 		InitPatches();
+		InitDeathPatches();
 		InitMultiplayer();
 		InitMenu(helperFunctions);
 		MultiHudInit();
