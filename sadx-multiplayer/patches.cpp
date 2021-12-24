@@ -2,6 +2,12 @@
 #include "deathzones.h"
 #include "camera.h"
 
+/*
+
+General patches to allow compatibility for 4+ players
+
+*/
+
 Trampoline* PGetRotation_t        = nullptr;
 Trampoline* GetPlayersInputData_t = nullptr;
 Trampoline* PInitialize_t         = nullptr;
@@ -223,6 +229,51 @@ void __cdecl EBuyon_ScorePatch(task* tp)
 	}
 }
 
+int __cdecl CheckCollisionP_r(NJS_POINT3* vp, float d)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto twp = playertwp[i];
+
+		if (twp && twp->cwp)
+		{
+			NJS_VECTOR v = twp->cwp->info->center;
+			njSubVector(&v, vp);
+
+			if (njScalor(&v) < d)
+			{
+				return i + 1;
+			}
+		}
+	}
+
+	return 0;
+}
+
+int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, float r, float h)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto twp = playertwp[i];
+
+		if (twp)
+		{
+			NJS_VECTOR v = twp->pos;
+			njSubVector(&v, vp);
+
+			if (v.x * v.x + v.z * v.z - r * r <= 0.0f)
+			{
+				if (fabsf(v.y) <= h)
+				{
+					return i + 1;
+				}
+			}
+		}
+	}
+
+	return 0;
+}
+
 void InitPatches()
 {
 	PGetRotation_t        = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -235,4 +286,8 @@ void InitPatches()
 	// EBuyon score patch:
 	WriteCall((void*)0x7B3273, EBuyon_ScorePatch);
 	WriteData<5>((void*)0x7B326D, 0x90);
+
+	// Collision checks:
+	WriteJump(CheckCollisionP, CheckCollisionP_r);
+	WriteJump(CheckCollisionCylinderP, CheckCollisionCylinderP_r);
 }
