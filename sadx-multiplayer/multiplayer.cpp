@@ -66,8 +66,8 @@ void AddScoreM(int pNum, int amount)
 {
     if (pNum == 0)
     {
-        EnemyBonus += amount;
-        score[0] = EnemyBonus;
+        slEnemyScore += amount;
+        score[0] = slEnemyScore;
     }
     else
     {

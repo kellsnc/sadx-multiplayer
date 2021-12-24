@@ -164,6 +164,7 @@ VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
 FunctionPointer(void, ds_DrawBoxFill2D, (float x, float y, float x2, float y2, float pri, int argb), 0x4071C0);
+FunctionPointer(void, late_DrawBoxFill2D, (float x, float y, float x2, float y2, float pri, int argb, int flgs), 0x4073B0);
 FunctionPointer(BOOL, GetZxShadowOnFDPolygon, (zxsdwstr* carry, NJS_OBJECT* object), 0x456510);
 FunctionPointer(void, SetChangeGameMode, (__int16 mode), 0x413C90);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
@@ -205,6 +206,8 @@ DataPointer(___stcFogEmu, gFogEmu, 0x909EB4);
 FunctionPointer(BOOL, GetPlayerPosition, (unsigned __int8 pno, char frame, NJS_VECTOR* pos, Rotation3* ang), 0x4419C0);
 DataPointer(BOOL, cameraready, 0x3B2CBB8);
 TaskFunc(RingDoneDisplayer, 0x44FC80);
+FunctionPointer(BOOL, CheckItemExplosion, (NJS_POINT3* pos), 0x4C0550);
+DataPointer(int, slEnemyScore, 0x3B0F104);
 
 static const void* const DrawActionBPtr = (void*)0x406C40;
 static inline void DrawActionB(NJS_ACTION* action, float frame, int flgs, float clpScl, void* drwMdlFnc)
