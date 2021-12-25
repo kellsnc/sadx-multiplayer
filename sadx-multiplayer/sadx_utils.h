@@ -171,6 +171,23 @@ struct OBJECT_SAVEPOINT_DATA
 	__int16 kiseki_timer;
 };
 
+struct FCWRK
+{
+	float dist1;
+	float dist2;
+	float dist0;
+	float dist;
+	Angle3 _ang;
+	NJS_POINT3 cammovepos;
+	NJS_POINT3 campos;
+	int counter;
+	int timer;
+	Angle3 pang;
+	NJS_POINT3 camspd;
+	NJS_POINT3 pos;
+	NJS_POINT3 _vec;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -234,6 +251,20 @@ DataPointer(BOOL, boolOneShot, 0x3C52464);
 DataPointer(OBJECT_SAVEPOINT_DATA*, savepoint_data, 0x3B42F7C);
 FunctionPointer(void, updateContinueData, (NJS_POINT3* pos, Angle3* ang), 0x44EE70);
 FunctionPointer(bool, CheckEditMode, (), 0x4258F0);
+FunctionPointer(void, CameraFilter, (task* tp), 0x436CD0);
+TaskFunc(CameraDisplay, 0x4370F0);
+TaskFunc(CameraPause, 0x4373D0);
+DataPointer(FCWRK, fcwrk, 0x3B2C958); // free cam worker
+
+static const void* const CameraSetViewPtr = (void*)0x435600;
+static inline void CameraSetView(taskwk* twp)
+{
+	__asm
+	{
+		mov eax, [twp]
+		call CameraSetViewPtr
+	}
+}
 
 static const void* const DrawActionBPtr = (void*)0x406C40;
 static inline void DrawActionB(NJS_ACTION* action, float frame, int flgs, float clpScl, void* drwMdlFnc)

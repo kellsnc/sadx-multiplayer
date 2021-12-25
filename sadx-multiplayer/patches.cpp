@@ -493,19 +493,29 @@ void __cdecl savepointCollision_r(task* tp, taskwk* twp)
 {
 	if (IsMultiplayerEnabled())
 	{
-		auto entity = CCL_IsHitPlayer(twp);
+		savepoint_data->tp[0]->twp->ang.x = twp->ang.x + savepoint_data->ang.x;
+		savepoint_data->tp[0]->twp->ang.y = twp->ang.y + savepoint_data->ang.y;
+		savepoint_data->tp[0]->twp->ang.z = twp->ang.z + savepoint_data->ang.z;
+		savepoint_data->tp[1]->twp->ang.x = twp->ang.x + savepoint_data->ang.x;
+		savepoint_data->tp[1]->twp->ang.y = twp->ang.y + savepoint_data->ang.y;
+		savepoint_data->tp[1]->twp->ang.z = twp->ang.z + savepoint_data->ang.z;
 
-		if (entity)
+		if (twp->mode == 1)
 		{
-			twp->mode = 2;
-			int pID = TASKWK_PLAYERID(entity);
-			savepoint_data->write_timer = 300;
-			savepoint_data->ang_spd.y = ((savepointGetSpeedM(twp, pID) * 10.0f) * 65536.0f * 0.0028f);
-			updateContinueData(&entity->pos, &entity->ang);
-			SetBroken(tp);
-			dsPlay_oneshot(10, 0, 0, 0);
-		}
+			auto entity = CCL_IsHitPlayer(twp);
 
+			if (entity)
+			{
+				twp->mode = 2;
+				int pID = TASKWK_PLAYERID(entity);
+				savepoint_data->write_timer = 300;
+				savepoint_data->ang_spd.y = ((savepointGetSpeedM(twp, pID) * 10.0f) * 65536.0f * 0.0028f);
+				updateContinueData(&entity->pos, &entity->ang);
+				SetBroken(tp);
+				dsPlay_oneshot(10, 0, 0, 0);
+			}
+		}
+		
 		EntryColliList(twp);
 	}
 	else

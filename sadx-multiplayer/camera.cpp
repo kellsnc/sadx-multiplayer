@@ -9,6 +9,12 @@ Trampoline* Camera_t = nullptr;
 NJS_VECTOR MultiCamPos[PLAYER_MAX];
 Angle3 MultiCamAng[PLAYER_MAX];
 
+enum CAMTASKMD
+{
+	CAMTASK_INIT,
+	CAMTASK_RUN
+};
+
 NJS_VECTOR* GetCameraPosition(int pnum)
 {
 	if (IsMultiplayerEnabled() && pnum < player_count && playertp[pnum])
@@ -43,7 +49,7 @@ void ApplyMultiCamera(taskwk* twp, int pnum)
 	twp->pos = MultiCamPos[pnum];
 	twp->ang = MultiCamAng[pnum];
 
-	Camera_Display_((EntityData1*)twp);
+	CameraSetView(twp);
 }
 
 void MultiCamera(int pnum)
@@ -75,6 +81,7 @@ void __cdecl CameraDisplay_r(task* tp)
 	if (IsMultiplayerEnabled())
 	{
 		ApplyMultiCamera(tp->twp, SplitScreen::numScreen);
+		//CameraFilter(tp); <- Works individually but crashes when draws more than once with DC Conv
 	}
 	else
 	{
@@ -96,20 +103,29 @@ void __cdecl CameraPause_r(task* tp)
 
 void __cdecl Camera_r(task* tp)
 {
-	camera_twp = tp->twp;
-	
 	// If multiplayer is enabled, run custom cameras
 	if (IsMultiplayerEnabled())
 	{
-		cameraready = TRUE;
-
-		for (int i = 0; i < player_count; ++i)
+		auto twp = tp->twp;
+		
+		if (twp->mode == CAMTASK_INIT)
 		{
-			MultiCamera(i);
-		}
+			tp->disp = CameraDisplay;
+			camera_twp = twp;
+			twp->mode = CAMTASK_RUN;
 
-		// in exec, apply camera for first player
-		ApplyMultiCamera(tp->twp, 0);
+			cameraready = FALSE;
+		}
+		else
+		{
+			for (int i = 0; i < player_count; ++i)
+			{
+				MultiCamera(i);
+			}
+
+			cameraready = TRUE;
+			tp->disp(tp);
+		}
 	}
 	else
 	{
