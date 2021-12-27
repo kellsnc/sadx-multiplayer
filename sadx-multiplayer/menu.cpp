@@ -6,9 +6,6 @@
 
 bool MultiMenuEnabled = false;
 
-NJS_TEXNAME AVA_TITLE_MULTI_TEXNAME[3]{};
-NJS_TEXLIST AVA_TITLE_MULTI_TEXLIST = { arrayptrandlengthT(AVA_TITLE_MULTI_TEXNAME, int) };
-
 // Menu layout with minigames
 PanelPrmType PanelPrmTitleMenu1[]
 {
@@ -45,16 +42,6 @@ Trampoline* MainMenuExecSub_t = nullptr;
 
 void MainMenuExecSub_r(TitleMenuWk* wkp)
 {
-	DebugFontSize = 20;
-	DisplayDebugStringFormatted(NJM_LOCATION(14, 20), "submode: %i", wkp->SubMode);
-	DisplayDebugStringFormatted(NJM_LOCATION(14, 22), "dialog: %i", GetDialogStat());
-
-	if (wkp->SubMode == 0)
-	{
-		LoadPVM("AVA_TITLE_MULTI", &AVA_TITLE_MULTI_TEXLIST);
-		LoadPVM("AVA_TITLE_MULTI", &AVA_TITLE_MULTI_TEXLIST);
-	}
-
 	if (wkp->SubMode == 1)
 	{
 		int stat = GetDialogStat();
@@ -159,5 +146,6 @@ void __cdecl InitMenu(const HelperFunctions& helperFunctions)
 	DialogPrm[3].SzY = 280.0f;
 
 	ReplacePVM("AVA_TITLE_E", "AVA_TITLE_E_MULTI");
+
 	init_MultiMenu();
 }
