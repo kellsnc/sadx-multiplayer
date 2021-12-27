@@ -1,16 +1,11 @@
 #include "pch.h"
 #include "splitscreen.h"
 
-void __cdecl ObjectBeachWave_act1_disp_j(task* tp)
-{
-	// Draw only if object is coded for current screen id
-	if (tp->twp->btimer == SplitScreen::numScreen)
-	{
-		Obj_EC1Water_Display((ObjectMaster*)tp);
-	}
-}
+TaskFunc(ObjectBeachWaveBG1Display, 0x501130); // unnamed in symbols
+TaskFunc(ObjectBeachWaveBG2Display, 0x4F76C0); // unnamed in symbols
+TaskFunc(ObjectBeachWaveBG3Display, 0x4F7760); // unnamed in symbols
 
-void __cdecl ObjectBeachWave_act1_exec_multi(task* tp)
+void __cdecl ObjectBeachWaveBGExec_multi(task* tp)
 {
 	auto twp = tp->twp;
 
@@ -24,20 +19,80 @@ void __cdecl ObjectBeachWave_act1_exec_multi(task* tp)
 	tp->disp(tp);
 }
 
-void __cdecl ObjectBeachWave_act1_r(task* tp);
-Trampoline ObjectBeachWave_act1_t(0x501970, 0X501977, ObjectBeachWave_act1_r);
-void __cdecl ObjectBeachWave_act1_r(task* tp)
+void __cdecl ObjectBeachWaveBG1Display_multi(task* tp)
 {
-	TARGET_STATIC(ObjectBeachWave_act1)(tp);
-	tp->disp = ObjectBeachWave_act1_disp_j;
+	// Draw only if object is coded for current screen id
+	if (tp->twp->id == SplitScreen::numScreen)
+	{
+		ObjectBeachWaveBG1Display(tp);
+	}
+}
+
+void __cdecl ObjectBeachWaveBG1_r(task* tp);
+Trampoline ObjectBeachWaveBG1_t(0x501970, 0X501977, ObjectBeachWaveBG1_r);
+void __cdecl ObjectBeachWaveBG1_r(task* tp)
+{
+	TARGET_STATIC(ObjectBeachWaveBG1)(tp);
+	tp->disp = ObjectBeachWaveBG1Display_multi;
 
 	// Load one more per player since movement is calculated in main
 	for (int i = 1; i < player_count; ++i)
 	{
-		auto tp2 = CreateElementalTask(LoadObj_UnknownA | LoadObj_Data1, LEV_6, ObjectBeachWave_act1_exec_multi);
-		tp2->twp->btimer = i; // screen ID, only display for that screen
+		auto tp2 = CreateElementalTask(LoadObj_UnknownA | LoadObj_Data1, LEV_6, ObjectBeachWaveBGExec_multi);
+		tp2->twp->id = i; // screen ID, only display for that screen
 		tp2->twp->pos.y = -1.5f;
-		tp2->exec = ObjectBeachWave_act1_exec_multi;
-		tp2->disp = ObjectBeachWave_act1_disp_j;
+		tp2->disp = ObjectBeachWaveBG1Display_multi;
+	}
+}
+
+void __cdecl ObjectBeachWaveBG2Display_Multi(task* tp)
+{
+	// Draw only if object is coded for current screen id
+	if (tp->twp->id == SplitScreen::numScreen)
+	{
+		ObjectBeachWaveBG2Display(tp);
+	}
+}
+
+void __cdecl ObjectBeachWaveBG2_r(task* tp);
+Trampoline ObjectBeachWaveBG2_t(0x4F79C0, 0x4F79C7, ObjectBeachWaveBG2_r);
+void __cdecl ObjectBeachWaveBG2_r(task* tp)
+{
+	TARGET_STATIC(ObjectBeachWaveBG2)(tp);
+	tp->disp = ObjectBeachWaveBG2Display_Multi;
+
+	// Load one more per player since movement is calculated in main
+	for (int i = 1; i < player_count; ++i)
+	{
+		auto tp2 = CreateElementalTask(LoadObj_UnknownA | LoadObj_Data1, LEV_6, ObjectBeachWaveBGExec_multi);
+		tp2->twp->id = i; // screen ID, only display for that screen
+		tp2->twp->pos.y = -1.5f;
+		tp2->disp = ObjectBeachWaveBG2Display_Multi;
+	}
+}
+
+void __cdecl ObjectBeachWaveBG3Display_Multi(task* tp)
+{
+	// Draw only if object is coded for current screen id
+	if (tp->twp->id == SplitScreen::numScreen)
+	{
+		ObjectBeachWaveBG3Display(tp);
+	}
+}
+
+void __cdecl ObjectBeachWaveBG3_r(task* tp);
+Trampoline ObjectBeachWaveBG3_t(0x4F7A00, 0x4F7A07, ObjectBeachWaveBG3_r);
+void __cdecl ObjectBeachWaveBG3_r(task* tp)
+{
+	TARGET_STATIC(ObjectBeachWaveBG3)(tp);
+	tp->disp = ObjectBeachWaveBG3Display_Multi;
+
+	// Load one more per player since movement is calculated in main
+	for (int i = 1; i < player_count; ++i)
+	{
+		auto tp2 = CreateElementalTask(LoadObj_Data1, LEV_6, ObjectBeachWaveBGExec_multi);
+		tp2->twp->id = i; // screen ID, only display for that screen
+		tp2->twp->pos.y = -1.5f;
+		tp2->disp = ObjectBeachWaveBG3Display_Multi;
 	}
 }
