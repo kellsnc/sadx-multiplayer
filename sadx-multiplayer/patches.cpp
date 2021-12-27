@@ -21,6 +21,7 @@ Trampoline* EnemyDist2FromPlayer_t = nullptr;
 Trampoline* EnemyCalcPlayerAngle_t = nullptr;
 Trampoline* savepointCollision_t   = nullptr;
 Trampoline* TikalDisplay_t         = nullptr;
+Trampoline* ObjectSpringB_t = nullptr;
 Trampoline* CheckPlayerRideOnMobileLandObjectP_t = nullptr;
 
 // Patch forward calculation to use multiplayer cameras
@@ -585,6 +586,28 @@ void TikalDisplay_r(task* tp)
 	}
 }
 
+// Patch for this to work properly for 4+ players
+void ObjectSpringB_r(task* tp)
+{
+	auto twp = tp->twp;
+
+	if (twp->mode == 1 && twp->btimer > 10)
+	{
+		auto entity = CCL_IsHitPlayer(twp);
+
+		if (entity)
+		{
+			twp->smode = TASKWK_PLAYERID(entity);
+			twp->scl.z = 20.0f;
+			twp->timer.f = 270.0f;
+			twp->counter.f = 0.1f;
+			twp->mode = 2;
+		}
+	}
+
+	TARGET_DYNAMIC(ObjectSpringB)(tp);
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -592,24 +615,24 @@ void InitPatches()
 	PInitialize_t           = new Trampoline(0x442750, 0x442755, PInitialize_r);
 	//NpcMilesSet_t         = new Trampoline(0x47ED60, 0x47ED65, NpcMilesSet_r);
 	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
-	EnemyCheckDamage_t      = new Trampoline(0x4CE030, 0x4CE036, EnemyCheckDamage_r);
 	ProcessStatusTable_t    = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
 	CheckRangeOutWithR_t    = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
-	EnemyDist2FromPlayer_t  = new Trampoline(0x4CD610, 0x4CD61B, EnemyDist2FromPlayer_r);
-	EnemyCalcPlayerAngle_t  = new Trampoline(0x4CD670, 0x4CD675, EnemyCalcPlayerAngle_r);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);
 
-	// EBuyon score patch:
-	WriteCall((void*)0x7B3273, EBuyon_ScorePatch);
-	WriteData<5>((void*)0x7B326D, 0x90);
+	// Score patches
+	EnemyCheckDamage_t = new Trampoline(0x4CE030, 0x4CE036, EnemyCheckDamage_r);
+	WriteCall((void*)0x7B3273, EBuyon_ScorePatch); // EBuyon: add 100 points to proper player
+	WriteData<5>((void*)0x7B326D, 0x90); // EBuyon: remove original 100 points for player 0
 
 	// Collision checks:
 	WriteJump(CheckCollisionP, CheckCollisionP_r);
 	WriteJump(CheckCollisionCylinderP, CheckCollisionCylinderP_r);
 
-	// EnemySearchPlayer
-	WriteData((char*)0x4CCB3F, (char)PLAYER_MAX);
+	// Enemy player checks
+	EnemyDist2FromPlayer_t = new Trampoline(0x4CD610, 0x4CD61B, EnemyDist2FromPlayer_r);
+	EnemyCalcPlayerAngle_t = new Trampoline(0x4CD670, 0x4CD675, EnemyCalcPlayerAngle_r);
+	WriteData((char*)0x4CCB3F, (char)PLAYER_MAX); // EnemySearchPlayer
 
 	// Patch Skyboxes (display function managing mode)
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast
@@ -630,4 +653,9 @@ void InitPatches()
 	WriteCall((void*)0x48BA5A, IsGamePausedOrNot1stScreen); // Big
 	WriteCall((void*)0x480702, IsGamePausedOrNot1stScreen); // Gamma
 	TikalDisplay_t = new Trampoline(0x7B33A0, 0x7B33A5, TikalDisplay_r);
+
+	// Springs for 4+ players
+	ObjectSpringB_t = new Trampoline(0x7A4E50, 0x7A4E55, ObjectSpringB_r);
+	WriteData((uint8_t*)0x7A4DC4, (uint8_t)PLAYER_MAX); // ObjectSpring
+	WriteData((uint8_t*)0x79F77C, (uint8_t)PLAYER_MAX); // spring_h_exec
 }
