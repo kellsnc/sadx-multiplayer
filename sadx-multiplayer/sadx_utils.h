@@ -208,14 +208,6 @@ DataArray(PDS_PERIPHERAL, perG, 0x3B0E7F0, 8);
 CamFunc(CameraStay, 0x464DF0);
 ObjectFunc(sub_425B30, 0x425B30);
 ObjectFunc(sub_425BB0, 0x425BB0);
-FunctionPointer(char, GetDialogStat, (), 0x432550);
-VoidFunc(PlayMenuBipSound, 0x6FC8A0);
-VoidFunc(PlayMenuEnterSound, 0x505810);
-VoidFunc(PlayMenuBackSound, 0x505830);
-FunctionPointer(void, PlayMenuMusicID, (int id), 0x505990);
-FunctionPointer(void, CmnAdvaModeProcedure, (int id), 0x505B40);
-FunctionPointer(int, GetFadeOutColFromT, (float t), 0x506E10);
-FunctionPointer(int, GetFadeInColFromT, (float t), 0x506E40);
 FunctionPointer(void, ___dsDrawObject, (NJS_OBJECT* obj), 0x408530);
 FunctionPointer(void, njSetZCompare, (Uint8 index), 0x77ED00);
 FunctionPointer(void, njSetZUpdateMode, (DWORD enable), 0x77ED20);
@@ -344,6 +336,42 @@ enum AvaStgEnum : __int32
 	AVASTG_VS_E102B = 0x1F,
 	AVASTG_VS_BOSS = 0x20,
 	AVASTG_MAX = 0x21,
+};
+
+enum DiaTypeEnum : __int32
+{
+	DIA_TYPE_FILESEL = 0x0,
+	DIA_TYPE_FILEDEL = 0x1,
+	DIA_TYPE_MAINMENU = 0x2,
+	DIA_TYPE_MAINMENU_NPUTI = 0x3,
+	DIA_TYPE_TITLEMENU = 0x4,
+	DIA_TYPE_TRIALACTSEL = 0x5,
+	DIA_TYPE_MINIGAMESEL = 0x6,
+	DIA_TYPE_CHARSEL1 = 0x7,
+	DIA_TYPE_CHARSEL2 = 0x8,
+	DIA_TYPE_CHARSEL3 = 0x9,
+	DIA_TYPE_CHARSEL4 = 0xA,
+	DIA_TYPE_OPT_MONOSTE = 0xB,
+	DIA_TYPE_OPT_MSG = 0xC,
+	DIA_TYPE_OPT_VOICE = 0xD,
+	DIA_TYPE_OPT_TEXT = 0xE,
+	DIA_TYPE_TVSETTING1 = 0xF,
+	DIA_TYPE_SNDTEST = 0x10,
+	DIA_TYPE_VMSNOMEM = 0x11,
+	DIA_TYPE_OPT_VIBSEL = 0x12,
+	DIA_TYPE_OPT_SNDOUT = 0x13,
+	DIA_TYPE_FILE_CRC_ERR = 0x14,
+	DIA_TYPE_FORMAT = 0x15,
+	DIA_TYPE_NEW_FILESEL = 0x16,
+	DIA_TYPE_MAINMENU_SUB_UN = 0x17,
+	DIA_TYPE_MAINMENU_SUB = 0x18,
+	DIA_TYPE_MAINMENU_SUB_DL = 0x19,
+	DIA_TYPE_OPTIONMENU_SUB = 0x1A,
+	DIA_TYPE_HOW_TO_PLAY = 0x1B,
+	DIA_TYPE_LB_MENU = 0x1C,
+	DIA_TYPE_MAINMENU_NDOWNLOAD = 0x1D,
+	DIA_TYPE_MAINMENU_EXIT = 0x1E,
+	DIA_TYPE_MAX = 0x1F,
 };
 
 struct AvaStgActT
@@ -523,6 +551,23 @@ DataArray(void*, CreateModeFncPtrs, 0x10D7B4C, 14);
 DataPointer(task*, TitleNewTp, 0x3C5FF00);
 DataPointer(BOOL, Menu_CanSelect, 0x3C5E8E0);
 VoidFunc(MenuLaunchNext, 0x506040);
+
+FunctionPointer(BOOL, IsMiniGameMenuEnabled, (), 0x506460);
+FunctionPointer(BOOL, GetEnableTrialActNumAll, (), 0x5061F0);
+FunctionPointer(BOOL, GetEnableMiniGameNumAll, (), 0x506210);
+FunctionPointer(void, AdvaOpenDialogCsrLet, (DiaTypeEnum dialog_type, char csr, char* csrp), 0x5057D0);
+
+FunctionPointer(char, GetDialogStat, (), 0x432550);
+VoidFunc(PlayMenuBipSound, 0x6FC8A0);
+VoidFunc(PlayMenuEnterSound, 0x505810);
+VoidFunc(PlayMenuBackSound, 0x505830);
+FunctionPointer(void, PlayMenuMusicID, (int id), 0x505990);
+FunctionPointer(void, CmnAdvaModeProcedure, (AdvaModeEnum mode), 0x505B40);
+FunctionPointer(void, CharSelAdvaModeProcedure, (AdvaModeEnum mode), 0x505E60);
+FunctionPointer(int, GetFadeOutColFromT, (float t), 0x506E10);
+FunctionPointer(int, GetFadeInColFromT, (float t), 0x506E40);
+DataArray(int, GblMenuTbl, 0x7EF8E8, 6);
+FunctionPointer(void, OpenDialog, (const DialogPrmType* dp), 0x432DB0);
 
 static const void* const ChgSubModePtr = (void*)0x50B1C0;
 static inline void ChgSubModeToStay_0(ModeSelPrmType* a1, task* a2)
