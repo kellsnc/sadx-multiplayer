@@ -2,8 +2,6 @@
 #include "menu.h"
 #include "menu_multi.h"
 
-#define ReplacePVM(C, D) helperFunctions.ReplaceFile("system\\" C ".pvm", "system\\" D ".pvmx")
-
 bool MultiMenuEnabled = false;
 
 // Menu layout with minigames
@@ -144,9 +142,6 @@ void __cdecl InitMenu(const HelperFunctions& helperFunctions)
 	DialogPrm[3].CsrMax = 6;
 	DialogPrm[3].CsrCancel = 6;
 	DialogPrm[3].SzY = 280.0f;
-
-	ReplacePVM("AVA_TITLE", "AVA_TITLE_MULTI");
-	ReplacePVM("AVA_TITLE_E", "AVA_TITLE_E_MULTI");
 
 	init_MultiMenu();
 }
