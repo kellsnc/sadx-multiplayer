@@ -256,6 +256,7 @@ TaskFunc(CameraDisplay, 0x4370F0);
 TaskFunc(CameraPause, 0x4373D0);
 DataPointer(FCWRK, fcwrk, 0x3B2C958); // free cam worker
 DataPointer(Uint32, free_camera_mode, 0x3B2CBA8);
+FunctionPointer(void, DrawCharacterShadow, (taskwk* twp, shadowwk* swp), 0x49F0B0);
 
 static const void* const CameraSetViewPtr = (void*)0x435600;
 static inline void CameraSetView(taskwk* twp)

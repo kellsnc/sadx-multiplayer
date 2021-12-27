@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "deathzones.h"
 #include "camera.h"
+#include "splitscreen.h"
 
 /*
 
@@ -19,6 +20,7 @@ Trampoline* CheckRangeOutWithR_t   = nullptr;
 Trampoline* EnemyDist2FromPlayer_t = nullptr;
 Trampoline* EnemyCalcPlayerAngle_t = nullptr;
 Trampoline* savepointCollision_t   = nullptr;
+Trampoline* TikalDisplay_t         = nullptr;
 Trampoline* CheckPlayerRideOnMobileLandObjectP_t = nullptr;
 
 // Patch forward calculation to use multiplayer cameras
@@ -565,6 +567,23 @@ bool CheckPlayerRideOnMobileLandObjectP_r(unsigned __int8 pno, task* ttp)
 	}
 }
 
+// Trick the game to draw shadows on other screens
+BOOL IsGamePausedOrNot1stScreen()
+{
+	return IsGamePaused() || SplitScreen::numScreen != 0;
+}
+
+// Add shadow rendering in Tikal's display routine because they forgot it
+void TikalDisplay_r(task* tp)
+{
+	TARGET_DYNAMIC(TikalDisplay)(tp);
+
+	if (IsGamePausedOrNot1stScreen())
+	{
+		DrawCharacterShadow(tp->twp, &((playerwk*)tp->mwp->work.ptr)->shadow);
+	}
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -598,4 +617,16 @@ void InitPatches()
 	WriteData((void**)0x610A7E, (void*)0x6109E0); // Speed Highway
 	WriteData((void**)0x5E1FCE, (void*)0x5E1F30); // Lost World
 	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Ice Cap
+
+	// Character shadows:
+	// Game draws shadow in logic sub but also in display sub *if* game is paused.
+	// To keep compatibility with mods (like SA2 Sonic), I just force the display for the other screens.
+	// Better alternative is to skip display in logic and always draw in display, but I chose max compatibility.
+	WriteCall((void*)0x494B57, IsGamePausedOrNot1stScreen); // Sonic
+	WriteCall((void*)0x461420, IsGamePausedOrNot1stScreen); // Tails
+	WriteCall((void*)0x472674, IsGamePausedOrNot1stScreen); // Knuckles
+	WriteCall((void*)0x4875F9, IsGamePausedOrNot1stScreen); // Amy
+	WriteCall((void*)0x48BA5A, IsGamePausedOrNot1stScreen); // Big
+	WriteCall((void*)0x480702, IsGamePausedOrNot1stScreen); // Gamma
+	TikalDisplay_t = new Trampoline(0x7B33A0, 0x7B33A5, TikalDisplay_r);
 }

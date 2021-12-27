@@ -500,7 +500,7 @@ void InitCamera()
     Camera_t = new Trampoline(0x438090, 0x438097, Camera_r);
     CameraPause_t = new Trampoline(0x4373D0, 0x4373D7, CameraPause_r);
     CameraDisplay_t = new Trampoline(0x4370F0, 0x4370F5, CameraDisplay_r);
-
+    
     WriteJump((void*)0x434870, InitFreeCamera_r);
     WriteJump((void*)0x434880, ResetFreeCamera_r);
 }
