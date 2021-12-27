@@ -82,7 +82,7 @@ void DrawQueueItem_SetViewPort(LATE_RQ_T* data)
 
     if (SplitScreen::ChangeViewPort(viewport))
     {
-        ApplyMultiCamera(camera_twp, viewport);
+        ApplyMultiCamera(viewport);
     }
 }
 

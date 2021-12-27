@@ -132,7 +132,7 @@ void __cdecl SpLoopOnlyDisplay_r()
             if (SplitScreen::IsScreenEnabled(i))
             {
                 SplitScreen::ChangeViewPort(i);
-                ApplyMultiCamera(camera_twp, i);
+                ApplyMultiCamera(i);
                 TARGET_DYNAMIC(SpLoopOnlyDisplay)();
             }
         }
