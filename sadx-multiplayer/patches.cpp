@@ -329,7 +329,7 @@ void __cdecl ProcessStatusTable_r()
 {
 	if (IsMultiplayerEnabled())
 	{
-		for (int i = numStatusEntry - 1; i >= 0; --i)
+		for (int i = 0; i < numStatusEntry; ++i)
 		{
 			auto& item = objStatusEntry[i];
 
@@ -342,7 +342,8 @@ void __cdecl ProcessStatusTable_r()
 			auto objentry = item.pObjEditEntry;
 
 			// If the object id is beyond the object count
-			if (pObjItemTable->ssCount <= objentry->usID & 0xFFF)
+			int count = objentry->usID & 0xFFF;
+			if (count != 0 && pObjItemTable->ssCount <= count)
 			{
 				continue;
 			}
