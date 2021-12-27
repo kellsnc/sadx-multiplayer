@@ -141,10 +141,11 @@ void __cdecl InitMenu(const HelperFunctions& helperFunctions)
 	DialogPrm[2].SzY = 320.0f;
 
 	DialogPrm[3].PnlPrmPtr = PanelPrmTitleMenu2;
-	DialogPrm[3].CsrMax = 7;
-	DialogPrm[3].CsrCancel = 7;
+	DialogPrm[3].CsrMax = 6;
+	DialogPrm[3].CsrCancel = 6;
 	DialogPrm[3].SzY = 280.0f;
 
+	ReplacePVM("AVA_TITLE", "AVA_TITLE_MULTI");
 	ReplacePVM("AVA_TITLE_E", "AVA_TITLE_E_MULTI");
 
 	init_MultiMenu();
