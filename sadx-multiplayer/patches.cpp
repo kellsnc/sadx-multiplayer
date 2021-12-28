@@ -19,7 +19,8 @@ Trampoline* EnemyDist2FromPlayer_t = nullptr;
 Trampoline* EnemyCalcPlayerAngle_t = nullptr;
 Trampoline* savepointCollision_t   = nullptr;
 Trampoline* TikalDisplay_t         = nullptr;
-Trampoline* ObjectSpringB_t = nullptr;
+Trampoline* ObjectSpringB_t        = nullptr;
+Trampoline* FogColorChange_t       = nullptr;
 Trampoline* CheckPlayerRideOnMobileLandObjectP_t = nullptr;
 
 // Patch forward calculation to use multiplayer cameras
@@ -443,14 +444,40 @@ void ObjectSpringB_r(task* tp)
 	TARGET_DYNAMIC(ObjectSpringB)(tp);
 }
 
+// Remove Windy Valley tornade effects
+static void FogColorChange_r(task* tp)
+{
+	if (!IsMultiplayerEnabled())
+	{
+		auto target = TARGET_DYNAMIC(FogColorChange);
+
+		__asm
+		{
+			mov eax, [tp]
+			call target
+		}
+	}
+}
+
+static void __declspec(naked) FogColorChange_w()
+{
+	__asm
+	{
+		push eax
+		call FogColorChange_r
+		pop eax
+		retn
+	}
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
 	GetPlayersInputData_t   = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
 	PInitialize_t           = new Trampoline(0x442750, 0x442755, PInitialize_r);
-	//NpcMilesSet_t         = new Trampoline(0x47ED60, 0x47ED65, NpcMilesSet_r);
 	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
+	FogColorChange_t        = new Trampoline(0x4DD240, 0x4DD246, FogColorChange_w);
 	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);
 
 	// Score patches
