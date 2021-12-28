@@ -3,10 +3,95 @@
 
 extern bool MultiMenuEnabled;
 
-uint8_t cursor[PLAYER_MAX];
+bool isStageSelected = false;
+
+const char levelMax = 11;
+
+uint8_t cursorChar[PLAYER_MAX];
+uint8_t cursorLvl;
 
 NJS_TEXNAME multicharTex[10];
 NJS_TEXLIST multichar_Texlist = { arrayptrandlength(multicharTex) };
+
+NJS_TEXNAME multiLevelTex[11];
+NJS_TEXLIST multiLevel_Texlist = { arrayptrandlength(multiLevelTex) };
+
+enum class multiTask {
+	init,
+	charSelect,
+	levelSelect,
+	finish
+
+};
+
+LevelAndActIDs multiLevelsSonicArray[]
+{
+	{ LevelAndActIDs_EmeraldCoast1 },
+	//{ LevelAndActIDs_EmeraldCoast2 },
+	{ LevelAndActIDs_WindyValley1 },
+	//{ LevelAndActIDs_WindyValley2 },
+	//{ LevelAndActIDs_WindyValley3 },
+	{ LevelAndActIDs_Casinopolis2 },
+	{ LevelAndActIDs_IceCap1 },
+	//{ LevelAndActIDs_IceCap2 },
+	//{ LevelAndActIDs_IceCap3 },
+	{ LevelAndActIDs_TwinklePark1 },
+	//{ LevelAndActIDs_TwinklePark2 },
+	{ LevelAndActIDs_SpeedHighway1 },
+	//{ LevelAndActIDs_SpeedHighway3 },
+	{ LevelAndActIDs_RedMountain1 },
+	//{ LevelAndActIDs_RedMountain2 },
+	{ LevelAndActIDs_SkyDeck1 },
+	//{ LevelAndActIDs_SkyDeck2 },
+	//{ LevelAndActIDs_SkyDeck3 },
+	{ LevelAndActIDs_LostWorld1 },
+	//{ LevelAndActIDs_LostWorld2 },
+	{ LevelAndActIDs_FinalEgg1 },
+	//{ LevelAndActIDs_FinalEgg2 },
+	//{ LevelAndActIDs_FinalEgg3 },
+
+};
+
+NJS_TEXANIM MultiLevel_TexAnim[]{
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 0, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 1, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 2, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 3, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 4, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 5, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 6, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 7, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 8, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 9, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, 10, 0x20 },
+};
+
+NJS_POINT2 cursorLevel_PosArray[]{
+	{ 50, 150 },
+	{ 180, 150 },
+	{ 310, 150 },
+	{ 440, 150 },
+	{ 50, 220 },
+	{ 180, 220 },
+	{ 310, 220 },
+	{ 440, 220 },
+	{ 50, 290 },
+	{ 180, 290 },
+};
+
+NJS_SPRITE MultiLevel_Sprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multiLevel_Texlist, MultiLevel_TexAnim };
+
+NJS_SPRITE MultiLevelCursor_Sprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multiLevel_Texlist, MultiLevel_TexAnim };
+
+
+void DrawMulti_LevelSelect(char i) {
+
+	SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
+	MultiLevel_Sprite.p.x = cursorLevel_PosArray[i].x;
+	MultiLevel_Sprite.p.y = cursorLevel_PosArray[i].y;
+	njDrawSprite2D_DrawNow(&MultiLevel_Sprite, i +1, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	return;
+}
 
 int playerReady[PLAYER_MAX];
 
@@ -54,7 +139,7 @@ NJS_TEXANIM MultiTexAnim[]{
 	{ 64, 64, 0, 0, 0, 0, 255, 255, cursorIcon, 0x20 },
 };
 
-NJS_POINT2 cursorPosArray[8]{
+NJS_POINT2 cursorCharPos_Array[8]{
 	{ 200, 150 },
 	{ 260, 150 },
 	{ 320, 150 },
@@ -63,12 +148,11 @@ NJS_POINT2 cursorPosArray[8]{
 	{ 260, 220 },
 	{ 320, 220 },
 	{ 380, 220 },
-
 };
 
-NJS_SPRITE MultiTexSprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim };
+NJS_SPRITE MultiCharTexSprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim };
 
-NJS_SPRITE MultiCursorSprite[8] = {
+NJS_SPRITE MultiChar_CursorSprite[8] = {
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
@@ -78,7 +162,6 @@ NJS_SPRITE MultiCursorSprite[8] = {
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
 };
-
 
 bool isAlreadySelected(char pnum, char character) {
 
@@ -102,19 +185,19 @@ bool isEveryoneReady() {
 	for (int i = 0; i < PLAYER_MAX; i++) {
 
 		if (playerReady[i] <= disconnected) {
-			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Disconnected.", i);
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Disconnected.", i + 1);
 		}
 
 		if (playerReady[i] == ready) {
 			countRDY++;
 
-			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d READY!", i);
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d READY!", i + 1);
 		}
 
 		if (playerReady[i] == pressedStart) {
 			countNotRDY++;
 
-			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Select character...", i);
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Select character...", i + 1);
 		}
 	}
 
@@ -124,19 +207,18 @@ bool isEveryoneReady() {
 	return false;
 }
 
-
 void StartMulti_Game(TrialActSelWk* wk) {
 
-	if (!isEveryoneReady())
+	if (!isEveryoneReady() || !isStageSelected)
 		return;
 
 	LastLevel = CurrentLevel;
 	LastAct = CurrentAct;
 
-	CurrentCharacter = cursor[0];
+	CurrentCharacter = cursorChar[0];
 
-	CurrentLevel = 1;
-	CurrentAct = 0;
+	CurrentLevel = ConvertLevelActsID_ToLevel(multiLevelsSonicArray[cursorLvl]);
+	CurrentAct = ConvertLevelActsID_ToAct(multiLevelsSonicArray[cursorLvl]);
 
 	SeqTp->awp[1].work.ul[0] = 100;
 
@@ -148,29 +230,103 @@ void StartMulti_Game(TrialActSelWk* wk) {
 
 	wk->Stat = ADVA_STAT_FADEOUT;
 	wk->T = 0.0f;
+	njReleaseTexture(&multichar_Texlist);
 }
 
 void DrawCharacterPortrait(char i) {
 
 	SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
-	MultiTexSprite.p.x = cursorPosArray[i].x;
-	MultiTexSprite.p.y = cursorPosArray[i].y;
-	njDrawSprite2D_DrawNow(&MultiTexSprite, i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	MultiCharTexSprite.p.x = cursorCharPos_Array[i].x;
+	MultiCharTexSprite.p.y = cursorCharPos_Array[i].y;
+	njDrawSprite2D_DrawNow(&MultiCharTexSprite, i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 	return;
 }
 
-
-void DrawCursor(char pnum) {
+void DrawChar_Cursor(char pnum) {
 
 	if (playerReady[pnum] < pressedStart || pnum > PLAYER_MAX)
 		return;
 
 	SetMaterialAndSpriteColor_Float(1, CursorColor[pnum].x, CursorColor[pnum].y, CursorColor[pnum].z);
-	MultiCursorSprite[pnum].p.x = cursorPosArray[cursor[pnum]].x;
-	MultiCursorSprite[pnum].p.y = cursorPosArray[cursor[pnum]].y;
+	MultiChar_CursorSprite[pnum].p.x = cursorCharPos_Array[cursorChar[pnum]].x;
+	MultiChar_CursorSprite[pnum].p.y = cursorCharPos_Array[cursorChar[pnum]].y;
 
-	njDrawSprite2D_DrawNow(&MultiCursorSprite[pnum], cursorIcon + 1, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&MultiChar_CursorSprite[pnum], cursorIcon + 1, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 	ClampGlobalColorThing_Thing();
+}
+
+void DrawLevel_Cursor() {
+
+	SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
+	MultiLevelCursor_Sprite.p.x = cursorLevel_PosArray[cursorLvl].x;
+	MultiLevelCursor_Sprite.p.y = cursorLevel_PosArray[cursorLvl].y;
+
+	njDrawSprite2D_DrawNow(&MultiLevelCursor_Sprite, 0, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	ClampGlobalColorThing_Thing();
+}
+
+void MultiMenu_InputLevel()
+{
+
+	if ((PressedButtons[0] & Buttons_Up))
+	{
+		cursorLvl -= 4;
+		PlayMenuBipSound();
+	}
+
+	if ((PressedButtons[0] & Buttons_Down))
+	{
+		cursorLvl += 4;
+		PlayMenuBipSound();
+	}
+
+	if ((PressedButtons[0] & Buttons_Left))
+	{
+		cursorLvl--;
+		PlayMenuBipSound();
+	}
+
+	if ((PressedButtons[0] & Buttons_Right))
+	{
+		cursorLvl++;
+		PlayMenuBipSound();
+	}
+
+	if (cursorLvl < 0)
+		cursorLvl = levelMax;
+
+	if (cursorLvl > levelMax)
+		cursorLvl = 0;
+}
+
+
+void MultiMenuChild_TaskDisplay(ObjectMaster* obj) {
+
+	if (!obj)
+		return;
+
+	EntityData1* data = obj->Data1;
+
+	switch (multiTask(data->Action))
+	{
+	case multiTask::charSelect:
+		for (int i = 0; i < 8; i++) {
+			DrawChar_Cursor(i);
+			DrawCharacterPortrait(i);
+		}
+
+		break;
+	case multiTask::levelSelect:
+
+		DrawLevel_Cursor();
+
+		for (int i = 0; i < LengthOfArray(multiLevelsSonicArray); i++) {
+
+			DrawMulti_LevelSelect(i);
+		}
+
+		break;
+	}
 }
 
 void __cdecl MultiMenuExec_Display(task* tp)
@@ -181,6 +337,8 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		return;
 	}
 
+	ObjectMaster* parent = (ObjectMaster*)tp;
+
 	if (!MissedFrames && TrialActStelTp)
 	{
 		auto wk = (TrialActSelWk*)tp->awp;
@@ -190,11 +348,8 @@ void __cdecl MultiMenuExec_Display(task* tp)
 			gHelperFunctions->PushScaleUI(uiscale::Align_Center, false, 1.0f, 1.0f);
 			SetDefaultAlphaBlend();
 
-			for (int i = 0; i < 8; i++) {
-				DrawCursor(i);
-				DrawCharacterPortrait(i);
-			}
 
+			MultiMenuChild_TaskDisplay(parent->Child);
 
 			DrawSADXText("MULTIPLAYER - BATTLE", 0, 24, 120, 40);
 			ClampGlobalColorThing_Thing();
@@ -216,26 +371,26 @@ bool MultiMenu_CheckMoveInput(int button, char pNum)
 		switch (button)
 		{
 		case Buttons_Up:
-			cursor[pNum] -= 4;
+			cursorChar[pNum] -= 4;
 			break;
 		case Buttons_Down:
-			cursor[pNum] += 4;
+			cursorChar[pNum] += 4;
 			break;
 		case Buttons_Left:
-			cursor[pNum]--;
+			cursorChar[pNum]--;
 			break;
 		case Buttons_Right:
-			cursor[pNum]++;
+			cursorChar[pNum]++;
 			break;
 		default:
 			return false;
 		}
 
-		if (cursor[pNum] < sonicIcon)
-			cursor[pNum] = bigIcon;
+		if (cursorChar[pNum] < sonicIcon)
+			cursorChar[pNum] = bigIcon;
 
-		if (cursor[pNum] > msIcon)
-			cursor[pNum] = sonicIcon;
+		if (cursorChar[pNum] > msIcon)
+			cursorChar[pNum] = sonicIcon;
 
 		PlayMenuBipSound();
 
@@ -246,6 +401,15 @@ bool MultiMenu_CheckMoveInput(int button, char pNum)
 
 void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 {
+
+
+	if (tp->ctp)
+	{
+		if (tp->ctp->twp->mode > (char)multiTask::charSelect) {
+			MultiMenu_InputLevel();
+			return;
+		}
+	}
 
 	for (int i = 0; i < PLAYER_MAX; i++) {
 
@@ -259,10 +423,9 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 
 			if (playerReady[i] >= ready)
 			{
-				SetCurrentCharacter(i, cursor[i]);
+				SetCurrentCharacter(i, cursorChar[i]);
 				continue;
 			}
-
 		}
 
 		if (playerReady[i] <= disconnected)
@@ -307,6 +470,56 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 	return;
 }
 
+void MultiMenuChild_TaskManager(ObjectMaster* obj) {
+	EntityData1* data = obj->Data1;
+
+	switch (multiTask(data->Action))
+	{
+	case multiTask::init:
+		memset(playerReady, 0, sizeof(playerReady));
+		ResetCharactersArray();
+		player_count = 0;
+		MusicList[MusicIDs_Trial].Name = "btl_sel";
+		PlayMenuMusicID(4);
+		PlayVoice(40);
+		LoadPVM("multichar", &multichar_Texlist);
+		LoadPVM("multi_Levels", &multiLevel_Texlist);
+		playerReady[0] = pressedStart;
+		SetDebugFontSize(13.0f * (unsigned short)VerticalResolution / 480.0f);
+		SetDebugFontColor(0x8e8e8e);
+		data->Action++;
+		break;
+	case multiTask::charSelect:
+		if (isEveryoneReady())
+		{
+			PlayVoice(48);
+
+			if (++data->InvulnerableTime == 20) {
+
+				data->Action++;
+				data->InvulnerableTime = 0;
+			}
+		}
+		break;
+	case multiTask::levelSelect:
+
+		if (MenuSelectButtonsPressed_r(0))
+		{
+			isStageSelected = true;
+			PlayMenuEnterSound();			
+			data->Action++;
+		}
+
+		break;
+	case multiTask::finish:
+		isStageSelected = false;
+		njReleaseTexture_(&multiLevel_Texlist);
+		CheckThingButThenDeleteObject(obj);
+		break;
+	}
+}
+
+
 void __cdecl MultiMenuExec_Main(task* tp)
 {
 	if (MultiMenuEnabled == false)
@@ -320,17 +533,8 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 	if (SeqTp->awp->work.ul[1] == ADVA_MODE_TRIALACT_SEL && wk->Stat == ADVA_STAT_REQWAIT)
 	{
-		memset(playerReady, 0, sizeof(playerReady));
-		ResetCharactersArray();
-		player_count = 0;
-		MusicList[MusicIDs_Trial].Name = "btl_sel";
-		PlayMenuMusicID(4);
-		PlayVoice(40);
-		LoadPVM("multichar", &multichar_Texlist);
-		playerReady[0] = pressedStart;
-		SetDebugFontSize(13.0f * (unsigned short)VerticalResolution / 480.0f);
-		SetDebugFontColor(0x8e8e8e);
 
+		LoadChildObject(LoadObj_Data1, MultiMenuChild_TaskManager, (ObjectMaster*)tp);
 		wk->Stat = ADVA_STAT_FADEIN;
 		wk->T = 0.0f;
 		wk->SelStg = -1;
@@ -372,8 +576,10 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			wk->Stat = ADVA_STAT_REQWAIT;
 			SeqTp->awp[1].work.ub[15] = 1;
 			njReleaseTexture(&multichar_Texlist);
+			njReleaseTexture(&multiLevel_Texlist);
 			MenuLaunchNext();
 			MultiMenuEnabled = false;
+			isStageSelected = false;
 
 			if (wk->SelStg != -1)
 			{
@@ -386,6 +592,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		return;
 	}
 
+	RunObjectChildren((ObjectMaster*)tp);
 	tp->disp(tp);
 }
 

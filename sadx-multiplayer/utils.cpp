@@ -19,3 +19,13 @@ int MenuBackButtonsPressed_r(int pnum)
 {
 	return PressedButtons[pnum] & (Buttons_X | Buttons_B);
 }
+
+short ConvertLevelActsID_ToLevel(short level) {
+
+	return level >> 8;
+}
+
+short ConvertLevelActsID_ToAct(short act) {
+
+	return act & 0xf;
+}
