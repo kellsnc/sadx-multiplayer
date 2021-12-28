@@ -6,6 +6,7 @@
 #include "patches.h"
 #include "deathzones.h"
 #include "set.h"
+#include "levels.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -22,6 +23,7 @@ extern "C"
 		InitMenu(helperFunctions);
 		MultiHudInit();
 		InitSET();
+		InitLevels();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()

@@ -97,6 +97,7 @@
     <ClInclude Include="deathzones.h" />
     <ClInclude Include="drawqueue.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="levels.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="menu_multi.h" />
@@ -114,6 +115,7 @@
     <ClCompile Include="deathzones.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
+    <ClCompile Include="levels.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="menu_multi.cpp" />

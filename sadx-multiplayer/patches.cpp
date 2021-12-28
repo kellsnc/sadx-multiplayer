@@ -20,7 +20,6 @@ Trampoline* EnemyCalcPlayerAngle_t = nullptr;
 Trampoline* savepointCollision_t   = nullptr;
 Trampoline* TikalDisplay_t         = nullptr;
 Trampoline* ObjectSpringB_t        = nullptr;
-Trampoline* FogColorChange_t       = nullptr;
 Trampoline* CheckPlayerRideOnMobileLandObjectP_t = nullptr;
 
 // Patch forward calculation to use multiplayer cameras
@@ -444,32 +443,6 @@ void ObjectSpringB_r(task* tp)
 	TARGET_DYNAMIC(ObjectSpringB)(tp);
 }
 
-// Remove Windy Valley tornade effects
-static void FogColorChange_r(task* tp)
-{
-	if (!IsMultiplayerEnabled())
-	{
-		auto target = TARGET_DYNAMIC(FogColorChange);
-
-		__asm
-		{
-			mov eax, [tp]
-			call target
-		}
-	}
-}
-
-static void __declspec(naked) FogColorChange_w()
-{
-	__asm
-	{
-		push eax
-		call FogColorChange_r
-		pop eax
-		retn
-	}
-}
-
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -477,7 +450,6 @@ void InitPatches()
 	PInitialize_t           = new Trampoline(0x442750, 0x442755, PInitialize_r);
 	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
-	FogColorChange_t        = new Trampoline(0x4DD240, 0x4DD246, FogColorChange_w);
 	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);
 
 	// Score patches
@@ -493,14 +465,6 @@ void InitPatches()
 	EnemyDist2FromPlayer_t = new Trampoline(0x4CD610, 0x4CD61B, EnemyDist2FromPlayer_r);
 	EnemyCalcPlayerAngle_t = new Trampoline(0x4CD670, 0x4CD675, EnemyCalcPlayerAngle_r);
 	WriteData((char*)0x4CCB3F, (char)PLAYER_MAX); // EnemySearchPlayer
-
-	// Patch Skyboxes (display function managing mode)
-	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast
-	WriteData((void**)0x4DDBFE, (void*)0x4DDB60); // Windy Valley
-	WriteData((void**)0x61D57E, (void*)0x61D4E0); // Twinkle Park
-	WriteData((void**)0x610A7E, (void*)0x6109E0); // Speed Highway
-	WriteData((void**)0x5E1FCE, (void*)0x5E1F30); // Lost World
-	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Ice Cap
 
 	// Character shadows:
 	// Game draws shadow in logic sub but also in display sub *if* game is paused.

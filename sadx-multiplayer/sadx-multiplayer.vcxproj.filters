@@ -46,6 +46,9 @@
     <ClCompile Include="set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="levels.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -94,6 +97,9 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="set.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="levels.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
