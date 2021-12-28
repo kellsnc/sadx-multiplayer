@@ -8,6 +8,27 @@ Level-related adjustements for multiplayer
 */
 
 Trampoline* FogColorChange_t = nullptr;
+Trampoline* SetPlayerInitialPosition_t = nullptr;
+
+// Put players side by side
+void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
+{
+	TARGET_DYNAMIC(SetPlayerInitialPosition)(twp);
+
+	if (IsMultiplayerEnabled())
+	{
+		static const int dists[]
+		{
+			-5.0f,
+			5.0f,
+			-10.0f,
+			10.0f
+		};
+
+		twp->pos.x += njCos(twp->ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
+		twp->pos.z += njSin(twp->ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
+	}
+}
 
 static void FogColorChange_r(task* tp)
 {
@@ -38,6 +59,7 @@ void InitLevels()
 {
 	// Windy Valley tornade effects
 	FogColorChange_t = new Trampoline(0x4DD240, 0x4DD246, FogColorChange_w);
+	SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
 
 	// Patch Skyboxes (display function managing mode)
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast

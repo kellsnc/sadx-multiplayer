@@ -47,6 +47,7 @@ void LoadCharObj(int pnum, int character)
     TASKWK_PLAYERID(tp->twp) = pnum;
     playertwp[pnum] = tp->twp;
     playermwp[pnum] = (motionwk2*)tp->mwp;
+    SetPlayerInitialPosition(tp->twp);
 }
 
 void ResetEnemyScoreM()
