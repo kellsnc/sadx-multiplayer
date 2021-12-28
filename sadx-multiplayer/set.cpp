@@ -4,6 +4,7 @@
 
 Trampoline* ProcessStatusTable_t = nullptr;
 Trampoline* CheckRangeOutWithR_t = nullptr;
+Trampoline* LoadSetFile_t        = nullptr;
 
 void CreateSetTask(OBJ_CONDITION* item, _OBJ_EDITENTRY* objentry, _OBJ_ITEMENTRY* objinfo, float distance)
 {
@@ -169,8 +170,55 @@ BOOL __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
 	}
 }
 
+// Load Multiplayer version of setfiles:
+
+void __cdecl LoadSetFile_o(unsigned int u32SetType, const char* pcFileName)
+{
+	const auto LoadSetFile_ptr = LoadSetFile_t->Target();
+
+	__asm
+	{
+		push[pcFileName]
+		mov ecx, u32SetType
+		call LoadSetFile_ptr
+		add esp, 4
+	}
+}
+
+void __cdecl LoadSetFile_r(unsigned int u32SetType, const char* pcFileName)
+{
+	if (IsMultiplayerEnabled())
+	{
+		std::string temp = (std::string)"M" + (std::string)pcFileName;
+
+		LoadSetFile_o(u32SetType, temp.c_str());
+
+		// If loaded properly exit, otherwise run original behaviour
+		if (SetFiles[u32SetType])
+		{
+			return;
+		}
+	}
+	
+	LoadSetFile_o(u32SetType, pcFileName);
+}
+
+static void __declspec(naked) LoadSetFile_j()
+{
+	__asm
+	{
+		push[esp + 04h]
+		push ecx
+		call LoadSetFile_r
+		pop ecx
+		add esp, 4
+		retn
+	}
+}
+
 void InitSET()
 {
 	ProcessStatusTable_t = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
 	CheckRangeOutWithR_t = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
+	LoadSetFile_t        = new Trampoline(0x422930, 0x422938, LoadSetFile_j);
 }
