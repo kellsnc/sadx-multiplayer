@@ -202,32 +202,35 @@ int GetCurrentCharacter(int pnum)
     return characters[pnum];
 }
 
-void Load_MultipleCharacters()
+void LoadCharacter_r()
 {
-    player_count = 0;
-
-    LoadCharacter();
-    player_count++; //count player one
-
-    for (int i = 1; i < PLAYER_MAX; i++)
-    {
-        if (characters[i] > -1)
-        {
-            LoadCharObj(i, characters[i]);
-            player_count++;
-        }
-    }
-
-    if (TailsAI_ptr) //temporary so we can make test 
-        player_count++;
-
 #ifdef _DEBUG
     player_count = 2;
+    characters[1] = Characters_Tails;
 #endif
+
+    if (IsMultiplayerEnabled())
+    {
+        TailsAI_ptr = (ObjectMaster*)1; // don't load tails AI; horrible patch for compatibility with CharSel
+        LoadCharacter();
+        TailsAI_ptr = nullptr;
+
+        for (int i = 1; i < player_count; i++)
+        {
+            if (characters[i] > -1)
+            {
+                LoadCharObj(i, characters[i]);
+            }
+        }
+    }
+    else
+    {
+        LoadCharacter();
+    }
 }
 
 void __cdecl InitMultiplayer()
 {
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
-    WriteCall((void*)0x415A25, Load_MultipleCharacters);
+    WriteCall((void*)0x415A25, LoadCharacter_r);
 }
