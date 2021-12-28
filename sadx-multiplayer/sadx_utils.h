@@ -249,6 +249,8 @@ TaskFunc(CameraPause, 0x4373D0);
 DataPointer(FCWRK, fcwrk, 0x3B2C958); // free cam worker
 DataPointer(Uint32, free_camera_mode, 0x3B2CBA8);
 FunctionPointer(void, DrawCharacterShadow, (taskwk* twp, shadowwk* swp), 0x49F0B0);
+TaskFunc(execTPCoaster, 0x61D6E0);
+FunctionPointer(void, GetOutOfCartP, (int pno, float x, float y, float z), 0x441820);
 
 static const void* const CameraSetViewPtr = (void*)0x435600;
 static inline void CameraSetView(taskwk* twp)

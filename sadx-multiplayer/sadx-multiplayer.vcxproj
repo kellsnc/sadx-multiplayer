@@ -121,6 +121,7 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="multihud.cpp" />
     <ClCompile Include="objects\ObjectBeachWave.cpp" />
+    <ClCompile Include="ObjectTPCoaster.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
