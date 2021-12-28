@@ -105,6 +105,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="sadx_utils.h" />
+    <ClInclude Include="set.h" />
     <ClInclude Include="splitscreen.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
@@ -124,6 +125,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="multiplayer.cpp" />
+    <ClCompile Include="set.cpp" />
     <ClCompile Include="splitscreen.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>

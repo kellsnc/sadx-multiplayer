@@ -15,8 +15,6 @@ Trampoline* PInitialize_t          = nullptr;
 Trampoline* NpcMilesSet_t          = nullptr;
 Trampoline* Ring_t                 = nullptr;
 Trampoline* EnemyCheckDamage_t     = nullptr;
-Trampoline* ProcessStatusTable_t   = nullptr;
-Trampoline* CheckRangeOutWithR_t   = nullptr;
 Trampoline* EnemyDist2FromPlayer_t = nullptr;
 Trampoline* EnemyCalcPlayerAngle_t = nullptr;
 Trampoline* savepointCollision_t   = nullptr;
@@ -283,169 +281,6 @@ int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, float r, float h)
 	return 0;
 }
 
-void CreateSetTask(OBJ_CONDITION* item, _OBJ_EDITENTRY* objentry, _OBJ_ITEMENTRY* objinfo, float distance)
-{
-	if (item->ssCondition & 1)
-	{
-		return;
-	}
-
-	auto tp = CreateElementalTask(objinfo->ucInitMode, objinfo->ucLevel, objinfo->fnExec);
-	item->ssCondition |= 1; // we're loaded!
-	++item->scCount;
-	tp->ocp = item;
-	auto twp = tp->twp;
-
-	if (twp)
-	{
-		if (item->ssCondition & 2)
-		{
-			auto objsocd = item->unionStatus.pObjSleepCondition;
-			twp->pos = objsocd->pos;
-			twp->ang = objsocd->ang;
-			twp->scl = objsocd->scl;
-			FreeMemory(objsocd);
-			item->ssCondition &= ~2u;
-		}
-		else
-		{
-			twp->pos.x = objentry->xpos;
-			twp->pos.y = objentry->ypos;
-			twp->pos.z = objentry->zpos;
-			twp->ang.x = objentry->rotx;
-			twp->ang.y = objentry->roty;
-			twp->ang.z = objentry->rotz;
-			twp->scl.x = objentry->xscl;
-			twp->scl.y = objentry->yscl;
-			twp->scl.z = objentry->zscl;
-		}
-	}
-
-	item->unionStatus.fRangeOut = distance; // tell CheckRangeOut when to unload object
-	item->pTask = tp;
-}
-
-// Load objects around every players
-void __cdecl ProcessStatusTable_r()
-{
-	if (IsMultiplayerEnabled())
-	{
-		for (int i = 0; i < numStatusEntry; ++i)
-		{
-			auto& item = objStatusEntry[i];
-
-			// Object already loaded
-			if (item.ssCondition >= 0 || (item.ssCondition & 1))
-			{
-				continue;
-			}
-
-			auto objentry = item.pObjEditEntry;
-
-			// If the object id is beyond the object count
-			int count = objentry->usID & 0xFFF;
-			if (count != 0 && pObjItemTable->ssCount <= count)
-			{
-				continue;
-			}
-
-			int cliplevel = (objentry->usID >> 12) & 7;
-
-			if (cliplevel)
-			{
-				if (cliplevel == 1)
-				{
-					if (ClipLevel >= 1)
-					{
-						continue;
-					}
-				}
-				else if (ClipLevel >= 2)
-				{
-					continue;
-				}
-			}
-
-			auto& objinfo = pObjItemTable->pObjItemEntry[objentry->usID & 0xFFF];
-
-			if (objinfo.ssAttribute & 2)
-			{
-				CreateSetTask(&item, objentry, &objinfo, 0.0f);
-			}
-			else
-			{
-				float dist = (objinfo.ssAttribute & 1) ? objinfo.fRange : 160000.0f;
-
-				if (boolOneShot == FALSE && objinfo.ssAttribute & 4)
-				{
-					CreateSetTask(&item, objentry, &objinfo, dist);
-					continue;
-				}
-
-				for (int i = 0; i < PLAYER_MAX; ++i)
-				{
-					if (!playertwp[i]) continue;
-
-					NJS_POINT3 pos = camera_twp ? *GetCameraPosition(i) : playertwp[i]->pos;
-					njSubVector(&pos, (NJS_POINT3*)&objentry->xpos);
-
-					if (njScalor2(&pos) < dist)
-					{
-						CreateSetTask(&item, objentry, &objinfo, dist);
-						break;
-					}
-				}
-			}
-		}
-
-		boolOneShot = TRUE;
-	}
-	else
-	{
-		TARGET_DYNAMIC(ProcessStatusTable)();
-	}
-}
-
-// Check object deletion for every player
-BOOL __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
-{
-	if (IsMultiplayerEnabled())
-	{
-		// Do not delete if the no delete flag is set
-		if (tp->ocp && (tp->ocp->ssCondition & 8))
-		{
-			return FALSE;
-		}
-
-		// Do not delete if range is 0
-		if (fRange == 0.0f)
-		{
-			return FALSE;
-		}
-
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			if (playertp[i])
-			{
-				NJS_POINT3 pos = *GetCameraPosition(i);
-				njSubVector(&pos, &tp->twp->pos);
-
-				if (njScalor2(&pos) < fRange)
-				{
-					return FALSE;
-				}
-			}
-		}
-
-		tp->exec = FreeTask;
-		return TRUE;
-	}
-	else
-	{
-		return TARGET_DYNAMIC(CheckRangeOutWithR)(tp, fRange);
-	}
-}
-
 // Despite taking player id, it always gets 0 so let's check closest player
 float __cdecl EnemyDist2FromPlayer_r(taskwk* twp, int num)
 {
@@ -615,8 +450,6 @@ void InitPatches()
 	PInitialize_t           = new Trampoline(0x442750, 0x442755, PInitialize_r);
 	//NpcMilesSet_t         = new Trampoline(0x47ED60, 0x47ED65, NpcMilesSet_r);
 	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
-	ProcessStatusTable_t    = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
-	CheckRangeOutWithR_t    = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);
 

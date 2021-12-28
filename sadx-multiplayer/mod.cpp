@@ -5,6 +5,7 @@
 #include "multihud.h"
 #include "patches.h"
 #include "deathzones.h"
+#include "set.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -20,6 +21,7 @@ extern "C"
 		InitMultiplayer();
 		InitMenu(helperFunctions);
 		MultiHudInit();
+		InitSET();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()

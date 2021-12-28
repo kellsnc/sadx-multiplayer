@@ -98,7 +98,7 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 		case 6: // Exit
 			IsExiting = TRUE;
 			break;
-		case 7: // Idk
+		case 7: // Back to title screen
 			CmnAdvaModeProcedure(wkp->PrevMode);
 			SaveFile.LastCharacter = 0;
 			j_LoadSave();
