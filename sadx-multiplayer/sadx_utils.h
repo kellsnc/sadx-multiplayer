@@ -251,6 +251,11 @@ DataPointer(Uint32, free_camera_mode, 0x3B2CBA8);
 FunctionPointer(void, DrawCharacterShadow, (taskwk* twp, shadowwk* swp), 0x49F0B0);
 TaskFunc(execTPCoaster, 0x61D6E0);
 FunctionPointer(void, GetOutOfCartP, (int pno, float x, float y, float z), 0x441820);
+VoidFunc(MakeLandCollLandEntryALL, 0x43B580);
+DataPointer(float, mleriRangeRad, 0x915458); // minimum radius for ground collisions lookup
+DataPointer(Uint16, numLandCollList, 0x3B32724);
+DataArray(_OBJ_LANDCOLL, LandCollList, 0x3B32728, 128);
+DataPointer(int, ri_landcoll_nmb, 0x3B36D38);
 
 static const void* const CameraSetViewPtr = (void*)0x435600;
 static inline void CameraSetView(taskwk* twp)

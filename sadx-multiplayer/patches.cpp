@@ -21,6 +21,7 @@ Trampoline* savepointCollision_t   = nullptr;
 Trampoline* TikalDisplay_t         = nullptr;
 Trampoline* ObjectSpringB_t        = nullptr;
 Trampoline* CheckPlayerRideOnMobileLandObjectP_t = nullptr;
+Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 
 // Patch forward calculation to use multiplayer cameras
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -443,6 +444,18 @@ void ObjectSpringB_r(task* tp)
 	TARGET_DYNAMIC(ObjectSpringB)(tp);
 }
 
+void __cdecl MakeLandCollLandEntryRangeIn_r()
+{
+	if (IsMultiplayerEnabled() && player_count > 2)
+	{
+		MakeLandCollLandEntryALL(); // todo: rewrite MakeLandCollLandEntryRangeIn
+	}
+	else
+	{
+		TARGET_DYNAMIC(MakeLandCollLandEntryRangeIn)();
+	}
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -451,6 +464,7 @@ void InitPatches()
 	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);
+	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
 
 	// Score patches
 	EnemyCheckDamage_t = new Trampoline(0x4CE030, 0x4CE036, EnemyCheckDamage_r);
