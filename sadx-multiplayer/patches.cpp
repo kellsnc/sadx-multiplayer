@@ -3,6 +3,8 @@
 #include "camera.h"
 #include "splitscreen.h"
 
+#include "objects/ObjectItemBox.h"
+
 /*
 
 General patches to allow compatibility for 4+ players
@@ -499,4 +501,6 @@ void InitPatches()
 
 	// Windy Valley exec for hane, bigfloot, saku (static "exec" name in symbols)
 	WriteData<2>((void*)0x4E1399, 0x90ui8);
+
+	InitItemBoxPatches();
 }

@@ -188,6 +188,12 @@ struct FCWRK
 	NJS_POINT3 _vec;
 };
 
+struct ITEM_INFOMATION
+{
+	unsigned int texture_id;
+	void(__cdecl* effect_func)(taskwk*);
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -257,6 +263,22 @@ DataPointer(Uint16, numLandCollList, 0x3B32724);
 DataArray(_OBJ_LANDCOLL, LandCollList, 0x3B32728, 128);
 DataPointer(int, ri_landcoll_nmb, 0x3B36D38);
 FunctionPointer(void, CalcAdvanceAsPossible, (NJS_POINT3* src, NJS_POINT3* dst, float dist, NJS_POINT3* ans), 0x4BA860);
+DataArray(ITEM_INFOMATION, item_info, 0x9BF190, 9);
+DataPointer(int, RandomRingNum, 0x3C5AB30);
+FunctionPointer(void, GetInvincibleBodyP, (int character), 0x441F10);
+FunctionPointer(void, GetThunderBarrierP, (char character), 0x441E30);
+FunctionPointer(void, GetBarrierP, (char character), 0x441EA0);
+DataPointer(NJS_POINT3, explosion_pos, 0x3C5AB24);
+DataPointer(Float, explosion_r, 0x3C5A9D0);
+FunctionPointer(void, ef_speed, (taskwk* twp), 0x4D6BF0);
+FunctionPointer(void, ef_muteki, (taskwk* twp), 0x4D6D80);
+FunctionPointer(void, ef_5ring, (taskwk* twp), 0x4D6C50);
+FunctionPointer(void, ef_10ring, (taskwk* twp), 0x4D6C90);
+FunctionPointer(void, ef_random_ring, (taskwk* twp), 0x4D6CD0);
+FunctionPointer(void, ef_baria, (taskwk* twp), 0x4D6DC0);
+FunctionPointer(void, ef_1up, (taskwk* twp), 0x4D6D40);
+FunctionPointer(void, ef_explosion, (taskwk* twp), 0x4D6E00);
+FunctionPointer(void, ef_th_baria, (taskwk* twp), 0x4D6E40);
 
 static const void* const CameraSetViewPtr = (void*)0x435600;
 static inline void CameraSetView(taskwk* twp)

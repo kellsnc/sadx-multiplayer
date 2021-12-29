@@ -52,6 +52,9 @@
     <ClCompile Include="ObjectTPCoaster.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectItemBox.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -105,6 +108,9 @@
     <ClInclude Include="levels.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
+    <ClInclude Include="objects\ObjectItemBox.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -121,6 +127,9 @@
     </Filter>
     <Filter Include="Source Files\objects">
       <UniqueIdentifier>{f7f1aa64-91c4-404c-b268-0b44e95f29b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects">
+      <UniqueIdentifier>{25a58ace-4839-4bc1-ade4-5d673fc39e17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
