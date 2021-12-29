@@ -256,6 +256,7 @@ DataPointer(float, mleriRangeRad, 0x915458); // minimum radius for ground collis
 DataPointer(Uint16, numLandCollList, 0x3B32724);
 DataArray(_OBJ_LANDCOLL, LandCollList, 0x3B32728, 128);
 DataPointer(int, ri_landcoll_nmb, 0x3B36D38);
+FunctionPointer(void, CalcAdvanceAsPossible, (NJS_POINT3* src, NJS_POINT3* dst, float dist, NJS_POINT3* ans), 0x4BA860);
 
 static const void* const CameraSetViewPtr = (void*)0x435600;
 static inline void CameraSetView(taskwk* twp)
