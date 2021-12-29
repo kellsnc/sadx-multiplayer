@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "sadx_utils.h"
 
 Trampoline* EntryItemBoxPanel_t = nullptr;
 Trampoline* TBarrier_t = nullptr;
@@ -132,11 +133,33 @@ void __cdecl TBarrier_r(task* tp)
 {
 	if (IsMultiplayerEnabled())
 	{
-		// todo: rewrite
-		auto backup = playerpwp[0];
-		playerpwp[0] = playerpwp[tp->twp->counter.b[0]];
-		TARGET_DYNAMIC(TBarrier)(tp);
-		playerpwp[0] = backup;
+		auto twp = tp->twp;
+		auto pltwp = playertwp[twp->counter.b[0]];
+		auto plpwp = playerpwp[twp->counter.b[0]];
+
+		if (pltwp && plpwp && (plpwp->item & Powerups_MagneticBarrier) != 0)
+		{
+			EffBarrierPosSet(twp, pltwp);
+			
+			if ((double)rand() * 0.000030517578 > 0.70)
+			{
+				auto ctp = CreateChildTask(LoadObj_Data1, ThunderB, tp);
+				auto ctwp = ctp->twp;
+
+				if (ctwp)
+				{
+					ctwp->ang.x = (rand() * 0.000030517578 * 65536.0);
+					ctwp->ang.y = (rand() * 0.000030517578 * 65536.0);
+					ctwp->value.f = 1.0f;
+					ctp->disp = TBarrierDisp;
+				}
+			}
+			LoopTaskC(tp);
+		}
+		else
+		{
+			FreeTask(tp);
+		}
 	}
 	else
 	{

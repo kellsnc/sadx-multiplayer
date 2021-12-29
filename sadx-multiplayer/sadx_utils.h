@@ -279,6 +279,19 @@ FunctionPointer(void, ef_baria, (taskwk* twp), 0x4D6DC0);
 FunctionPointer(void, ef_1up, (taskwk* twp), 0x4D6D40);
 FunctionPointer(void, ef_explosion, (taskwk* twp), 0x4D6E00);
 FunctionPointer(void, ef_th_baria, (taskwk* twp), 0x4D6E40);
+TaskFunc(ThunderB, 0x4BA100);
+TaskFunc(TBarrierDisp, 0x4B9D90);
+
+static const void* const EffBarrierPosSetPtr = (void*)0x4B9CE0;
+static inline void EffBarrierPosSet(taskwk* twp, taskwk* ptwp)
+{
+	__asm
+	{
+		mov esi, [ptwp]
+		mov eax, [twp]
+		call EffBarrierPosSetPtr
+	}
+}
 
 static const void* const CameraSetViewPtr = (void*)0x435600;
 static inline void CameraSetView(taskwk* twp)
