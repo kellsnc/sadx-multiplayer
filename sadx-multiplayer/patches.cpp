@@ -482,4 +482,7 @@ void InitPatches()
 	ObjectSpringB_t = new Trampoline(0x7A4E50, 0x7A4E55, ObjectSpringB_r);
 	WriteData((uint8_t*)0x7A4DC4, (uint8_t)PLAYER_MAX); // ObjectSpring
 	WriteData((uint8_t*)0x79F77C, (uint8_t)PLAYER_MAX); // spring_h_exec
+
+	// Windy Valley exec for hane, bigfloot, saku (static "exec" name in symbols)
+	WriteData<2>((void*)0x4E1399, 0x90ui8);
 }
