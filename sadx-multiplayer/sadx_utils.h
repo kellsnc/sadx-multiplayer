@@ -653,3 +653,15 @@ DataPointer(MSGC, stru_3ABDC18, 0x3ABDC18);
 VoidFunc(sub_40BC80, 0x40BC80);
 FunctionPointer(void, SetMessageSettings, (MSGC* a1, __int16 x, __int16 y, int width, int height, int globalindex), 0x40E430);
 FunctionPointer(void, MSG_LoadTexture2, (MSGC* a1), 0x40D2A0);
+
+struct __declspec(align(4)) CharMdlWk
+{
+	task* PlTskPtrs[7];
+	task* CamTskPtr;
+	float LocX;
+	float LocY;
+	float Scale;
+	char MdlDspCnt;
+	char MotCnts[7];
+	unsigned __int8 SelFlg;
+};

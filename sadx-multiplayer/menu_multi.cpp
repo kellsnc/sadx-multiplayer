@@ -47,7 +47,6 @@ void MultiMenu_DrawControls()
 }
 
 
-
 enum class multiTask {
 	init,
 	charSelect,
@@ -111,9 +110,7 @@ NJS_POINT2 cursorLevel_PosArray[]{
 };
 
 NJS_SPRITE MultiLevel_Sprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multiLevel_Texlist, MultiLevel_TexAnim };
-
 NJS_SPRITE MultiLevelCursor_Sprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multiLevel_Texlist, MultiLevel_TexAnim };
-
 
 void DrawMulti_LevelSelect(char i) {
 
@@ -206,19 +203,6 @@ NJS_SPRITE MultiChar_CursorSprite[8] = {
 	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
 };
 
-bool isAlreadySelected(char pnum, char character) {
-
-	for (int i = 0; i < PLAYER_MAX; i++) {
-
-		if (i == pnum)
-			continue;
-
-		if ((char)GetCurrentCharacter(i) == character)
-			return true;
-	}
-
-	return false;
-}
 
 bool isEveryoneReady() {
 
@@ -229,6 +213,9 @@ bool isEveryoneReady() {
 
 		if (playerReady[i] <= disconnected) {
 			DisplayDebugStringFormatted(NJM_LOCATION(2, 7 + i), "Player %d Disconnected", i + 1);
+
+			if (i > 0)
+				cursorChar[i] = i;
 		}
 
 		if (playerReady[i] == ready) {
@@ -239,7 +226,7 @@ bool isEveryoneReady() {
 
 		if (playerReady[i] == pressedStart) {
 			countNotRDY++;
-
+	
 			DisplayDebugStringFormatted(NJM_LOCATION(2, 7 + i), "Player %d Select character...", i + 1);
 		}
 	}
@@ -555,6 +542,7 @@ void MultiMenuChild_TaskManager(ObjectMaster* obj) {
 		LoadPVM("multichar", &multichar_Texlist);
 		LoadPVM("multi_Levels", &multiLevel_Texlist);
 		LoadPVM("MultiLegend", &multiLegend_Texlist);
+		//LoadPVM("ava_chsel_e", &ava_chsel_e_TEXLIST);
 		playerReady[0] = pressedStart;
 		SetDebugFontSize(13.0f * (unsigned short)VerticalResolution / 480.0f);
 		SetDebugFontColor(0x8e8e8e);
