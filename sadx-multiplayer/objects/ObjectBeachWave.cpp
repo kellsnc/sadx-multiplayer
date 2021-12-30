@@ -10,7 +10,7 @@ void __cdecl ObjectBeachWaveBGExec_multi(task* tp)
 	auto twp = tp->twp;
 
 	NJS_VECTOR plpos;
-	GetPlayerPosition(twp->btimer, 0, &plpos, 0);
+	GetPlayerPosition(twp->id, 0, &plpos, 0);
 	twp->pos.x = floorf((plpos.x - twp->pos.x) * 0.04f) * 25.0f + twp->pos.x;
 	twp->pos.z = floorf((plpos.z - twp->pos.z) * 0.04f) * 25.0f + twp->pos.z;
 	*(float*)0x3C5E78C = twp->pos.x;
