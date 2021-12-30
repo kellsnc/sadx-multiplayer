@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "menu_multi.h"
 
+
 extern bool MultiMenuEnabled;
 
 bool isStageSelected = false;
 
-const char levelMax = 11;
+const char levelMax = 10;
 
 uint8_t cursorChar[PLAYER_MAX];
 uint8_t cursorLvl;
@@ -16,12 +17,42 @@ NJS_TEXLIST multichar_Texlist = { arrayptrandlength(multicharTex) };
 NJS_TEXNAME multiLevelTex[11];
 NJS_TEXLIST multiLevel_Texlist = { arrayptrandlength(multiLevelTex) };
 
+NJS_TEXNAME multiLegendTex[3];
+NJS_TEXLIST multiLegend_Texlist = { arrayptrandlength(multiLegendTex) };
+
+NJS_TEXANIM multiLegendTexAnim[]{
+	{ 110, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, 0, 0x20},
+	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, 1, 0x20},
+	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, 2, 0x20},
+};
+
+NJS_SPRITE MultiLegendSprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multiLegend_Texlist, multiLegendTexAnim };
+
+void MultiMenu_DrawControls()
+{
+	gHelperFunctions->PushScaleUI((uiscale::Align)(Align_Bottom | Align_Center_Horizontal), false, 1.0f, 1.0f);
+
+	MultiLegendSprite.p.y = 448.0f;
+
+	MultiLegendSprite.p.x = 165.0f;
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, 0, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+
+	MultiLegendSprite.p.x = 330.0f;
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, 1, -64, NJD_SPRITE_ALPHA);
+
+	MultiLegendSprite.p.x = 495.0f;
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, 2, -64, NJD_SPRITE_ALPHA);
+
+	gHelperFunctions->PopScaleUI();
+}
+
+
+
 enum class multiTask {
 	init,
 	charSelect,
 	levelSelect,
 	finish
-
 };
 
 LevelAndActIDs multiLevelsSonicArray[]
@@ -89,7 +120,7 @@ void DrawMulti_LevelSelect(char i) {
 	SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
 	MultiLevel_Sprite.p.x = cursorLevel_PosArray[i].x;
 	MultiLevel_Sprite.p.y = cursorLevel_PosArray[i].y;
-	njDrawSprite2D_DrawNow(&MultiLevel_Sprite, i +1, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&MultiLevel_Sprite, i + 1, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 	return;
 }
 
@@ -100,6 +131,18 @@ enum playReadyState {
 	pressedStart,
 	ready
 };
+
+
+void SetPlayerToUnready() {
+
+	for (int i = 0; i < PLAYER_MAX; i++) {
+
+		if (playerReady[i] >= ready) 
+			playerReady[i] = pressedStart;
+		
+	}
+	return;
+}
 
 enum CharacterMenu {
 	sonicIcon,
@@ -185,19 +228,19 @@ bool isEveryoneReady() {
 	for (int i = 0; i < PLAYER_MAX; i++) {
 
 		if (playerReady[i] <= disconnected) {
-			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Disconnected.", i + 1);
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 7 + i), "Player %d Disconnected", i + 1);
 		}
 
 		if (playerReady[i] == ready) {
 			countRDY++;
 
-			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d READY!", i + 1);
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 7 + i), "Player %d READY!", i + 1);
 		}
 
 		if (playerReady[i] == pressedStart) {
 			countNotRDY++;
 
-			DisplayDebugStringFormatted(NJM_LOCATION(2, 4 + i), "Player %d Select character...", i + 1);
+			DisplayDebugStringFormatted(NJM_LOCATION(2, 7 + i), "Player %d Select character...", i + 1);
 		}
 	}
 
@@ -207,9 +250,12 @@ bool isEveryoneReady() {
 	return false;
 }
 
-void StartMulti_Game(TrialActSelWk* wk) {
+void StartMulti_Game(task* tp, TrialActSelWk* wk) {
 
-	if (!isEveryoneReady() || !isStageSelected)
+	if (!tp->ctp)
+		return;
+
+	if (tp->ctp->twp->mode < (char)multiTask::levelSelect || !isStageSelected)
 		return;
 
 	LastLevel = CurrentLevel;
@@ -265,8 +311,22 @@ void DrawLevel_Cursor() {
 	ClampGlobalColorThing_Thing();
 }
 
-void MultiMenu_InputLevel()
+void MultiMenu_InputLevel(EntityData1* data)
 {
+	if (MenuBackButtonsPressed_r(0))
+	{
+		PlayMenuBackSound();
+		SetPlayerToUnready();
+		data->Action--;
+		return;
+	}
+
+	if (MenuSelectButtonsPressed_r(0))
+	{
+		isStageSelected = true;
+		PlayMenuEnterSound();
+		data->Action++;
+	}
 
 	if ((PressedButtons[0] & Buttons_Up))
 	{
@@ -307,17 +367,25 @@ void MultiMenuChild_TaskDisplay(ObjectMaster* obj) {
 
 	EntityData1* data = obj->Data1;
 
+	njColorBlendingMode(0, NJD_COLOR_BLENDING_SRCALPHA);
+	njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
+
+
 	switch (multiTask(data->Action))
 	{
 	case multiTask::charSelect:
+		DrawSADXText("MULTIPLAYER - BATTLE\n     Character Select", 0, 20, 120, 40);
+
 		for (int i = 0; i < 8; i++) {
 			DrawChar_Cursor(i);
 			DrawCharacterPortrait(i);
 		}
+		MultiMenu_DrawControls();
 
 		break;
 	case multiTask::levelSelect:
 
+		DrawSADXText("MULTIPLAYER - BATTLE\n    Level Select", 0, 20, 120, 40);
 		DrawLevel_Cursor();
 
 		for (int i = 0; i < LengthOfArray(multiLevelsSonicArray); i++) {
@@ -325,8 +393,12 @@ void MultiMenuChild_TaskDisplay(ObjectMaster* obj) {
 			DrawMulti_LevelSelect(i);
 		}
 
+		MultiMenu_DrawControls();
 		break;
 	}
+
+	njColorBlendingMode(0, NJD_COLOR_BLENDING_SRCALPHA);
+	njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
 }
 
 void __cdecl MultiMenuExec_Display(task* tp)
@@ -345,13 +417,13 @@ void __cdecl MultiMenuExec_Display(task* tp)
 
 		if (wk->BaseCol != 0)
 		{
+
 			gHelperFunctions->PushScaleUI(uiscale::Align_Center, false, 1.0f, 1.0f);
 			SetDefaultAlphaBlend();
 
-
 			MultiMenuChild_TaskDisplay(parent->Child);
 
-			DrawSADXText("MULTIPLAYER - BATTLE", 0, 24, 120, 40);
+
 			ClampGlobalColorThing_Thing();
 			gHelperFunctions->PopScaleUI();
 		}
@@ -402,11 +474,9 @@ bool MultiMenu_CheckMoveInput(int button, char pNum)
 void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 {
 
-
 	if (tp->ctp)
 	{
 		if (tp->ctp->twp->mode > (char)multiTask::charSelect) {
-			MultiMenu_InputLevel();
 			return;
 		}
 	}
@@ -484,6 +554,7 @@ void MultiMenuChild_TaskManager(ObjectMaster* obj) {
 		PlayVoice(40);
 		LoadPVM("multichar", &multichar_Texlist);
 		LoadPVM("multi_Levels", &multiLevel_Texlist);
+		LoadPVM("MultiLegend", &multiLegend_Texlist);
 		playerReady[0] = pressedStart;
 		SetDebugFontSize(13.0f * (unsigned short)VerticalResolution / 480.0f);
 		SetDebugFontColor(0x8e8e8e);
@@ -502,18 +573,12 @@ void MultiMenuChild_TaskManager(ObjectMaster* obj) {
 		}
 		break;
 	case multiTask::levelSelect:
-
-		if (MenuSelectButtonsPressed_r(0))
-		{
-			isStageSelected = true;
-			PlayMenuEnterSound();			
-			data->Action++;
-		}
-
+		MultiMenu_InputLevel(data);
 		break;
 	case multiTask::finish:
 		isStageSelected = false;
-		njReleaseTexture_(&multiLevel_Texlist);
+		njReleaseTexture(&multiLevel_Texlist);
+		njReleaseTexture(&multiLegend_Texlist);
 		CheckThingButThenDeleteObject(obj);
 		break;
 	}
@@ -565,7 +630,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	case ADVA_STAT_KEEP:
 		SeqTp->awp->work.ul[3] = 3;
 		MultiMenu_InputCheck(tp, wk);
-		StartMulti_Game(wk);
+		StartMulti_Game(tp, wk);
 		break;
 	case ADVA_STAT_FADEOUT:
 		wk->T += MissedFrames_B * 0.1f;
@@ -577,6 +642,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			SeqTp->awp[1].work.ub[15] = 1;
 			njReleaseTexture(&multichar_Texlist);
 			njReleaseTexture(&multiLevel_Texlist);
+			njReleaseTexture(&multiLegend_Texlist);
 			MenuLaunchNext();
 			MultiMenuEnabled = false;
 			isStageSelected = false;
