@@ -116,6 +116,7 @@
     <ClCompile Include="deathzones.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
+    <ClCompile Include="EnemyCart.cpp" />
     <ClCompile Include="levels.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="mod.cpp" />

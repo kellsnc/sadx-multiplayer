@@ -3,6 +3,7 @@
 #include "camera.h"
 
 Trampoline* ProcessStatusTable_t = nullptr;
+Trampoline* CheckRangeWithR_t    = nullptr;
 Trampoline* CheckRangeOutWithR_t = nullptr;
 Trampoline* LoadSetFile_t        = nullptr;
 
@@ -130,39 +131,57 @@ void __cdecl ProcessStatusTable_r()
 	}
 }
 
+BOOL CheckRangeWithR_m(task* tp, float fRange)
+{
+	if ((tp->ocp && (tp->ocp->ssCondition & 8)) || fRange == 0.0f)
+	{
+		return FALSE;
+	}
+
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (playertp[i])
+		{
+			NJS_POINT3 pos = *GetCameraPosition(i);
+			pos.x -= tp->twp->pos.x;
+			pos.y -= tp->twp->pos.y;
+			pos.z -= tp->twp->pos.z;
+			
+			if (njScalor2(&pos) < fRange)
+			{
+				return FALSE;
+			}
+		}
+	}
+
+	return TRUE;
+}
+
+// Check object deletion for every player
+BOOL __cdecl CheckRangeWithR_r(task* tp, float fRange)
+{
+	if (IsMultiplayerEnabled())
+	{
+		return CheckRangeWithR_m(tp, fRange);
+	}
+	else
+	{
+		return TARGET_DYNAMIC(CheckRangeWithR)(tp, fRange);
+	}
+}
+
 // Check object deletion for every player
 BOOL __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
 {
 	if (IsMultiplayerEnabled())
 	{
-		// Do not delete if the no delete flag is set
-		if (tp->ocp && (tp->ocp->ssCondition & 8))
+		if (CheckRangeWithR_m(tp, fRange))
 		{
-			return FALSE;
+			tp->exec = FreeTask;
+			return TRUE;
 		}
-
-		// Do not delete if range is 0
-		if (fRange == 0.0f)
-		{
-			return FALSE;
-		}
-
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			if (playertp[i])
-			{
-				NJS_POINT3 pos = *GetCameraPosition(i);
-				njSubVector(&pos, &tp->twp->pos);
-
-				if (njScalor2(&pos) < fRange)
-				{
-					return FALSE;
-				}
-			}
-		}
-
-		tp->exec = FreeTask;
-		return TRUE;
+		
+		return FALSE;
 	}
 	else
 	{
@@ -219,6 +238,7 @@ static void __declspec(naked) LoadSetFile_j()
 void InitSET()
 {
 	ProcessStatusTable_t = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
+	CheckRangeWithR_t    = new Trampoline(0x46BFA0, 0x46BFA7, CheckRangeWithR_r);
 	CheckRangeOutWithR_t = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
 	LoadSetFile_t        = new Trampoline(0x422930, 0x422938, LoadSetFile_j);
 }

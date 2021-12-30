@@ -446,6 +446,7 @@ void ObjectSpringB_r(task* tp)
 	TARGET_DYNAMIC(ObjectSpringB)(tp);
 }
 
+// Geometry collision lookup is hardcoded around P1 and P2, patching it for more
 void __cdecl MakeLandCollLandEntryRangeIn_r()
 {
 	if (IsMultiplayerEnabled() && player_count > 2)

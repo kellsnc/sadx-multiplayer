@@ -194,6 +194,89 @@ struct ITEM_INFOMATION
 	void(__cdecl* effect_func)(taskwk*);
 };
 
+struct ENEMY_CART_DATA
+{
+	int flag;
+	int ring_timer;
+	float player_colli_r;
+	int fan_angle;
+	__int16 cart_color;
+	__int16 invincible_timer;
+	__int16 motion_timer;
+	__int16 ignor_collision;
+	__int16 drift_mode;
+	__int16 drift_timer;
+	int drift_angle;
+	char vitality;
+	Angle3 unstable;
+	int loop_pos;
+	float restless;
+	float restless_timer;
+	int smoke_timer;
+	int drift_effect_timer;
+	float shadow_pos;
+	NJS_POINT3 vector;
+	Angle3 shadow_ang;
+	float max_spd;
+	NJS_POINT3 add_key;
+	NJS_POINT3 add_nature;
+	float bonus_add;
+	int rest_timer;
+	unsigned __int8 next_point;
+	unsigned __int8 load_line;
+	unsigned __int8 load_indp[2];
+	NJS_POINT3 last_pos;
+	char cart_type;
+	char start_wait;
+	__int16 last_player_flag;
+	char explose_flag[10];
+	NJS_POINT3 explose_point[10];
+	NJS_POINT3 explose_spd[10];
+	Angle3 explose_angle[10];
+	Angle3 explose_rotate[10];
+	float tmp_posi[3];
+	int tmp_angle[3];
+	unsigned int hamari_cnt;
+};
+
+struct CART_PLAYER_PARAMETER
+{
+	float max_spd;
+	float min_spd;
+	float max_back_spd;
+	float slide_spd;
+	float gravitation;
+	float gravitation_max;
+	float hover_point;
+	float grip;
+	float spd_accell;
+	float spd_break;
+	float spd_masatu;
+	int max_vitality;
+	int smoke_vitality;
+	float cart_handle;
+	float drift_rate;
+};
+
+struct CUSTOM_OBJ
+{
+	NJS_OBJECT* obj;
+	void(__cdecl* exad)(NJS_OBJECT*);
+};
+
+struct CART_OTHER_PARAM
+{
+	float chase_distance;
+	int rest_time;
+	float cart_enemy_accell;
+	float cart_enemy_break;
+	float cart_enemy_search_addspd;
+	float explose_spd;
+	int explose_ang;
+	int dead_wait_time;
+	int ring_sub_timer;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -281,6 +364,72 @@ FunctionPointer(void, ef_explosion, (taskwk* twp), 0x4D6E00);
 FunctionPointer(void, ef_th_baria, (taskwk* twp), 0x4D6E40);
 TaskFunc(ThunderB, 0x4BA100);
 TaskFunc(TBarrierDisp, 0x4B9D90);
+FunctionPointer(float, DrawShadow_, (Angle3* ang, NJS_POINT3* pos, float scl), 0x49EF30);
+FunctionPointer(BOOL, CheckRange, (task* tp), 0x46C330);
+FunctionPointer(BOOL, CheckRangeWithR, (task* tp, Float fRange), 0x46BFA0);
+FunctionPointer(int, GetGlobalTime, (), 0x4261B0);
+FunctionPointer(bool, dsCheckViewV, (NJS_POINT3* ft, float radius), 0x403330);
+FunctionPointer(void, DrawCustomObject, (NJS_OBJECT* top_object, CUSTOM_OBJ* custom), 0x4BA5D0);
+FunctionPointer(void, SetVelocityP, (uint8_t pno, float x, float y, float z), 0x441280);
+FunctionPointer(void, VibShot, (int pno, int Time), 0x4BCBC0);
+FunctionPointer(void, VibConvergence, (int pno, int Power, int Freq, int Time), 0x4BCC10);
+
+DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
+DataArray(__int16, cartColor, 0x88C004, 7);
+DataArray(CART_PLAYER_PARAMETER, CartParameter, 0x38C5DA8, 8);
+DataArray(CCL_INFO, cci_cart, 0x38A6BF0, 8);
+TaskFunc(cartDisplay, 0x796CE0);
+DataArray(CUSTOM_OBJ, fan_model_big, 0x88C03C, 2);
+DataPointer(NJS_OBJECT, object_b_cart_cart_cart, 0x38A9130);
+DataArray(CUSTOM_OBJ, fan_model_e102, 0x88C014, 2);
+DataPointer(NJS_OBJECT, object_e_cart_cart_cart, 0x38AB250);
+DataArray(CUSTOM_OBJ, fan_model, 0x88C02C, 2);
+DataPointer(NJS_OBJECT, object_sarucart_sarucart_sarucart, 0x38BAAA4);
+DataPointer(NJS_OBJECT, object_sarucart_saru_body_saru_body, 0x38B8780);
+FunctionPointer(void, cartTopographicalCollision, (task* tp, taskwk* twp), 0x799380);
+DataPointer(CART_OTHER_PARAM, CartOtherParam, 0x38C5F88);
+
+static const void* const cartSELoopPtr = (void*)0x798170;
+static inline void cartSELoop(int se_no, task* tp)
+{
+	__asm
+	{
+		mov edi, [tp]
+		mov ebx, [se_no]
+		call cartSELoopPtr
+	}
+}
+
+static const void* const cartThinkPtr = (void*)0x79A8E0;
+static inline void cartThink(taskwk* twp, task* tp)
+{
+	__asm
+	{
+		mov ecx, [tp]
+		mov eax, [twp]
+		call cartThinkPtr
+	}
+}
+
+static const void* const cartSpdForceOfNaturePtr = (void*)0x799EB0;
+static inline void cartSpdForceOfNature(taskwk* twp)
+{
+	__asm
+	{
+		mov edx, [twp]
+		call cartSpdForceOfNaturePtr
+	}
+}
+
+static const void* const cartShadowPosPtr = (void*)0x7977C0;
+static inline void cartShadowPos(taskwk* twp)
+{
+	__asm
+	{
+		mov eax, [twp]
+		call cartShadowPosPtr
+	}
+}
 
 static const void* const EffBarrierPosSetPtr = (void*)0x4B9CE0;
 static inline void EffBarrierPosSet(taskwk* twp, taskwk* ptwp)
