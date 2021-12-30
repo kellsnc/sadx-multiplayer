@@ -373,6 +373,8 @@ FunctionPointer(void, DrawCustomObject, (NJS_OBJECT* top_object, CUSTOM_OBJ* cus
 FunctionPointer(void, SetVelocityP, (uint8_t pno, float x, float y, float z), 0x441280);
 FunctionPointer(void, VibShot, (int pno, int Time), 0x4BCBC0);
 FunctionPointer(void, VibConvergence, (int pno, int Power, int Freq, int Time), 0x4BCC10);
+FastcallFunctionPointer(bool, njCollisionCheckSS, (float* p1, float* p2), 0x789360);
+FunctionPointer(void, KillHimP, (int pno), 0x440CD0); // kill player
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -388,6 +390,16 @@ DataPointer(NJS_OBJECT, object_sarucart_sarucart_sarucart, 0x38BAAA4);
 DataPointer(NJS_OBJECT, object_sarucart_saru_body_saru_body, 0x38B8780);
 FunctionPointer(void, cartTopographicalCollision, (task* tp, taskwk* twp), 0x799380);
 DataPointer(CART_OTHER_PARAM, CartOtherParam, 0x38C5F88);
+
+static const void* const setupCartStagePtr = (void*)0x7981F0;
+static inline void setupCartStage(task* tp)
+{
+	__asm
+	{
+		mov eax, [tp]
+		call setupCartStagePtr
+	}
+}
 
 static const void* const cartSELoopPtr = (void*)0x798170;
 static inline void cartSELoop(int se_no, task* tp)

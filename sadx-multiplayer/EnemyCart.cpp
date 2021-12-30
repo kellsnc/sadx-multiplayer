@@ -4,11 +4,17 @@
 enum CARTMD
 {
 	CARTMD_INIT,
-	CARTMD_1,
-	CARTMD_2,
-	CARTMD_3,
-	CARTMD_4, // Player controlled
+	CARTMD_SARU,
+	CARTMD_WAIT,
+	CARTMD_WARP,
+	CARTMD_CTRL, // Player controlled
 	CARTMD_5, // Player controlled
+	CARTMD_6,
+	CARTMD_EXPL,
+	CARTMD_8,
+	CARTMD_9,
+	CARTMD_10,
+	CARTMD_11
 };
 
 enum CARTTYPE
@@ -35,6 +41,7 @@ DataArray(__int16, cartNumber, 0x88BFEC, 12);
 DataArray(int, bodyListNum, 0x3D08EBC, 3);
 DataArray(int*, dword_3D08E40, 0x3D08E40, 30);
 DataArray(int, cart_se_num, 0x38A6D70, 6 * 2);
+DataPointer(float, hamariDist, 0x3D08E10);
 
 Characters GetPlayerNumberM(int pnum)
 {
@@ -124,12 +131,12 @@ void cartInitM(task* tp, taskwk* twp, CART_PLAYER_PARAMETER* cartparam, int pnum
 	// Start mode:
 	if (static_cast<int>(twp->scl.y) == 1)
 	{
-		twp->mode = CARTMD_2;
+		twp->mode = CARTMD_WAIT;
 		cart_data->flag &= ~CARTFLG_SHOWSARU;
 	}
 	else
 	{
-		twp->mode = CARTMD_1;
+		twp->mode = CARTMD_SARU;
 		cart_data->flag |= CARTFLG_SHOWSARU;
 	}
 
@@ -201,11 +208,11 @@ void cartSetVectorM(taskwk* twp, int pnum)
 	cart_data->last_pos = twp->pos;
 }
 
-void cartThinkM(taskwk* twp, task* tp)
+void cartThinkM(task* tp, taskwk* twp, int pnum)
 {
 	// todo: rewrite
 	auto backup = playertwp[0];
-	playertwp[0] = playertwp[GetTheNearestPlayerNumber(&twp->pos)];
+	playertwp[0] = playertwp[pnum];
 	cartThink(twp, tp);
 	playertwp[0] = backup;
 }
@@ -232,23 +239,22 @@ void cartCollisionM(taskwk* twp)
 	EntryColliList(twp);
 }
 
-void cartCharactorCollisionM(taskwk* twp)
+void cartCharactorCollisionM(taskwk* twp, int pnum)
 {
 	if (cart_data->invincible_timer <= 0)
 	{
 		auto cwp = twp->cwp;
-		auto nearpnum = GetTheNearestPlayerNumber(&twp->pos);
-		auto nearptwp = playertwp[nearpnum];
+		auto ptwp = playertwp[pnum];
 
 		switch (twp->mode)
 		{
-		case CARTMD_1:
-			if ((cwp->flag & 1) != 0 && cwp->hit_cwp == nearptwp->cwp)
+		case CARTMD_SARU:
+			if ((cwp->flag & 1) != 0 && cwp->hit_cwp == ptwp->cwp)
 			{
 				cart_data->rest_timer = CartOtherParam.rest_time;
 			}
 
-			if (nearptwp->smode == 18)
+			if (ptwp->smode == 18)
 			{
 				if ((twp->flag & Status_Hurt) != 0)
 				{
@@ -256,22 +262,54 @@ void cartCharactorCollisionM(taskwk* twp)
 					RumbleA(0, 0);
 				}
 			}
-			else if ((twp->flag & Status_Hurt) != 0 && (nearptwp->flag & Status_Ground) == 0)
+			else if ((twp->flag & Status_Hurt) != 0 && (ptwp->flag & Status_Ground) == 0)
 			{
 				CreateFlash(twp, 1.0f);
-				SetVelocityP(nearpnum, 0.0f, 2.0f, 0.0f);
-				VibShot(nearpnum, 0);
-				twp->mode = CARTMD_2;
+				SetVelocityP(pnum, 0.0f, 2.0f, 0.0f);
+				VibShot(pnum, 0);
+				twp->mode = CARTMD_WAIT;
 			}
 
 			cwp->info->damage = cwp->info->damage & ~0xF | 1;
 			cartCollisionM(twp);
 			break;
-		case CARTMD_2:
+		case CARTMD_WAIT:
 			cart_data->flag &= ~CARTFLG_4000;
 			cwp->info->damage = cwp->info->damage & ~0xF | 4;
 			cartCollisionM(twp);
 			break;
+		case CARTMD_WARP:
+			ptwp->cwp->info->damage &= 0xFCu;
+			ptwp->cwp->info->damage |= 0xCu;
+			break;
+		}
+
+		// Kill player if too far away from camera in TC
+		if (twp->mode > 2 && cart_data->hamari_cnt > 0x258 && CurrentLevel == LevelIDs_TwinkleCircuit)
+		{
+			NJS_VECTOR pos = *GetCameraPosition(pnum);
+			njSubVector(&pos, &ptwp->pos);
+			if (njScalor(&pos) > 400.0f && hamariDist < 100.0f)
+			{
+				KillHimP(pnum);
+				cart_data->vitality = 0;
+			}
+		}
+
+		// Handle death
+		if (cart_data->vitality <= 0)
+		{
+			cart_data->invincible_timer = 0;
+
+			if (twp->mode == CARTMD_CTRL)
+			{
+				twp->cwp->info->attr &= ~0x10u;
+				ptwp->cwp->info->a = cart_data->player_colli_r;
+				// if (CurrentLevel == LevelIDs_TwinkleCircuit) CameraReleaseEventCamera();
+			}
+
+			dsPlay_oneshot(25, 0, 0, 0);
+			twp->mode = CARTMD_EXPL;
 		}
 	}
 	else
@@ -304,6 +342,116 @@ void cartSELoopM(task* tp, int se_no)
 	}
 }
 
+void setupCartStageM(task* tp, taskwk* twp)
+{
+	setupCartStage(tp);
+
+	// place all players on the starting line
+	if (twp->mode == CARTMD_WARP)
+	{
+		static const int dists[]
+		{
+			-10.0f,
+			10.0f,
+			-20.0f,
+			20.0f
+		};
+
+		twp->pos.x += njCos(twp->ang.y + 0x4000) * dists[twp->btimer];
+		twp->pos.z += njSin(twp->ang.y + 0x4000) * dists[twp->btimer];
+	}													 
+}
+
+void cartRideButtonCheckM(taskwk* twp, int pnum)
+{
+	auto ptwp = playertwp[pnum];
+
+	if ((perG[pnum].press & Buttons_A) != 0 && !ptwp->wtimer)
+	{
+		auto smode = ptwp->smode;
+		if (smode != 50 && smode != 18 && (cart_data->last_player_flag & 1) != 0)
+		{
+			float p1[4] = { twp->pos.x, twp->pos.y, twp->pos.z, 20.0f };
+			float p2[4] = { ptwp->pos.x, ptwp->pos.y, ptwp->pos.z, 20.0f };
+
+			if (njCollisionCheckSS(p1, p2) && !(ptwp->flag & Status_HoldObject))
+			{
+				twp->mode = CARTMD_WARP;
+				twp->btimer = pnum;
+				cart_data->motion_timer = 0;
+				SetInputP(pnum, 18);
+			}
+		}
+	}
+
+	cart_data->add_key.x = 0.0f;
+	cart_data->add_key.y = 0.0f;
+	cart_data->add_key.z = 0.0f;
+	cart_data->last_player_flag = ptwp->flag;
+}
+
+static Angle calcAngle(Angle a, Angle b)
+{
+	Angle ang = SubAngle(a, b);
+	return ang <= 0x8000 ? ang / 30 : (0x10000 - ang) / -30;
+}
+
+void cartSonicRidingCartM(taskwk* twp, int pnum)
+{
+	auto pltwp = playertwp[pnum];
+
+	if (cart_data->motion_timer == 0)
+	{
+		cart_data->tmp_angle[0] = calcAngle(pltwp->ang.x, twp->ang.x);
+		cart_data->tmp_angle[1] = calcAngle(pltwp->ang.y, twp->ang.y);
+		cart_data->tmp_angle[2] = calcAngle(pltwp->ang.z, twp->ang.z);
+		cart_data->tmp_posi[0] = (twp->pos.x - pltwp->pos.x) * 0.033f;
+		cart_data->tmp_posi[1] = 4.5f;
+		cart_data->tmp_posi[2] = (twp->pos.z - pltwp->pos.z) * 0.033f;
+	}
+
+	if (cart_data->motion_timer <= 15 || twp->pos.y + 5.0f <= pltwp->pos.y)
+	{
+		cart_data->motion_timer += 1;
+		pltwp->ang.x += cart_data->tmp_angle[0];
+		pltwp->ang.y += cart_data->tmp_angle[1];
+		pltwp->ang.z += cart_data->tmp_angle[2];
+		pltwp->pos.x += cart_data->tmp_posi[0];
+		pltwp->pos.y += cart_data->tmp_posi[1];
+		pltwp->pos.z += cart_data->tmp_posi[2];
+		cart_data->tmp_posi[1] -= 0.3f;
+	}
+	else if (fabs(pltwp->pos.x - twp->pos.x) <= 4.0f && fabs(pltwp->pos.z - twp->pos.z) <= 4.0f)
+	{
+		// Let's go
+		twp->mode = CARTMD_CTRL;
+
+		pltwp->ang.x = twp->ang.x;
+		pltwp->ang.y = 0x4000 - twp->ang.y;
+		pltwp->ang.z = twp->ang.z;
+		pltwp->pos.x = twp->pos.x;
+		pltwp->pos.y = twp->pos.y + 1.0f;
+		pltwp->pos.z = twp->pos.z;
+
+		cart_data->motion_timer = 0;
+		cart_data->ring_timer = CartOtherParam.ring_sub_timer;
+
+		// Change collision
+		cart_data->player_colli_r = pltwp->cwp->info->a;
+		pltwp->cwp->info->a = cci_cart[GetPlayerNumberM(pnum)].a;
+
+		//taskOfPlayerOn = tp;
+		//CameraSetEventCamera(49, 5u);
+	}
+	else
+	{
+		twp->mode = CARTMD_WAIT;
+		twp->cwp->info->attr &= ~0x10u;
+		GetOutOfCartP(pnum, 0.0f, 0.0f, 0.0f);
+		cart_data->ignor_collision = 30;
+	}
+}
+
 void EnemyCartM(task* tp)
 {
 	if (CheckRange(tp))
@@ -313,7 +461,7 @@ void EnemyCartM(task* tp)
 
 	auto twp = tp->twp;
 	cart_data = (ENEMY_CART_DATA*)tp->awp;
-	auto pnum = twp->btimer;
+	auto pnum = twp->mode < 2 ? GetTheNearestPlayerNumber(&twp->pos) : twp->btimer;
 	player_no = GetPlayerNumberM(pnum);
 	auto cartparam = &CartParameter[GetPlayerNumberM(pnum)];
 
@@ -322,23 +470,33 @@ void EnemyCartM(task* tp)
 	case CARTMD_INIT:
 		cartInitM(tp, twp, cartparam, pnum);
 		break;
-	case CARTMD_1:
+	case CARTMD_SARU:
 		cart_data->flag |= 1u;
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
 		cartSpdForceOfNature(twp);
-		cartThinkM(twp, tp);
-		cartCharactorCollisionM(twp);
+		cartThinkM(tp, twp, pnum);
+		cartCharactorCollisionM(twp, pnum);
 		cartTopographicalCollisionM(tp, twp);
 		cartSELoopM(tp, 0);
 		break;
-	case CARTMD_2:
+	case CARTMD_WAIT:
 		cart_data->flag &= ~1u;
+		setupCartStageM(tp, twp);
+		cartSetVectorM(twp, pnum);
+		cartRideButtonCheckM(twp, pnum);
+		cartShadowPos(twp);
+		cartSpdForceOfNature(twp);
+		cartCharactorCollisionM(twp, pnum);
+		cartTopographicalCollisionM(tp, twp);
+		break;
+	case CARTMD_WARP:
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
 		cartSpdForceOfNature(twp);
-		cartCharactorCollisionM(twp);
+		cartCharactorCollisionM(twp, pnum);
 		cartTopographicalCollisionM(tp, twp);
+		cartSonicRidingCartM(twp, pnum);
 		break;
 	}
 
