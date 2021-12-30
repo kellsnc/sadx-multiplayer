@@ -502,5 +502,10 @@ void InitPatches()
 	// Windy Valley exec for hane, bigfloot, saku (static "exec" name in symbols)
 	WriteData<2>((void*)0x4E1399, 0x90ui8);
 
+	// Emerald Coast Bridge
+	WriteData<2>((void*)0x501B66, 0x90ui8);
+	WriteData<2>((void*)0x501B12, 0x90ui8);
+	WriteData<1>((void*)0x501C2F, 0xEBui8);
+
 	InitItemBoxPatches();
 }
