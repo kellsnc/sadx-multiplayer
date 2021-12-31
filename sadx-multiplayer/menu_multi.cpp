@@ -3,10 +3,6 @@
 
 enum AVA_MULTI_TEX
 {
-	AVAMULTITEX_CURSOR1,
-	AVAMULTITEX_CURSOR2,
-	AVAMULTITEX_CURSOR3,
-	AVAMULTITEX_CURSOR4,
 	AVAMULTITEX_SONIC,
 	AVAMULTITEX_EGGMAN,
 	AVAMULTITEX_TAILS,
@@ -29,7 +25,17 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_BACK,
 	AVAMULTITEX_CONFIRM,
 	AVAMULTITEX_SELECT,
-	AVAMULTITEX_TITLE
+	AVAMULTITEX_TITLE,
+	AVAMULTITEX_YES,
+	AVAMULTITEX_NO,
+	AVAMULTITEX_CURSOR1,
+	AVAMULTITEX_CURSOR2,
+	AVAMULTITEX_CURSOR3,
+	AVAMULTITEX_CURSOR4,
+	AVAMULTITEX_CSR1,
+	AVAMULTITEX_CSR2,
+	AVAMULTITEX_CSR3,
+	AVAMULTITEX_CSR4,
 };
 
 enum AVA_MULTI_ANM
@@ -38,7 +44,8 @@ enum AVA_MULTI_ANM
 	AVAMULTIANM_CURSOR = 8,
 	AVAMULTIANM_BACK,
 	AVAMULTIANM_CONFIRM,
-	AVAMULTIANM_SELECT
+	AVAMULTIANM_SELECT,
+	AVAMULTIANM_STG
 };
 
 enum MD_MULTI
@@ -47,13 +54,14 @@ enum MD_MULTI
 	MD_MULTI_CHARSEL,
 	MD_MULTI_INITSTGSEL,
 	MD_MULTI_STGSEL,
+	MD_MULTI_INITSTGASK,
+	MD_MULTI_STGASK,
 };
 
 NJS_TEXNAME AVA_MULTI_TEXNAME[26];
 NJS_TEXLIST AVA_MULTI_TEXLIST = { arrayptrandlength(AVA_MULTI_TEXNAME) };
 
-NJS_TEXANIM AVA_MULTI_TEXANIM[]{
-
+NJS_TEXANIM AVA_MULTI_TEXANIM[] {
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_SONIC, 0x20},
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_EGGMAN, 0x20},
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_TAILS, 0x20},
@@ -66,6 +74,7 @@ NJS_TEXANIM AVA_MULTI_TEXANIM[]{
 	{ 110, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_BACK, 0x20},
 	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_CONFIRM, 0x20},
 	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_SELECT, 0x20},
+	{ 256, 128, 128, 64, 0, 0, 255, 255, AVAMULTITEX_STG1, 0x20},
 };
 
 NJS_SPRITE AVA_MULTI_SPRITE = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM };
@@ -105,53 +114,37 @@ PanelPrmType PanelPrmMenuMultiStgSel[] {
 	 { 0.0f,	120.0f,  AVAMULTITEX_STG10 },
 };
 
-const DialogPrmType MultiMenuStageSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0, 280.0, 20.0, 500.0, 340.0, 2.0, 1.1, 10, 10};
+PanelPrmType PanelPrmMenuMultiStgConfirm[] {
+	 { -114.0f, 0.0f, AVAMULTITEX_YES  },
+	 { 114.0f, 0.0f,  AVAMULTITEX_NO }
+};
+
+void multi_menu_confirmdialog_proc(DDlgType* ddltype);
+
+const DialogPrmType MultiMenuStageSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.0f, 1.1f, 10, 10};
+const DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, multi_menu_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 349.0f, 10.0f, 568.0f, 80.0f, 1.625f, 0.8f, 2, 1 };
 
 int sonic_level_link[] = {
-	LevelIDs_EmeraldCoast,
-	LevelIDs_WindyValley,
-	LevelIDs_Casinopolis,
-	LevelIDs_IceCap,
-	LevelIDs_TwinklePark,
-	LevelIDs_SpeedHighway,
-	LevelIDs_RedMountain,
-	LevelIDs_SkyDeck,
-	LevelIDs_LostWorld,
-	LevelIDs_FinalEgg,
-	LevelIDs_HotShelter
+	LevelAndActIDs_EmeraldCoast1,
+	LevelAndActIDs_WindyValley1,
+	LevelAndActIDs_Casinopolis2,
+	LevelAndActIDs_IceCap1,
+	LevelAndActIDs_TwinklePark1,
+	LevelAndActIDs_SpeedHighway1,
+	LevelAndActIDs_RedMountain1,
+	LevelAndActIDs_SkyDeck1,
+	LevelAndActIDs_LostWorld1,
+	LevelAndActIDs_FinalEgg1,
+	LevelAndActIDs_HotShelter1
 };
 
 extern bool MultiMenuEnabled;
 float alpha = 1.0f;
-int selected_characters[PLAYER_MAX]{ -1, -1, -1, -1 };
-bool player_ready[PLAYER_MAX]{ false, false, false, false};
-
-void launch_game(TrialActSelWk* wk, int level, int act)
-{
-	// Get splitscreen layout (TODO: create an "SetMultiplayerMode" function)
-	for (int i = PLAYER_MAX - 1; i >= 0; --i)
-	{
-		if (selected_characters[i] != -1)
-		{
-			player_count = i;
-			break;
-		}
-	}
-
-	LastLevel = CurrentLevel;
-	LastAct = CurrentAct;
-	CurrentCharacter = selected_characters[0];
-	CurrentLevel = level;
-	CurrentAct = act;
-	SeqTp->awp[1].work.ul[0] = 100;
-	AvaStgActT stgact = { level, act };
-	AvaCmnPrm = { (uint8_t)level, (uint8_t)act };
-	AdvertiseWork.Stage = level;
-	AdvertiseWork.Act = act;
-	wk->SelStg = level;
-	wk->Stat = ADVA_STAT_FADEOUT;
-	wk->T = 0.0f;
-}
+int selected_characters[PLAYER_MAX];
+bool player_ready[PLAYER_MAX];
+int stgactreq;
+int stgacttexid;
+MD_MULTI prevsubmode;
 
 void menu_multi_reset()
 {
@@ -173,6 +166,61 @@ void menu_multi_change(TrialActSelWk* wk, MD_MULTI id)
 {
 	CloseDialog();
 	wk->SubMode = (TrialActSbMdEnum)id;
+}
+
+void multi_menu_request_stg(TrialActSelWk* wk, int levelact, int id)
+{
+	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[id].PvrIdx;
+	prevsubmode = (MD_MULTI)(wk->SubMode - 1);
+	menu_multi_change(wk, MD_MULTI_INITSTGASK);
+	stgactreq = levelact;
+}
+
+void multi_menu_confirmdialog_proc(DDlgType* ddltype)
+{
+	AVA_MULTI_SPRITE.p.x = 320;
+	AVA_MULTI_SPRITE.p.y = 200;
+	AVA_MULTI_SPRITE.tanim[AVAMULTIANM_STG].texid = stgacttexid;
+	njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_STG, -100, 0);
+}
+
+void multi_menu_stg_confirm(TrialActSelWk* wk)
+{
+	auto stat = GetDialogStat();
+
+	if (stat != -1)
+	{
+		menu_multi_change(wk, prevsubmode);
+
+		if (stat == 0) // chose yes
+		{
+			// Get splitscreen layout (TODO: create an "SetMultiplayerMode" function)
+			for (int i = PLAYER_MAX - 1; i >= 0; --i)
+			{
+				if (selected_characters[i] != -1)
+				{
+					player_count = i;
+					break;
+				}
+			}
+
+			int level = ConvertLevelActsID_ToLevel(stgactreq);
+			int act = ConvertLevelActsID_ToAct(stgactreq);
+
+			LastLevel = CurrentLevel;
+			LastAct = CurrentAct;
+			CurrentCharacter = selected_characters[0];
+			CurrentLevel = level;
+			CurrentAct = act;
+			SeqTp->awp[1].work.ul[0] = 100;
+			AvaStgActT stgact = { level, act };
+			AvaCmnPrm = { (uint8_t)level, (uint8_t)act };
+			AdvertiseWork.Stage = level;
+			AdvertiseWork.Act = act;
+			wk->SelStg = level;
+			wk->Stat = ADVA_STAT_FADEOUT;
+		}
+	}
 }
 
 void menu_multi_charsel(TrialActSelWk* wk)
@@ -206,20 +254,22 @@ void menu_multi_charsel(TrialActSelWk* wk)
 			if (press & Buttons_Right)
 			{
 				sel = (sel - (sel % 4)) + ((sel + 1) % 4);
+				PlayMenuBipSound();
 			}
 			else if (press & Buttons_Left)
 			{
 				sel = sel - 1 < (sel - (sel % 4)) ? (sel - (sel % 4)) + 4 - 1 : sel - 1;
+				PlayMenuBipSound();
 			}
 			else if (press & (Buttons_Up | Buttons_Down))
 			{
 				sel = sel > 3 ? sel - 4 : sel + 4;
+				PlayMenuBipSound();
 			}
 			else if (press & Buttons_Start)
 			{
 				player_ready[i] = true;
 				PlayMenuEnterSound();
-				break;
 			}
 		}
 		else // player is ready
@@ -233,7 +283,7 @@ void menu_multi_charsel(TrialActSelWk* wk)
 	}
 
 	// If everyone is ready and at least two players are there
-	if (pcount > 1 && done == true)
+	if (pcount > 1 && player_ready[0] == true && done == true)
 	{
 		menu_multi_change(wk, MD_MULTI_INITSTGSEL);
 	}
@@ -254,8 +304,7 @@ void menu_multi_stgsel(TrialActSelWk* wk)
 	}
 	else if (stat != -1) // launch game request
 	{
-		launch_game(wk, sonic_level_link[stat], 0);
-		wk->Stat = ADVA_STAT_FADEOUT;
+		multi_menu_request_stg(wk, sonic_level_link[stat], stat);
 	}
 }
 
@@ -266,22 +315,38 @@ void menu_multi_subexec(TrialActSelWk* wk)
 	case MD_MULTI_INITCHARSEL: // Open character select
 		menu_multi_change(wk, MD_MULTI_CHARSEL);
 		menu_multi_charsel_unready();
-		alpha = 0.0f;
 		break;
 	case MD_MULTI_CHARSEL:
 		menu_multi_charsel(wk);
 		break;
 	case MD_MULTI_INITSTGSEL: // Open stage select (only Sonic for now)
+		ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR1];
+		ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR2];
+		ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR3];
+		ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR4];
+
+		menu_multi_change(wk, MD_MULTI_STGSEL);
 		OpenDialog(&MultiMenuStageSelDialog);
-		wk->SubMode = (TrialActSbMdEnum)MD_MULTI_STGSEL;
 		break;
 	case MD_MULTI_STGSEL:
 		menu_multi_stgsel(wk);
 		break;
+	case MD_MULTI_INITSTGASK: // Open prompt to ask level confirmation
+		ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR1];
+		ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR2];
+		ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR3];
+		ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR4];
+
+		menu_multi_change(wk, MD_MULTI_STGASK);
+		OpenDialog(&MultiMenuStageConfirmDialog);
+		break;
+	case MD_MULTI_STGASK:
+		multi_menu_stg_confirm(wk);
+		break;
 	}
 }
 
-void MultiMenu_DrawControls(TrialActSelWk* wk)
+void multi_menu_disp_controls(TrialActSelWk* wk)
 {
 	// Do not show on level select screen to save space:
 	
@@ -307,7 +372,7 @@ void MultiMenu_DrawControls(TrialActSelWk* wk)
 
 void multi_menu_disp_charsel(TrialActSelWk* wk)
 {
-	if (wk->SubMode != MD_MULTI_STGSEL)
+	if (wk->SubMode <= MD_MULTI_CHARSEL)
 	{
 		if (alpha < 1.0f) alpha += 0.05f;
 	}
@@ -351,7 +416,7 @@ void multi_menu_disp_charsel(TrialActSelWk* wk)
 	}
 
 	// Draw controls
-	MultiMenu_DrawControls(wk);
+	multi_menu_disp_controls(wk);
 }
 
 void __cdecl MultiMenuExec_Display(task* tp)
@@ -402,6 +467,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		PlayMenuMusicID(MusicIDs_JingleE);
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		wk->Stat = ADVA_STAT_FADEIN;
+		alpha = 1.0f;
 		wk->T = 0.0f;
 		wk->SelStg = -1;
 	}

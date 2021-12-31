@@ -600,6 +600,16 @@ enum DiaTypeEnum : __int32
 	DIA_TYPE_MAX = 0x1F,
 };
 
+struct __declspec(align(4)) DDlgType
+{
+	float CntrX;
+	float CntrY;
+	float BaseZ;
+	float SclX;
+	float SclY;
+	char Csr;
+};
+
 struct AvaStgActT
 {
 	unsigned __int8 Stg;
@@ -745,7 +755,7 @@ struct DlgSndPrmType
 struct __declspec(align(4)) DialogPrmType
 {
 	DlgPnlStyleEnum DlgStyle;
-	void(__cdecl* EachDrawFnc)(int*);
+	void(__cdecl* EachDrawFnc)(DDlgType*);
 	NJS_TEXLIST* PnlTlsPtr;
 	PanelPrmType* PnlPrmPtr;
 	DlgSndPrmType* DlgSndPrmPtr;
@@ -796,6 +806,7 @@ DataArray(int, GblMenuTbl, 0x7EF8E8, 6);
 FunctionPointer(void, OpenDialog, (const DialogPrmType* dp), 0x432DB0);
 FunctionPointer(char, GetDialogStat, (), 0x432550);
 FunctionPointer(BOOL, CloseDialog, (), 0x432580);
+DataPointer(task*, DialogTp, 0x3B2C588);
 
 VoidFunc(ghDefaultBlendingMode, 0x433170);
 FunctionPointer(void, DrawSkyBg, (float z), 0x507BB0);
