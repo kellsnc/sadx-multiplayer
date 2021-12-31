@@ -59,25 +59,8 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 		switch (stat)
 		{
 		case 0: // Adventure
-			CharSelAdvaModeProcedure(ADVA_MODE_EXPLAIN);
-			wkp->SubMode = TITLEMENU_SMD_NWAIT;
-			break;
 		case 1: // Trial
-			if (!GetEnableTrialActNumAll())
-			{
-				v8 = 1;
-				v13[0] = 0;
-			}
-
-			if (!GetEnableMiniGameNumAll())
-			{
-				v13[v8++] = 1;
-			}
-
-			v13[v8] = -1;
-
-			wkp->SubMode = TITLEMENU_SMD_STAY_S;
-			AdvaOpenDialogCsrLet(DIA_TYPE_TITLEMENU, 0, v13);
+			TARGET_DYNAMIC(MainMenuExecSub)(wkp); // first two items doesn't need adjusting so original is fine
 			break;
 		case 2: // Multiplayer (custom)
 			OpenDialog(&MainMenuMultiDialog);
