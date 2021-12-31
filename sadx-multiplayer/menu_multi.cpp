@@ -106,24 +106,6 @@ NJS_SPRITE MultiChar_CursorSprite[8] = {
 	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
 };
 
-void MultiMenu_DrawControls()
-{
-	gHelperFunctions->PushScaleUI((uiscale::Align)(Align_Bottom | Align_Center_Horizontal), false, 1.0f, 1.0f);
-
-	MultiLegendSprite.p.y = 448.0f;
-
-	MultiLegendSprite.p.x = 165.0f;
-	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-
-	MultiLegendSprite.p.x = 330.0f;
-	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_CONFIRM, -64, NJD_SPRITE_ALPHA);
-
-	MultiLegendSprite.p.x = 495.0f;
-	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_BACK, -64, NJD_SPRITE_ALPHA);
-
-	gHelperFunctions->PopScaleUI();
-}
-
 LevelAndActIDs multiLevelsSonicArray[]
 {
 	{ LevelAndActIDs_EmeraldCoast1 },
@@ -266,6 +248,24 @@ void StartMulti_Game(task* tp, TrialActSelWk* wk)
 	njReleaseTexture(&AVA_MULTI_TEXLIST);
 }
 
+void MultiMenu_DrawControls()
+{
+	gHelperFunctions->PushScaleUI((uiscale::Align)(Align_Bottom | Align_Center_Horizontal), false, 1.0f, 1.0f);
+
+	MultiLegendSprite.p.y = 448.0f;
+
+	MultiLegendSprite.p.x = 165.0f;
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+
+	MultiLegendSprite.p.x = 330.0f;
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_CONFIRM, -64, NJD_SPRITE_ALPHA);
+
+	MultiLegendSprite.p.x = 495.0f;
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_BACK, -64, NJD_SPRITE_ALPHA);
+
+	gHelperFunctions->PopScaleUI();
+}
+
 void DrawCharacterPortrait(int i)
 {
 	SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
@@ -284,7 +284,7 @@ void DrawChar_Cursor(int pnum)
 	MultiChar_CursorSprite[pnum].p.y = cursorCharPos_Array[cursorChar[pnum]].y;
 
 	njDrawSprite2D_DrawNow(&MultiChar_CursorSprite[pnum], AVAMULTIANM_CURSORCHAR, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-	ClampGlobalColorThing_Thing();
+	ResetMaterial();
 }
 
 void DrawLevel_Cursor()
@@ -294,7 +294,7 @@ void DrawLevel_Cursor()
 	MultiLevelCursor_Sprite.p.y = cursorLevel_PosArray[cursorLvl].y;
 
 	njDrawSprite2D_DrawNow(&MultiLevelCursor_Sprite, AVAMULTIANM_CURSORSTG, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-	ClampGlobalColorThing_Thing();
+	ResetMaterial();
 }
 
 void MultiMenu_InputLevel(EntityData1* data)
@@ -369,8 +369,9 @@ void MultiMenuChild_TaskDisplay(ObjectMaster* obj)
 
 		break;
 	case multiTask::levelSelect:
+		DrawSADXText("MULTIPLAYER - BATTLE", 0, 20, 120, 40);
+		DrawSADXText("Level Select", 0, 50, 120, 40);
 
-		DrawSADXText("MULTIPLAYER - BATTLE\n    Level Select", 0, 20, 120, 40);
 		DrawLevel_Cursor();
 
 		for (int i = 0; i < LengthOfArray(multiLevelsSonicArray); i++)
@@ -408,8 +409,7 @@ void __cdecl MultiMenuExec_Display(task* tp)
 
 			MultiMenuChild_TaskDisplay(parent->Child);
 
-
-			ClampGlobalColorThing_Thing();
+			ResetMaterial();
 			gHelperFunctions->PopScaleUI();
 		}
 
