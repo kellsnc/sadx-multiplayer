@@ -1,32 +1,110 @@
 #include "pch.h"
 #include "menu_multi.h"
 
+enum AVA_MULTI_TEX
+{
+	AVAMULTITEX_SONIC,
+	AVAMULTITEX_EGGMAN,
+	AVAMULTITEX_TAILS,
+	AVAMULTITEX_KNUCKLES,
+	AVAMULTITEX_TIKAL,
+	AVAMULTITEX_AMY,
+	AVAMULTITEX_E102,
+	AVAMULTITEX_BIG,
+	AVAMULTITEX_METAL,
+	AVAMULTITEX_CURSOR,
+	AVAMULTITEX_STG1,
+	AVAMULTITEX_STG2,
+	AVAMULTITEX_STG3,
+	AVAMULTITEX_STG4,
+	AVAMULTITEX_STG5,
+	AVAMULTITEX_STG6,
+	AVAMULTITEX_STG7,
+	AVAMULTITEX_STG8,
+	AVAMULTITEX_STG9,
+	AVAMULTITEX_STG10,
+	AVAMULTITEX_BACK,
+	AVAMULTITEX_CONFIRM,
+	AVAMULTITEX_SELECT
+};
+
+enum AVA_MULTI_ANM
+{
+	AVAMULTIANM_CHARA = 0,
+	AVAMULTIANM_CURSORCHAR = 9,
+	AVAMULTIANM_CURSORSTG,
+	AVAMULTIANM_STG,
+	AVAMULTIANM_BACK = 21,
+	AVAMULTIANM_CONFIRM,
+	AVAMULTIANM_SELECT
+};
+
+enum playReadyState {
+	disconnected,
+	pressedStart,
+	ready
+};
+
+enum class multiTask {
+	init,
+	charSelect,
+	levelSelect,
+	finish
+};
 
 extern bool MultiMenuEnabled;
-
 bool isStageSelected = false;
-
-const char levelMax = 10;
+const int levelMax = 10;
+int playerReady[PLAYER_MAX];
 
 uint8_t cursorChar[PLAYER_MAX];
 uint8_t cursorLvl;
 
-NJS_TEXNAME multicharTex[10];
-NJS_TEXLIST multichar_Texlist = { arrayptrandlength(multicharTex) };
+NJS_TEXNAME AVA_MULTI_TEXNAME[10];
+NJS_TEXLIST AVA_MULTI_TEXLIST = { arrayptrandlength(AVA_MULTI_TEXNAME) };
 
-NJS_TEXNAME multiLevelTex[11];
-NJS_TEXLIST multiLevel_Texlist = { arrayptrandlength(multiLevelTex) };
-
-NJS_TEXNAME multiLegendTex[3];
-NJS_TEXLIST multiLegend_Texlist = { arrayptrandlength(multiLegendTex) };
-
-NJS_TEXANIM multiLegendTexAnim[]{
-	{ 110, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, 0, 0x20},
-	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, 1, 0x20},
-	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, 2, 0x20},
+NJS_TEXANIM AVA_MULTI_TEXANIM[]{
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_SONIC, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_EGGMAN, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_TAILS, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_KNUCKLES, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_TIKAL, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_AMY, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_BIG, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_E102, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_METAL, 0x20 },
+	{ 64, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_CURSOR, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG1, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG2, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG3, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG4, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG5, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG6, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG7, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG8, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG9, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_STG10, 0x20 },
+	{ 128, 64, 0, 0, 0, 0, 255, 255, AVAMULTITEX_CURSOR, 0x20 },
+	{ 110, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_BACK, 0x20},
+	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_CONFIRM, 0x20},
+	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_SELECT, 0x20},
 };
 
-NJS_SPRITE MultiLegendSprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multiLegend_Texlist, multiLegendTexAnim };
+NJS_SPRITE MultiLegendSprite = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM };
+NJS_SPRITE MultiLevel_Sprite = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM };
+NJS_SPRITE MultiLevelCursor_Sprite = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM };
+NJS_SPRITE MultiCharTexSprite = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM };
+
+NJS_SPRITE MultiChar_CursorSprite[8] = {
+	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
+	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
+	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
+	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
+	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
+	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
+	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
+	{ { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM },
+};
 
 void MultiMenu_DrawControls()
 {
@@ -35,24 +113,16 @@ void MultiMenu_DrawControls()
 	MultiLegendSprite.p.y = 448.0f;
 
 	MultiLegendSprite.p.x = 165.0f;
-	njDrawSprite2D_DrawNow(&MultiLegendSprite, 0, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
 	MultiLegendSprite.p.x = 330.0f;
-	njDrawSprite2D_DrawNow(&MultiLegendSprite, 1, -64, NJD_SPRITE_ALPHA);
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_CONFIRM, -64, NJD_SPRITE_ALPHA);
 
 	MultiLegendSprite.p.x = 495.0f;
-	njDrawSprite2D_DrawNow(&MultiLegendSprite, 2, -64, NJD_SPRITE_ALPHA);
+	njDrawSprite2D_DrawNow(&MultiLegendSprite, AVAMULTIANM_BACK, -64, NJD_SPRITE_ALPHA);
 
 	gHelperFunctions->PopScaleUI();
 }
-
-
-enum class multiTask {
-	init,
-	charSelect,
-	levelSelect,
-	finish
-};
 
 LevelAndActIDs multiLevelsSonicArray[]
 {
@@ -82,20 +152,6 @@ LevelAndActIDs multiLevelsSonicArray[]
 
 };
 
-NJS_TEXANIM MultiLevel_TexAnim[]{
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 0, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 1, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 2, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 3, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 4, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 5, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 6, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 7, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 8, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 9, 0x20 },
-	{ 128, 64, 0, 0, 0, 0, 255, 255, 10, 0x20 },
-};
-
 NJS_POINT2 cursorLevel_PosArray[]{
 	{ 50, 150 },
 	{ 180, 150 },
@@ -109,136 +165,80 @@ NJS_POINT2 cursorLevel_PosArray[]{
 	{ 180, 290 },
 };
 
-NJS_SPRITE MultiLevel_Sprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multiLevel_Texlist, MultiLevel_TexAnim };
-NJS_SPRITE MultiLevelCursor_Sprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multiLevel_Texlist, MultiLevel_TexAnim };
-
-void DrawMulti_LevelSelect(char i) {
-
-	SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
-	MultiLevel_Sprite.p.x = cursorLevel_PosArray[i].x;
-	MultiLevel_Sprite.p.y = cursorLevel_PosArray[i].y;
-	njDrawSprite2D_DrawNow(&MultiLevel_Sprite, i + 1, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-	return;
-}
-
-int playerReady[PLAYER_MAX];
-
-enum playReadyState {
-	disconnected,
-	pressedStart,
-	ready
-};
-
-
-void SetPlayerToUnready() {
-
-	for (int i = 0; i < PLAYER_MAX; i++) {
-
-		if (playerReady[i] >= ready) 
-			playerReady[i] = pressedStart;
-		
-	}
-	return;
-}
-
-enum CharacterMenu {
-	sonicIcon,
-	eggIcon,
-	tailsIcon,
-	knuxIcon,
-	tikalIcon,
-	amyIcon,
-	e102Icon,
-	bigIcon,
-	msIcon,
-	cursorIcon
+NJS_POINT2 cursorCharPos_Array[8]{
+	{ 200.0f, 150.0f },
+	{ 260.0f, 150.0f },
+	{ 320.0f, 150.0f },
+	{ 380.0f, 150.0f },
+	{ 200.0f, 220.0f },
+	{ 260.0f, 220.0f },
+	{ 320.0f, 220.0f },
+	{ 380.0f, 220.0f },
 };
 
 NJS_VECTOR CursorColor[8] = {
-	{ 1, 1, 1},
-	{ 0.145, 0.501, 0.894 }, //light blue
-	{0.423, 0.894, 0.047}, //light green
-	{ 0.894, 0.701, 0.047}, //yellow
-	{ 0.976, 0.525, 0.862}, //pink 
-	{ 0.584, 0.074, 0.560}, //purple
-	{ 0.070, 0.047, 0.894}, //dark blue
-	{ 0.521, 0, 0}, //dark red
+	{ 1.0f, 1.0f, 1.0f },
+	{ 0.145f, 0.501f, 0.894f }, //light blue
+	{ 0.423f, 0.894f, 0.047f }, //light green
+	{ 0.894f, 0.701f, 0.047f }, //yellow
+	{ 0.976f, 0.525f, 0.862f }, //pink 
+	{ 0.584f, 0.074f, 0.560f }, //purple
+	{ 0.070f, 0.047f, 0.894f }, //dark blue
+	{ 0.521f, 0.0f, 0.0f}, //dark red
 };
 
-NJS_TEXANIM MultiTexAnim[]{
-	{ 64, 64, 0, 0, 0, 0, 255, 255, sonicIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, eggIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, tailsIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, knuxIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, tikalIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, amyIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, bigIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, e102Icon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, bigIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, msIcon, 0x20 },
-	{ 64, 64, 0, 0, 0, 0, 255, 255, cursorIcon, 0x20 },
-};
+void DrawMulti_LevelSelect(int i)
+{
+	SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
+	MultiLevel_Sprite.p.x = cursorLevel_PosArray[i].x;
+	MultiLevel_Sprite.p.y = cursorLevel_PosArray[i].y;
+	njDrawSprite2D_DrawNow(&MultiLevel_Sprite, AVAMULTIANM_STG + i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+}
 
-NJS_POINT2 cursorCharPos_Array[8]{
-	{ 200, 150 },
-	{ 260, 150 },
-	{ 320, 150 },
-	{ 380, 150 },
-	{ 200, 220 },
-	{ 260, 220 },
-	{ 320, 220 },
-	{ 380, 220 },
-};
+void SetPlayerToUnready()
+{
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		if (playerReady[i] >= ready) 
+			playerReady[i] = pressedStart;
+	}
+}
 
-NJS_SPRITE MultiCharTexSprite = { { 0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim };
+bool isEveryoneReady()
+{
+	int countRDY = 0;
+	int countNotRDY = 0;
 
-NJS_SPRITE MultiChar_CursorSprite[8] = {
-	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-	{ {0, 0, 0 }, 1.0f, 1.0f, 0, &multichar_Texlist, MultiTexAnim },
-};
-
-
-bool isEveryoneReady() {
-
-	char countRDY = 0;
-	char countNotRDY = 0;
-
-	for (int i = 0; i < PLAYER_MAX; i++) {
-
-		if (playerReady[i] <= disconnected) {
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		if (playerReady[i] <= disconnected)
+		{
 			DisplayDebugStringFormatted(NJM_LOCATION(2, 7 + i), "Player %d Disconnected", i + 1);
 
 			if (i > 0)
 				cursorChar[i] = i;
 		}
 
-		if (playerReady[i] == ready) {
+		if (playerReady[i] == ready)
+		{
 			countRDY++;
 
 			DisplayDebugStringFormatted(NJM_LOCATION(2, 7 + i), "Player %d READY!", i + 1);
 		}
 
-		if (playerReady[i] == pressedStart) {
+		if (playerReady[i] == pressedStart)
+		{
 			countNotRDY++;
 	
 			DisplayDebugStringFormatted(NJM_LOCATION(2, 7 + i), "Player %d Select character...", i + 1);
 		}
 	}
 
-	if (countNotRDY <= 0 && countRDY >= 2)
-		return true;
-
-	return false;
+	return countNotRDY <= 0 && countRDY >= 2;
 }
 
-void StartMulti_Game(task* tp, TrialActSelWk* wk) {
-
+void StartMulti_Game(task* tp, TrialActSelWk* wk)
+{
 	if (!tp->ctp)
 		return;
 
@@ -263,20 +263,19 @@ void StartMulti_Game(task* tp, TrialActSelWk* wk) {
 
 	wk->Stat = ADVA_STAT_FADEOUT;
 	wk->T = 0.0f;
-	njReleaseTexture(&multichar_Texlist);
+	njReleaseTexture(&AVA_MULTI_TEXLIST);
 }
 
-void DrawCharacterPortrait(char i) {
-
-	SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
+void DrawCharacterPortrait(int i)
+{
+	SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 	MultiCharTexSprite.p.x = cursorCharPos_Array[i].x;
 	MultiCharTexSprite.p.y = cursorCharPos_Array[i].y;
-	njDrawSprite2D_DrawNow(&MultiCharTexSprite, i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-	return;
+	njDrawSprite2D_DrawNow(&MultiCharTexSprite, AVAMULTIANM_CHARA + i, -500, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 }
 
-void DrawChar_Cursor(char pnum) {
-
+void DrawChar_Cursor(int pnum)
+{
 	if (playerReady[pnum] < pressedStart || pnum > PLAYER_MAX)
 		return;
 
@@ -284,17 +283,17 @@ void DrawChar_Cursor(char pnum) {
 	MultiChar_CursorSprite[pnum].p.x = cursorCharPos_Array[cursorChar[pnum]].x;
 	MultiChar_CursorSprite[pnum].p.y = cursorCharPos_Array[cursorChar[pnum]].y;
 
-	njDrawSprite2D_DrawNow(&MultiChar_CursorSprite[pnum], cursorIcon + 1, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&MultiChar_CursorSprite[pnum], AVAMULTIANM_CURSORCHAR, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 	ClampGlobalColorThing_Thing();
 }
 
-void DrawLevel_Cursor() {
-
-	SetMaterialAndSpriteColor_Float(1, 1, 1, 1);
+void DrawLevel_Cursor()
+{
+	SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 	MultiLevelCursor_Sprite.p.x = cursorLevel_PosArray[cursorLvl].x;
 	MultiLevelCursor_Sprite.p.y = cursorLevel_PosArray[cursorLvl].y;
 
-	njDrawSprite2D_DrawNow(&MultiLevelCursor_Sprite, 0, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&MultiLevelCursor_Sprite, AVAMULTIANM_CURSORSTG, -499, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 	ClampGlobalColorThing_Thing();
 }
 
@@ -346,9 +345,8 @@ void MultiMenu_InputLevel(EntityData1* data)
 		cursorLvl = 0;
 }
 
-
-void MultiMenuChild_TaskDisplay(ObjectMaster* obj) {
-
+void MultiMenuChild_TaskDisplay(ObjectMaster* obj)
+{
 	if (!obj)
 		return;
 
@@ -357,11 +355,11 @@ void MultiMenuChild_TaskDisplay(ObjectMaster* obj) {
 	njColorBlendingMode(0, NJD_COLOR_BLENDING_SRCALPHA);
 	njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
 
-
 	switch (multiTask(data->Action))
 	{
 	case multiTask::charSelect:
-		DrawSADXText("MULTIPLAYER - BATTLE\n     Character Select", 0, 20, 120, 40);
+		DrawSADXText("MULTIPLAYER - BATTLE", 0, 20, 120, 40);
+		DrawSADXText("Character Select", 0, 50, 120, 40);
 
 		for (int i = 0; i < 8; i++) {
 			DrawChar_Cursor(i);
@@ -375,8 +373,8 @@ void MultiMenuChild_TaskDisplay(ObjectMaster* obj) {
 		DrawSADXText("MULTIPLAYER - BATTLE\n    Level Select", 0, 20, 120, 40);
 		DrawLevel_Cursor();
 
-		for (int i = 0; i < LengthOfArray(multiLevelsSonicArray); i++) {
-
+		for (int i = 0; i < LengthOfArray(multiLevelsSonicArray); i++)
+		{
 			DrawMulti_LevelSelect(i);
 		}
 
@@ -415,13 +413,12 @@ void __cdecl MultiMenuExec_Display(task* tp)
 			gHelperFunctions->PopScaleUI();
 		}
 
-
 		float a1 = wk->BaseZ - 2.0;
 		DrawTiledBG_AVA_BACK(a1);
 	}
 }
 
-bool MultiMenu_CheckMoveInput(int button, char pNum)
+bool MultiMenu_CheckMoveInput(int button, int pNum)
 {
 	//lock control if player has the character selected.
 
@@ -445,14 +442,9 @@ bool MultiMenu_CheckMoveInput(int button, char pNum)
 			return false;
 		}
 
-		if (cursorChar[pNum] < sonicIcon)
-			cursorChar[pNum] = bigIcon;
-
-		if (cursorChar[pNum] > msIcon)
-			cursorChar[pNum] = sonicIcon;
+		cursorChar[pNum] %= 8;
 
 		PlayMenuBipSound();
-
 	}
 
 	return false;
@@ -460,23 +452,22 @@ bool MultiMenu_CheckMoveInput(int button, char pNum)
 
 void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 {
-
 	if (tp->ctp)
 	{
-		if (tp->ctp->twp->mode > (char)multiTask::charSelect) {
+		if (tp->ctp->twp->mode > (char)multiTask::charSelect)
+		{
 			return;
 		}
 	}
 
-	for (int i = 0; i < PLAYER_MAX; i++) {
-
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
 		if (MenuSelectButtonsPressed_r(i))
 		{
 			PlayMenuEnterSound();
 
 			if (playerReady[i] < ready)
 				playerReady[i]++;
-
 
 			if (playerReady[i] >= ready)
 			{
@@ -506,10 +497,8 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 			}
 		}
 
-
 		if (playerReady[i] >= ready || playerReady[i] <= disconnected)
 			continue;
-
 
 		if (MultiMenu_CheckMoveInput(Buttons_Up, i))
 			continue;
@@ -523,11 +512,10 @@ void MultiMenu_InputCheck(task* tp, TrialActSelWk* wk)
 		if (MultiMenu_CheckMoveInput(Buttons_Right, i))
 			continue;
 	}
-
-	return;
 }
 
-void MultiMenuChild_TaskManager(ObjectMaster* obj) {
+void MultiMenuChild_TaskManager(ObjectMaster* obj)
+{
 	EntityData1* data = obj->Data1;
 
 	switch (multiTask(data->Action))
@@ -539,9 +527,7 @@ void MultiMenuChild_TaskManager(ObjectMaster* obj) {
 		MusicList[MusicIDs_Trial].Name = "btl_sel";
 		PlayMenuMusicID(4);
 		PlayVoice(40);
-		LoadPVM("multichar", &multichar_Texlist);
-		LoadPVM("multi_Levels", &multiLevel_Texlist);
-		LoadPVM("MultiLegend", &multiLegend_Texlist);
+		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		//LoadPVM("ava_chsel_e", &ava_chsel_e_TEXLIST);
 		playerReady[0] = pressedStart;
 		SetDebugFontSize(13.0f * (unsigned short)VerticalResolution / 480.0f);
@@ -565,13 +551,11 @@ void MultiMenuChild_TaskManager(ObjectMaster* obj) {
 		break;
 	case multiTask::finish:
 		isStageSelected = false;
-		njReleaseTexture(&multiLevel_Texlist);
-		njReleaseTexture(&multiLegend_Texlist);
+		njReleaseTexture(&AVA_MULTI_TEXLIST);
 		CheckThingButThenDeleteObject(obj);
 		break;
 	}
 }
-
 
 void __cdecl MultiMenuExec_Main(task* tp)
 {
@@ -628,9 +612,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		{
 			wk->Stat = ADVA_STAT_REQWAIT;
 			SeqTp->awp[1].work.ub[15] = 1;
-			njReleaseTexture(&multichar_Texlist);
-			njReleaseTexture(&multiLevel_Texlist);
-			njReleaseTexture(&multiLegend_Texlist);
+			njReleaseTexture(&AVA_MULTI_TEXLIST);
 			MenuLaunchNext();
 			MultiMenuEnabled = false;
 			isStageSelected = false;
