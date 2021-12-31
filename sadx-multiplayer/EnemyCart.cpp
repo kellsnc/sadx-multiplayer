@@ -8,8 +8,8 @@ enum CARTMD
 	CARTMD_WAIT,
 	CARTMD_WARP,
 	CARTMD_CTRL, // Player controlled
-	CARTMD_5, // Player controlled
-	CARTMD_6,
+	CARTMD_PASS, // Looping
+	CARTMD_GOAL, // IA after course
 	CARTMD_EXPL,
 	CARTMD_8,
 	CARTMD_9,
@@ -112,7 +112,7 @@ void cartDisplayM(task* tp)
 
 		if (cart_data->vitality <= cartparam->smoke_vitality)
 		{
-			if (!(GetGlobalTime() % cart_data->vitality + 8))
+			if (!(GetGlobalTime() % (cart_data->vitality + 8)))
 			{
 				CreateSmoke(&twp->pos, &_velo, 1.0);
 			}
@@ -186,7 +186,7 @@ void cartSetVectorM(taskwk* twp, int pnum)
 	{
 		taskwk* pltwp = playertwp[pnum];
 
-		twp->pos = playertwp[0]->pos;
+		twp->pos = pltwp->pos;
 
 		if (pltwp->cwp->flag & 1)
 		{
@@ -217,15 +217,15 @@ void cartThinkM(task* tp, taskwk* twp, int pnum)
 	playertwp[0] = backup;
 }
 
-void cartTopographicalCollisionM(task* tp, taskwk* twp)
+void cartTopographicalCollisionM(task* tp, taskwk* twp, int pnum)
 {
 	// todo: rewrite
 	auto backup1 = playertp[0];
 	auto backup2 = playertwp[0];
 	auto backup3 = camera_twp->pos;
-	playertp[0] = playertp[twp->btimer];
-	playertwp[0] = playertwp[twp->btimer];
-	camera_twp->pos = *GetCameraPosition(twp->btimer);
+	playertp[0] = playertp[pnum];
+	playertwp[0] = playertwp[pnum];
+	camera_twp->pos = *GetCameraPosition(pnum);
 	cartTopographicalCollision(tp, twp);
 	playertp[0] = backup1;
 	playertwp[0] = backup2;
@@ -281,6 +281,41 @@ void cartCharactorCollisionM(taskwk* twp, int pnum)
 		case CARTMD_WARP:
 			ptwp->cwp->info->damage &= 0xFCu;
 			ptwp->cwp->info->damage |= 0xCu;
+			break;
+		case CARTMD_CTRL:
+			if (ptwp->wtimer)
+			{
+				cart_data->vector.x *= 0.5f;
+				cart_data->vector.y *= 0.5f;
+				cart_data->vector.z *= 0.5f;
+
+				if (GetRings())
+				{
+					DamegeRingScatter(pnum);
+				}
+				else
+				{
+					KillHimP(pnum);
+					cart_data->vitality = 0;
+				}
+
+				cart_data->invincible_timer = CartOtherParam.rest_time;
+			}
+			else
+			{
+				Angle diff = (twp->ang.y - (0x4000 - playermwp[pnum]->ang_aim.y));
+				if (diff > 0x8000) diff = 0x10000 - diff;
+				if (diff >= 0x2000)
+				{
+					ptwp->cwp->info->damage &= ~3;
+					ptwp->cwp->info->damage &= ~0xC;
+				}
+				else
+				{
+					ptwp->cwp->info->damage = ~3 | 2;
+					ptwp->cwp->info->damage = ~0xC | 4;
+				}
+			}
 			break;
 		}
 
@@ -452,6 +487,39 @@ void cartSonicRidingCartM(taskwk* twp, int pnum)
 	}
 }
 
+void cartSpdControlSonicOnTheCartM(taskwk* twp, int pnum)
+{
+	// todo: rewrite
+	auto backup1 = perG[0];
+	auto backup2 = Rings;
+	Rings = GetNumRingM(pnum);
+	perG[0] = perG[pnum];
+	cartSpdControlSonicOnTheCart(twp);
+	perG[0] = backup1;
+	Rings = backup2;
+}
+
+void cartTakeSonicM(taskwk* twp, int pnum)
+{
+	playertwp[pnum]->pos = twp->pos;
+	playertwp[pnum]->ang.x = twp->ang.x;
+	playertwp[pnum]->ang.y = 0x4000 - twp->ang.y;
+	playertwp[pnum]->ang.z = twp->ang.z;
+	//pLockingOnTargetEnemy2(playertwp[pnum], playermwp[pnum], playerpwp[pnum], v6, v5, v9);
+	
+	// Camera stuff here
+}
+
+void checkCartGoalM(taskwk* twp)
+{
+	if (CartGoalFlag == 1) // todo: update multiplayer
+	{
+		twp->mode = CARTMD_GOAL;
+		cart_data->load_line = 1;
+		cart_data->next_point = 1;
+	}
+}
+
 void EnemyCartM(task* tp)
 {
 	if (CheckRange(tp))
@@ -461,7 +529,7 @@ void EnemyCartM(task* tp)
 
 	auto twp = tp->twp;
 	cart_data = (ENEMY_CART_DATA*)tp->awp;
-	auto pnum = twp->mode < 2 ? GetTheNearestPlayerNumber(&twp->pos) : twp->btimer;
+	auto pnum = twp->mode < 3 ? GetTheNearestPlayerNumber(&twp->pos) : twp->btimer;
 	player_no = GetPlayerNumberM(pnum);
 	auto cartparam = &CartParameter[GetPlayerNumberM(pnum)];
 
@@ -477,7 +545,7 @@ void EnemyCartM(task* tp)
 		cartSpdForceOfNature(twp);
 		cartThinkM(tp, twp, pnum);
 		cartCharactorCollisionM(twp, pnum);
-		cartTopographicalCollisionM(tp, twp);
+		cartTopographicalCollisionM(tp, twp, pnum);
 		cartSELoopM(tp, 0);
 		break;
 	case CARTMD_WAIT:
@@ -488,15 +556,42 @@ void EnemyCartM(task* tp)
 		cartShadowPos(twp);
 		cartSpdForceOfNature(twp);
 		cartCharactorCollisionM(twp, pnum);
-		cartTopographicalCollisionM(tp, twp);
+		cartTopographicalCollisionM(tp, twp, pnum);
 		break;
 	case CARTMD_WARP:
+		cart_data->flag &= ~1u;
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
 		cartSpdForceOfNature(twp);
 		cartCharactorCollisionM(twp, pnum);
-		cartTopographicalCollisionM(tp, twp);
+		cartTopographicalCollisionM(tp, twp, pnum);
 		cartSonicRidingCartM(twp, pnum);
+		break;
+	case CARTMD_CTRL:
+		cart_data->flag &= ~1u;
+		cartSetVectorM(twp, pnum);
+		cartShadowPos(twp);
+		cartSpdForceOfNature(twp);
+		cartSpdControlSonicOnTheCartM(twp, pnum);
+		cartCharactorCollisionM(twp, pnum);
+		cartTopographicalCollisionM(tp, twp, pnum);
+		cartTakeSonicM(twp, pnum);
+		cartCheckPass(twp);
+		break;
+	case CARTMD_PASS:
+		//cartRunPass
+		cartTakeSonicM(twp, pnum);
+		cartSELoopM(tp, 0);
+		break;
+	case CARTMD_GOAL:
+		cart_data->flag |= 1u;
+		cartSetVectorM(twp, pnum);
+		cartShadowPos(twp);
+		cartSpdForceOfNature(twp);
+		cartThinkM(tp, twp, pnum);
+		cartCharactorCollisionM(twp, pnum);
+		cartTopographicalCollisionM(tp, twp, pnum);
+		cartTakeSonicM(twp, pnum);
 		break;
 	}
 
