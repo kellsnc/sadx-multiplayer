@@ -783,17 +783,28 @@ FunctionPointer(BOOL, GetEnableTrialActNumAll, (), 0x5061F0);
 FunctionPointer(BOOL, GetEnableMiniGameNumAll, (), 0x506210);
 FunctionPointer(void, AdvaOpenDialogCsrLet, (DiaTypeEnum dialog_type, char csr, char* csrp), 0x5057D0);
 
-FunctionPointer(char, GetDialogStat, (), 0x432550);
 VoidFunc(PlayMenuBipSound, 0x6FC8A0);
 VoidFunc(PlayMenuEnterSound, 0x505810);
 VoidFunc(PlayMenuBackSound, 0x505830);
-FunctionPointer(void, PlayMenuMusicID, (int id), 0x505990);
+FunctionPointer(void, PlayMenuMusicID, (MusicIDs id), 0x505900);
+FunctionPointer(void, PlayMenuMusic, (int id), 0x505990);
 FunctionPointer(void, CmnAdvaModeProcedure, (AdvaModeEnum mode), 0x505B40);
 FunctionPointer(void, CharSelAdvaModeProcedure, (AdvaModeEnum mode), 0x505E60);
 FunctionPointer(int, GetFadeOutColFromT, (float t), 0x506E10);
 FunctionPointer(int, GetFadeInColFromT, (float t), 0x506E40);
 DataArray(int, GblMenuTbl, 0x7EF8E8, 6);
 FunctionPointer(void, OpenDialog, (const DialogPrmType* dp), 0x432DB0);
+FunctionPointer(char, GetDialogStat, (), 0x432550);
+FunctionPointer(BOOL, CloseDialog, (), 0x432580);
+
+VoidFunc(ghDefaultBlendingMode, 0x433170);
+FunctionPointer(void, DrawSkyBg, (float z), 0x507BB0);
+FunctionPointer(void, ghSetPvrTexBaseColor, (Uint32 color), 0x433010);
+FunctionPointer(void, ghSetPvrTexMaterial, (Uint32 color), 0x432F40);
+FunctionPointer(void, DrawTitleBack, (float x, float y, float z, float w, float h), 0x4334F0);
+FunctionPointer(void, ghSetPvrTexVertexColor, (unsigned int c0, unsigned int c1, unsigned int c2, unsigned int c3), 0x432F90);
+FunctionPointer(void, ghDrawPvrTexture, (int index, float x, float y, float z), 0x4338D0);
+FunctionPointer(void, DrawShadowWindow, (float x, float y, float z, float w, float h), 0x4343E0);
 
 static const void* const ChgSubModePtr = (void*)0x50B1C0;
 static inline void ChgSubModeToStay_0(ModeSelPrmType* a1, task* a2)
