@@ -71,6 +71,25 @@ enum MD_MULTI
 	MD_MULTI_STGASK,
 };
 
+struct MultiMenuWK
+{
+	AdvaStatEnum Stat;
+	AdvaModeEnum PrevMode;
+	AdvaModeEnum NextMode;
+	float BaseZ;
+	float T;
+	unsigned int BaseCol;
+	MD_MULTI SubMode;
+	MD_MULTI PrevSubMode;
+	int SelStg;
+	float alphaMainMenu;
+	float alphaControls;
+	int selected_characters[PLAYER_MAX];
+	bool player_ready[PLAYER_MAX];
+	int stgactreq;
+	int pcount;
+};
+
 NJS_TEXNAME AVA_MULTI_TEXNAME[33];
 NJS_TEXLIST AVA_MULTI_TEXLIST = { arrayptrandlength(AVA_MULTI_TEXNAME) };
 
@@ -175,45 +194,37 @@ const char* press_start_texts[] {
 	"Press start to join",
 };
 
-extern bool MultiMenuEnabled;
-float alphaMainMenu = 1.0f;
-float alphaControls = 1.0f;
-int selected_characters[PLAYER_MAX];
-bool player_ready[PLAYER_MAX];
-int stgactreq;
-int stgacttexid;
-int pcount;
-int gametype;
-MD_MULTI prevsubmode;
+Trampoline* CreateModeFnc_t = nullptr;
+int stgacttexid = 0;
 
-void menu_multi_reset()
+void menu_multi_reset(MultiMenuWK* wk)
 {
-	for (auto& item : selected_characters)
+	for (auto& item : wk->selected_characters)
 	{
 		item = -1;
 	}
 }
 
-void menu_multi_charsel_unready()
+void menu_multi_charsel_unready(MultiMenuWK* wk)
 {
-	for (auto& item : player_ready)
+	for (auto& item : wk->player_ready)
 	{
 		item = false;
 	}
 }
 
-void menu_multi_change(TrialActSelWk* wk, MD_MULTI id)
+void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 {
 	CloseDialog();
-	wk->SubMode = (TrialActSbMdEnum)id;
+	wk->SubMode = id;
 }
 
-void multi_menu_request_stg(TrialActSelWk* wk, int levelact, int id)
+void multi_menu_request_stg(MultiMenuWK* wk, int levelact, int id)
 {
 	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[id].PvrIdx;
-	prevsubmode = (MD_MULTI)(wk->SubMode - 1);
+	wk->PrevSubMode = (MD_MULTI)(wk->SubMode - 1);
 	menu_multi_change(wk, MD_MULTI_INITSTGASK);
-	stgactreq = levelact;
+	wk->stgactreq = levelact;
 }
 
 void multi_menu_confirmdialog_proc(DDlgType* ddltype)
@@ -226,32 +237,32 @@ void multi_menu_confirmdialog_proc(DDlgType* ddltype)
 	njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_STG, -100, 0);
 }
 
-void multi_menu_stg_confirm(TrialActSelWk* wk)
+void multi_menu_stg_confirm(MultiMenuWK* wk)
 {
 	auto stat = GetDialogStat();
 
 	if (stat != -1)
 	{
-		menu_multi_change(wk, prevsubmode);
+		menu_multi_change(wk, wk->PrevSubMode);
 
 		if (stat == 0) // chose yes
 		{
 			// Get splitscreen layout (TODO: create an "SetMultiplayerMode" function)
 			for (int i = PLAYER_MAX - 1; i >= 0; --i)
 			{
-				if (selected_characters[i] != -1)
+				if (wk->selected_characters[i] != -1)
 				{
 					player_count = i;
 					break;
 				}
 			}
 
-			int level = ConvertLevelActsID_ToLevel(stgactreq);
-			int act = ConvertLevelActsID_ToAct(stgactreq);
+			int level = ConvertLevelActsID_ToLevel(wk->stgactreq);
+			int act = ConvertLevelActsID_ToAct(wk->stgactreq);
 
 			LastLevel = CurrentLevel;
 			LastAct = CurrentAct;
-			CurrentCharacter = selected_characters[0];
+			CurrentCharacter = wk->selected_characters[0];
 			CurrentLevel = level;
 			CurrentAct = act;
 			SeqTp->awp[1].work.ul[0] = 100;
@@ -266,7 +277,7 @@ void multi_menu_stg_confirm(TrialActSelWk* wk)
 	}
 }
 
-void menu_multi_stgsel_snc(TrialActSelWk* wk)
+void menu_multi_stgsel_snc(MultiMenuWK* wk)
 {
 	auto stat = GetDialogStat();
 
@@ -280,7 +291,7 @@ void menu_multi_stgsel_snc(TrialActSelWk* wk)
 	}
 }
 
-void menu_multi_modesel(TrialActSelWk* wk)
+void menu_multi_modesel(MultiMenuWK* wk)
 {
 	auto stat = GetDialogStat();
 
@@ -304,15 +315,15 @@ void menu_multi_modesel(TrialActSelWk* wk)
 	}
 }
 
-void menu_multi_charsel(TrialActSelWk* wk)
+void menu_multi_charsel(MultiMenuWK* wk)
 {
 	bool done = true;
-	pcount = 0;
+	wk->pcount = 0;
 
 	// Manage input
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		auto& sel = selected_characters[i];
+		auto& sel = wk->selected_characters[i];
 		auto press = PressedButtons[i];
 
 		if (sel < 0) // If player is not connected
@@ -326,9 +337,9 @@ void menu_multi_charsel(TrialActSelWk* wk)
 			continue;
 		}
 
-		pcount++;
+		wk->pcount++;
 
-		if (player_ready[i] == false) // Character selection
+		if (wk->player_ready[i] == false) // Character selection
 		{
 			done = false;
 
@@ -349,7 +360,7 @@ void menu_multi_charsel(TrialActSelWk* wk)
 			}
 			else if (press & Buttons_Start)
 			{
-				player_ready[i] = true;
+				wk->player_ready[i] = true;
 				PlayMenuEnterSound();
 			}
 		}
@@ -357,20 +368,21 @@ void menu_multi_charsel(TrialActSelWk* wk)
 		{
 			if (press & Buttons_B) // unready
 			{
-				player_ready[i] = false;
+				wk->player_ready[i] = false;
 				PlayMenuBackSound();
 			}
 		}
 	}
 
 	// If everyone is ready and at least two players are there
-	if (pcount > 1 && player_ready[0] == true && done == true)
+	if (wk->pcount > 1 && wk->player_ready[0] == true && done == true)
 	{
 		menu_multi_change(wk, MD_MULTI_INITMODESEL);
 	}
-	else if (MenuBackButtonsPressed() && player_ready[0] == false)
+	else if (MenuBackButtonsPressed() && wk->player_ready[0] == false)
 	{
 		CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
+		wk->T = 0.0f;
 		wk->Stat = ADVA_STAT_FADEOUT;
 	}
 }
@@ -391,13 +403,13 @@ void menu_multi_setsqrcursor()
 	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR4];
 }
 
-void menu_multi_subexec(TrialActSelWk* wk)
+void menu_multi_subexec(MultiMenuWK* wk)
 {
 	switch (wk->SubMode)
 	{
 	case MD_MULTI_INITCHARSEL: // Open character select
 		menu_multi_change(wk, MD_MULTI_CHARSEL);
-		menu_multi_charsel_unready();
+		menu_multi_charsel_unready(wk);
 		break;
 	case MD_MULTI_CHARSEL:
 		menu_multi_charsel(wk);
@@ -429,32 +441,32 @@ void menu_multi_subexec(TrialActSelWk* wk)
 	}
 }
 
-void multi_menu_disp_controls(TrialActSelWk* wk)
+void multi_menu_disp_controls(MultiMenuWK* wk)
 {
-	if (wk->SubMode < MD_MULTI_STGSEL_SNC)
+	if (wk->SubMode < MD_MULTI_STGSEL_SNC && wk->Stat != ADVA_STAT_FADEOUT)
 	{
-		if (alphaControls < 1.0f) alphaControls += 0.05f;
+		if (wk->alphaControls < 1.0f) wk->alphaControls += 0.05f;
 	}
 	else
 	{
-		if (alphaControls > 0.0f) alphaControls -= 0.05f;
+		if (wk->alphaControls > 0.0f) wk->alphaControls -= 0.05f;
 	}
 
-	if (alphaControls <= 0.0f)
+	if (wk->alphaControls <= 0.0f)
 	{
 		return;
 	}
 
-	alphaControls = min(1.0f, alphaControls);
+	wk->alphaControls = min(1.0f, wk->alphaControls);
 
-	SetMaterial(alphaControls, alphaControls, alphaControls, alphaControls);
+	SetMaterial(wk->alphaControls, 1.0f, 1.0f, 1.0f);
 
 	gHelperFunctions->PushScaleUI((uiscale::Align)(Align_Bottom | Align_Center_Horizontal), false, 1.0f, 1.0f);
 
 	AVA_MULTI_SPRITE.p.y = 448.0f;
 
 	AVA_MULTI_SPRITE.p.x = 165.0f;
-	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA| NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
 	AVA_MULTI_SPRITE.p.x = 330.0f;
 	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_CONFIRM, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
@@ -465,31 +477,31 @@ void multi_menu_disp_controls(TrialActSelWk* wk)
 	gHelperFunctions->PopScaleUI();
 }
 
-void multi_menu_disp_charsel(TrialActSelWk* wk)
+void multi_menu_disp_charsel(MultiMenuWK* wk)
 {
-	if (wk->SubMode <= MD_MULTI_CHARSEL)
+	if (wk->SubMode <= MD_MULTI_CHARSEL && wk->Stat != ADVA_STAT_FADEOUT)
 	{
-		if (alphaMainMenu < 1.0f) alphaMainMenu += 0.05f;
+		if (wk->alphaMainMenu < 1.0f) wk->alphaMainMenu += 0.05f;
 	}
 	else
 	{
-		if (alphaMainMenu > 0.0f) alphaMainMenu -= 0.05f;
+		if (wk->alphaMainMenu > 0.0f) wk->alphaMainMenu -= 0.05f;
 	}
 
-	if (alphaMainMenu <= 0.0f)
+	if (wk->alphaMainMenu <= 0.0f)
 	{
 		return;
 	}
 
-	alphaMainMenu = min(1.0f, alphaMainMenu);
+	wk->alphaMainMenu = min(1.0f, wk->alphaMainMenu);
 
 	// Draw window
 	ghSetPvrTexVertexColor(0x78002E67u, 0x78117BFFu, 0x78002E67u, 0x78117BFFu);
 	DrawShadowWindow(120.0f, 110.0f, wk->BaseZ - 6.0f, 400.0f, 300.0f);
 
-	SetMaterial(alphaMainMenu, alphaMainMenu, alphaMainMenu, alphaMainMenu);
+	SetMaterial(wk->alphaMainMenu, 1.0f, 1.0f, 1.0f);
 
-	if (pcount > 0)
+	if (wk->pcount > 0)
 	{
 		// Draw character icons
 		for (int i = 0; i < 8; ++i)
@@ -502,12 +514,20 @@ void multi_menu_disp_charsel(TrialActSelWk* wk)
 			// Draw cursor
 			for (int p = PLAYER_MAX - 1; p >= 0; --p)
 			{
-				if (i == selected_characters[p])
+				if (i == wk->selected_characters[p])
 				{
-					CursorColors[p].a = 0.75f + 0.25 * njSin(FrameCounter * 1000);
+					if (wk->Stat != ADVA_STAT_FADEOUT)
+					{
+						CursorColors[p].a = 0.75f + 0.25 * njSin(FrameCounter * 1000);
+					}
+					else
+					{
+						CursorColors[p].a = wk->alphaMainMenu;
+					}
+
 					___njSetConstantMaterial(&CursorColors[p]);
 					njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CURSOR, wk->BaseZ + 100,  NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-					SetMaterial(alphaMainMenu, alphaMainMenu, alphaMainMenu, alphaMainMenu);
+					SetMaterial(wk->alphaMainMenu, wk->alphaMainMenu, wk->alphaMainMenu, wk->alphaMainMenu);
 				}
 			}
 		}
@@ -521,13 +541,7 @@ void multi_menu_disp_charsel(TrialActSelWk* wk)
 
 void __cdecl MultiMenuExec_Display(task* tp)
 {
-	if (MultiMenuEnabled == false)
-	{
-		trial_act_sel_disp(tp);
-		return;
-	}
-
-	auto wk = (TrialActSelWk*)tp->awp;
+	auto wk = (MultiMenuWK*)tp->awp;
 	
 	if (wk->Stat != ADVA_STAT_REQWAIT)
 	{
@@ -556,30 +570,24 @@ void __cdecl MultiMenuExec_Display(task* tp)
 
 void __cdecl MultiMenuExec_Main(task* tp)
 {
-	if (MultiMenuEnabled == false)
-	{
-		trial_act_sel_exec(tp);
-		return;
-	}
-
-	auto wk = (TrialActSelWk*)tp->awp;
+	auto wk = (MultiMenuWK*)tp->awp;
 
 	// Check if our menu is ready
-	if (SeqTp->awp->work.ul[1] == ADVA_MODE_TRIALACT_SEL && wk->Stat == ADVA_STAT_REQWAIT)
+	if (SeqTp->awp->work.ul[1] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
 	{
-		menu_multi_reset();
+		menu_multi_reset(wk);
 		PlayMenuMusicID(MusicIDs_JingleE);
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
 		wk->Stat = ADVA_STAT_FADEIN;
-		alphaMainMenu = 1.0f;
-		alphaControls = 1.0f;
+		wk->alphaMainMenu = 1.0f;
+		wk->alphaControls = 1.0f;
 		wk->T = 0.0f;
 		wk->SelStg = -1;
 	}
 
 	// Check if our menu has to change
-	if (SeqTp->awp->work.ul[2] == ADVA_MODE_TITLE_NEW && wk->Stat == ADVA_STAT_KEEP)
+	if (SeqTp->awp->work.ul[2] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_KEEP)
 	{
 		PlayMenuEnterSound();
 		wk->Stat = ADVA_STAT_FADEOUT;
@@ -614,9 +622,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			wk->Stat = ADVA_STAT_REQWAIT;
 
 			SeqTp->awp[1].work.ub[15] = 1;
-			MenuLaunchNext();
 
-			MultiMenuEnabled = false;
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
 			njReleaseTexture(&CON_MULTI_TEXLIST);
 
@@ -651,7 +657,34 @@ void __cdecl LoadMultiMenuExec(ModeSelPrmType* prmp)
 	ChgSubModeToStay_0(prmp, tp);
 }
 
-void MultiMenuInit()
+void __cdecl CreateModeFnc_r(void* a1)
 {
-	WriteJump(LevelSelect_Load, LoadMultiMenuExec);
+	// Load our new menu
+	ModeSelPrmType multimenuprm = { ADVA_MODE_TITLE_MENU, ADVA_MODE_TITLE_MENU, ADVA_MODE_TITLE_MENU };
+	LoadMultiMenuExec(&multimenuprm);
+
+	// Load the other menus:
+	auto target = TARGET_DYNAMIC(CreateModeFnc);
+
+	__asm
+	{
+		mov eax, [a1]
+		call target
+	}
+}
+
+static void __declspec(naked) CreateModeFnc_w()
+{
+	__asm
+	{
+		push eax
+		call CreateModeFnc_r
+		pop eax
+		retn
+	}
+}
+
+void InitMultiMenu()
+{
+	CreateModeFnc_t = new Trampoline(0x505A80, 0x505A86, CreateModeFnc_w);
 }

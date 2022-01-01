@@ -2,8 +2,6 @@
 #include "menu.h"
 #include "menu_multi.h"
 
-bool MultiMenuEnabled = false;
-
 // Menu layout with minigames
 PanelPrmType PanelPrmTitleMenu1[]
 {
@@ -98,10 +96,9 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 		{
 		case 0:
 		case 1:
-			CmnAdvaModeProcedure(ADVA_MODE_TRIALACT_SEL); // go directly to level select
+			CmnAdvaModeProcedure(ADVA_MODE_MULTI);
 			AdvertiseWork.flags[1] = 0;
 			wkp->SubMode = TITLEMENU_SMD_NWAIT;
-			MultiMenuEnabled = true; // replace trial with multi mode
 			break;
 		case 2:
 			wkp->SubMode = TITLEMENU_SMD_TO_MAINMENU;
@@ -126,5 +123,5 @@ void __cdecl InitMenu(const HelperFunctions& helperFunctions)
 	DialogPrm[3].CsrCancel = 6;
 	DialogPrm[3].SzY = 280.0f;
 
-	MultiMenuInit();
+	InitMultiMenu();
 }

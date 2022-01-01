@@ -123,7 +123,7 @@ void DrawWaitingForPlayer(float x, float y)
     MULTIHUD_SPRITE.p.y = y;
 
     // Draw Cream
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cream + (FrameCounter / 5) % 12, -1000.0f, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cream + (FrameCounter / 5) % 12, -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
     // Move right
     MULTIHUD_SPRITE.p.x += 30.0f;
@@ -131,7 +131,7 @@ void DrawWaitingForPlayer(float x, float y)
     MULTIHUD_SPRITE.p.x += njSin(FrameCounter * 300) * 2.5f; // slide chao left and right
 
     // Draw Chao
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cheese + (FrameCounter / 5) % 2, -1000.0f, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cheese + (FrameCounter / 5) % 2, -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
     // Restore position and move right
     MULTIHUD_SPRITE.p.x = x + 20.0f;
