@@ -115,14 +115,14 @@ PanelPrmType PanelPrmMenuMultiStgSel[] {
 };
 
 PanelPrmType PanelPrmMenuMultiStgConfirm[] {
-	 { -114.0f, 0.0f, AVAMULTITEX_YES  },
-	 { 114.0f, 0.0f,  AVAMULTITEX_NO }
+	 { -114.0f, 25.0f, AVAMULTITEX_YES  },
+	 { 114.0f, 25.0f,  AVAMULTITEX_NO }
 };
 
 void multi_menu_confirmdialog_proc(DDlgType* ddltype);
 
 const DialogPrmType MultiMenuStageSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.0f, 1.1f, 10, 10};
-const DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, multi_menu_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 349.0f, 10.0f, 568.0f, 80.0f, 1.625f, 0.8f, 2, 1 };
+const DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, multi_menu_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 2, 1 };
 
 int sonic_level_link[] = {
 	LevelAndActIDs_EmeraldCoast1,
@@ -136,6 +136,14 @@ int sonic_level_link[] = {
 	LevelAndActIDs_LostWorld1,
 	LevelAndActIDs_FinalEgg1,
 	LevelAndActIDs_HotShelter1
+};
+
+const char* stg_confirm_texts[] {
+	"Do you want to play this stage?"
+	"Do you want to play this stage?",
+	"Voulez vous jouer à ce niveau ?",
+	"Do you want to play this stage?",
+	"Do you want to play this stage?"
 };
 
 extern bool MultiMenuEnabled;
@@ -178,6 +186,8 @@ void multi_menu_request_stg(TrialActSelWk* wk, int levelact, int id)
 
 void multi_menu_confirmdialog_proc(DDlgType* ddltype)
 {
+	DrawSADXText(stg_confirm_texts[TextLanguage], 315);
+	
 	AVA_MULTI_SPRITE.p.x = 320;
 	AVA_MULTI_SPRITE.p.y = 200;
 	AVA_MULTI_SPRITE.tanim[AVAMULTIANM_STG].texid = stgacttexid;

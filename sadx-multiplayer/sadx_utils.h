@@ -806,6 +806,8 @@ DataArray(int, GblMenuTbl, 0x7EF8E8, 6);
 FunctionPointer(void, OpenDialog, (const DialogPrmType* dp), 0x432DB0);
 FunctionPointer(char, GetDialogStat, (), 0x432550);
 FunctionPointer(BOOL, CloseDialog, (), 0x432580);
+VoidFunc(DialogJimakuInit, 0x40BC80);
+FunctionPointer(void, DialogJimakuPut, (const char* str), 0x40BD30);
 DataPointer(task*, DialogTp, 0x3B2C588);
 
 VoidFunc(ghDefaultBlendingMode, 0x433170);
