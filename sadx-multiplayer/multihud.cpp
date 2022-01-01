@@ -142,13 +142,13 @@ void DrawWaitingForPlayer(float x, float y)
     {
         MULTIHUD_SPRITE.p.x += 16.0f; // move right
         MULTIHUD_SPRITE.p.y = y + njSin(FrameCounter * 1000 + i * 1000) * 5; // slide up and down individually
-        SetMaterialAndSpriteColor_Float(1.0f - (fabs(njSin(FrameCounter * 500 + i * 500)) * 0.5f), 1.0f, 1.0f, 1.0f); // color ramp
+        SetMaterial(1.0f - (fabs(njSin(FrameCounter * 500 + i * 500)) * 0.5f), 1.0f, 1.0f, 1.0f); // color ramp
 
         // Draw letter
         if (waittextseq[i] != -1) njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Alphabet + waittextseq[i], -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
     }
 
-    ClampGlobalColorThing_Thing();
+    ResetMaterial();
 }
 
 void DrawWaitScreen(int num)
@@ -191,13 +191,13 @@ void DrawWaitScreen(int num)
     {
         MULTIHUD_SPRITE.p.x += 16 * scale; // move right
         MULTIHUD_SPRITE.p.y = y + njSin(GameTimer * 1000 + i * 1000) * 5; // slide up and down individually
-        SetMaterialAndSpriteColor_Float(1.0f - (fabs(njSin(GameTimer * 500 + i * 500)) * 0.5f), 1.0f, 1.0f, 1.0f); // color ramp
+        SetMaterial(1.0f - (fabs(njSin(GameTimer * 500 + i * 500)) * 0.5f), 1.0f, 1.0f, 1.0f); // color ramp
 
         // Draw letter
         if (waittextseq[i] != -1) njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Alphabet + waittextseq[i], -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
     }
 
-    ClampGlobalColorThing_Thing();
+    ResetMaterial();
     SplitScreen::RestoreViewPort();
 }
 
@@ -212,7 +212,7 @@ void MultiHudScore(int num, float scale)
     {
         if (score <= 0)
         {
-            SetMaterialAndSpriteColor_Float(0.8f, 0.8f, 0.8f, 0.8f);
+            SetMaterial(0.8f, 0.8f, 0.8f, 0.8f);
             njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 0, 0, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
         }
         else
@@ -267,7 +267,7 @@ void MultiHudRings(int num, float scale)
         color -= sin * sin;
     }
 
-    SetMaterialAndSpriteColor_Float(1.0f, 1.0f, color, color);
+    SetMaterial(1.0f, 1.0f, color, color);
     
     MULTIHUDDIGIT_SPRITE.p.x += 25.0f * scale;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 1000 / 100, 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
@@ -303,14 +303,14 @@ void DisplayMultiHud(int num)
     SplitScreen::SaveViewPort();
     SplitScreen::ChangeViewPort(-1);
 
-    SetMaterialAndSpriteColor_Float(1.0f, 1.0f, 1.0f, 1.0f);
+    SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 
     auto ratio = SplitScreen::GetScreenRatio(num);
 
     float scaleY = VerticalStretch * ratio->h;
     float scale = min(HorizontalStretch * ratio->w, scaleY);
 
-    SetDefaultAlphaBlend();
+    ghDefaultBlendingMode();
 
     MULTIHUD_SPRITE.sx = MULTIHUD_SPRITE.sy = scale;
     MULTIHUDDIGIT_SPRITE.sx = MULTIHUDDIGIT_SPRITE.sy = scale;
@@ -340,7 +340,7 @@ void DisplayMultiHud(int num)
         MultiHudLives(num, scale);
     }
 
-    ClampGlobalColorThing_Thing();
+    ResetMaterial();
     SplitScreen::RestoreViewPort();
 }
 
