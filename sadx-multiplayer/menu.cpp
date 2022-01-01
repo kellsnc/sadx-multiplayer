@@ -126,5 +126,5 @@ void __cdecl InitMenu(const HelperFunctions& helperFunctions)
 	DialogPrm[3].CsrCancel = 6;
 	DialogPrm[3].SzY = 280.0f;
 
-	init_MultiMenu();
+	MultiMenuInit();
 }

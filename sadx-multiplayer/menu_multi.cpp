@@ -651,7 +651,7 @@ void __cdecl LoadMultiMenuExec(ModeSelPrmType* prmp)
 	ChgSubModeToStay_0(prmp, tp);
 }
 
-void init_MultiMenu()
+void MultiMenuInit()
 {
 	WriteJump(LevelSelect_Load, LoadMultiMenuExec);
 }
