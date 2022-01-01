@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "menu_multi.h"
+#include "multihud.h"
 
 enum AVA_MULTI_TEX
 {
@@ -141,9 +142,17 @@ int sonic_level_link[] = {
 const char* stg_confirm_texts[] {
 	"Do you want to play this stage?"
 	"Do you want to play this stage?",
-	"Voulez vous jouer à ce niveau ?",
+	"Voulez-vous jouer à ce niveau ?",
 	"Do you want to play this stage?",
 	"Do you want to play this stage?"
+};
+
+const char* press_start_texts[] {
+	"Press start to join",
+	"Press start to join",
+	"Appuyez sur entrer pour joindre",
+	"Press start to join",
+	"Press start to join",
 };
 
 extern bool MultiMenuEnabled;
@@ -152,6 +161,7 @@ int selected_characters[PLAYER_MAX];
 bool player_ready[PLAYER_MAX];
 int stgactreq;
 int stgacttexid;
+int pcount;
 MD_MULTI prevsubmode;
 
 void menu_multi_reset()
@@ -229,6 +239,7 @@ void multi_menu_stg_confirm(TrialActSelWk* wk)
 			AdvertiseWork.Act = act;
 			wk->SelStg = level;
 			wk->Stat = ADVA_STAT_FADEOUT;
+			wk->T = 0.0f;
 		}
 	}
 }
@@ -236,7 +247,7 @@ void multi_menu_stg_confirm(TrialActSelWk* wk)
 void menu_multi_charsel(TrialActSelWk* wk)
 {
 	bool done = true;
-	int pcount = 0;
+	pcount = 0;
 
 	// Manage input
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -404,27 +415,35 @@ void multi_menu_disp_charsel(TrialActSelWk* wk)
 
 	SetMaterial(alpha, alpha, alpha, alpha);
 
-	// Draw character icons
-	for (int i = 0; i < 8; ++i)
+	if (pcount > 0)
 	{
-		AVA_MULTI_SPRITE.p.x = 320.0f + IconPosMenuMultiCharSel[i].x;
-		AVA_MULTI_SPRITE.p.y = 260.0f + IconPosMenuMultiCharSel[i].y;
-		AVA_MULTI_SPRITE.p.z = wk->BaseZ - 8;
-		njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CHARA + i, wk->BaseZ - 8, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-
-		// Draw cursor
-		for (int p = PLAYER_MAX - 1; p >= 0; --p)
+		// Draw character icons
+		for (int i = 0; i < 8; ++i)
 		{
-			if (i == selected_characters[p])
+			AVA_MULTI_SPRITE.p.x = 320.0f + IconPosMenuMultiCharSel[i].x;
+			AVA_MULTI_SPRITE.p.y = 260.0f + IconPosMenuMultiCharSel[i].y;
+			AVA_MULTI_SPRITE.p.z = wk->BaseZ - 8;
+			njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CHARA + i, wk->BaseZ - 8, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+
+			// Draw cursor
+			for (int p = PLAYER_MAX - 1; p >= 0; --p)
 			{
-				CursorColors[p].a = 0.75f + 0.25 * njSin(FrameCounter * 1000);
-				___njSetConstantMaterial(&CursorColors[p]);
-				njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CURSOR, wk->BaseZ + 100, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-				SetMaterial(alpha, alpha, alpha, alpha);
+				if (i == selected_characters[p])
+				{
+					CursorColors[p].a = 0.75f + 0.25 * njSin(FrameCounter * 1000);
+					___njSetConstantMaterial(&CursorColors[p]);
+					njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CURSOR, wk->BaseZ + 100, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+					SetMaterial(alpha, alpha, alpha, alpha);
+				}
 			}
 		}
 	}
-
+	else
+	{
+		DrawWaitingForPlayer(140, 230);
+		DrawSADXText(press_start_texts[TextLanguage], 280);
+	}
+	
 	// Draw controls
 	multi_menu_disp_controls(wk);
 }
@@ -476,6 +495,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		menu_multi_reset();
 		PlayMenuMusicID(MusicIDs_JingleE);
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
+		LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
 		wk->Stat = ADVA_STAT_FADEIN;
 		alpha = 1.0f;
 		wk->T = 0.0f;
@@ -522,6 +542,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 			MultiMenuEnabled = false;
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
+			njReleaseTexture(&CON_MULTI_TEXLIST);
 
 			// Force stage mode:
 			if (wk->SelStg != -1)

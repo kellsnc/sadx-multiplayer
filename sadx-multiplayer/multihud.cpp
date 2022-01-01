@@ -6,8 +6,8 @@ Trampoline* DisplayScore_t = nullptr;
 Trampoline* DisplayTimer_t = nullptr;
 Trampoline* DisplayPauseMenu_t = nullptr;
 
-NJS_TEXNAME MULTIHUD_TEXNAME[3]{};
-NJS_TEXLIST MULTIHUD_TEXLIST = { arrayptrandlength(MULTIHUD_TEXNAME) };
+NJS_TEXNAME CON_MULTI_TEXNAME[3]{};
+NJS_TEXLIST CON_MULTI_TEXLIST = { arrayptrandlength(CON_MULTI_TEXNAME) };
 
 enum MHudTex
 {
@@ -31,7 +31,7 @@ enum MHudSprt
     MHudSprt_Ring
 };
 
-NJS_TEXANIM MULTIHUD_TEXANIMS[]{
+NJS_TEXANIM CON_MULTI_TEXANIMS[]{
     { 32, 32, 0, 16, 0, 0, 64, 85, MHudTex_Cream, 0x20 },
     { 32, 32, 0, 16, 64, 0, 128, 85, MHudTex_Cream, 0x20 },
     { 32, 32, 0, 16, 128, 0, 192, 85, MHudTex_Cream, 0x20 },
@@ -65,7 +65,7 @@ NJS_TEXANIM MULTIHUD_TEXANIMS[]{
     { 24, 24, 0, 0, 0, 0, 255, 255, MHudTex_Ring, 0x20 }
 };
 
-NJS_SPRITE MULTIHUD_SPRITE = { {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f, 0, &MULTIHUD_TEXLIST, MULTIHUD_TEXANIMS };
+NJS_SPRITE MULTIHUD_SPRITE = { {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f, 0, &CON_MULTI_TEXLIST, CON_MULTI_TEXANIMS };
 
 NJS_TEXANIM MULTIHUDDIGIT_TEXANIMS[] {
     { 20, 20, 0, 0, 0, 0, 0x100, 0x100, 0, 0x20 },
@@ -102,10 +102,51 @@ static int ringtimer[PLAYER_MAX]{};
 
 void LoadMultiHudPVM()
 {
-    if (VerifyTexList(&MULTIHUD_TEXLIST))
+    if (VerifyTexList(&CON_MULTI_TEXLIST))
     {
-        LoadPVM("multihud", &MULTIHUD_TEXLIST);
+        LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
     }
+}
+
+void DrawWaitingForPlayer(float x, float y)
+{
+    if (VerifyTexList(&CON_MULTI_TEXLIST))
+    {
+        return;
+    }
+
+    // Start position and scale
+    MULTIHUD_SPRITE.sx = MULTIHUD_SPRITE.sy = 1.0f;
+    MULTIHUD_SPRITE.p.x = x;
+    MULTIHUD_SPRITE.p.y = y;
+
+    // Draw Cream
+    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cream + (FrameCounter / 5) % 12, -1000.0f, NJD_SPRITE_ALPHA);
+
+    // Move right
+    MULTIHUD_SPRITE.p.x += 30.0f;
+    x = MULTIHUD_SPRITE.p.x; // backup position
+    MULTIHUD_SPRITE.p.x += njSin(FrameCounter * 300) * 2.5f; // slide chao left and right
+
+    // Draw Chao
+    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cheese + (FrameCounter / 5) % 2, -1000.0f, NJD_SPRITE_ALPHA);
+
+    // Restore position and move right
+    MULTIHUD_SPRITE.p.x = x + 20.0f;
+
+    y = MULTIHUD_SPRITE.p.y; // backup position
+
+    for (int i = 0; i < LengthOfArray(waittextseq); ++i)
+    {
+        MULTIHUD_SPRITE.p.x += 16.0f; // move right
+        MULTIHUD_SPRITE.p.y = y + njSin(FrameCounter * 1000 + i * 1000) * 5; // slide up and down individually
+        SetMaterialAndSpriteColor_Float(1.0f - (fabs(njSin(FrameCounter * 500 + i * 500)) * 0.5f), 1.0f, 1.0f, 1.0f); // color ramp
+
+        // Draw letter
+        if (waittextseq[i] != -1) njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Alphabet + waittextseq[i], -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+    }
+
+    ClampGlobalColorThing_Thing();
 }
 
 void DrawWaitScreen(int num)
