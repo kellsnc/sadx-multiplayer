@@ -4,9 +4,10 @@
 
 Trampoline* DisplayScore_t = nullptr;
 Trampoline* DisplayTimer_t = nullptr;
-Trampoline* DisplayPauseMenu_t = nullptr;
+Trampoline* LoadTextureForEachGameMode_t = nullptr;
+Trampoline* ReleaseTextureForEachGameMode_t = nullptr;
 
-NJS_TEXNAME CON_MULTI_TEXNAME[3]{};
+NJS_TEXNAME CON_MULTI_TEXNAME[6]{};
 NJS_TEXLIST CON_MULTI_TEXLIST = { arrayptrandlength(CON_MULTI_TEXNAME) };
 
 enum MHudTex
@@ -14,7 +15,6 @@ enum MHudTex
     MHudTex_Cream,
     MHudTex_Cheese,
     MHudTex_Alphabet,
-    MHudTex_Black,
     MHudTex_Score,
     MHudTex_Time,
     MHudTex_Ring
@@ -25,8 +25,7 @@ enum MHudSprt
     MHudSprt_Cream = 0,
     MHudSprt_Cheese = 12,
     MHudSprt_Alphabet = 14,
-    MHudSprt_Black = 27,
-    MHudSprt_Score,
+    MHudSprt_Score = 27,
     MHudSprt_Time,
     MHudSprt_Ring
 };
@@ -59,7 +58,6 @@ NJS_TEXANIM CON_MULTI_TEXANIMS[]{
     { 16, 16, 0, 8, 128, 128, 192, 192, MHudTex_Alphabet, 0x20 },
     { 16, 16, 0, 8, 192, 128, 255, 192, MHudTex_Alphabet, 0x20 },
     { 16, 16, 0, 8, 0, 192, 64, 255, MHudTex_Alphabet, 0x20 },
-    { 1, 1, 0, 0, 0, 0, 255, 255, MHudTex_Black, 0x20 },
     { 64, 24, 0, 0, 0, 0, 255, 255, MHudTex_Score, 0x20 },
     { 55, 24, 0, 0, 0, 0, 255, 255, MHudTex_Time, 0x20 },
     { 24, 24, 0, 0, 0, 0, 255, 255, MHudTex_Ring, 0x20 }
@@ -100,12 +98,16 @@ static const int waittextseq[] = { 10, 0, 4, 12, 4, 6, 3, -1, 2, 7, 9, -1, 8, 5,
 
 static int ringtimer[PLAYER_MAX]{};
 
-void LoadMultiHudPVM()
+void LoadTextureForEachGameMode_r(int gamemode)
 {
-    if (VerifyTexList(&CON_MULTI_TEXLIST))
-    {
-        LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
-    }
+    LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
+    TARGET_DYNAMIC(LoadTextureForEachGameMode)(gamemode);
+}
+
+void ReleaseTextureForEachGameMode_r()
+{
+    njReleaseTexture(&CON_MULTI_TEXLIST);
+    TARGET_DYNAMIC(ReleaseTextureForEachGameMode)();
 }
 
 void DrawWaitingForPlayer(float x, float y)
@@ -151,8 +153,6 @@ void DrawWaitingForPlayer(float x, float y)
 
 void DrawWaitScreen(int num)
 {
-    LoadMultiHudPVM();
-
     if (MissedFrames || IsGamePaused())
     {
         return;
@@ -295,8 +295,6 @@ void MultiHudLives(int num, float scale)
 
 void DisplayMultiHud(int num)
 {
-    LoadMultiHudPVM();
-
     if (MissedFrames || IsGamePaused())
     {
         return;
@@ -366,4 +364,6 @@ void MultiHudInit()
 {
     DisplayScore_t = new Trampoline(0x425F90, 0x425F95, DisplayScore_r);
     DisplayTimer_t = new Trampoline(0x427F50, 0x427F55, DisplayTimer_r);
+    LoadTextureForEachGameMode_t    = new Trampoline(0x4212E0, 0x4212E5, LoadTextureForEachGameMode_r);
+    ReleaseTextureForEachGameMode_t = new Trampoline(0x420F40, 0x420F45, ReleaseTextureForEachGameMode_r);
 }
