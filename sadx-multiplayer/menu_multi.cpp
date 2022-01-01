@@ -37,6 +37,10 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_CSR2,
 	AVAMULTITEX_CSR3,
 	AVAMULTITEX_CSR4,
+	AVAMULTITEX_MD_SPD,
+	AVAMULTITEX_MD_EME,
+	AVAMULTITEX_MD_TC,
+	AVAMULTITEX_MD_FISH,
 };
 
 enum AVA_MULTI_ANM
@@ -53,8 +57,16 @@ enum MD_MULTI
 {
 	MD_MULTI_INITCHARSEL,
 	MD_MULTI_CHARSEL,
-	MD_MULTI_INITSTGSEL,
-	MD_MULTI_STGSEL,
+	MD_MULTI_INITMODESEL,
+	MD_MULTI_MODESEL,
+	MD_MULTI_INITSTGSEL_SNC,
+	MD_MULTI_STGSEL_SNC,
+	MD_MULTI_INITSTGSEL_EME,
+	MD_MULTI_STGSEL_EME,
+	MD_MULTI_INITSTGSEL_TC,
+	MD_MULTI_STGSEL_TC,
+	MD_MULTI_INITSTGSEL_FISH,
+	MD_MULTI_STGSEL_FISH,
 	MD_MULTI_INITSTGASK,
 	MD_MULTI_STGASK,
 };
@@ -102,7 +114,14 @@ NJS_POINT2 IconPosMenuMultiCharSel[] {
 	 { 120.0f,	50.0f },
 };
 
-PanelPrmType PanelPrmMenuMultiStgSel[] {
+PanelPrmType PanelPrmMenuMultiModSel[] {
+	 { -180.0f,	8.0f, AVAMULTITEX_MD_SPD   },
+	 { -60.0f,	8.0f, AVAMULTITEX_MD_EME   },
+	 { 60.0f,	8.0f, AVAMULTITEX_MD_TC    },
+	 { 180.0f,	8.0f,  AVAMULTITEX_MD_FISH },
+};
+
+PanelPrmType PanelPrmMenuMultiStgSel[]{
 	 { -150.0f,	-120.0f, AVAMULTITEX_STG1  },
 	 { 0.0f,	-120.0f, AVAMULTITEX_STG2  },
 	 { 150.0f,	-120.0f, AVAMULTITEX_STG3  },
@@ -122,7 +141,8 @@ PanelPrmType PanelPrmMenuMultiStgConfirm[] {
 
 void multi_menu_confirmdialog_proc(DDlgType* ddltype);
 
-const DialogPrmType MultiMenuStageSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.0f, 1.1f, 10, 10};
+const DialogPrmType MultiMenuModeSelDialog = { DLG_PNLSTYLE_MARU2, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiModSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 180.0f, 1.2f, 1.2f, LengthOfArray(PanelPrmMenuMultiModSel), 4};
+const DialogPrmType MultiMenuStageSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.0f, 1.1f, LengthOfArray(PanelPrmMenuMultiStgSel), 10};
 const DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, multi_menu_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 2, 1 };
 
 int sonic_level_link[] = {
@@ -156,12 +176,14 @@ const char* press_start_texts[] {
 };
 
 extern bool MultiMenuEnabled;
-float alpha = 1.0f;
+float alphaMainMenu = 1.0f;
+float alphaControls = 1.0f;
 int selected_characters[PLAYER_MAX];
 bool player_ready[PLAYER_MAX];
 int stgactreq;
 int stgacttexid;
 int pcount;
+int gametype;
 MD_MULTI prevsubmode;
 
 void menu_multi_reset()
@@ -244,6 +266,44 @@ void multi_menu_stg_confirm(TrialActSelWk* wk)
 	}
 }
 
+void menu_multi_stgsel_snc(TrialActSelWk* wk)
+{
+	auto stat = GetDialogStat();
+
+	if (stat == 10) // go back request
+	{
+		menu_multi_change(wk, MD_MULTI_INITMODESEL);
+	}
+	else if (stat != -1) // launch game request
+	{
+		multi_menu_request_stg(wk, sonic_level_link[stat], stat);
+	}
+}
+
+void menu_multi_modesel(TrialActSelWk* wk)
+{
+	auto stat = GetDialogStat();
+
+	switch (stat)
+	{
+	case 0:
+		menu_multi_change(wk, MD_MULTI_INITSTGSEL_SNC);
+		break;
+	case 1:
+		menu_multi_change(wk, MD_MULTI_INITSTGSEL_EME);
+		break;
+	case 2:
+		menu_multi_change(wk, MD_MULTI_INITSTGSEL_TC);
+		break;
+	case 3:
+		menu_multi_change(wk, MD_MULTI_INITSTGSEL_FISH);
+		break;
+	case 4:
+		menu_multi_change(wk, MD_MULTI_INITCHARSEL);
+		break;
+	}
+}
+
 void menu_multi_charsel(TrialActSelWk* wk)
 {
 	bool done = true;
@@ -306,7 +366,7 @@ void menu_multi_charsel(TrialActSelWk* wk)
 	// If everyone is ready and at least two players are there
 	if (pcount > 1 && player_ready[0] == true && done == true)
 	{
-		menu_multi_change(wk, MD_MULTI_INITSTGSEL);
+		menu_multi_change(wk, MD_MULTI_INITMODESEL);
 	}
 	else if (MenuBackButtonsPressed() && player_ready[0] == false)
 	{
@@ -315,18 +375,20 @@ void menu_multi_charsel(TrialActSelWk* wk)
 	}
 }
 
-void menu_multi_stgsel(TrialActSelWk* wk)
+void menu_multi_setrndcursor()
 {
-	auto stat = GetDialogStat();
+	ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR1];
+	ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR2];
+	ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR3];
+	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR4];
+}
 
-	if (stat == 10) // go back request
-	{
-		menu_multi_change(wk, MD_MULTI_INITCHARSEL);
-	}
-	else if (stat != -1) // launch game request
-	{
-		multi_menu_request_stg(wk, sonic_level_link[stat], stat);
-	}
+void menu_multi_setsqrcursor()
+{
+	ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR1];
+	ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR2];
+	ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR3];
+	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR4];
 }
 
 void menu_multi_subexec(TrialActSelWk* wk)
@@ -340,24 +402,24 @@ void menu_multi_subexec(TrialActSelWk* wk)
 	case MD_MULTI_CHARSEL:
 		menu_multi_charsel(wk);
 		break;
-	case MD_MULTI_INITSTGSEL: // Open stage select (only Sonic for now)
-		ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR1];
-		ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR2];
-		ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR3];
-		ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR4];
-
-		menu_multi_change(wk, MD_MULTI_STGSEL);
+	case MD_MULTI_INITMODESEL:
+		menu_multi_setrndcursor();
+		menu_multi_change(wk, MD_MULTI_MODESEL);
+		OpenDialog(&MultiMenuModeSelDialog);
+		break;
+	case MD_MULTI_MODESEL:
+		menu_multi_modesel(wk);
+		break;
+	case MD_MULTI_INITSTGSEL_SNC: // Open stage select (only Sonic for now)
+		menu_multi_setsqrcursor();
+		menu_multi_change(wk, MD_MULTI_STGSEL_SNC);
 		OpenDialog(&MultiMenuStageSelDialog);
 		break;
-	case MD_MULTI_STGSEL:
-		menu_multi_stgsel(wk);
+	case MD_MULTI_STGSEL_SNC:
+		menu_multi_stgsel_snc(wk);
 		break;
 	case MD_MULTI_INITSTGASK: // Open prompt to ask level confirmation
-		ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR1];
-		ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR2];
-		ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR3];
-		ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR4];
-
+		menu_multi_setrndcursor();
 		menu_multi_change(wk, MD_MULTI_STGASK);
 		OpenDialog(&MultiMenuStageConfirmDialog);
 		break;
@@ -369,18 +431,30 @@ void menu_multi_subexec(TrialActSelWk* wk)
 
 void multi_menu_disp_controls(TrialActSelWk* wk)
 {
-	// Do not show on level select screen to save space:
-	
-	float color = min(1.0f, alpha);
+	if (wk->SubMode < MD_MULTI_STGSEL_SNC)
+	{
+		if (alphaControls < 1.0f) alphaControls += 0.05f;
+	}
+	else
+	{
+		if (alphaControls > 0.0f) alphaControls -= 0.05f;
+	}
 
-	SetMaterial(color, color, color, color);
+	if (alphaControls <= 0.0f)
+	{
+		return;
+	}
+
+	alphaControls = min(1.0f, alphaControls);
+
+	SetMaterial(alphaControls, alphaControls, alphaControls, alphaControls);
 
 	gHelperFunctions->PushScaleUI((uiscale::Align)(Align_Bottom | Align_Center_Horizontal), false, 1.0f, 1.0f);
 
 	AVA_MULTI_SPRITE.p.y = 448.0f;
 
 	AVA_MULTI_SPRITE.p.x = 165.0f;
-	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA| NJD_SPRITE_COLOR);
 
 	AVA_MULTI_SPRITE.p.x = 330.0f;
 	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_CONFIRM, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
@@ -395,25 +469,25 @@ void multi_menu_disp_charsel(TrialActSelWk* wk)
 {
 	if (wk->SubMode <= MD_MULTI_CHARSEL)
 	{
-		if (alpha < 1.0f) alpha += 0.05f;
+		if (alphaMainMenu < 1.0f) alphaMainMenu += 0.05f;
 	}
 	else
 	{
-		if (alpha > 0.0f) alpha -= 0.05f;
+		if (alphaMainMenu > 0.0f) alphaMainMenu -= 0.05f;
 	}
 
-	if (alpha <= 0.0f)
+	if (alphaMainMenu <= 0.0f)
 	{
 		return;
 	}
 
-	alpha = min(1.0f, alpha);
+	alphaMainMenu = min(1.0f, alphaMainMenu);
 
 	// Draw window
 	ghSetPvrTexVertexColor(0x78002E67u, 0x78117BFFu, 0x78002E67u, 0x78117BFFu);
 	DrawShadowWindow(120.0f, 110.0f, wk->BaseZ - 6.0f, 400.0f, 300.0f);
 
-	SetMaterial(alpha, alpha, alpha, alpha);
+	SetMaterial(alphaMainMenu, alphaMainMenu, alphaMainMenu, alphaMainMenu);
 
 	if (pcount > 0)
 	{
@@ -432,8 +506,8 @@ void multi_menu_disp_charsel(TrialActSelWk* wk)
 				{
 					CursorColors[p].a = 0.75f + 0.25 * njSin(FrameCounter * 1000);
 					___njSetConstantMaterial(&CursorColors[p]);
-					njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CURSOR, wk->BaseZ + 100, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-					SetMaterial(alpha, alpha, alpha, alpha);
+					njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CURSOR, wk->BaseZ + 100,  NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+					SetMaterial(alphaMainMenu, alphaMainMenu, alphaMainMenu, alphaMainMenu);
 				}
 			}
 		}
@@ -443,9 +517,6 @@ void multi_menu_disp_charsel(TrialActSelWk* wk)
 		DrawWaitingForPlayer(140, 230);
 		DrawSADXText(press_start_texts[TextLanguage], 280);
 	}
-	
-	// Draw controls
-	multi_menu_disp_controls(wk);
 }
 
 void __cdecl MultiMenuExec_Display(task* tp)
@@ -472,7 +543,11 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		njSetTexture(&AVA_MULTI_TEXLIST);
 		ghDrawPvrTexture(AVAMULTITEX_TITLE, 40.0f, 47.0f, wk->BaseZ - 18);
 
+		// Draw charsel background and items
 		multi_menu_disp_charsel(wk);
+
+		// Draw controls
+		multi_menu_disp_controls(wk);
 
 		ResetMaterial();
 		gHelperFunctions->PopScaleUI();
@@ -497,7 +572,8 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
 		wk->Stat = ADVA_STAT_FADEIN;
-		alpha = 1.0f;
+		alphaMainMenu = 1.0f;
+		alphaControls = 1.0f;
 		wk->T = 0.0f;
 		wk->SelStg = -1;
 	}
