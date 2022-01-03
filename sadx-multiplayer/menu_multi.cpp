@@ -335,6 +335,14 @@ void menu_multi_charsel(MultiMenuWK* wk)
 	bool done = true;
 	wk->pcount = 0;
 
+	// Return to main menu
+	if (MenuBackButtonsPressed() && wk->player_ready[0] == false)
+	{
+		CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
+		wk->T = 0.0f;
+		wk->Stat = ADVA_STAT_FADEOUT;
+	}
+
 	// Manage input
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
@@ -386,20 +394,15 @@ void menu_multi_charsel(MultiMenuWK* wk)
 			{
 				wk->player_ready[i] = false;
 				PlayMenuBackSound();
+				
 			}
 		}
 	}
 
-	// If everyone is ready and at least two players are there
+	// If everyone is ready and at least two players are there (including player 1)
 	if (wk->pcount > 1 && wk->player_ready[0] == true && done == true)
 	{
 		menu_multi_change(wk, MD_MULTI_INITMODESEL);
-	}
-	else if (MenuBackButtonsPressed() && wk->player_ready[0] == false)
-	{
-		CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
-		wk->T = 0.0f;
-		wk->Stat = ADVA_STAT_FADEOUT;
 	}
 }
 
