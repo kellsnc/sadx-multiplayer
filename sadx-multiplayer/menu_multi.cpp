@@ -178,11 +178,24 @@ int sonic_level_link[] = {
 	LevelAndActIDs_HotShelter1
 };
 
+int charsel_voicelist[]
+{
+	1098,
+	569,
+	528,
+	392,
+	921,
+	510,
+	394,
+	1346,
+	2047
+};
+
 const char* stg_confirm_texts[] {
 	"Do you want to play this stage?"
 	"Do you want to play this stage?",
 	"Voulez-vous jouer à ce niveau ?",
-	"Do you want to play this stage?",
+	"¿Quieres jugar este nivel?",
 	"Do you want to play this stage?"
 };
 
@@ -190,8 +203,8 @@ const char* press_start_texts[] {
 	"Press start to join",
 	"Press start to join",
 	"Appuyez sur entrer pour joindre",
-	"Press start to join",
-	"Press start to join",
+	"Presiona start para unirte",
+	"Press start to join"
 };
 
 Trampoline* CreateModeFnc_t = nullptr;
@@ -199,6 +212,8 @@ int stgacttexid = 0;
 
 void menu_multi_reset(MultiMenuWK* wk)
 {
+	wk->pcount = 0;
+
 	for (auto& item : wk->selected_characters)
 	{
 		item = -1;
@@ -361,6 +376,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 			else if (press & Buttons_Start)
 			{
 				wk->player_ready[i] = true;
+				PlayVoice(charsel_voicelist[sel]);
 				PlayMenuEnterSound();
 			}
 		}
@@ -576,6 +592,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	if (SeqTp->awp->work.ul[1] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
 	{
 		menu_multi_reset(wk);
+		menu_multi_charsel_unready(wk);
 		PlayMenuMusicID(MusicIDs_JingleE);
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
