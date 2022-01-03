@@ -565,6 +565,35 @@ void cartCheckGoalM(taskwk* twp)
 	}
 }
 
+void cartRunPassM(taskwk* twp, int pnum)
+{
+	auto pos1 = cart_load[16].load_data[cart_data->loop_pos];
+	auto pos2 = cart_load[17].load_data[cart_data->loop_pos];
+
+	auto pos = twp->pos;
+	twp->pos.x = (pos2.x + pos1.x) * 0.5f - twp->pos.x + twp->pos.x;
+	twp->pos.y = ((pos2.y + pos1.y) * 0.5f - twp->pos.y) * 0.5f + twp->pos.y;
+	twp->pos.z = (pos2.z + pos1.z) * 0.5f - twp->pos.z + twp->pos.z;
+
+	pos.x = twp->pos.x - pos.x;
+	pos.y = twp->pos.y - pos.y;
+	pos.z = twp->pos.z - pos.z;
+	DirectionToRotation(&pos, &twp->ang.x, &twp->ang.y);
+
+	cart_data->unstable.x = 0;
+	cart_data->unstable.z = 0;
+	++cart_data->loop_pos;
+
+	if (cart_data->loop_pos == cart_load[16].point_num)
+	{
+		twp->mode = 4;
+		cart_data->vector.x = pos.x;
+		cart_data->vector.y = pos.y;
+		cart_data->vector.z = pos.z;
+		//SetCameraType(49, 5u);
+	}
+}
+
 void EnemyCartM(task* tp)
 {
 	if (CheckRange(tp))
@@ -631,7 +660,7 @@ void EnemyCartM(task* tp)
 		break;
 	case CARTMD_PASS:
 		tp->disp(tp);
-		//cartRunPass(twp, pnum);
+		cartRunPassM(twp, pnum);
 		cartTakeSonicM(twp, pnum);
 		cartSELoopM(tp, 0);
 		break;
