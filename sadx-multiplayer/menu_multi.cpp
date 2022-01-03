@@ -207,7 +207,6 @@ const char* press_start_texts[] {
 	"Press start to join"
 };
 
-Trampoline* CreateModeFnc_t = nullptr;
 int stgacttexid = 0;
 
 void menu_multi_reset(MultiMenuWK* wk)
