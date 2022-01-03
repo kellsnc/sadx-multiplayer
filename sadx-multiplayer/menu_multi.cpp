@@ -643,10 +643,10 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
 			njReleaseTexture(&CON_MULTI_TEXLIST);
 
-			TldFlg = TRUE;
+			AvaReleaseTexForEachMode();
 
 			// Force stage mode:
-			if (wk->SelStg != -1)
+			if (wk->SelStg >= 0)
 			{
 				SeqTp->awp[1].work.sl[1] = 100;
 			}
@@ -656,8 +656,6 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	default:
 		return;
 	}
-
-	tp->disp(tp);
 }
 
 void __cdecl LoadMultiMenuExec(ModeSelPrmType* prmp)
@@ -674,34 +672,7 @@ void __cdecl LoadMultiMenuExec(ModeSelPrmType* prmp)
 	wk->BaseZ = -10000.0f;
 }
 
-void __cdecl CreateModeFnc_r(void* a1)
-{
-	// Load our new menu
-	ModeSelPrmType multimenuprm = { ADVA_MODE_TITLE_MENU, ADVA_MODE_TITLE_MENU, ADVA_MODE_TITLE_MENU };
-	LoadMultiMenuExec(&multimenuprm);
-
-	// Load the other menus:
-	auto target = TARGET_DYNAMIC(CreateModeFnc);
-
-	__asm
-	{
-		mov eax, [a1]
-		call target
-	}
-}
-
-static void __declspec(naked) CreateModeFnc_w()
-{
-	__asm
-	{
-		push eax
-		call CreateModeFnc_r
-		pop eax
-		retn
-	}
-}
-
 void InitMultiMenu()
 {
-	CreateModeFnc_t = new Trampoline(0x505A80, 0x505A86, CreateModeFnc_w);
+	CreateModeFncPtrs[ADVA_MODE_EXPLAIN] = LoadMultiMenuExec; // Replace unused menu
 }

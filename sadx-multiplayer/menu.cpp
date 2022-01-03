@@ -40,6 +40,8 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 {
 	if (wkp->SubMode == 1)
 	{
+		TldFlg = TRUE;
+
 		int stat = GetDialogStat();
 		int v8 = 0;
 		char v13[4];
@@ -97,7 +99,6 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 		case 0:
 		case 1:
 			CmnAdvaModeProcedure(ADVA_MODE_MULTI);
-			AdvertiseWork.flags[1] = 0;
 			wkp->SubMode = TITLEMENU_SMD_NWAIT;
 			break;
 		case 2:

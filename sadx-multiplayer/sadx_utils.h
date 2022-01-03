@@ -857,10 +857,14 @@ struct MSGC
 	int msgc_flag;
 };
 
-DataPointer(MSGC, stru_3ABDC18, 0x3ABDC18);
-VoidFunc(sub_40BC80, 0x40BC80);
-FunctionPointer(void, SetMessageSettings, (MSGC* a1, __int16 x, __int16 y, int width, int height, int globalindex), 0x40E430);
-FunctionPointer(void, MSG_LoadTexture2, (MSGC* a1), 0x40D2A0);
+DataPointer(MSGC, jimakumsgc, 0x3ABDC18);
+DataPointer(void*, jimakubuf, 0x3ABDF84);
+FunctionPointer(void, MSG_Cls, (MSGC* msgc), 0x40D850);
+FunctionPointer(void, MSG_LoadTexture, (MSGC* msgc), 0x40D290);
+FunctionPointer(void, MSG_LoadTexture2, (MSGC* msgc), 0x40D2A0);
+FunctionPointer(void, MSG_Puts, (MSGC* msgc, const char* text), 0x40D290);
+FunctionPointer(void, NH_MSG_Open, (MSGC* a1, __int16 x, __int16 y, int width, int height, int globalindex, void* buf), 0x40E430);
+FunctionPointer(void, MSG_Close, (MSGC* msgc), 0x40D450);
 
 struct __declspec(align(4)) CharMdlWk
 {

@@ -2,11 +2,11 @@
 
 void DrawSADXText(const char* text, __int16 y)
 {
-	sub_40BC80();
-	SetMessageSettings(&stru_3ABDC18, 0, y, 0, 0, 0xFF000020);
-	unk_3C49C23 = 0x80;
+	MSG_Close(&jimakumsgc);
+	DialogJimakuInit();
+	NH_MSG_Open(&jimakumsgc, 0, y, 0, 0, 0xFF000020, jimakubuf);
 	DoSomethingRelatedToText_(text);
-	MSG_LoadTexture2(&stru_3ABDC18);
+	MSG_LoadTexture(&jimakumsgc);
 }
 
 int MenuSelectButtonsPressed_r(int pnum)
