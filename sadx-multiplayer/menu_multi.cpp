@@ -591,6 +591,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	// Check if our menu is ready
 	if (SeqTp->awp->work.ul[1] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
 	{
+		TldFlg = FALSE;
 		menu_multi_reset(wk);
 		menu_multi_charsel_unready(wk);
 		PlayMenuMusicID(MusicIDs_JingleE);
@@ -643,7 +644,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
 			njReleaseTexture(&CON_MULTI_TEXLIST);
 
-			AvaReleaseTexForEachMode();
+			TldFlg = TRUE;
 
 			// Force stage mode:
 			if (wk->SelStg >= 0)
