@@ -79,8 +79,8 @@ void cartDisplayM(task* tp)
 		}
 
 		njSetTexture(&OBJ_SHAREOBJ_TEXLIST);
-		njPushMatrix(0);
-		njTranslate(0, twp->pos.x, twp->pos.y + cartOffset[cart_data->cart_type], twp->pos.z);
+		njPushMatrixEx();
+		njTranslate(0, cart_data->last_pos.x, cart_data->last_pos.y + cartOffset[cart_data->cart_type], cart_data->last_pos.z);
 		if (twp->ang.z) njRotateZ(0, twp->ang.z);
 		if (twp->ang.x) njRotateX(0, twp->ang.x);
 		if (twp->ang.y) njRotateY(0, twp->ang.y + 0x4000);
@@ -616,7 +616,6 @@ void EnemyCartM(task* tp)
 		cart_data->flag |= 1u;
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
-		tp->disp(tp);
 		cartSpdForceOfNature(twp);
 		cartThinkM(tp, twp, pnum);
 		cartCharactorCollisionM(twp, pnum);
@@ -629,7 +628,6 @@ void EnemyCartM(task* tp)
 		cartSetVectorM(twp, pnum);
 		cartRideButtonCheckM(twp, cartparam, pnum);
 		cartShadowPos(twp);
-		tp->disp(tp);
 		cartSpdForceOfNature(twp);
 		cartCharactorCollisionM(twp, pnum);
 		cartTopographicalCollisionM(tp, twp, pnum);
@@ -638,7 +636,6 @@ void EnemyCartM(task* tp)
 		cart_data->flag &= ~1u;
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
-		tp->disp(tp);
 		cartSpdForceOfNature(twp);
 		cartCharactorCollisionM(twp, pnum);
 		cartTopographicalCollisionM(tp, twp, pnum);
@@ -648,7 +645,6 @@ void EnemyCartM(task* tp)
 		cart_data->flag &= ~1u;
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
-		tp->disp(tp);
 		cartSpdForceOfNature(twp);
 		cartSpdControlSonicOnTheCartM(twp, pnum);
 		cartCharactorCollisionM(twp, pnum);
@@ -659,7 +655,6 @@ void EnemyCartM(task* tp)
 		cartSELoopM(tp, 0);
 		break;
 	case CARTMD_PASS:
-		tp->disp(tp);
 		cartRunPassM(twp, pnum);
 		cartTakeSonicM(twp, pnum);
 		cartSELoopM(tp, 0);
@@ -668,7 +663,6 @@ void EnemyCartM(task* tp)
 		cart_data->flag |= 1u;
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
-		tp->disp(tp);
 		cartSpdForceOfNature(twp);
 		cartThinkM(tp, twp, pnum);
 		cartCharactorCollisionM(twp, pnum);
@@ -678,13 +672,11 @@ void EnemyCartM(task* tp)
 	case CARTMD_EXPL:
 		cart_data->flag &= ~1u;
 		tp->disp = cartDisplayExplosionM;
-		tp->disp(tp);
 		cartExplosion(twp);
 		break;
 	case CARTMD_8:
 		cart_data->flag &= ~1u;
 		cartShadowPos(twp);
-		tp->disp(tp);
 		cartCharactorCollisionM(twp, pnum);
 		cartTakeSonicM(twp, pnum);
 		cartSELoop(0, tp);
@@ -692,13 +684,11 @@ void EnemyCartM(task* tp)
 	case CARTMD_9:
 		cart_data->flag &= ~1u;
 		cartShadowPos(twp);
-		tp->disp(tp);
 		cartCharactorCollisionM(twp, pnum);
 		break;
 	case CARTMD_10:
 		cart_data->flag &= ~1u;
 		cartShadowPos(twp);
-		tp->disp(tp);
 		cartSpdForceOfNature(twp);
 		cartThinkM(tp, twp, pnum);
 		cartCharactorCollisionM(twp, pnum);
@@ -711,6 +701,7 @@ void EnemyCartM(task* tp)
 		return;
 	}
 
+	tp->disp(tp);
 	++cart_data->hamari_cnt;
 }
 
