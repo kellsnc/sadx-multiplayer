@@ -334,7 +334,7 @@ void cartCharactorCollisionM(taskwk* twp, int pnum)
 				cart_data->vector.y *= 0.5f;
 				cart_data->vector.z *= 0.5f;
 
-				if (GetRings())
+				if (GetNumRingM(pnum))
 				{
 					DamegeRingScatter(pnum);
 				}
