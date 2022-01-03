@@ -277,6 +277,12 @@ struct CART_OTHER_PARAM
 	int ring_sub_timer;
 };
 
+struct CART_LOAD_DATA
+{
+	NJS_POINT3* load_data;
+	int point_num;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -389,9 +395,34 @@ DataPointer(NJS_OBJECT, object_e_cart_cart_cart, 0x38AB250);
 DataArray(CUSTOM_OBJ, fan_model, 0x88C02C, 2);
 DataPointer(NJS_OBJECT, object_sarucart_sarucart_sarucart, 0x38BAAA4);
 DataPointer(NJS_OBJECT, object_sarucart_saru_body_saru_body, 0x38B8780);
+DataArray(NJS_MODEL_SADX*, cart_model, 0x38F4FC8, 32);
 FunctionPointer(void, cartTopographicalCollision, (task* tp, taskwk* twp), 0x799380);
 DataPointer(CART_OTHER_PARAM, CartOtherParam, 0x38C5F88);
 DataPointer(BOOL, CartGoalFlag, 0x3D08E00);
+DataArray(CART_LOAD_DATA, cart_load, 0x38C7FF0, 18);
+
+static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
+static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
+{
+	__asm
+	{
+		push[pwp]
+		mov edi, [twp]
+		mov ebx, [mwp]
+		call pLockingOnTargetEnemy2Ptr
+		add esp, 4
+	}
+}
+
+static const void* const cartExplosionPtr = (void*)0x797300;
+static inline void cartExplosion(taskwk* twp)
+{
+	__asm
+	{
+		mov edi, [twp]
+		call cartExplosionPtr
+	}
+}
 
 static const void* const cartCheckPassPtr = (void*)0x7980C0;
 static inline void cartCheckPass(taskwk* twp)
