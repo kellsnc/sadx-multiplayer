@@ -786,7 +786,8 @@ DataArray(PVMEntry*, MenuTexlists, 0x10D7CB0, 5);
 DataArray(void*, CreateModeFncPtrs, 0x10D7B4C, 14);
 DataPointer(task*, TitleNewTp, 0x3C5FF00);
 DataPointer(BOOL, Menu_CanSelect, 0x3C5E8E0);
-VoidFunc(MenuLaunchNext, 0x506040);
+VoidFunc(AvaReleaseTexForEachMode, 0x506040); // also sets menu ready flag
+DataPointer(int, TldFlg, 0x3C5E8E0); // menu ready flag
 
 FunctionPointer(BOOL, IsMiniGameMenuEnabled, (), 0x506460);
 FunctionPointer(BOOL, GetEnableTrialActNumAll, (), 0x5061F0);

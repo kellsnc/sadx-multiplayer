@@ -643,6 +643,8 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
 			njReleaseTexture(&CON_MULTI_TEXLIST);
 
+			TldFlg = TRUE;
+
 			// Force stage mode:
 			if (wk->SelStg != -1)
 			{
@@ -660,9 +662,9 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 void __cdecl LoadMultiMenuExec(ModeSelPrmType* prmp)
 {
-	auto tp = TrialActStelTp = CreateElementalTask(0, LEV_4, MultiMenuExec_Main);
+	auto tp = CreateElementalTask(0, LEV_4, MultiMenuExec_Main);
 
-	auto wk = (TrialActSelWk*)AllocateArray(1, 208);
+	auto wk = (MultiMenuWK*)AllocateArray(1, sizeof(MultiMenuWK));
 	wk->NextMode = prmp->NextMode;
 	wk->PrevMode = prmp->PrevMode;
 
@@ -670,8 +672,6 @@ void __cdecl LoadMultiMenuExec(ModeSelPrmType* prmp)
 	tp->disp = MultiMenuExec_Display;
 
 	wk->BaseZ = -10000.0f;
-
-	ChgSubModeToStay_0(prmp, tp);
 }
 
 void __cdecl CreateModeFnc_r(void* a1)
