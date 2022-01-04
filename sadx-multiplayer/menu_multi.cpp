@@ -314,10 +314,10 @@ void multi_menu_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
 	}
 	else if (actcnt == 3)
 	{
-		PanelPrmMenuMultiStgConfirm[0] = { -114.0f, 25.0f, AVAMULTITEX_ACT1 };
-		PanelPrmMenuMultiStgConfirm[1] = { -38.0f, 25.0f, AVAMULTITEX_ACT2 };
-		PanelPrmMenuMultiStgConfirm[2] = { 38.0f, 25.0f, AVAMULTITEX_ACT3 };
-		PanelPrmMenuMultiStgConfirm[3] = { 114.0f, 25.0f, AVAMULTITEX_NO };
+		PanelPrmMenuMultiStgConfirm[0] = { -177.0f, 25.0f, AVAMULTITEX_ACT1 };
+		PanelPrmMenuMultiStgConfirm[1] = { -60.0f, 25.0f, AVAMULTITEX_ACT2 };
+		PanelPrmMenuMultiStgConfirm[2] = { 60.0f, 25.0f, AVAMULTITEX_ACT3 };
+		PanelPrmMenuMultiStgConfirm[3] = { 177.0f, 25.0f, AVAMULTITEX_NO };
 	}
 
 	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[item].PvrIdx;
