@@ -201,12 +201,15 @@ int GetCurrentCharacter(int pnum)
 void LoadCharacter_r()
 {
 #ifdef _DEBUG
-    //multiplayer::Enable(2);
-    //characters[0] = Characters_Sonic;
-    //characters[1] = Characters_Sonic;
+    if (multiplayer::IsEnabled() == false)
+    {
+        multiplayer::Enable(2);
+        characters[0] = Characters_Sonic;
+        characters[1] = Characters_Sonic;
+    }
 #endif
 
-    if (multiplayer::IsEnabled())
+    if (multiplayer::IsActive())
     {
         CurrentCharacter = characters[0];
 

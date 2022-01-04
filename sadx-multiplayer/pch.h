@@ -5,6 +5,7 @@ struct IUnknown;
 
 #include "framework.h"
 #include <math.h>
+#include <utility>
 #include <vector>
 #include <algorithm>
 #include <d3d8types.h>

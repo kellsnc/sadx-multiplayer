@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <utility>
 #include "menu_multi.h"
 #include "multihud.h"
 
@@ -13,6 +14,26 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_E102,
 	AVAMULTITEX_BIG,
 	AVAMULTITEX_METAL,
+	AVAMULTITEX_BACK,
+	AVAMULTITEX_CONFIRM,
+	AVAMULTITEX_SELECT,
+	AVAMULTITEX_TITLE,
+	AVAMULTITEX_ACT1,
+	AVAMULTITEX_ACT2,
+	AVAMULTITEX_ACT3,
+	AVAMULTITEX_YES,
+	AVAMULTITEX_NO,
+	AVAMULTITEX_CURSORBG,
+	AVAMULTITEX_CURSOR1,
+	AVAMULTITEX_CURSOR2,
+	AVAMULTITEX_CSR1,
+	AVAMULTITEX_CSR2,
+	AVAMULTITEX_CSR3,
+	AVAMULTITEX_CSR4,
+	AVAMULTITEX_MD_SPD,
+	AVAMULTITEX_MD_EME,
+	AVAMULTITEX_MD_TC,
+	AVAMULTITEX_MD_FISH,
 	AVAMULTITEX_STG1,
 	AVAMULTITEX_STG2,
 	AVAMULTITEX_STG3,
@@ -23,24 +44,13 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_STG8,
 	AVAMULTITEX_STG9,
 	AVAMULTITEX_STG10,
-	AVAMULTITEX_BACK,
-	AVAMULTITEX_CONFIRM,
-	AVAMULTITEX_SELECT,
-	AVAMULTITEX_TITLE,
-	AVAMULTITEX_YES,
-	AVAMULTITEX_NO,
-	AVAMULTITEX_CURSOR1,
-	AVAMULTITEX_CURSOR2,
-	AVAMULTITEX_CURSOR3,
-	AVAMULTITEX_CURSOR4,
-	AVAMULTITEX_CSR1,
-	AVAMULTITEX_CSR2,
-	AVAMULTITEX_CSR3,
-	AVAMULTITEX_CSR4,
-	AVAMULTITEX_MD_SPD,
-	AVAMULTITEX_MD_EME,
-	AVAMULTITEX_MD_TC,
-	AVAMULTITEX_MD_FISH,
+	AVAMULTITEX_STG11,
+	AVAMULTITEX_STGTC1,
+	AVAMULTITEX_STGTC2,
+	AVAMULTITEX_STGTC3,
+	AVAMULTITEX_STGTC4,
+	AVAMULTITEX_STGTC5,
+	AVAMULTITEX_STGTC6,
 };
 
 enum AVA_MULTI_ANM
@@ -59,14 +69,14 @@ enum MD_MULTI
 	MD_MULTI_CHARSEL,
 	MD_MULTI_INITMODESEL,
 	MD_MULTI_MODESEL,
-	MD_MULTI_INITSTGSEL_SNC,
-	MD_MULTI_STGSEL_SNC,
 	MD_MULTI_INITSTGSEL_EME,
 	MD_MULTI_STGSEL_EME,
 	MD_MULTI_INITSTGSEL_TC,
 	MD_MULTI_STGSEL_TC,
 	MD_MULTI_INITSTGSEL_FISH,
 	MD_MULTI_STGSEL_FISH,
+	MD_MULTI_INITSTGSEL_SNC,
+	MD_MULTI_STGSEL_SNC,
 	MD_MULTI_INITSTGASK,
 	MD_MULTI_STGASK,
 };
@@ -80,14 +90,14 @@ struct MultiMenuWK
 	float T;
 	unsigned int BaseCol;
 	MD_MULTI SubMode;
-	MD_MULTI PrevSubMode;
 	int SelStg;
 	float alphaMainMenu;
 	float alphaControls;
-	int stgactreq;
+	int stgreq;
+	int actcnt;
 };
 
-NJS_TEXNAME AVA_MULTI_TEXNAME[33];
+NJS_TEXNAME AVA_MULTI_TEXNAME[44];
 NJS_TEXLIST AVA_MULTI_TEXLIST = { arrayptrandlength(AVA_MULTI_TEXNAME) };
 
 NJS_TEXANIM AVA_MULTI_TEXANIM[] {
@@ -99,24 +109,24 @@ NJS_TEXANIM AVA_MULTI_TEXANIM[] {
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_AMY, 0x20},
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_E102, 0x20},
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_BIG, 0x20},
-	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_CURSOR1, 0x20},
-	{ 110, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_BACK, 0x20},
-	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_CONFIRM, 0x20},
-	{ 120, 32, 55, 16, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_SELECT, 0x20},
+	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_CURSOR2, 0x20},
+	{ 120, 32, 0, 0, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_BACK, 0x20},
+	{ 120, 32, 0, 0, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_CONFIRM, 0x20},
+	{ 120, 32, 0, 0, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_SELECT, 0x20},
 	{ 256, 128, 128, 64, 0, 0, 255, 255, AVAMULTITEX_STG1, 0x20},
 };
 
 NJS_SPRITE AVA_MULTI_SPRITE = { { 0.0f, 0.0f, 0.0f }, 1.0f, 1.0f, 0, &AVA_MULTI_TEXLIST, AVA_MULTI_TEXANIM };
 
 NJS_ARGB CursorColors[8] = {
-	{ 1.0f, 1.0f, 1.0f, 1.0f },
-	{ 1.0f, 0.145f, 0.501f, 0.894f }, //light blue
+	{ 1.0f, 0.145f, 0.501f, 0.894f }, // light blue
+	{ 1.0f, 0.97f, 0.07f, 0.07f },    // light red
 	{ 1.0f, 0.423f, 0.894f, 0.047f }, //light green
 	{ 1.0f, 0.894f, 0.701f, 0.047f }, //yellow
 	{ 1.0f, 0.976f, 0.525f, 0.862f }, //pink 
 	{ 1.0f, 0.584f, 0.074f, 0.560f }, //purple
 	{ 1.0f, 0.070f, 0.047f, 0.894f }, //dark blue
-	{ 1.0f, 0.521f, 0.0f, 0.0f}, //dark red
+	{ 1.0f, 0.521f, 0.0f, 0.0f},      //dark red
 };
 
 NJS_POINT2 IconPosMenuMultiCharSel[] {
@@ -137,7 +147,7 @@ PanelPrmType PanelPrmMenuMultiModSel[] {
 	 { 180.0f,	8.0f,  AVAMULTITEX_MD_FISH },
 };
 
-PanelPrmType PanelPrmMenuMultiStgSel[]{
+PanelPrmType PanelPrmMenuMultiStgSelSonic[]{
 	 { -150.0f,	-120.0f, AVAMULTITEX_STG1  },
 	 { 0.0f,	-120.0f, AVAMULTITEX_STG2  },
 	 { 150.0f,	-120.0f, AVAMULTITEX_STG3  },
@@ -147,32 +157,49 @@ PanelPrmType PanelPrmMenuMultiStgSel[]{
 	 { -150.0f,	40.0f,   AVAMULTITEX_STG7  },
 	 { 0.0f,	40.0f,   AVAMULTITEX_STG8  },
 	 { 150.0f,	40.0f,   AVAMULTITEX_STG9  },
-	 { 0.0f,	120.0f,  AVAMULTITEX_STG10 },
+	 { -75.0f,	120.0f,  AVAMULTITEX_STG10 },
+	 { 75.0f,	120.0f,  AVAMULTITEX_STG11 },
 };
 
-PanelPrmType PanelPrmMenuMultiStgConfirm[] {
-	 { -114.0f, 25.0f, AVAMULTITEX_YES  },
-	 { 114.0f, 25.0f,  AVAMULTITEX_NO }
+PanelPrmType PanelPrmMenuMultiStgSelTwinkle[]{
+	 { -150.0f,	-40.0f, AVAMULTITEX_STGTC1 },
+	 { 0.0f,	-40.0f, AVAMULTITEX_STGTC2 },
+	 { 150.0f,	-40.0f, AVAMULTITEX_STGTC3 },
+	 { -150.0f,	40.0f,  AVAMULTITEX_STGTC4 },
+	 { 0.0f,	40.0f,  AVAMULTITEX_STGTC5 },
+	 { 150.0f,	40.0f,  AVAMULTITEX_STGTC6 }
 };
+
+PanelPrmType PanelPrmMenuMultiStgConfirm[4] {};
 
 void multi_menu_confirmdialog_proc(DDlgType* ddltype);
 
 const DialogPrmType MultiMenuModeSelDialog = { DLG_PNLSTYLE_MARU2, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiModSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 180.0f, 1.2f, 1.2f, LengthOfArray(PanelPrmMenuMultiModSel), 4};
-const DialogPrmType MultiMenuStageSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.0f, 1.1f, LengthOfArray(PanelPrmMenuMultiStgSel), 10};
-const DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, multi_menu_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 2, 1 };
+const DialogPrmType MultiMenuStageSelSonicDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelSonic, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelSonic), 11};
+const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelTwinkle, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelTwinkle), 7};
+DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, multi_menu_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 4, 3 };
 
-int sonic_level_link[] = {
-	LevelAndActIDs_EmeraldCoast1,
-	LevelAndActIDs_WindyValley1,
-	LevelAndActIDs_Casinopolis2,
-	LevelAndActIDs_IceCap1,
-	LevelAndActIDs_TwinklePark1,
-	LevelAndActIDs_SpeedHighway1,
-	LevelAndActIDs_RedMountain1,
-	LevelAndActIDs_SkyDeck1,
-	LevelAndActIDs_LostWorld1,
-	LevelAndActIDs_FinalEgg1,
-	LevelAndActIDs_HotShelter1
+std::pair<int, int> sonic_level_link[] = {
+	{ LevelAndActIDs_EmeraldCoast1, 2 },
+	{ LevelAndActIDs_WindyValley1, 3 },
+	{ LevelAndActIDs_Casinopolis2, 1 },
+	{ LevelAndActIDs_IceCap2, 2 },
+	{ LevelAndActIDs_TwinklePark1, 3 },
+	{ LevelAndActIDs_SpeedHighway1, 3 },
+	{ LevelAndActIDs_RedMountain1, 2 },
+	{ LevelAndActIDs_SkyDeck1, 3 },
+	{ LevelAndActIDs_LostWorld1, 2 },
+	{ LevelAndActIDs_FinalEgg1, 3 },
+	{ LevelAndActIDs_HotShelter1, 2 },
+};
+
+int twinkle_level_link[]{
+	LevelAndActIDs_TwinkleCircuit1,
+	LevelAndActIDs_TwinkleCircuit2,
+	LevelAndActIDs_TwinkleCircuit3,
+	LevelAndActIDs_TwinkleCircuit4,
+	LevelAndActIDs_TwinkleCircuit5,
+	LevelAndActIDs_TwinkleCircuit6,
 };
 
 int charsel_voicelist[] {
@@ -237,7 +264,7 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	wk->SubMode = id;
 }
 
-void menu_multi_launch_level(MultiMenuWK* wk)
+void menu_multi_launch_level(MultiMenuWK* wk, int act)
 {
 	// Enable multiplayer mode
 	multiplayer::Enable(pcount);
@@ -247,10 +274,10 @@ void menu_multi_launch_level(MultiMenuWK* wk)
 		SetCurrentCharacter(i, selected_characters[i]);
 	}
 
+	// Force trial return to this menu instead of charsel
 	WriteData((int*)0x7EEB58, (int)ADVA_MODE_MULTI);
 
-	int level = ConvertLevelActsID_ToLevel(wk->stgactreq);
-	int act = ConvertLevelActsID_ToAct(wk->stgactreq);
+	auto level = wk->stgreq;
 
 	LastLevel = CurrentLevel;
 	LastAct = CurrentAct;
@@ -267,12 +294,35 @@ void menu_multi_launch_level(MultiMenuWK* wk)
 	wk->T = 0.0f;
 }
 
-void multi_menu_request_stg(MultiMenuWK* wk, int levelact, int id)
+void multi_menu_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
 {
-	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[id].PvrIdx;
-	wk->PrevSubMode = (MD_MULTI)(wk->SubMode - 1);
+	auto act = ConvertLevelActsID_ToAct(level);
+
+	MultiMenuStageConfirmDialog.CsrMax = actcnt + 1;
+	MultiMenuStageConfirmDialog.CsrCancel = actcnt;
+
+	if (actcnt == 1)
+	{
+		PanelPrmMenuMultiStgConfirm[0] = { -114.0f, 25.0f, AVAMULTITEX_YES };
+		PanelPrmMenuMultiStgConfirm[1] = { 114.0f, 25.0f, AVAMULTITEX_NO };
+	}
+	else if (actcnt == 2)
+	{
+		PanelPrmMenuMultiStgConfirm[0] = { -144.0f, 25.0f, (uint8_t)(AVAMULTITEX_ACT1 + act) };
+		PanelPrmMenuMultiStgConfirm[1] = { 0.0f, 25.0f, (uint8_t)(AVAMULTITEX_ACT2 + act) };
+		PanelPrmMenuMultiStgConfirm[2] = { 144.0f, 25.0f, AVAMULTITEX_NO };
+	}
+	else if (actcnt == 3)
+	{
+		PanelPrmMenuMultiStgConfirm[0] = { -114.0f, 25.0f, AVAMULTITEX_ACT1 };
+		PanelPrmMenuMultiStgConfirm[1] = { -38.0f, 25.0f, AVAMULTITEX_ACT2 };
+		PanelPrmMenuMultiStgConfirm[2] = { 38.0f, 25.0f, AVAMULTITEX_ACT3 };
+		PanelPrmMenuMultiStgConfirm[3] = { 114.0f, 25.0f, AVAMULTITEX_NO };
+	}
+
+	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[item].PvrIdx;
 	menu_multi_change(wk, MD_MULTI_INITSTGASK);
-	wk->stgactreq = levelact;
+	wk->stgreq = ConvertLevelActsID_ToLevel(level);
 }
 
 void multi_menu_confirmdialog_proc(DDlgType* ddltype)
@@ -282,7 +332,7 @@ void multi_menu_confirmdialog_proc(DDlgType* ddltype)
 	AVA_MULTI_SPRITE.p.x = 320;
 	AVA_MULTI_SPRITE.p.y = 200;
 	AVA_MULTI_SPRITE.tanim[AVAMULTIANM_STG].texid = stgacttexid;
-	njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_STG, -100, 0);
+	njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_STG, -100, NJD_SPRITE_ALPHA);
 }
 
 void multi_menu_stg_confirm(MultiMenuWK* wk)
@@ -291,11 +341,12 @@ void multi_menu_stg_confirm(MultiMenuWK* wk)
 
 	if (stat != -1)
 	{
-		menu_multi_change(wk, wk->PrevSubMode);
+		menu_multi_change(wk, saved_mode);
 
-		if (stat == 0) // chose yes
+		if (stat != MultiMenuStageConfirmDialog.CsrCancel)
 		{
-			menu_multi_launch_level(wk);
+			int act = PanelPrmMenuMultiStgConfirm[stat].PvrIdx - AVA_MULTI_TEX::AVAMULTITEX_ACT1;
+			menu_multi_launch_level(wk, act);
 		}
 	}
 }
@@ -304,13 +355,27 @@ void menu_multi_stgsel_snc(MultiMenuWK* wk)
 {
 	auto stat = GetDialogStat();
 
-	if (stat == 10) // go back request
+	if (stat == MultiMenuStageSelSonicDialog.CsrCancel) // go back request
 	{
 		menu_multi_change(wk, MD_MULTI_INITMODESEL);
 	}
 	else if (stat != -1) // launch game request
 	{
-		multi_menu_request_stg(wk, sonic_level_link[stat], stat);
+		multi_menu_request_stg(wk, sonic_level_link[stat].first, sonic_level_link[stat].second, stat);
+	}
+}
+
+void menu_multi_stgsel_twinkle(MultiMenuWK* wk)
+{
+	auto stat = GetDialogStat();
+
+	if (stat == MultiMenuStageSelTwinkleDialog.CsrCancel) // go back request
+	{
+		menu_multi_change(wk, MD_MULTI_INITMODESEL);
+	}
+	else if (stat != -1) // launch game request
+	{
+		multi_menu_request_stg(wk, twinkle_level_link[stat], 1, stat);
 	}
 }
 
@@ -424,10 +489,10 @@ void menu_multi_setrndcursor()
 
 void menu_multi_setsqrcursor()
 {
-	ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR1];
-	ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR2];
-	ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR3];
-	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR4];
+	ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
+	ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
+	ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
+	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR1];
 }
 
 void menu_multi_subexec(MultiMenuWK* wk)
@@ -455,10 +520,19 @@ void menu_multi_subexec(MultiMenuWK* wk)
 		menu_multi_setsqrcursor();
 		menu_multi_change(wk, MD_MULTI_STGSEL_SNC);
 		saved_mode = MD_MULTI_INITSTGSEL_SNC;
-		OpenDialog(&MultiMenuStageSelDialog);
+		OpenDialog(&MultiMenuStageSelSonicDialog);
 		break;
 	case MD_MULTI_STGSEL_SNC:
 		menu_multi_stgsel_snc(wk);
+		break;
+	case MD_MULTI_INITSTGSEL_TC:
+		menu_multi_setsqrcursor();
+		menu_multi_change(wk, MD_MULTI_STGSEL_TC);
+		saved_mode = MD_MULTI_INITSTGSEL_TC;
+		OpenDialog(&MultiMenuStageSelTwinkleDialog);
+		break;
+	case MD_MULTI_STGSEL_TC:
+		menu_multi_stgsel_twinkle(wk);
 		break;
 	case MD_MULTI_INITSTGASK: // Open prompt to ask level confirmation
 		menu_multi_setrndcursor();
@@ -493,15 +567,15 @@ void multi_menu_disp_controls(MultiMenuWK* wk)
 
 	gHelperFunctions->PushScaleUI((uiscale::Align)(Align_Bottom | Align_Center_Horizontal), false, 1.0f, 1.0f);
 
-	AVA_MULTI_SPRITE.p.y = 448.0f;
+	AVA_MULTI_SPRITE.p.y = 432.0f;
 
-	AVA_MULTI_SPRITE.p.x = 165.0f;
+	AVA_MULTI_SPRITE.p.x = 135.0f;
 	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
-	AVA_MULTI_SPRITE.p.x = 330.0f;
+	AVA_MULTI_SPRITE.p.x += 130.0f;
 	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_CONFIRM, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
-	AVA_MULTI_SPRITE.p.x = 495.0f;
+	AVA_MULTI_SPRITE.p.x += 150.0f;
 	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_BACK, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
 	gHelperFunctions->PopScaleUI();
