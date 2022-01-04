@@ -709,7 +709,7 @@ void __cdecl EnemyCart_r(task* tp);
 Trampoline EnemyCart_t(0x79A9E0, 0x79A9E5, EnemyCart_r);
 void __cdecl EnemyCart_r(task* tp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		EnemyCartM(tp);
 	}

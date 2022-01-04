@@ -198,7 +198,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 
 void __cdecl late_exec_r()
 {
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
         NJS_MATRIX orig_matrix;
         njGetMatrix(orig_matrix);
@@ -302,7 +302,7 @@ static LATE_RQ* late_setOdr_r(__int16 no, int sz, QueuedModelType odr, QueuedMod
 {
     auto rq = late_setOdr_o(no, sz, odr, flgs);
     
-    if (rq && IsMultiplayerEnabled() && SplitScreen::numViewPort != -1)
+    if (rq && multiplayer::IsActive() && SplitScreen::numViewPort != -1)
     {
         BYTEn(rq->ctrl3dFlg, 3) += SplitScreen::numViewPort + 1; // place viewport id in the last available digits
     }

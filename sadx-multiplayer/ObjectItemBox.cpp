@@ -13,7 +13,7 @@ void play_itembox_sound(int num)
 
 void __cdecl ef_muteki_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
 		GetInvincibleBodyP(TASKWK_PLAYERID(pltwp));
@@ -27,7 +27,7 @@ void __cdecl ef_muteki_r(taskwk* twp)
 
 void __cdecl ef_5ring_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
 		AddNumRingM(TASKWK_PLAYERID(pltwp), 5);
@@ -41,7 +41,7 @@ void __cdecl ef_5ring_r(taskwk* twp)
 
 void __cdecl ef_10ring_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
 		AddNumRingM(TASKWK_PLAYERID(pltwp), 10);
@@ -55,7 +55,7 @@ void __cdecl ef_10ring_r(taskwk* twp)
 
 void __cdecl ef_random_ring_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
 		RandomRingNum = RandomRingAmounts[(int)-(rand() * 0.000030517578 * -6.0) % 6];
@@ -70,7 +70,7 @@ void __cdecl ef_random_ring_r(taskwk* twp)
 
 void __cdecl ef_baria_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
 		GetBarrierP(TASKWK_PLAYERID(pltwp));
@@ -84,7 +84,7 @@ void __cdecl ef_baria_r(taskwk* twp)
 
 void __cdecl ef_1up_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
 		AddNumPlayerM(TASKWK_PLAYERID(pltwp), 1);
@@ -98,7 +98,7 @@ void __cdecl ef_1up_r(taskwk* twp)
 
 void __cdecl ef_explosion_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
 		play_itembox_sound(TASKWK_CHARID(pltwp));
@@ -116,7 +116,7 @@ void __cdecl ef_explosion_r(taskwk* twp)
 
 void __cdecl ef_th_baria_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
 		GetThunderBarrierP(TASKWK_PLAYERID(pltwp));
@@ -131,7 +131,7 @@ void __cdecl ef_th_baria_r(taskwk* twp)
 // Magnetic barrier has support for all player... except for one condition that checks player 1 ;_;
 void __cdecl TBarrier_r(task* tp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto twp = tp->twp;
 		auto pltwp = playertwp[twp->counter.b[0]];
@@ -169,7 +169,7 @@ void __cdecl TBarrier_r(task* tp)
 
 void __cdecl EntryItemBoxPanel_r(int panel)
 {
-	if (!IsMultiplayerEnabled())
+	if (!multiplayer::IsActive())
 	{
 		TARGET_DYNAMIC(EntryItemBoxPanel)(panel);
 	}

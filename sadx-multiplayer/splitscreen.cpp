@@ -60,7 +60,7 @@ namespace SplitScreen
 
     const ScreenRatio* GetScreenRatio(int num)
     {
-        return &ScreenRatios[player_count - 2][num];
+        return &ScreenRatios[multiplayer::GetPlayerCount() - 2][num];
     }
 
     void SaveViewPort()
@@ -105,7 +105,7 @@ namespace SplitScreen
             return true;
         }
 
-        if (num < 0 || num > player_count || num > PLAYER_MAX)
+        if (num < 0 || num > multiplayer::GetPlayerCount() || num > PLAYER_MAX)
         {
             return false;
         }
@@ -125,9 +125,9 @@ namespace SplitScreen
 
 void __cdecl SpLoopOnlyDisplay_r()
 {
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
-        for (int i = 0; i < player_count; ++i)
+        for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
         {
             if (SplitScreen::IsScreenEnabled(i))
             {
@@ -170,11 +170,11 @@ static void DrawScreen(int num)
 // DisplayTask run every task displays
 void __cdecl DisplayTask_r()
 {
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
         // If multiplayer is enabled, split screen:
 
-        for (int i = 0; i < player_count; ++i)
+        for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
         {
             DrawScreen(i);
         }
@@ -192,7 +192,7 @@ void __cdecl DisplayTask_r()
 // LoopTask run every task execs
 void __cdecl LoopTask_r()
 {
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
         // When unpaused run logic (which also runs display) for first screen, then only run display for the other screens.
 
@@ -201,7 +201,7 @@ void __cdecl LoopTask_r()
         TARGET_DYNAMIC(LoopTask)();
         DisplayMultiHud(0);
 
-        for (int i = 1; i < player_count; ++i)
+        for (int i = 1; i < multiplayer::GetPlayerCount(); ++i)
         {
             DrawScreen(i);
         }
@@ -219,7 +219,7 @@ void __cdecl LoopTask_r()
 // Draw into viewport with scaling
 void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
 {
-    if (IsMultiplayerEnabled() && SplitScreen::numViewPort != -1)
+    if (multiplayer::IsActive() && SplitScreen::numViewPort != -1)
     {
         auto ratio = SplitScreen::GetScreenRatio(SplitScreen::numScreen);
 

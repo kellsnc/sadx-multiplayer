@@ -84,10 +84,7 @@ struct MultiMenuWK
 	int SelStg;
 	float alphaMainMenu;
 	float alphaControls;
-	int selected_characters[PLAYER_MAX];
-	bool player_ready[PLAYER_MAX];
 	int stgactreq;
-	int pcount;
 };
 
 NJS_TEXNAME AVA_MULTI_TEXNAME[33];
@@ -178,8 +175,7 @@ int sonic_level_link[] = {
 	LevelAndActIDs_HotShelter1
 };
 
-int charsel_voicelist[]
-{
+int charsel_voicelist[] {
 	1098,
 	569,
 	528,
@@ -189,6 +185,10 @@ int charsel_voicelist[]
 	394,
 	1346,
 	2047
+};
+
+AvaTexLdEnum AvaTexLdListForMulti[]{
+	TENUM_AVA_BACK, TENUM_ADV_WINDOW, TENUM_NMAX_SADXPC
 };
 
 const char* stg_confirm_texts[] {
@@ -208,20 +208,24 @@ const char* press_start_texts[] {
 };
 
 int stgacttexid = 0;
+int selected_characters[PLAYER_MAX];
+bool player_ready[PLAYER_MAX];
+int pcount;
+MD_MULTI saved_mode;
 
-void menu_multi_reset(MultiMenuWK* wk)
+void menu_multi_reset()
 {
-	wk->pcount = 0;
+	pcount = 0;
 
-	for (auto& item : wk->selected_characters)
+	for (auto& item : selected_characters)
 	{
 		item = -1;
 	}
 }
 
-void menu_multi_charsel_unready(MultiMenuWK* wk)
+void menu_multi_charsel_unready()
 {
-	for (auto& item : wk->player_ready)
+	for (auto& item : player_ready)
 	{
 		item = false;
 	}
@@ -231,6 +235,36 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 {
 	CloseDialog();
 	wk->SubMode = id;
+}
+
+void menu_multi_launch_level(MultiMenuWK* wk)
+{
+	// Enable multiplayer mode
+	multiplayer::Enable(pcount);
+
+	for (int i = 0; i < pcount; ++i)
+	{
+		SetCurrentCharacter(i, selected_characters[i]);
+	}
+
+	WriteData((int*)0x7EEB58, (int)ADVA_MODE_MULTI);
+
+	int level = ConvertLevelActsID_ToLevel(wk->stgactreq);
+	int act = ConvertLevelActsID_ToAct(wk->stgactreq);
+
+	LastLevel = CurrentLevel;
+	LastAct = CurrentAct;
+	CurrentCharacter = selected_characters[0];
+	CurrentLevel = level;
+	CurrentAct = act;
+	SeqTp->awp[1].work.ul[0] = 100;
+	AvaStgActT stgact = { level, act };
+	AvaCmnPrm = { (uint8_t)level, (uint8_t)act };
+	AdvertiseWork.Stage = level;
+	AdvertiseWork.Act = act;
+	wk->SelStg = level;
+	wk->Stat = ADVA_STAT_FADEOUT;
+	wk->T = 0.0f;
 }
 
 void multi_menu_request_stg(MultiMenuWK* wk, int levelact, int id)
@@ -261,32 +295,7 @@ void multi_menu_stg_confirm(MultiMenuWK* wk)
 
 		if (stat == 0) // chose yes
 		{
-			// Get splitscreen layout (TODO: create an "SetMultiplayerMode" function)
-			for (int i = PLAYER_MAX - 1; i >= 0; --i)
-			{
-				if (wk->selected_characters[i] != -1)
-				{
-					player_count = i;
-					break;
-				}
-			}
-
-			int level = ConvertLevelActsID_ToLevel(wk->stgactreq);
-			int act = ConvertLevelActsID_ToAct(wk->stgactreq);
-
-			LastLevel = CurrentLevel;
-			LastAct = CurrentAct;
-			CurrentCharacter = wk->selected_characters[0];
-			CurrentLevel = level;
-			CurrentAct = act;
-			SeqTp->awp[1].work.ul[0] = 100;
-			AvaStgActT stgact = { level, act };
-			AvaCmnPrm = { (uint8_t)level, (uint8_t)act };
-			AdvertiseWork.Stage = level;
-			AdvertiseWork.Act = act;
-			wk->SelStg = level;
-			wk->Stat = ADVA_STAT_FADEOUT;
-			wk->T = 0.0f;
+			menu_multi_launch_level(wk);
 		}
 	}
 }
@@ -332,10 +341,10 @@ void menu_multi_modesel(MultiMenuWK* wk)
 void menu_multi_charsel(MultiMenuWK* wk)
 {
 	bool done = true;
-	wk->pcount = 0;
+	pcount = 0;
 
 	// Return to main menu
-	if (MenuBackButtonsPressed() && wk->player_ready[0] == false)
+	if (MenuBackButtonsPressed() && player_ready[0] == false)
 	{
 		CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
 		wk->T = 0.0f;
@@ -345,7 +354,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 	// Manage input
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		auto& sel = wk->selected_characters[i];
+		auto& sel = selected_characters[i];
 		auto press = PressedButtons[i];
 
 		if (sel < 0) // If player is not connected
@@ -359,9 +368,9 @@ void menu_multi_charsel(MultiMenuWK* wk)
 			continue;
 		}
 
-		wk->pcount++;
+		pcount++;
 
-		if (wk->player_ready[i] == false) // Character selection
+		if (player_ready[i] == false) // Character selection
 		{
 			done = false;
 
@@ -382,7 +391,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 			}
 			else if (press & Buttons_Start)
 			{
-				wk->player_ready[i] = true;
+				player_ready[i] = true;
 				PlayVoice(charsel_voicelist[sel]);
 				PlayMenuEnterSound();
 			}
@@ -391,7 +400,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 		{
 			if (press & Buttons_B) // unready
 			{
-				wk->player_ready[i] = false;
+				player_ready[i] = false;
 				PlayMenuBackSound();
 				
 			}
@@ -399,7 +408,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 	}
 
 	// If everyone is ready and at least two players are there (including player 1)
-	if (wk->pcount > 1 && wk->player_ready[0] == true && done == true)
+	if (pcount > 1 && player_ready[0] == true && done == true)
 	{
 		menu_multi_change(wk, MD_MULTI_INITMODESEL);
 	}
@@ -427,7 +436,8 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	{
 	case MD_MULTI_INITCHARSEL: // Open character select
 		menu_multi_change(wk, MD_MULTI_CHARSEL);
-		menu_multi_charsel_unready(wk);
+		menu_multi_charsel_unready();
+		saved_mode = MD_MULTI_INITCHARSEL;
 		break;
 	case MD_MULTI_CHARSEL:
 		menu_multi_charsel(wk);
@@ -435,6 +445,7 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	case MD_MULTI_INITMODESEL:
 		menu_multi_setrndcursor();
 		menu_multi_change(wk, MD_MULTI_MODESEL);
+		saved_mode = MD_MULTI_INITMODESEL;
 		OpenDialog(&MultiMenuModeSelDialog);
 		break;
 	case MD_MULTI_MODESEL:
@@ -443,6 +454,7 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	case MD_MULTI_INITSTGSEL_SNC: // Open stage select (only Sonic for now)
 		menu_multi_setsqrcursor();
 		menu_multi_change(wk, MD_MULTI_STGSEL_SNC);
+		saved_mode = MD_MULTI_INITSTGSEL_SNC;
 		OpenDialog(&MultiMenuStageSelDialog);
 		break;
 	case MD_MULTI_STGSEL_SNC:
@@ -519,7 +531,7 @@ void multi_menu_disp_charsel(MultiMenuWK* wk)
 
 	SetMaterial(wk->alphaMainMenu, 1.0f, 1.0f, 1.0f);
 
-	if (wk->pcount > 0)
+	if (pcount > 0)
 	{
 		// Draw character icons
 		for (int i = 0; i < 8; ++i)
@@ -532,7 +544,7 @@ void multi_menu_disp_charsel(MultiMenuWK* wk)
 			// Draw cursor
 			for (int p = PLAYER_MAX - 1; p >= 0; --p)
 			{
-				if (i == wk->selected_characters[p])
+				if (i == selected_characters[p])
 				{
 					if (wk->Stat != ADVA_STAT_FADEOUT)
 					{
@@ -593,16 +605,29 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	// Check if our menu is ready
 	if (SeqTp->awp->work.ul[1] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
 	{
-		TldFlg = FALSE;
-		menu_multi_reset(wk);
-		menu_multi_charsel_unready(wk);
+		AvaLoadTexForEachMode(ADVA_MODE_MULTI);
+
+		// Initialize menu or reset previous state
+		if (saved_mode <= MD_MULTI_MODESEL)
+		{
+			menu_multi_reset();
+			menu_multi_charsel_unready();
+			wk->Stat = ADVA_STAT_FADEIN;
+			wk->T = 0.0f;
+		}
+		else
+		{
+			menu_multi_change(wk, saved_mode);
+			wk->Stat = ADVA_STAT_KEEP;
+			wk->T = 1.0f;
+			wk->BaseCol = 0xFFFFFFFF;
+		}
+
 		PlayMenuMusicID(MusicIDs_JingleE);
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
-		wk->Stat = ADVA_STAT_FADEIN;
 		wk->alphaMainMenu = 1.0f;
 		wk->alphaControls = 1.0f;
-		wk->T = 0.0f;
 		wk->SelStg = -1;
 	}
 
@@ -646,7 +671,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
 			njReleaseTexture(&CON_MULTI_TEXLIST);
 
-			TldFlg = TRUE;
+			AvaReleaseTexForEachMode();
 
 			// Force stage mode:
 			if (wk->SelStg >= 0)
@@ -678,4 +703,5 @@ void __cdecl LoadMultiMenuExec(ModeSelPrmType* prmp)
 void InitMultiMenu()
 {
 	CreateModeFncPtrs[ADVA_MODE_EXPLAIN] = LoadMultiMenuExec; // Replace unused menu
+	AvaTexLdLists[ADVA_MODE_EXPLAIN] = AvaTexLdListForMulti;
 }

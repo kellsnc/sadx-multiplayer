@@ -346,7 +346,7 @@ void DisplayMultiHud(int num)
 
 void __cdecl DisplayScore_r()
 {
-    if (!IsMultiplayerEnabled())
+    if (!multiplayer::IsActive())
     {
         TARGET_DYNAMIC(DisplayScore)();
     }
@@ -354,7 +354,7 @@ void __cdecl DisplayScore_r()
 
 void __cdecl DisplayTimer_r()
 {
-    if (!IsMultiplayerEnabled())
+    if (!multiplayer::IsActive())
     {
         TARGET_DYNAMIC(DisplayTimer)();
     }

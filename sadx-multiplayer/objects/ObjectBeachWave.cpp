@@ -36,7 +36,7 @@ void __cdecl ObjectBeachWaveBG1_r(task* tp)
 	tp->disp = ObjectBeachWaveBG1Display_multi;
 
 	// Load one more per player since movement is calculated in main
-	for (int i = 1; i < player_count; ++i)
+	for (int i = 1; i < multiplayer::GetPlayerCount(); ++i)
 	{
 		auto tp2 = CreateElementalTask(LoadObj_UnknownA | LoadObj_Data1, LEV_6, ObjectBeachWaveBGExec_multi);
 		tp2->twp->id = i; // screen ID, only display for that screen
@@ -62,7 +62,7 @@ void __cdecl ObjectBeachWaveBG2_r(task* tp)
 	tp->disp = ObjectBeachWaveBG2Display_Multi;
 
 	// Load one more per player since movement is calculated in main
-	for (int i = 1; i < player_count; ++i)
+	for (int i = 1; i < multiplayer::GetPlayerCount(); ++i)
 	{
 		auto tp2 = CreateElementalTask(LoadObj_UnknownA | LoadObj_Data1, LEV_6, ObjectBeachWaveBGExec_multi);
 		tp2->twp->id = i; // screen ID, only display for that screen
@@ -88,7 +88,7 @@ void __cdecl ObjectBeachWaveBG3_r(task* tp)
 	tp->disp = ObjectBeachWaveBG3Display_Multi;
 
 	// Load one more per player since movement is calculated in main
-	for (int i = 1; i < player_count; ++i)
+	for (int i = 1; i < multiplayer::GetPlayerCount(); ++i)
 	{
 		auto tp2 = CreateElementalTask(LoadObj_Data1, LEV_6, ObjectBeachWaveBGExec_multi);
 		tp2->twp->id = i; // screen ID, only display for that screen

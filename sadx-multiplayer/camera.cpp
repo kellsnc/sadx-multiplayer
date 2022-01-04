@@ -19,7 +19,7 @@ MultiCam MultiCams[PLAYER_MAX];
 
 NJS_VECTOR* GetCameraPosition(int pnum)
 {
-    if (IsMultiplayerEnabled() && pnum < player_count && playertp[pnum])
+    if (multiplayer::IsActive() && pnum < multiplayer::GetPlayerCount() && playertp[pnum])
     {
         return &MultiCams[pnum].pos;
     }
@@ -31,7 +31,7 @@ NJS_VECTOR* GetCameraPosition(int pnum)
 
 Angle3* GetCameraAngle(int pnum)
 {
-    if (IsMultiplayerEnabled() && pnum < player_count && playertp[pnum])
+    if (multiplayer::IsActive() && pnum < multiplayer::GetPlayerCount() && playertp[pnum])
     {
         return &MultiCams[pnum].ang;
     }
@@ -43,7 +43,7 @@ Angle3* GetCameraAngle(int pnum)
 
 void ApplyMultiCamera(int pnum)
 {
-    if (!camera_twp || !playertwp[pnum] || pnum > player_count)
+    if (!camera_twp || !playertwp[pnum] || pnum > multiplayer::GetPlayerCount())
     {
         return;
     }
@@ -56,7 +56,7 @@ void ApplyMultiCamera(int pnum)
 
 void __cdecl CameraDisplay_r(task* tp)
 {
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
         ApplyMultiCamera(SplitScreen::numScreen);
         //CameraFilter(tp); <- Works individually but crashes when draws more than once with DC Conv
@@ -69,7 +69,7 @@ void __cdecl CameraDisplay_r(task* tp)
 
 void __cdecl CameraPause_r(task* tp)
 {
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
         ApplyMultiCamera(SplitScreen::numScreen);
     }
@@ -427,7 +427,7 @@ void RunMultiCamera(int num)
 void __cdecl Camera_r(task* tp)
 {
     // If multiplayer is enabled, run custom cameras
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
         auto twp = tp->twp;
 
@@ -452,7 +452,7 @@ void __cdecl Camera_r(task* tp)
         }
         else
         {
-            for (int i = 0; i < player_count; ++i)
+            for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
             {
                 RunMultiCamera(i);
             }
@@ -469,7 +469,7 @@ void __cdecl Camera_r(task* tp)
 
 void __cdecl InitFreeCamera_r()
 {
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
         for (auto& cam : MultiCams)
         {
@@ -483,7 +483,7 @@ void __cdecl InitFreeCamera_r()
 
 void __cdecl ResetFreeCamera_r()
 {
-    if (IsMultiplayerEnabled())
+    if (multiplayer::IsActive())
     {
         for (auto& cam : MultiCams)
         {

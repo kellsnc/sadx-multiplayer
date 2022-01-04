@@ -34,9 +34,10 @@ PanelPrmType PanelPrmTitleMenuMulti[]
 
 const DialogPrmType MainMenuMultiDialog = { DLG_PNLSTYLE_SIKAKU2, nullptr, &ava_title_e_TEXLIST, PanelPrmTitleMenuMulti, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 316.0, 236.0, 20.0, 232.0, 160.0, 0.71899998, 0.5, 2, 2 };
 
-Trampoline* MainMenuExecSub_t = nullptr;
+Trampoline* title_menu_sub_exec_t = nullptr;
+Trampoline* char_sel_exec_t = nullptr;
 
-void MainMenuExecSub_r(TitleMenuWk* wkp)
+void title_menu_sub_exec_r(TitleMenuWk* wkp)
 {
 	if (wkp->SubMode == 1)
 	{
@@ -56,11 +57,16 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 		
 		AdvertiseWork.MainMenuSelectedMode = GblMenuTbl[stat >= 2 ? stat - 1 : stat];
 
+		if (stat)
+		{
+			WriteData((int*)0x7EEB58, (int)ADVA_MODE_CHAR_SEL); // Restore changes made to force return to multi menu (failsafe)
+		}
+
 		switch (stat)
 		{
 		case 0: // Adventure
 		case 1: // Trial
-			TARGET_DYNAMIC(MainMenuExecSub)(wkp); // first two items doesn't need adjusting so original is fine
+			TARGET_DYNAMIC(title_menu_sub_exec)(wkp); // first two items doesn't need adjusting so original is fine
 			break;
 		case 2: // Multiplayer (custom)
 			OpenDialog(&MainMenuMultiDialog);
@@ -107,12 +113,26 @@ void MainMenuExecSub_r(TitleMenuWk* wkp)
 		}
 	}
 
-	TARGET_DYNAMIC(MainMenuExecSub)(wkp);
+	TARGET_DYNAMIC(title_menu_sub_exec)(wkp);
+}
+
+// Restore changes made to force return to multi menu (failsafe)
+void __cdecl char_sel_exec_r(task* tp)
+{
+	auto wk = (CharSelWk*)tp->awp;
+
+	if (SeqTp->awp->work.ul[1] == ADVA_MODE_CHAR_SEL && wk->Stat <= ADVA_STAT_FADEIN)
+	{
+		WriteData((int*)0x7EEB58, (int)ADVA_MODE_CHAR_SEL);
+	}
+
+	TARGET_DYNAMIC(char_sel_exec)(tp);
 }
 
 void __cdecl InitMenu(const HelperFunctions& helperFunctions)
 {
-	MainMenuExecSub_t = new Trampoline(0x50B630, 0x50B638, MainMenuExecSub_r);
+	title_menu_sub_exec_t = new Trampoline(0x50B630, 0x50B638, title_menu_sub_exec_r);
+	char_sel_exec_t = new Trampoline(0x5122D0, 0x5122DA, char_sel_exec_r);
 
 	DialogPrm[2].PnlPrmPtr = PanelPrmTitleMenu1;
 	DialogPrm[2].CsrMax = 7;

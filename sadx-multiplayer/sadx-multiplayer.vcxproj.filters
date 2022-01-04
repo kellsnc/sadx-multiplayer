@@ -19,7 +19,7 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="multiplayer.cpp">
+    <ClCompile Include="players.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="splitscreen.cpp">
@@ -58,6 +58,9 @@
     <ClCompile Include="EnemyCart.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="multiplayer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -72,7 +75,7 @@
     <ClInclude Include="mod.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="multiplayer.h">
+    <ClInclude Include="players.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="sadx_utils.h">
@@ -113,6 +116,9 @@
     </ClInclude>
     <ClInclude Include="objects\ObjectItemBox.h">
       <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="multiplayer.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

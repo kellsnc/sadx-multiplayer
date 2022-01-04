@@ -52,7 +52,7 @@ void CreateSetTask(OBJ_CONDITION* item, _OBJ_EDITENTRY* objentry, _OBJ_ITEMENTRY
 // Load objects around every players
 void __cdecl ProcessStatusTable_r()
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		for (int i = 0; i < numStatusEntry; ++i)
 		{
@@ -160,7 +160,7 @@ BOOL CheckRangeWithR_m(task* tp, float fRange)
 // Check object deletion for every player
 BOOL __cdecl CheckRangeWithR_r(task* tp, float fRange)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		return CheckRangeWithR_m(tp, fRange);
 	}
@@ -173,7 +173,7 @@ BOOL __cdecl CheckRangeWithR_r(task* tp, float fRange)
 // Check object deletion for every player
 BOOL __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		if (CheckRangeWithR_m(tp, fRange))
 		{
@@ -206,7 +206,7 @@ void __cdecl LoadSetFile_o(unsigned int u32SetType, const char* pcFileName)
 
 void __cdecl LoadSetFile_r(unsigned int u32SetType, const char* pcFileName)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		std::string temp = (std::string)"M" + (std::string)pcFileName;
 

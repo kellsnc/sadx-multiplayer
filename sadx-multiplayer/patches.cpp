@@ -28,7 +28,7 @@ Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 // Patch forward calculation to use multiplayer cameras
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
-	if (IsMultiplayerEnabled() && camera_twp)
+	if (multiplayer::IsActive() && camera_twp)
 	{
 		auto backup = camera_twp->ang;
 		camera_twp->ang = *GetCameraAngle(TASKWK_PLAYERID(twp));
@@ -44,7 +44,7 @@ void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 // Patch analog forward calculation to use multiplayer cameras
 void __cdecl GetPlayersInputData_r()
 {
-	if (!IsMultiplayerEnabled())
+	if (!multiplayer::IsActive())
 	{
 		TARGET_DYNAMIC(GetPlayersInputData)();
 		return;
@@ -118,7 +118,7 @@ void PInitialize_r(int no, task* tp)
 {
 	TARGET_DYNAMIC(PInitialize)(no, tp);
 
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		RemovePlayersDamage(tp->twp);
 	}
@@ -127,7 +127,7 @@ void PInitialize_r(int no, task* tp)
 // Patch to prevent 2P Tails to load (note: charsel incompatible)
 void __cdecl NpcMilesSet_r(task* tp)
 {
-	if (!IsMultiplayerEnabled())
+	if (!multiplayer::IsActive())
 	{
 		TARGET_DYNAMIC(NpcMilesSet)(tp);
 	}
@@ -136,7 +136,7 @@ void __cdecl NpcMilesSet_r(task* tp)
 // Patch for other players to collect rings
 void __cdecl Ring_r(task* tp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		taskwk* twp = tp->twp;
 
@@ -166,7 +166,7 @@ void __cdecl Ring_r(task* tp)
 // Patch for other players to get kill score
 BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 {
-	if (!IsMultiplayerEnabled())
+	if (!multiplayer::IsActive())
 	{
 		return TARGET_DYNAMIC(EnemyCheckDamage)(twp, ewp);
 	}
@@ -224,7 +224,7 @@ BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 // EBuyon is the only object to manually call AddEnemyScore
 void __cdecl EBuyon_ScorePatch(task* tp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto player = CCL_IsHitPlayer(tp->twp);
 
@@ -287,7 +287,7 @@ int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, float r, float h)
 // Despite taking player id, it always gets 0 so let's check closest player
 float __cdecl EnemyDist2FromPlayer_r(taskwk* twp, int num)
 {
-	if (IsMultiplayerEnabled() && num == 0)
+	if (multiplayer::IsActive() && num == 0)
 	{
 		return TARGET_DYNAMIC(EnemyDist2FromPlayer)(twp, GetTheNearestPlayerNumber(&twp->pos));
 	}
@@ -300,7 +300,7 @@ float __cdecl EnemyDist2FromPlayer_r(taskwk* twp, int num)
 // Despite taking player id, it always gets 0 so let's check closest player
 Angle __cdecl EnemyCalcPlayerAngle_r(taskwk* twp, enemywk* ewp, unsigned __int8 pnum)
 {
-	if (IsMultiplayerEnabled() && pnum == 0)
+	if (multiplayer::IsActive() && pnum == 0)
 	{
 		return TARGET_DYNAMIC(EnemyCalcPlayerAngle)(twp, ewp, GetTheNearestPlayerNumber(&twp->pos));
 	}
@@ -333,7 +333,7 @@ float savepointGetSpeedM(taskwk* twp, int pID)
 // Patch checkpoints to work for every players
 void __cdecl savepointCollision_r(task* tp, taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		savepoint_data->tp[0]->twp->ang.x = twp->ang.x + savepoint_data->ang.x;
 		savepoint_data->tp[0]->twp->ang.y = twp->ang.y + savepoint_data->ang.y;
@@ -389,7 +389,7 @@ static void __declspec(naked) savepointCollision_w()
 // Patch mobile land detection to detect every player
 bool CheckPlayerRideOnMobileLandObjectP_r(unsigned __int8 pno, task* ttp)
 {
-	if (IsMultiplayerEnabled() && pno == 0)
+	if (multiplayer::IsActive() && pno == 0)
 	{
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
@@ -449,7 +449,7 @@ void ObjectSpringB_r(task* tp)
 // Geometry collision lookup is hardcoded around P1 and P2, patching it for more
 void __cdecl MakeLandCollLandEntryRangeIn_r()
 {
-	if (IsMultiplayerEnabled() && player_count > 2)
+	if (multiplayer::IsActive() && multiplayer::GetPlayerCount() > 2)
 	{
 		MakeLandCollLandEntryALL(); // todo: rewrite MakeLandCollLandEntryRangeIn
 	}

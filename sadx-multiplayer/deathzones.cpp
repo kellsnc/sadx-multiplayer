@@ -39,7 +39,7 @@ void __cdecl GamePlayerMissed_r(task* tp)
 
 void __cdecl KillPlayer_r(unsigned __int8 pNum)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		if (!CheckEditMode())
 		{
@@ -117,7 +117,7 @@ void ExecFallingDownP_r(task* tp, int pNum)
 
 void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 {
-	if (!IsMultiplayerEnabled())
+	if (!multiplayer::IsActive())
 	{
 		TARGET_DYNAMIC(KillPlayerFallingDownStageP)(tp);
 		return;

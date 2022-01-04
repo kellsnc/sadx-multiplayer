@@ -16,7 +16,7 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 {
 	TARGET_DYNAMIC(SetPlayerInitialPosition)(twp);
 
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		static const int dists[]
 		{
@@ -33,7 +33,7 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 
 static void FogColorChange_r(task* tp)
 {
-	if (!IsMultiplayerEnabled())
+	if (!multiplayer::IsActive())
 	{
 		auto target = TARGET_DYNAMIC(FogColorChange);
 
@@ -58,14 +58,14 @@ static void __declspec(naked) FogColorChange_w()
 
 static BOOL PlayerVacumedRing_r(taskwk* twp)
 {
-	if (IsMultiplayerEnabled())
+	if (multiplayer::IsActive())
 	{
 		// Get closest players with magnetic field
 		taskwk* pltwp_ = nullptr;
 		playerwk* plpwp = nullptr;
 		float dist = 10000000.0f;
 
-		for (int i = 0; i < player_count; ++i)
+		for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
 		{
 			auto pltwp = playertwp[i];
 			plpwp = playerpwp[i];

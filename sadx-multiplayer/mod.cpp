@@ -19,7 +19,7 @@ extern "C"
 		InitCamera();
 		InitPatches();
 		InitDeathPatches();
-		InitMultiplayer();
+		InitPlayerPatches();
 		InitMenu(helperFunctions);
 		MultiHudInit();
 		InitSET();
