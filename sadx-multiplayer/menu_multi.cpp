@@ -51,6 +51,15 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_STGTC4,
 	AVAMULTITEX_STGTC5,
 	AVAMULTITEX_STGTC6,
+	AVAMULTITEX_STGBIG1,
+	AVAMULTITEX_STGBIG2,
+	AVAMULTITEX_STGBIG3,
+	AVAMULTITEX_STGBIG4,
+	AVAMULTITEX_STGEME1,
+	AVAMULTITEX_STGEME2,
+	AVAMULTITEX_STGEME3,
+	AVAMULTITEX_STGEME4,
+	AVAMULTITEX_STGEME5,
 };
 
 enum AVA_MULTI_ANM
@@ -94,7 +103,7 @@ struct MultiMenuWK
 	float alphaMainMenu;
 	float alphaControls;
 	int stgreq;
-	int actcnt;
+	int actreq;
 };
 
 NJS_TEXNAME AVA_MULTI_TEXNAME[44];
@@ -147,6 +156,21 @@ PanelPrmType PanelPrmMenuMultiModSel[] {
 	 { 180.0f,	8.0f,  AVAMULTITEX_MD_FISH },
 };
 
+PanelPrmType PanelPrmMenuMultiStgSelEme[]{
+	 { -150.0f,	-40.0f, AVAMULTITEX_STGEME1 },
+	 { 0.0f,	-40.0f, AVAMULTITEX_STGEME2 },
+	 { 150.0f,	-40.0f, AVAMULTITEX_STGEME3 },
+	 { -75.0f,	40.0f,  AVAMULTITEX_STGEME4 },
+	 { 75.0f,	40.0f,  AVAMULTITEX_STGEME5 }
+};
+
+PanelPrmType PanelPrmMenuMultiStgSelBig[]{
+	 { -100.0f,	-65.0f, AVAMULTITEX_STGBIG1 },
+	 { 100.0f,	-65.0f, AVAMULTITEX_STGBIG2 },
+	 { -100.0f,	65.0f,  AVAMULTITEX_STGBIG3 },
+	 { 100.0f,	65.0f,  AVAMULTITEX_STGBIG4 }
+};
+
 PanelPrmType PanelPrmMenuMultiStgSelSonic[]{
 	 { -150.0f,	-120.0f, AVAMULTITEX_STG1  },
 	 { 0.0f,	-120.0f, AVAMULTITEX_STG2  },
@@ -175,8 +199,10 @@ PanelPrmType PanelPrmMenuMultiStgConfirm[4] {};
 void multi_menu_confirmdialog_proc(DDlgType* ddltype);
 
 const DialogPrmType MultiMenuModeSelDialog = { DLG_PNLSTYLE_MARU2, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiModSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 180.0f, 1.2f, 1.2f, LengthOfArray(PanelPrmMenuMultiModSel), 4};
+const DialogPrmType MultiMenuStageSelBigDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelBig, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray(PanelPrmMenuMultiStgSelBig), 4};
 const DialogPrmType MultiMenuStageSelSonicDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelSonic, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelSonic), 11};
-const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelTwinkle, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelTwinkle), 7};
+const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelTwinkle, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelTwinkle), 6};
+const DialogPrmType MultiMenuStageSelEmeDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEme, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelEme), 5};
 DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, multi_menu_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 4, 3 };
 
 std::pair<int, int> sonic_level_link[] = {
@@ -190,7 +216,7 @@ std::pair<int, int> sonic_level_link[] = {
 	{ LevelAndActIDs_SkyDeck1, 3 },
 	{ LevelAndActIDs_LostWorld1, 2 },
 	{ LevelAndActIDs_FinalEgg1, 3 },
-	{ LevelAndActIDs_HotShelter1, 2 },
+	{ LevelAndActIDs_HotShelter1, 2 }
 };
 
 int twinkle_level_link[]{
@@ -199,7 +225,22 @@ int twinkle_level_link[]{
 	LevelAndActIDs_TwinkleCircuit3,
 	LevelAndActIDs_TwinkleCircuit4,
 	LevelAndActIDs_TwinkleCircuit5,
-	LevelAndActIDs_TwinkleCircuit6,
+	LevelAndActIDs_TwinkleCircuit6
+};
+
+int big_level_link[]{
+	LevelAndActIDs_TwinklePark2,
+	LevelAndActIDs_IceCap2,
+	LevelAndActIDs_EmeraldCoast3,
+	LevelAndActIDs_HotShelter1
+};
+
+int eme_level_link[]{
+	LevelAndActIDs_SpeedHighway3,
+	LevelAndActIDs_Casinopolis1,
+	LevelAndActIDs_RedMountain3,
+	LevelAndActIDs_LostWorld2,
+	LevelAndActIDs_SkyDeck3
 };
 
 int charsel_voicelist[] {
@@ -323,6 +364,7 @@ void multi_menu_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
 	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[item].PvrIdx;
 	menu_multi_change(wk, MD_MULTI_INITSTGASK);
 	wk->stgreq = ConvertLevelActsID_ToLevel(level);
+	wk->actreq = ConvertLevelActsID_ToAct(level);
 }
 
 void multi_menu_confirmdialog_proc(DDlgType* ddltype)
@@ -345,7 +387,17 @@ void multi_menu_stg_confirm(MultiMenuWK* wk)
 
 		if (stat != MultiMenuStageConfirmDialog.CsrCancel)
 		{
-			int act = PanelPrmMenuMultiStgConfirm[stat].PvrIdx - AVA_MULTI_TEX::AVAMULTITEX_ACT1;
+			int act = PanelPrmMenuMultiStgConfirm[stat].PvrIdx;
+
+			if (act == AVAMULTITEX_YES)
+			{
+				act = wk->actreq;
+			}
+			else
+			{
+				act = wk->actreq + act - AVAMULTITEX_ACT1;
+			}
+
 			menu_multi_launch_level(wk, act);
 		}
 	}
@@ -376,6 +428,34 @@ void menu_multi_stgsel_twinkle(MultiMenuWK* wk)
 	else if (stat != -1) // launch game request
 	{
 		multi_menu_request_stg(wk, twinkle_level_link[stat], 1, stat);
+	}
+}
+
+void menu_multi_stgsel_big(MultiMenuWK* wk)
+{
+	auto stat = GetDialogStat();
+
+	if (stat == MultiMenuStageSelBigDialog.CsrCancel) // go back request
+	{
+		menu_multi_change(wk, MD_MULTI_INITMODESEL);
+	}
+	else if (stat != -1) // launch game request
+	{
+		multi_menu_request_stg(wk, big_level_link[stat], 1, stat);
+	}
+}
+
+void menu_multi_stgsel_eme(MultiMenuWK* wk)
+{
+	auto stat = GetDialogStat();
+
+	if (stat == MultiMenuStageSelEmeDialog.CsrCancel) // go back request
+	{
+		menu_multi_change(wk, MD_MULTI_INITMODESEL);
+	}
+	else if (stat != -1) // launch game request
+	{
+		multi_menu_request_stg(wk, eme_level_link[stat], 1, stat);
 	}
 }
 
@@ -516,14 +596,14 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	case MD_MULTI_MODESEL:
 		menu_multi_modesel(wk);
 		break;
-	case MD_MULTI_INITSTGSEL_SNC: // Open stage select (only Sonic for now)
+	case MD_MULTI_INITSTGSEL_EME:
 		menu_multi_setsqrcursor();
-		menu_multi_change(wk, MD_MULTI_STGSEL_SNC);
-		saved_mode = MD_MULTI_INITSTGSEL_SNC;
-		OpenDialog(&MultiMenuStageSelSonicDialog);
+		menu_multi_change(wk, MD_MULTI_STGSEL_EME);
+		saved_mode = MD_MULTI_INITSTGSEL_EME;
+		OpenDialog(&MultiMenuStageSelEmeDialog);
 		break;
-	case MD_MULTI_STGSEL_SNC:
-		menu_multi_stgsel_snc(wk);
+	case MD_MULTI_STGSEL_EME:
+		menu_multi_stgsel_eme(wk);
 		break;
 	case MD_MULTI_INITSTGSEL_TC:
 		menu_multi_setsqrcursor();
@@ -533,6 +613,24 @@ void menu_multi_subexec(MultiMenuWK* wk)
 		break;
 	case MD_MULTI_STGSEL_TC:
 		menu_multi_stgsel_twinkle(wk);
+		break;
+	case MD_MULTI_INITSTGSEL_FISH:
+		menu_multi_setsqrcursor();
+		menu_multi_change(wk, MD_MULTI_STGSEL_FISH);
+		saved_mode = MD_MULTI_INITSTGSEL_FISH;
+		OpenDialog(&MultiMenuStageSelBigDialog);
+		break;
+	case MD_MULTI_STGSEL_FISH:
+		menu_multi_stgsel_big(wk);
+		break;
+	case MD_MULTI_INITSTGSEL_SNC: // Open stage select (only Sonic for now)
+		menu_multi_setsqrcursor();
+		menu_multi_change(wk, MD_MULTI_STGSEL_SNC);
+		saved_mode = MD_MULTI_INITSTGSEL_SNC;
+		OpenDialog(&MultiMenuStageSelSonicDialog);
+		break;
+	case MD_MULTI_STGSEL_SNC:
+		menu_multi_stgsel_snc(wk);
 		break;
 	case MD_MULTI_INITSTGASK: // Open prompt to ask level confirmation
 		menu_multi_setrndcursor();
