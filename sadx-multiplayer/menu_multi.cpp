@@ -899,7 +899,12 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		break;
 	case ADVA_STAT_FADEOUT:
 		wk->T += MissedFrames_B * 0.1f;
-		wk->BaseCol = GetFadeInColFromT(wk->T);
+		
+		// Fade out shouldn't happen when going back to main menu
+		if (wk->SelStg >= 0)
+		{
+			wk->BaseCol = GetFadeInColFromT(wk->T);
+		}
 
 		if (wk->T >= 1.0f)
 		{
