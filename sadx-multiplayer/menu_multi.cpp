@@ -279,6 +279,7 @@ int stgacttexid = 0;
 int selected_characters[PLAYER_MAX];
 bool player_ready[PLAYER_MAX];
 int pcount;
+bool enabled_characters[8];
 MD_MULTI saved_mode;
 
 void menu_multi_reset()
@@ -299,6 +300,28 @@ void menu_multi_charsel_unready()
 	}
 }
 
+int menu_multi_getplayerno(int num)
+{
+	if (num == 6)
+	{
+		num = Characters_Tikal;
+	}
+	else if (num == 7)
+	{
+		num = Characters_Eggman;
+	}
+	else if (num >= 3)
+	{
+		num += 2;
+	}
+	else if (num >= 1)
+	{
+		num += 1;
+	}
+
+	return num;
+}
+
 void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 {
 	CloseDialog();
@@ -312,7 +335,7 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 
 	for (int i = 0; i < pcount; ++i)
 	{
-		SetCurrentCharacter(i, selected_characters[i]);
+		SetCurrentCharacter(i, menu_multi_getplayerno(selected_characters[i]));
 	}
 
 	// Force trial return to this menu instead of charsel
@@ -322,7 +345,7 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 
 	LastLevel = CurrentLevel;
 	LastAct = CurrentAct;
-	CurrentCharacter = selected_characters[0];
+	CurrentCharacter = menu_multi_getplayerno(selected_characters[0]);
 	CurrentLevel = level;
 	CurrentAct = act;
 	SeqTp->awp[1].work.ul[0] = 100;
@@ -518,6 +541,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 		if (player_ready[i] == false) // Character selection
 		{
 			done = false;
+			bool oneshot = false;
 
 			if (press & Buttons_Right)
 			{
@@ -534,7 +558,20 @@ void menu_multi_charsel(MultiMenuWK* wk)
 				sel = sel > 3 ? sel - 4 : sel + 4;
 				PlayMenuBipSound();
 			}
-			else if (press & Buttons_Start)
+
+			while (enabled_characters[sel] == false)
+			{
+				if (press & Buttons_Left)
+				{
+					sel = abs(sel % 8 - 1);
+				}
+				else
+				{
+					sel = abs(sel % 8 + 1);
+				}
+			}
+
+			if (press & Buttons_Start)
 			{
 				player_ready[i] = true;
 				PlayVoice(charsel_voicelist[sel]);
@@ -547,7 +584,6 @@ void menu_multi_charsel(MultiMenuWK* wk)
 			{
 				player_ready[i] = false;
 				PlayMenuBackSound();
-				
 			}
 		}
 	}
@@ -575,6 +611,25 @@ void menu_multi_setsqrcursor()
 	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR1];
 }
 
+void menu_multi_getcharaenable()
+{
+	for (int i = 0; i < LengthOfArray(enabled_characters); ++i)
+	{
+		if (i < 6)
+		{
+			enabled_characters[i] = GetCharacterUnlockedFlag(i) == TRUE;
+		}
+		else if (i == Characters_Eggman)
+		{
+			enabled_characters[i] = false;
+		}
+		else if (i == Characters_Tikal)
+		{
+			enabled_characters[i] = false;
+		}
+	}
+}
+
 void menu_multi_subexec(MultiMenuWK* wk)
 {
 	switch (wk->SubMode)
@@ -582,6 +637,7 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	case MD_MULTI_INITCHARSEL: // Open character select
 		menu_multi_change(wk, MD_MULTI_CHARSEL);
 		menu_multi_charsel_unready();
+		menu_multi_getcharaenable();
 		saved_mode = MD_MULTI_INITCHARSEL;
 		break;
 	case MD_MULTI_CHARSEL:
@@ -711,8 +767,18 @@ void multi_menu_disp_charsel(MultiMenuWK* wk)
 			AVA_MULTI_SPRITE.p.x = 320.0f + IconPosMenuMultiCharSel[i].x;
 			AVA_MULTI_SPRITE.p.y = 260.0f + IconPosMenuMultiCharSel[i].y;
 			AVA_MULTI_SPRITE.p.z = wk->BaseZ - 8;
-			njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CHARA + i, wk->BaseZ - 8, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
+			if (enabled_characters[i] == true)
+			{
+				njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CHARA + i, wk->BaseZ - 8, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			}
+			else
+			{
+				SetMaterial(wk->alphaMainMenu, 0.5f, 0.5f, 0.5f);
+				njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CHARA + i, wk->BaseZ - 8, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+				SetMaterial(wk->alphaMainMenu, 1.0f, 1.0f, 1.0f);
+			}
+			
 			// Draw cursor
 			for (int p = PLAYER_MAX - 1; p >= 0; --p)
 			{
@@ -729,7 +795,7 @@ void multi_menu_disp_charsel(MultiMenuWK* wk)
 
 					___njSetConstantMaterial(&CursorColors[p]);
 					njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_CURSOR, wk->BaseZ + 100,  NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-					SetMaterial(wk->alphaMainMenu, wk->alphaMainMenu, wk->alphaMainMenu, wk->alphaMainMenu);
+					SetMaterial(wk->alphaMainMenu, 1.0f, 1.0f, 1.0f);
 				}
 			}
 		}
@@ -784,6 +850,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		{
 			menu_multi_reset();
 			menu_multi_charsel_unready();
+			menu_multi_change(wk, MD_MULTI_INITCHARSEL);
 			wk->Stat = ADVA_STAT_FADEIN;
 			wk->T = 0.0f;
 		}
