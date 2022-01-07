@@ -283,6 +283,31 @@ struct CART_LOAD_DATA
 	int point_num;
 };
 
+struct _OBJ_CAMERAENTRY
+{
+	char scMode;
+	char scPriority;
+	unsigned __int8 ucAdjType;
+	char scColType;
+	unsigned __int16 xColAng;
+	unsigned __int16 yColAng;
+	float xColPos;
+	float yColPos;
+	float zColPos;
+	float xColScl;
+	float yColScl;
+	float zColScl;
+	unsigned __int16 xCamAng;
+	unsigned __int16 yCamAng;
+	float xDirPos;
+	float yDirPos;
+	float zDirPos;
+	float xCamPos;
+	float yCamPos;
+	float zCamPos;
+	float fDistance;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -382,6 +407,7 @@ FunctionPointer(void, VibConvergence, (int pno, int Power, int Freq, int Time), 
 FastcallFunctionPointer(bool, njCollisionCheckSS, (float* p1, float* p2), 0x789360);
 FunctionPointer(void, KillHimP, (int pno), 0x440CD0); // kill player
 FunctionPointer(void, DamegeRingScatter, (char pno), 0x4506F0);
+DataPointer(_OBJ_CAMERAENTRY*, pObjCameraEntry, 0x3B2CAA4);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -514,6 +540,18 @@ static inline void CameraSetView(taskwk* twp)
 	{
 		mov eax, [twp]
 		call CameraSetViewPtr
+	}
+}
+
+// Simply turn vector to direction
+static const void* const calcModerateVectorPtr = (void*)0x465F00;
+static inline void calcModerateVector(NJS_POINT3* vec, Angle3* ang)
+{
+	__asm
+	{
+		mov esi, [ang]
+		mov edi, [vec]
+		call calcModerateVectorPtr
 	}
 }
 
@@ -882,6 +920,9 @@ FunctionPointer(int, GetFadeOutColFromT, (float t), 0x506E10);
 FunctionPointer(int, GetFadeInColFromT, (float t), 0x506E40);
 DataArray(int, GblMenuTbl, 0x7EF8E8, 6);
 FunctionPointer(void, OpenDialog, (const DialogPrmType* dp), 0x432DB0);
+FunctionPointer(BOOL, AvaGetTrialEnable, (), 0x506780);
+FunctionPointer(BOOL, AvaGetMissionEnable, (), 0x506410);
+FunctionPointer(void, AdvaOpenDialogQuick, (DiaTypeEnum dialog_type, char csr, char* csrp), 0x5057F0);
 FunctionPointer(char, GetDialogStat, (), 0x432550);
 FunctionPointer(BOOL, CloseDialog, (), 0x432580);
 VoidFunc(DialogJimakuInit, 0x40BC80);

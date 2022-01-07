@@ -7,8 +7,8 @@ PanelPrmType PanelPrmTitleMenu1[]
 {
 	 { 4.0f, -120.0f, 1 },
 	 { 4.0f, -80.0f, 5 },
-	 { 4.0f, -40.0f, 11 },
-	 { 4.0f, 0.0f, 2 },
+	 { 4.0f, -40.0f, 2 },
+	 { 4.0f, 0.0f, 11 },
 	 { 4.0f, 40.0f, 8 },
 	 { 4.0f, 80.0f, 4 },
 	 { 4.0f, 120.0f, 9 }
@@ -19,8 +19,8 @@ PanelPrmType PanelPrmTitleMenu2[]
 {
 	 { 4.0f, -100.0f, 1 },
 	 { 4.0f, -60.0f, 5 },
-	 { 4.0f, -20.0f, 11 },
-	 { 4.0f, 20.0f, 2 },
+	 { 4.0f, -20.0f, 2 },
+	 { 4.0f, 20.0f, 11 },
 	 { 4.0f, 60.0f, 4 },
 	 { 4.0f, 100.0f, 9 },
 };
@@ -37,9 +37,47 @@ const DialogPrmType MainMenuMultiDialog = { DLG_PNLSTYLE_SIKAKU2, nullptr, &ava_
 Trampoline* title_menu_sub_exec_t = nullptr;
 Trampoline* char_sel_exec_t = nullptr;
 
+bool AvaGetMultiEnable()
+{
+	return AvaGetTrialEnable();
+}
+
 void title_menu_sub_exec_r(TitleMenuWk* wkp)
 {
-	if (wkp->SubMode == 1)
+	if (wkp->SubMode == TITLEMENU_SMD_STAY || wkp->SubMode == TITLEMENU_SMD_TO_MAINMENU)
+	{
+		char csrp[9]{}; // disable items
+		int cnt = 0; // amount of disabled items
+
+		if (!AvaGetTrialEnable())
+		{
+			csrp[cnt++] = 1;
+		}
+
+		if (!AvaGetMissionEnable())
+		{
+			csrp[cnt++] = 2;
+		}
+
+		if (!AvaGetMultiEnable())
+		{
+			csrp[cnt++] = 3;
+		}
+
+		csrp[cnt] = -1;
+
+		if (IsMiniGameMenuEnabled())
+		{
+			AdvaOpenDialogQuick(DIA_TYPE_MAINMENU, wkp->SelMenu, csrp);
+		}
+		else
+		{
+			AdvaOpenDialogQuick(DIA_TYPE_MAINMENU_NPUTI, wkp->SelMenu, csrp);
+		}
+
+		wkp->SubMode = TITLEMENU_SMD_DECIDE;
+	}
+	else if (wkp->SubMode == TITLEMENU_SMD_DECIDE)
 	{
 		TldFlg = TRUE;
 
@@ -55,9 +93,9 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 
 		wkp->SelMenu = (TitleMenuEnum)stat;
 		
-		AdvertiseWork.MainMenuSelectedMode = GblMenuTbl[stat >= 2 ? stat - 1 : stat];
+		AdvertiseWork.MainMenuSelectedMode = GblMenuTbl[stat >= 3 ? stat - 1 : stat];
 
-		if (stat)
+		if (stat >= 0)
 		{
 			WriteData((int*)0x7EEB58, (int)ADVA_MODE_CHAR_SEL); // Restore changes made to force return to multi menu (failsafe)
 		}
@@ -66,15 +104,12 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 		{
 		case 0: // Adventure
 		case 1: // Trial
-			TARGET_DYNAMIC(title_menu_sub_exec)(wkp); // first two items doesn't need adjusting so original is fine
+		case 2: // Mission
+			TARGET_DYNAMIC(title_menu_sub_exec)(wkp); // first three items doesn't need adjusting so original is fine
 			break;
-		case 2: // Multiplayer (custom)
+		case 3: // Multiplayer (custom)
 			OpenDialog(&MainMenuMultiDialog);
 			wkp->SubMode = (TitleMenuSbMdEnum)7;
-			break;
-		case 3: // Mission
-			CmnAdvaModeProcedure(ADVA_MODE_CHAR_SEL);
-			wkp->SubMode = TITLEMENU_SMD_NWAIT;
 			break;
 		case 4: // MiniGame
 			CmnAdvaModeProcedure(ADVA_MODE_PUTI);
@@ -95,8 +130,6 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 			wkp->SubMode = TITLEMENU_SMD_NWAIT;
 			break;
 		}
-
-		return;
 	}
 	else if (wkp->SubMode == 7)
 	{
@@ -112,8 +145,10 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 			break;
 		}
 	}
-
-	TARGET_DYNAMIC(title_menu_sub_exec)(wkp);
+	else
+	{
+		TARGET_DYNAMIC(title_menu_sub_exec)(wkp);
+	}
 }
 
 // Restore changes made to force return to multi menu (failsafe)
