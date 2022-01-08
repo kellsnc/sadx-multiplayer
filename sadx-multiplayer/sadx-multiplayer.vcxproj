@@ -117,16 +117,16 @@
     <ClCompile Include="deathzones.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
-    <ClCompile Include="EnemyCart.cpp" />
     <ClCompile Include="levels.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="multihud.cpp" />
     <ClCompile Include="multiplayer.cpp" />
-    <ClCompile Include="ObjectItemBox.cpp" />
+    <ClCompile Include="objects\EnemyCart.cpp" />
     <ClCompile Include="objects\ObjectBeachWave.cpp" />
-    <ClCompile Include="ObjectTPCoaster.cpp" />
+    <ClCompile Include="objects\ObjectItemBox.cpp" />
+    <ClCompile Include="objects\ObjectTPCoaster.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
