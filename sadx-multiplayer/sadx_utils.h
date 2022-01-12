@@ -2,6 +2,7 @@
 
 #define TASKWK_PLAYERID(a) a->counter.b[0]
 #define TASKWK_CHARID(a) a->counter.b[1]
+static constexpr int ADVA_MODE_MULTI = 0x8;
 
 struct SONIC_INPUT
 {

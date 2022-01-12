@@ -137,7 +137,7 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 		{
 		case 0:
 		case 1:
-			CmnAdvaModeProcedure(ADVA_MODE_MULTI);
+			CmnAdvaModeProcedure((AdvaModeEnum)ADVA_MODE_MULTI);
 			wkp->SubMode = TITLEMENU_SMD_NWAIT;
 			break;
 		case 2:
