@@ -49,7 +49,7 @@ void ResetEnemyScoreM()
 
 int GetEnemyScoreM(int pNum)
 {
-    if (multiplayer::IsActive())
+    if (multiplayer::IsBattleMode())
     {
         return score[pNum];
     }
@@ -61,7 +61,7 @@ int GetEnemyScoreM(int pNum)
 
 void AddEnemyScoreM(int pNum, int add)
 {
-    if (multiplayer::IsActive())
+    if (multiplayer::IsBattleMode())
     {
         score[pNum] += add;
 
@@ -88,7 +88,7 @@ void __cdecl ResetNumPlayerM()
 
 int GetNumPlayerM(int pNum)
 {
-    if (multiplayer::IsActive())
+    if (multiplayer::IsBattleMode())
     {
         return lives[pNum];
     }
@@ -100,7 +100,7 @@ int GetNumPlayerM(int pNum)
 
 void AddNumPlayerM(int pNum, int Number)
 {
-    if (multiplayer::IsActive())
+    if (multiplayer::IsBattleMode())
     {
         if (Number > 0)
         {
@@ -132,7 +132,7 @@ void AddNumPlayerM(int pNum, int Number)
 
 int GetNumRingM(int pNum)
 {
-    if (multiplayer::IsActive())
+    if (multiplayer::IsBattleMode())
     {
         return rings[pNum];
     }
@@ -144,7 +144,7 @@ int GetNumRingM(int pNum)
 
 void AddNumRingM(int pNum, int add)
 {
-    if (multiplayer::IsActive())
+    if (multiplayer::IsBattleMode())
     {
         int origc, newc = 0;
 

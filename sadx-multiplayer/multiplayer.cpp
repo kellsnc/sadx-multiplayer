@@ -7,11 +7,6 @@ namespace multiplayer
     unsigned int pcount = 0;
     mode gMode = mode::coop;
 
-    mode GetMode()
-    {
-        return gMode;
-    }
-
     unsigned int GetPlayerCount()
     {
         return pcount;
@@ -42,5 +37,15 @@ namespace multiplayer
     bool IsActive()
     {
         return IsEnabled() && (GameMode != GameModes_Menu) && pcount > 1;
+    }
+
+    bool IsBattleMode()
+    {
+        return IsActive() && gMode == mode::battle;
+    }
+
+    bool IsCoopMode()
+    {
+        return IsActive() && gMode == mode::coop;
     }
 }

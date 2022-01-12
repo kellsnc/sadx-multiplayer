@@ -8,12 +8,13 @@ namespace multiplayer
         battle
     };
 
-    mode GetMode();
     unsigned int GetPlayerCount();
 
     void Enable(int player_count, mode md);
     void Disable();
 
-    bool IsEnabled();
-    bool IsActive();
+    bool IsEnabled(); // Check if multiplayer is enabled
+    bool IsActive(); // Check if multiplayer is active (ingame, not in menu)
+    bool IsBattleMode(); // Check if multiplayer is active and in battle mode
+    bool IsCoopMode(); // Check if multiplayer is active and in coop mode
 }
