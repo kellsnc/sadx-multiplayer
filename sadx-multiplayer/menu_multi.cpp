@@ -84,7 +84,6 @@ enum MD_MULTI
 	MD_MULTI_MODESEL,
 	MD_MULTI_CHARSEL,
 	MD_MULTI_COOPSEL,
-	MD_MULTI_COOPSTGSEL,
 	MD_MULTI_BATTLESEL,
 	MD_MULTI_STGSEL_EME,
 	MD_MULTI_STGSEL_TC,
@@ -230,6 +229,20 @@ std::pair<int, int> sonic_level_link[] = {
 	{ LevelAndActIDs_HotShelter1, 2 }
 };
 
+int coop_level_link[]{
+	LevelAndActIDs_EmeraldCoast1,
+	LevelAndActIDs_WindyValley1,
+	LevelAndActIDs_Casinopolis2,
+	LevelAndActIDs_IceCap1,
+	LevelAndActIDs_TwinklePark1,
+	LevelAndActIDs_SpeedHighway1,
+	LevelAndActIDs_RedMountain1,
+	LevelAndActIDs_SkyDeck1,
+	LevelAndActIDs_LostWorld1,
+	LevelAndActIDs_FinalEgg1,
+	LevelAndActIDs_HotShelter1
+};
+
 int twinkle_level_link[]{
 	LevelAndActIDs_TwinkleCircuit1,
 	LevelAndActIDs_TwinkleCircuit2,
@@ -297,6 +310,7 @@ MD_MULTI saved_mode;
 MD_MULTI next_mode;
 int charsel_mode;
 int gNextDialogStat;
+multiplayer::mode gNextMultiMode;
 
 void menu_multi_charsel_unready()
 {
@@ -411,6 +425,11 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 		saved_mode = MD_MULTI_MODESEL;
 		OpenDialogCsrLet(&MultiMenuModeSelDialog, nextdial, 0);
 		break;
+	case MD_MULTI_COOPSEL:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_COOPSEL;
+		OpenDialogCsrLet(&MultiMenuStageSelSonicDialog, nextdial, 0);
+		break;
 	case MD_MULTI_BATTLESEL:
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_BATTLESEL;
@@ -446,7 +465,7 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 void menu_multi_launch_level(MultiMenuWK* wk, int act)
 {
 	// Enable multiplayer mode
-	multiplayer::Enable(pcount);
+	multiplayer::Enable(pcount, gNextMultiMode);
 	
 	for (int i = 0; i < pcount; ++i)
 	{
@@ -555,6 +574,7 @@ void menu_multi_stgsel_snc(MultiMenuWK* wk)
 	else if (stat != -1) // launch game request
 	{
 		gNextDialogStat = stat;
+		gNextMultiMode = multiplayer::mode::battle;
 		multi_menu_request_stg(wk, sonic_level_link[stat].first, sonic_level_link[stat].second, stat);
 	}
 }
@@ -571,6 +591,7 @@ void menu_multi_stgsel_twinkle(MultiMenuWK* wk)
 	else if (stat != -1) // launch game request
 	{
 		gNextDialogStat = stat;
+		gNextMultiMode = multiplayer::mode::battle;
 		multi_menu_request_stg(wk, twinkle_level_link[stat], 1, stat);
 	}
 }
@@ -587,6 +608,7 @@ void menu_multi_stgsel_big(MultiMenuWK* wk)
 	else if (stat != -1) // launch game request
 	{
 		gNextDialogStat = stat;
+		gNextMultiMode = multiplayer::mode::battle;
 		menu_multi_setallcharacters(5);
 		multi_menu_request_stg(wk, big_level_link[stat], 1, stat);
 	}
@@ -604,8 +626,26 @@ void menu_multi_stgsel_eme(MultiMenuWK* wk)
 	else if (stat != -1) // launch game request
 	{
 		gNextDialogStat = stat;
+		gNextMultiMode = multiplayer::mode::battle;
 		menu_multi_setallcharacters(2);
 		multi_menu_request_stg(wk, eme_level_link[stat], 1, stat);
+	}
+}
+
+void menu_multi_coopsel(MultiMenuWK* wk)
+{
+	auto stat = GetDialogStat();
+
+	if (stat == MultiMenuStageSelSonicDialog.CsrCancel) // go back request
+	{
+		gNextDialogStat = 0;
+		menu_multi_change(wk, MD_MULTI_MODESEL);
+	}
+	else if (stat != -1) // launch game request
+	{
+		gNextDialogStat = stat;
+		gNextMultiMode = multiplayer::mode::coop;
+		multi_menu_request_stg(wk, coop_level_link[stat], 1, stat);
 	}
 }
 
@@ -616,6 +656,7 @@ void menu_multi_battlesel(MultiMenuWK* wk)
 	switch (stat)
 	{
 	case 0:
+		charsel_mode = 1;
 		gNextDialogStat = 0;
 		next_mode = MD_MULTI_STGSEL_SNC;
 		menu_multi_change(wk, MD_MULTI_CHARSEL);
@@ -624,6 +665,7 @@ void menu_multi_battlesel(MultiMenuWK* wk)
 		menu_multi_change(wk, MD_MULTI_STGSEL_EME);
 		break;
 	case 2:
+		charsel_mode = 1;
 		gNextDialogStat = 2;
 		next_mode = MD_MULTI_STGSEL_TC;
 		menu_multi_change(wk, MD_MULTI_CHARSEL);
@@ -645,7 +687,9 @@ void menu_multi_modesel(MultiMenuWK* wk)
 	switch (stat)
 	{
 	case 0:
-		menu_multi_change(wk, MD_MULTI_COOPSEL);
+		charsel_mode = 0;
+		next_mode = MD_MULTI_COOPSEL;
+		menu_multi_change(wk, MD_MULTI_CHARSEL);
 		break;
 	case 1:
 		menu_multi_change(wk, MD_MULTI_BATTLESEL);
@@ -727,7 +771,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 			}
 		}
 	}
-
+	
 	// If everyone has selected
 	if (done == true)
 	{
@@ -795,6 +839,9 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	case MD_MULTI_MODESEL:
 		menu_multi_modesel(wk);
 		break;
+	case MD_MULTI_COOPSEL:
+		menu_multi_coopsel(wk);
+		break;
 	case MD_MULTI_BATTLESEL:
 		menu_multi_battlesel(wk);
 		break;
@@ -818,7 +865,7 @@ void menu_multi_subexec(MultiMenuWK* wk)
 
 void multi_menu_disp_controls(MultiMenuWK* wk)
 {
-	if (wk->SubMode > MD_MULTI_LOCALCON && wk->SubMode < MD_MULTI_STGSEL_SNC && wk->Stat != ADVA_STAT_FADEOUT)
+	if (wk->SubMode != MD_MULTI_COOPSEL && wk->SubMode != MD_MULTI_STGSEL_SNC && wk->SubMode > MD_MULTI_ONLINECON && wk->SubMode != MD_MULTI_STGASK && wk->Stat != ADVA_STAT_FADEOUT)
 	{
 		if (wk->alphaControls < 1.0f) wk->alphaControls += 0.05f;
 	}
@@ -899,7 +946,7 @@ void multi_menu_disp_charsel(MultiMenuWK* wk)
 		{
 			if (i == selected_characters[p])
 			{
-				if (wk->Stat != ADVA_STAT_FADEOUT)
+				if (wk->Stat != ADVA_STAT_FADEOUT && chara_ready[i] == false)
 				{
 					CursorColors[p].a = 0.75f + 0.25 * njSin(FrameCounter * 1000);
 				}

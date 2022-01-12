@@ -5,16 +5,23 @@ namespace multiplayer
 {
     bool enabled = false;
     unsigned int pcount = 0;
+    mode gMode = mode::coop;
+
+    mode GetMode()
+    {
+        return gMode;
+    }
 
     unsigned int GetPlayerCount()
     {
         return pcount;
     }
 
-    void Enable(int player_count)
+    void Enable(int player_count, mode md)
     {
         if (player_count > 0 && player_count <= PLAYER_MAX)
         {
+            gMode = md;
             enabled = true;
             pcount = player_count;
         }

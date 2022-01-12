@@ -203,7 +203,7 @@ void LoadCharacter_r()
 #ifdef _DEBUG
     if (multiplayer::IsEnabled() == false)
     {
-        multiplayer::Enable(2);
+        multiplayer::Enable(2, multiplayer::mode::battle);
         characters[0] = Characters_Sonic;
         characters[1] = Characters_Sonic;
     }
