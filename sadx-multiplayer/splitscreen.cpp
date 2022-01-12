@@ -25,6 +25,8 @@ Trampoline* njDrawQuadTextureEx_t = nullptr;
 
 void __cdecl DisplayTask_r();
 
+static bool configSplitScreenEnabled = true;
+
 namespace SplitScreen
 {
     unsigned int numScreen = 0;
@@ -78,9 +80,14 @@ namespace SplitScreen
         return numViewPort;
     }
 
+    bool IsActive()
+    {
+        return configSplitScreenEnabled == true && multiplayer::IsActive();
+    }
+
     unsigned int GetCurrentScreenNum()
     {
-        return numScreen;
+        return IsActive() ? numScreen : 0;
     }
 
     bool IsScreenEnabled(int num)
@@ -125,7 +132,7 @@ namespace SplitScreen
 
 void __cdecl SpLoopOnlyDisplay_r()
 {
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
         {
@@ -170,7 +177,7 @@ static void DrawScreen(int num)
 // DisplayTask run every task displays
 void __cdecl DisplayTask_r()
 {
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         // If multiplayer is enabled, split screen:
 
@@ -192,7 +199,7 @@ void __cdecl DisplayTask_r()
 // LoopTask run every task execs
 void __cdecl LoopTask_r()
 {
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         // When unpaused run logic (which also runs display) for first screen, then only run display for the other screens.
 
@@ -219,7 +226,7 @@ void __cdecl LoopTask_r()
 // Draw into viewport with scaling
 void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
 {
-    if (multiplayer::IsActive() && SplitScreen::numViewPort != -1)
+    if (SplitScreen::IsActive() && SplitScreen::GetCurrentViewPortNum() >= 0)
     {
         auto ratio = SplitScreen::GetScreenRatio(SplitScreen::numScreen);
 
@@ -238,16 +245,21 @@ void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
     }
 }
 
-void InitSplitScreen()
+void InitSplitScreen(const IniFile* config)
 {
-    LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
-    WriteCall((void*)((int)(LoopTask_t->Target()) + 3), RunObjectIndex); // Repair LoopTask_t
-    DisplayTask_t = new Trampoline(0x40B540, 0x40B546, DisplayTask_r);
-    WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
-    SpLoopOnlyDisplay_t = new Trampoline(0x456CD0, 0x456CD9, SpLoopOnlyDisplay_r);
-    WriteCall((void*)((int)(SpLoopOnlyDisplay_t->Target()) + 4), ___njFogDisable); // Repair SpLoopOnlyDisplay_t
+    configSplitScreenEnabled = config->getBool("", "SplitScreen", true);
 
-    njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+    if (configSplitScreenEnabled)
+    {
+        LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
+        WriteCall((void*)((int)(LoopTask_t->Target()) + 3), RunObjectIndex); // Repair LoopTask_t
+        DisplayTask_t = new Trampoline(0x40B540, 0x40B546, DisplayTask_r);
+        WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
+        SpLoopOnlyDisplay_t = new Trampoline(0x456CD0, 0x456CD9, SpLoopOnlyDisplay_r);
+        WriteCall((void*)((int)(SpLoopOnlyDisplay_t->Target()) + 4), ___njFogDisable); // Repair SpLoopOnlyDisplay_t
 
-    DrawQueue_Init();
+        njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+
+        DrawQueue_Init();
+    }
 }

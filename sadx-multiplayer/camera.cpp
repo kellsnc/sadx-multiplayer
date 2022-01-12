@@ -19,7 +19,7 @@ MultiCam MultiCams[PLAYER_MAX];
 
 NJS_VECTOR* GetCameraPosition(int pnum)
 {
-    if (multiplayer::IsActive() && pnum < multiplayer::GetPlayerCount() && playertp[pnum])
+    if (SplitScreen::IsActive() && pnum < multiplayer::GetPlayerCount() && playertp[pnum])
     {
         return &MultiCams[pnum].pos;
     }
@@ -31,7 +31,7 @@ NJS_VECTOR* GetCameraPosition(int pnum)
 
 Angle3* GetCameraAngle(int pnum)
 {
-    if (multiplayer::IsActive() && pnum < multiplayer::GetPlayerCount() && playertp[pnum])
+    if (SplitScreen::IsActive() && pnum < multiplayer::GetPlayerCount() && playertp[pnum])
     {
         return &MultiCams[pnum].ang;
     }
@@ -56,7 +56,7 @@ void ApplyMultiCamera(int pnum)
 
 void __cdecl CameraDisplay_r(task* tp)
 {
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         ApplyMultiCamera(SplitScreen::numScreen);
         //CameraFilter(tp); <- Works individually but crashes when draws more than once with DC Conv
@@ -427,7 +427,7 @@ void RunMultiCamera(int num)
 void __cdecl Camera_r(task* tp)
 {
     // If multiplayer is enabled, run custom cameras
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         auto twp = tp->twp;
 
@@ -469,7 +469,7 @@ void __cdecl Camera_r(task* tp)
 
 void __cdecl InitFreeCamera_r()
 {
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         for (auto& cam : MultiCams)
         {
@@ -483,7 +483,7 @@ void __cdecl InitFreeCamera_r()
 
 void __cdecl ResetFreeCamera_r()
 {
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         for (auto& cam : MultiCams)
         {

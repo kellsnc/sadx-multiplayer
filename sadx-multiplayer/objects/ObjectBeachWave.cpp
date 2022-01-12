@@ -22,7 +22,7 @@ void __cdecl ObjectBeachWaveBGExec_multi(task* tp)
 void __cdecl ObjectBeachWaveBG1Display_multi(task* tp)
 {
 	// Draw only if object is coded for current screen id
-	if (tp->twp->id == SplitScreen::numScreen)
+	if (tp->twp->id == SplitScreen::GetCurrentScreenNum())
 	{
 		ObjectBeachWaveBG1Display(tp);
 	}
@@ -48,7 +48,7 @@ void __cdecl ObjectBeachWaveBG1_r(task* tp)
 void __cdecl ObjectBeachWaveBG2Display_Multi(task* tp)
 {
 	// Draw only if object is coded for current screen id
-	if (tp->twp->id == SplitScreen::numScreen)
+	if (tp->twp->id == SplitScreen::GetCurrentScreenNum())
 	{
 		ObjectBeachWaveBG2Display(tp);
 	}
@@ -74,7 +74,7 @@ void __cdecl ObjectBeachWaveBG2_r(task* tp)
 void __cdecl ObjectBeachWaveBG3Display_Multi(task* tp)
 {
 	// Draw only if object is coded for current screen id
-	if (tp->twp->id == SplitScreen::numScreen)
+	if (tp->twp->id == SplitScreen::GetCurrentScreenNum())
 	{
 		ObjectBeachWaveBG3Display(tp);
 	}

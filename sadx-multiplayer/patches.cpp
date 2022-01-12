@@ -101,38 +101,6 @@ void __cdecl GetPlayersInputData_r()
 	}
 }
 
-// Remove ability to be hurt by players
-void RemovePlayersDamage(taskwk* twp)
-{
-	if (twp && twp->cwp)
-	{
-		for (int i = 0; i < twp->cwp->nbInfo; i++)
-		{
-			twp->cwp->info[i].damage &= ~0x20u;
-		}
-	}
-}
-
-// Patch to prevent characters from hurting each others (todo: differenciate coop and battle)
-void PInitialize_r(int no, task* tp)
-{
-	TARGET_DYNAMIC(PInitialize)(no, tp);
-
-	if (multiplayer::IsActive())
-	{
-		RemovePlayersDamage(tp->twp);
-	}
-}
-
-// Patch to prevent 2P Tails to load (note: charsel incompatible)
-void __cdecl NpcMilesSet_r(task* tp)
-{
-	if (!multiplayer::IsActive())
-	{
-		TARGET_DYNAMIC(NpcMilesSet)(tp);
-	}
-}
-
 // Patch for other players to collect rings
 void __cdecl Ring_r(task* tp)
 {
@@ -463,7 +431,6 @@ void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
 	GetPlayersInputData_t   = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
-	PInitialize_t           = new Trampoline(0x442750, 0x442755, PInitialize_r);
 	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);

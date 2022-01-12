@@ -14,7 +14,9 @@ namespace SplitScreen
 	const ScreenRatio* GetScreenRatio(int num);
 	void SaveViewPort();
 	void RestoreViewPort();
+	bool IsActive();
+	unsigned int GetCurrentScreenNum();
 	bool ChangeViewPort(int num);
 }
 
-void InitSplitScreen();
+void InitSplitScreen(const IniFile* config);

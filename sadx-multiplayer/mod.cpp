@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <IniFile.hpp>
 #include "camera.h"
 #include "splitscreen.h"
 #include "menu.h"
@@ -14,8 +15,10 @@ extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
+		const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
 		gHelperFunctions = &helperFunctions;
-		InitSplitScreen();
+
+		InitSplitScreen(config);
 		InitCamera();
 		InitPatches();
 		InitDeathPatches();
@@ -24,6 +27,8 @@ extern "C"
 		MultiHudInit();
 		InitSET();
 		InitLevels();
+
+		delete config;
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()

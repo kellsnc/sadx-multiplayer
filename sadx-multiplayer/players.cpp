@@ -173,11 +173,31 @@ void AddNumRingM(int pNum, int add)
     }
 }
 
+// Remove ability to be hurt by players
+void RemovePlayersDamage(taskwk* twp)
+{
+    if (twp && twp->cwp)
+    {
+        for (int i = 0; i < twp->cwp->nbInfo; i++)
+        {
+            twp->cwp->info[i].damage &= ~0x20u;
+        }
+    }
+}
+
 void UpdatePlayersInfo()
 {
     rings[0] = ssNumRing;
     lives[0] = scNumPlayer;
     score[0] = slEnemyScore;
+
+    if (IsIngame() && multiplayer::IsCoopMode())
+    {
+        for (int i = 0; i < PLAYER_MAX; ++i)
+        {
+            if (playertwp[i]) RemovePlayersDamage(playertwp[i]);
+        }
+    }
 }
 
 void ResetCharactersArray()
