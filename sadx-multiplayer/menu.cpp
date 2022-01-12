@@ -36,6 +36,7 @@ const DialogPrmType MainMenuMultiDialog = { DLG_PNLSTYLE_SIKAKU2, nullptr, &ava_
 
 Trampoline* title_menu_sub_exec_t = nullptr;
 Trampoline* char_sel_exec_t = nullptr;
+int selected_multi_mode = 0;
 
 bool AvaGetMultiEnable()
 {
@@ -46,6 +47,8 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 {
 	if (wkp->SubMode == TITLEMENU_SMD_STAY || wkp->SubMode == TITLEMENU_SMD_TO_MAINMENU)
 	{
+		selected_multi_mode = 0;
+
 		char csrp[9]{}; // disable items
 		int cnt = 0; // amount of disabled items
 
@@ -100,15 +103,17 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 			WriteData((int*)0x7EEB58, (int)ADVA_MODE_CHAR_SEL); // Restore changes made to force return to multi menu (failsafe)
 		}
 
+		char csrp[2]{ 1, -1 };
+
 		switch (stat)
 		{
 		case 0: // Adventure
 		case 1: // Trial
 		case 2: // Mission
-			TARGET_DYNAMIC(title_menu_sub_exec)(wkp); // first three items doesn't need adjusting so original is fine
+			TARGET_DYNAMIC(title_menu_sub_exec)(wkp); // first three items do not need adjusting so original is fine
 			break;
 		case 3: // Multiplayer (custom)
-			OpenDialog(&MainMenuMultiDialog);
+			OpenDialogCsrLet(&MainMenuMultiDialog, selected_multi_mode, csrp);
 			wkp->SubMode = (TitleMenuSbMdEnum)7;
 			break;
 		case 4: // MiniGame
@@ -136,7 +141,12 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 		switch (GetDialogStat())
 		{
 		case 0:
+			selected_multi_mode = 0;
+			CmnAdvaModeProcedure((AdvaModeEnum)ADVA_MODE_MULTI);
+			wkp->SubMode = TITLEMENU_SMD_NWAIT;
+			break;
 		case 1:
+			selected_multi_mode = 1;
 			CmnAdvaModeProcedure((AdvaModeEnum)ADVA_MODE_MULTI);
 			wkp->SubMode = TITLEMENU_SMD_NWAIT;
 			break;

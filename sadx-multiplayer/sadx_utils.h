@@ -886,7 +886,7 @@ enum AvaTexLdEnum : __int32
 	TENUM_NMAX_SADXPC = 30 // custom, enum is different
 };
 
-DataArray(AvaTexLdEnum*, AvaTexLdLists, 0x10D7CC4, 14);
+DataArray(const AvaTexLdEnum*, AvaTexLdLists, 0x10D7CC4, 14);
 DataPointer(AvaStgActT, AvaCmnPrm, 0x3C5FED0);
 DataPointer(ADVERTISE_WORK, AdvertiseWork, 0x3B2A2FA);
 DataArray(DialogPrmType, DialogPrm, 0x7EE328, 22); // Menu dialogs
@@ -899,6 +899,7 @@ DataPointer(task*, SeqTp, 0x3C5E8D0);
 DataPointer(task*, TrialActStelTp, 0x3C5FEE0);
 DataArray(PVMEntry*, MenuTexlists, 0x10D7CB0, 5);
 DataArray(void*, CreateModeFncPtrs, 0x10D7B4C, 14);
+DataArray(void*, FreeModeFncPtrs, 0x10D7B84, 14);
 DataPointer(task*, TitleNewTp, 0x3C5FF00);
 DataPointer(BOOL, Menu_CanSelect, 0x3C5E8E0);
 FunctionPointer(void, AvaLoadTexForEachMode, (int mode) ,0x506010);
@@ -921,6 +922,7 @@ FunctionPointer(int, GetFadeOutColFromT, (float t), 0x506E10);
 FunctionPointer(int, GetFadeInColFromT, (float t), 0x506E40);
 DataArray(int, GblMenuTbl, 0x7EF8E8, 6);
 FunctionPointer(void, OpenDialog, (const DialogPrmType* dp), 0x432DB0);
+FunctionPointer(void, OpenDialogCsrLet, (const DialogPrmType* dp, char csr, char* dis_csr_ptr), 0x432D20);
 FunctionPointer(BOOL, AvaGetTrialEnable, (), 0x506780);
 FunctionPointer(BOOL, AvaGetMissionEnable, (), 0x506410);
 FunctionPointer(void, AdvaOpenDialogQuick, (DiaTypeEnum dialog_type, char csr, char* csrp), 0x5057F0);
