@@ -2,7 +2,7 @@
 #include "camera.h"
 #include "splitscreen.h"
 #include "menu.h"
-#include "multihud.h"
+#include "hud_multi.h"
 #include "patches.h"
 #include "deathzones.h"
 #include "set.h"

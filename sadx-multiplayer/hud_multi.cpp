@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "multihud.h"
+#include "hud_multi.h"
 #include "splitscreen.h"
 
 Trampoline* DisplayScore_t = nullptr;

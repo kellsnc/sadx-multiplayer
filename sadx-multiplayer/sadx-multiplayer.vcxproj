@@ -101,7 +101,7 @@
     <ClInclude Include="menu.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="menu_multi.h" />
-    <ClInclude Include="multihud.h" />
+    <ClInclude Include="hud_multi.h" />
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="objects\ObjectItemBox.h" />
     <ClInclude Include="patches.h" />
@@ -121,7 +121,7 @@
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="menu_multi.cpp" />
-    <ClCompile Include="multihud.cpp" />
+    <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
     <ClCompile Include="objects\EnemyCart.cpp" />
     <ClCompile Include="objects\ObjectBeachWave.cpp" />

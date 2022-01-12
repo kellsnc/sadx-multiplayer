@@ -28,7 +28,7 @@
     <ClCompile Include="utils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="multihud.cpp">
+    <ClCompile Include="hud_multi.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
     <ClCompile Include="drawqueue.cpp">
@@ -87,7 +87,7 @@
     <ClInclude Include="utils.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="multihud.h">
+    <ClInclude Include="hud_multi.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
     <ClInclude Include="menu.h">

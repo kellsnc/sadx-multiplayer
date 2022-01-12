@@ -4,7 +4,7 @@
 #include <SADXModLoader.h>
 #include <Trampoline.h>
 #include "splitscreen.h"
-#include "multihud.h"
+#include "hud_multi.h"
 #include "d3d8vars.h"
 #include "drawqueue.h"
 #include "camera.h"
