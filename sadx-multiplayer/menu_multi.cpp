@@ -79,28 +79,19 @@ enum AVA_MULTI_ANM
 
 enum MD_MULTI
 {
-	MD_MULTI_INITCONNECT,
+	MD_MULTI_CONNECT,
 	MD_MULTI_LOCALCON,
-	MD_MULTI_INITCHARSEL,
-	MD_MULTI_CHARSEL,
-	MD_MULTI_INITMODESEL,
+	MD_MULTI_ONLINECON,
 	MD_MULTI_MODESEL,
-	MD_MULTI_INITCOOPSEL,
+	MD_MULTI_CHARSEL,
 	MD_MULTI_COOPSEL,
-	MD_MULTI_INITCOOPSTGSEL,
 	MD_MULTI_COOPSTGSEL,
-	MD_MULTI_INITBATTLESEL,
 	MD_MULTI_BATTLESEL,
-	MD_MULTI_INITSTGSEL_EME,
 	MD_MULTI_STGSEL_EME,
-	MD_MULTI_INITSTGSEL_TC,
 	MD_MULTI_STGSEL_TC,
-	MD_MULTI_INITSTGSEL_FISH,
 	MD_MULTI_STGSEL_FISH,
-	MD_MULTI_INITSTGSEL_SNC,
 	MD_MULTI_STGSEL_SNC,
-	MD_MULTI_INITSTGASK,
-	MD_MULTI_STGASK,
+	MD_MULTI_STGASK
 };
 
 struct MultiMenuWK
@@ -306,6 +297,7 @@ bool enabled_characters[8];
 MD_MULTI saved_mode;
 MD_MULTI next_mode;
 int charsel_mode;
+int gNextDialogStat;
 
 void menu_multi_charsel_unready()
 {
@@ -330,11 +322,11 @@ void menu_multi_unready()
 	}
 }
 
-void menu_multi_setallcharacters(Characters character)
+void menu_multi_setallcharacters(int c)
 {
 	for (auto& i : selected_characters)
 	{
-		i = Characters_Big;
+		i = c;
 	}
 }
 
@@ -362,10 +354,94 @@ int menu_multi_getplayerno(int num)
 	}
 }
 
+void menu_multi_setrndcursor()
+{
+	ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR1];
+	ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR2];
+	ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR3];
+	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR4];
+}
+
+void menu_multi_setsqrcursor()
+{
+	ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
+	ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
+	ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
+	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR1];
+}
+
+void menu_multi_getcharaenable()
+{
+	for (int i = 0; i < LengthOfArray(enabled_characters); ++i)
+	{
+		if (i < 6)
+		{
+			enabled_characters[i] = GetCharacterUnlockedFlag(i) == TRUE;
+		}
+		else if (i == Characters_Eggman)
+		{
+			enabled_characters[i] = false;
+		}
+		else if (i == Characters_Tikal)
+		{
+			enabled_characters[i] = false;
+		}
+	}
+}
+
 void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 {
+	int nextdial = wk->SubMode < id ? 0 : gNextDialogStat;
+
 	CloseDialog();
 	wk->SubMode = id;
+
+	switch (id)
+	{
+	case MD_MULTI_CONNECT:
+		wk->SubMode = MD_MULTI_LOCALCON;
+		menu_multi_unready();
+		saved_mode = wk->SubMode;
+		break;
+	case MD_MULTI_CHARSEL: // Open character select
+		menu_multi_getcharaenable();
+		menu_multi_charsel_unready();
+		break;
+	case MD_MULTI_MODESEL:
+		menu_multi_setrndcursor();
+		saved_mode = MD_MULTI_MODESEL;
+		OpenDialogCsrLet(&MultiMenuModeSelDialog, nextdial, 0);
+		break;
+	case MD_MULTI_BATTLESEL:
+		menu_multi_setrndcursor();
+		saved_mode = MD_MULTI_BATTLESEL;
+		OpenDialogCsrLet(&MultiMenuBattleSelDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGSEL_EME:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_EME;
+		OpenDialogCsrLet(&MultiMenuStageSelEmeDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGSEL_TC:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_TC;
+		OpenDialogCsrLet(&MultiMenuStageSelTwinkleDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGSEL_FISH:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_FISH;
+		OpenDialogCsrLet(&MultiMenuStageSelBigDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGSEL_SNC:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_SNC;
+		OpenDialogCsrLet(&MultiMenuStageSelSonicDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGASK: // Open prompt to ask level confirmation
+		menu_multi_setrndcursor();
+		OpenDialog(&MultiMenuStageConfirmDialog);
+		break;
+	}
 }
 
 void menu_multi_launch_level(MultiMenuWK* wk, int act)
@@ -425,7 +501,7 @@ void multi_menu_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
 	}
 
 	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[item].PvrIdx;
-	menu_multi_change(wk, MD_MULTI_INITSTGASK);
+	menu_multi_change(wk, MD_MULTI_STGASK);
 	wk->stgreq = ConvertLevelActsID_ToLevel(level);
 	wk->actreq = ConvertLevelActsID_ToAct(level);
 }
@@ -446,8 +522,6 @@ void multi_menu_stg_confirm(MultiMenuWK* wk)
 
 	if (stat != -1)
 	{
-		menu_multi_change(wk, saved_mode);
-
 		if (stat != MultiMenuStageConfirmDialog.CsrCancel)
 		{
 			int act = PanelPrmMenuMultiStgConfirm[stat].PvrIdx;
@@ -463,6 +537,10 @@ void multi_menu_stg_confirm(MultiMenuWK* wk)
 
 			menu_multi_launch_level(wk, act);
 		}
+		else
+		{
+			menu_multi_change(wk, saved_mode);
+		}
 	}
 }
 
@@ -472,10 +550,12 @@ void menu_multi_stgsel_snc(MultiMenuWK* wk)
 
 	if (stat == MultiMenuStageSelSonicDialog.CsrCancel) // go back request
 	{
-		menu_multi_change(wk, MD_MULTI_INITBATTLESEL);
+		gNextDialogStat = 0;
+		menu_multi_change(wk, MD_MULTI_BATTLESEL);
 	}
 	else if (stat != -1) // launch game request
 	{
+		gNextDialogStat = stat;
 		multi_menu_request_stg(wk, sonic_level_link[stat].first, sonic_level_link[stat].second, stat);
 	}
 }
@@ -486,10 +566,12 @@ void menu_multi_stgsel_twinkle(MultiMenuWK* wk)
 
 	if (stat == MultiMenuStageSelTwinkleDialog.CsrCancel) // go back request
 	{
-		menu_multi_change(wk, MD_MULTI_INITBATTLESEL);
+		gNextDialogStat = 3;
+		menu_multi_change(wk, MD_MULTI_BATTLESEL);
 	}
 	else if (stat != -1) // launch game request
 	{
+		gNextDialogStat = stat;
 		multi_menu_request_stg(wk, twinkle_level_link[stat], 1, stat);
 	}
 }
@@ -500,11 +582,13 @@ void menu_multi_stgsel_big(MultiMenuWK* wk)
 
 	if (stat == MultiMenuStageSelBigDialog.CsrCancel) // go back request
 	{
-		menu_multi_change(wk, MD_MULTI_INITBATTLESEL);
+		gNextDialogStat = 3;
+		menu_multi_change(wk, MD_MULTI_BATTLESEL);
 	}
 	else if (stat != -1) // launch game request
 	{
-		menu_multi_setallcharacters(Characters_Big);
+		gNextDialogStat = stat;
+		menu_multi_setallcharacters(5);
 		multi_menu_request_stg(wk, big_level_link[stat], 1, stat);
 	}
 }
@@ -515,11 +599,13 @@ void menu_multi_stgsel_eme(MultiMenuWK* wk)
 
 	if (stat == MultiMenuStageSelEmeDialog.CsrCancel) // go back request
 	{
-		menu_multi_change(wk, MD_MULTI_INITBATTLESEL);
+		gNextDialogStat = 1;
+		menu_multi_change(wk, MD_MULTI_BATTLESEL);
 	}
 	else if (stat != -1) // launch game request
 	{
-		menu_multi_setallcharacters(Characters_Knuckles);
+		gNextDialogStat = stat;
+		menu_multi_setallcharacters(2);
 		multi_menu_request_stg(wk, eme_level_link[stat], 1, stat);
 	}
 }
@@ -531,21 +617,24 @@ void menu_multi_battlesel(MultiMenuWK* wk)
 	switch (stat)
 	{
 	case 0:
-		next_mode = MD_MULTI_INITSTGSEL_SNC;
-		menu_multi_change(wk, MD_MULTI_INITCHARSEL);
+		gNextDialogStat = 0;
+		next_mode = MD_MULTI_STGSEL_SNC;
+		menu_multi_change(wk, MD_MULTI_CHARSEL);
 		break;
 	case 1:
-		menu_multi_change(wk, MD_MULTI_INITSTGSEL_EME);
+		menu_multi_change(wk, MD_MULTI_STGSEL_EME);
 		break;
 	case 2:
-		next_mode = MD_MULTI_INITSTGSEL_TC;
-		menu_multi_change(wk, MD_MULTI_INITCHARSEL);
+		gNextDialogStat = 2;
+		next_mode = MD_MULTI_STGSEL_TC;
+		menu_multi_change(wk, MD_MULTI_CHARSEL);
 		break;
 	case 3:
-		menu_multi_change(wk, MD_MULTI_INITSTGSEL_FISH);
+		menu_multi_change(wk, MD_MULTI_STGSEL_FISH);
 		break;
 	case 4:
-		menu_multi_change(wk, MD_MULTI_INITMODESEL);
+		gNextDialogStat = 1;
+		menu_multi_change(wk, MD_MULTI_MODESEL);
 		break;
 	}
 }
@@ -557,13 +646,13 @@ void menu_multi_modesel(MultiMenuWK* wk)
 	switch (stat)
 	{
 	case 0:
-		menu_multi_change(wk, MD_MULTI_INITCOOPSEL);
+		menu_multi_change(wk, MD_MULTI_COOPSEL);
 		break;
 	case 1:
-		menu_multi_change(wk, MD_MULTI_INITBATTLESEL);
+		menu_multi_change(wk, MD_MULTI_BATTLESEL);
 		break;
 	case 2:
-		menu_multi_change(wk, MD_MULTI_INITCONNECT);
+		menu_multi_change(wk, MD_MULTI_CONNECT);
 		break;
 	}
 }
@@ -690,42 +779,7 @@ void menu_multi_localcon(MultiMenuWK* wk)
 	if (MenuSelectButtonsPressed() && player_ready[0] == true && pcount > 1)
 	{
 		PlayMenuEnterSound();
-		menu_multi_change(wk, MD_MULTI_INITMODESEL);
-	}
-}
-
-void menu_multi_setrndcursor()
-{
-	ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR1];
-	ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR2];
-	ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR3];
-	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CSR4];
-}
-
-void menu_multi_setsqrcursor()
-{
-	ava_csr_TEXLIST.textures[0] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
-	ava_csr_TEXLIST.textures[1] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
-	ava_csr_TEXLIST.textures[2] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSORBG];
-	ava_csr_TEXLIST.textures[3] = AVA_MULTI_TEXLIST.textures[AVAMULTITEX_CURSOR1];
-}
-
-void menu_multi_getcharaenable()
-{
-	for (int i = 0; i < LengthOfArray(enabled_characters); ++i)
-	{
-		if (i < 6)
-		{
-			enabled_characters[i] = GetCharacterUnlockedFlag(i) == TRUE;
-		}
-		else if (i == Characters_Eggman)
-		{
-			enabled_characters[i] = false;
-		}
-		else if (i == Characters_Tikal)
-		{
-			enabled_characters[i] = false;
-		}
+		menu_multi_change(wk, MD_MULTI_MODESEL);
 	}
 }
 
@@ -733,81 +787,29 @@ void menu_multi_subexec(MultiMenuWK* wk)
 {
 	switch (wk->SubMode)
 	{
-	case MD_MULTI_INITCONNECT:
-		menu_multi_change(wk, MD_MULTI_LOCALCON);
-		menu_multi_unready();
-		saved_mode = MD_MULTI_INITCONNECT;
-		break;
 	case MD_MULTI_LOCALCON:
 		menu_multi_localcon(wk);
-		break;
-	case MD_MULTI_INITCHARSEL: // Open character select
-		menu_multi_change(wk, MD_MULTI_CHARSEL);
-		menu_multi_getcharaenable();
-		menu_multi_charsel_unready();
-		saved_mode = MD_MULTI_INITCHARSEL;
 		break;
 	case MD_MULTI_CHARSEL:
 		menu_multi_charsel(wk);
 		break;
-	case MD_MULTI_INITMODESEL:
-		menu_multi_setrndcursor();
-		menu_multi_change(wk, MD_MULTI_MODESEL);
-		saved_mode = MD_MULTI_INITMODESEL;
-		OpenDialog(&MultiMenuModeSelDialog);
-		break;
 	case MD_MULTI_MODESEL:
 		menu_multi_modesel(wk);
-		break;
-	case MD_MULTI_INITBATTLESEL:
-		menu_multi_setrndcursor();
-		menu_multi_change(wk, MD_MULTI_BATTLESEL);
-		saved_mode = MD_MULTI_INITBATTLESEL;
-		OpenDialog(&MultiMenuBattleSelDialog);
 		break;
 	case MD_MULTI_BATTLESEL:
 		menu_multi_battlesel(wk);
 		break;
-	case MD_MULTI_INITSTGSEL_EME:
-		menu_multi_setsqrcursor();
-		menu_multi_change(wk, MD_MULTI_STGSEL_EME);
-		saved_mode = MD_MULTI_INITSTGSEL_EME;
-		OpenDialog(&MultiMenuStageSelEmeDialog);
-		break;
 	case MD_MULTI_STGSEL_EME:
 		menu_multi_stgsel_eme(wk);
-		break;
-	case MD_MULTI_INITSTGSEL_TC:
-		menu_multi_setsqrcursor();
-		menu_multi_change(wk, MD_MULTI_STGSEL_TC);
-		saved_mode = MD_MULTI_INITSTGSEL_TC;
-		OpenDialog(&MultiMenuStageSelTwinkleDialog);
 		break;
 	case MD_MULTI_STGSEL_TC:
 		menu_multi_stgsel_twinkle(wk);
 		break;
-	case MD_MULTI_INITSTGSEL_FISH:
-		menu_multi_setsqrcursor();
-		menu_multi_change(wk, MD_MULTI_STGSEL_FISH);
-		saved_mode = MD_MULTI_INITSTGSEL_FISH;
-		OpenDialog(&MultiMenuStageSelBigDialog);
-		break;
 	case MD_MULTI_STGSEL_FISH:
 		menu_multi_stgsel_big(wk);
 		break;
-	case MD_MULTI_INITSTGSEL_SNC: // Open stage select (only Sonic for now)
-		menu_multi_setsqrcursor();
-		menu_multi_change(wk, MD_MULTI_STGSEL_SNC);
-		saved_mode = MD_MULTI_INITSTGSEL_SNC;
-		OpenDialog(&MultiMenuStageSelSonicDialog);
-		break;
 	case MD_MULTI_STGSEL_SNC:
 		menu_multi_stgsel_snc(wk);
-		break;
-	case MD_MULTI_INITSTGASK: // Open prompt to ask level confirmation
-		menu_multi_setrndcursor();
-		menu_multi_change(wk, MD_MULTI_STGASK);
-		OpenDialog(&MultiMenuStageConfirmDialog);
 		break;
 	case MD_MULTI_STGASK:
 		multi_menu_stg_confirm(wk);
@@ -1032,7 +1034,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		{
 			menu_multi_charsel_unready();
 			menu_multi_unready();
-			menu_multi_change(wk, MD_MULTI_INITCONNECT);
+			menu_multi_change(wk, MD_MULTI_CONNECT);
 			wk->Stat = ADVA_STAT_FADEIN;
 			wk->T = 0.0f;
 		}

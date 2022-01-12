@@ -110,47 +110,6 @@ void ReleaseTextureForEachGameMode_r()
     TARGET_DYNAMIC(ReleaseTextureForEachGameMode)();
 }
 
-void DrawWaitingForPlayer(float x, float y)
-{
-    if (VerifyTexList(&CON_MULTI_TEXLIST))
-    {
-        return;
-    }
-
-    // Start position and scale
-    MULTIHUD_SPRITE.sx = MULTIHUD_SPRITE.sy = 1.0f;
-    MULTIHUD_SPRITE.p.x = x;
-    MULTIHUD_SPRITE.p.y = y;
-
-    // Draw Cream
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cream + (FrameCounter / 5) % 12, -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-
-    // Move right
-    MULTIHUD_SPRITE.p.x += 30.0f;
-    x = MULTIHUD_SPRITE.p.x; // backup position
-    MULTIHUD_SPRITE.p.x += njSin(FrameCounter * 300) * 2.5f; // slide chao left and right
-
-    // Draw Chao
-    njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Cheese + (FrameCounter / 5) % 2, -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-
-    // Restore position and move right
-    MULTIHUD_SPRITE.p.x = x + 20.0f;
-
-    y = MULTIHUD_SPRITE.p.y; // backup position
-
-    for (int i = 0; i < LengthOfArray(waittextseq); ++i)
-    {
-        MULTIHUD_SPRITE.p.x += 16.0f; // move right
-        MULTIHUD_SPRITE.p.y = y + njSin(FrameCounter * 1000 + i * 1000) * 5; // slide up and down individually
-        SetMaterial(1.0f - (fabs(njSin(FrameCounter * 500 + i * 500)) * 0.5f), 1.0f, 1.0f, 1.0f); // color ramp
-
-        // Draw letter
-        if (waittextseq[i] != -1) njDrawSprite2D_DrawNow(&MULTIHUD_SPRITE, MHudSprt_Alphabet + waittextseq[i], -1000.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-    }
-
-    ResetMaterial();
-}
-
 void DrawWaitScreen(int num)
 {
     if (MissedFrames || IsGamePaused())
@@ -295,7 +254,7 @@ void MultiHudLives(int num, float scale)
 
 void DisplayMultiHud(int num)
 {
-    if (MissedFrames || IsGamePaused())
+    if (MissedFrames || IsGamePaused() || CurrentLevel == LevelIDs_TwinkleCircuit)
     {
         return;
     }
