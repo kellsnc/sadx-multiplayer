@@ -420,7 +420,11 @@ void RunMultiCamera(int num)
 
     cam->wk.dist0 = cam->wk.dist;
 
-    cam->pos = cam->wk.campos;
+    if (!(plpwp->item & Powerups_Dead))
+    {
+        cam->pos = cam->wk.campos;
+    }
+
     cam->ang = cam->wk._ang;
 }
 

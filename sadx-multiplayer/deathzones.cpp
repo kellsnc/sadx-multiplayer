@@ -13,6 +13,16 @@ void __cdecl GamePlayerMissed_r(task* tp)
 {
 	auto awp = tp->awp;
 	auto pNum = awp->work.ul[1];
+	auto twp = playertwp[pNum];
+	auto pwp = playerpwp[pNum];
+
+	if (!twp)
+	{
+		FreeTask(tp);
+		return;
+	}
+
+	pwp->item |= Powerups_Dead;
 
 	if (++awp->work.ul[0] > 0x78)
 	{
@@ -28,8 +38,8 @@ void __cdecl GamePlayerMissed_r(task* tp)
 				AddNumPlayerM(pNum, -1);
 				SetPlayerInitialPosition(playertwp[pNum]);
 				SetInputP(pNum, 24);
-				playertwp[pNum]->mode = 1;
-				playerpwp[pNum]->item &= ~Powerups_Dead;
+				twp->mode = 1;
+				pwp->item &= ~Powerups_Dead;
 			}
 		}
 
