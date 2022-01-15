@@ -10,8 +10,8 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_KNUCKLES,
 	AVAMULTITEX_TIKAL,
 	AVAMULTITEX_AMY,
-	AVAMULTITEX_E102,
 	AVAMULTITEX_BIG,
+	AVAMULTITEX_E102,
 	AVAMULTITEX_METAL,
 	AVAMULTITEX_BACK,
 	AVAMULTITEX_CONFIRM,
@@ -34,9 +34,13 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_CSR3,
 	AVAMULTITEX_CSR4,
 	AVAMULTITEX_MD_SPD,
+	AVAMULTITEX_MD_FLY,
 	AVAMULTITEX_MD_EME,
-	AVAMULTITEX_MD_TC,
+	AVAMULTITEX_MD_EGROB,
 	AVAMULTITEX_MD_FISH,
+	AVAMULTITEX_MD_SHOOT,
+	AVAMULTITEX_MD_TC,
+	AVAMULTITEX_MD_VS,
 	AVAMULTITEX_STG1,
 	AVAMULTITEX_STG2,
 	AVAMULTITEX_STG3,
@@ -62,7 +66,8 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_STGEME2,
 	AVAMULTITEX_STGEME3,
 	AVAMULTITEX_STGEME4,
-	AVAMULTITEX_STGEME5
+	AVAMULTITEX_STGEME5,
+	AVAMULTITEX_STGBOARD,
 };
 
 enum AVA_MULTI_ANM
@@ -82,14 +87,30 @@ enum MD_MULTI
 	MD_MULTI_LOCALCON,
 	MD_MULTI_ONLINECON,
 	MD_MULTI_MODESEL,
-	MD_MULTI_CHARSEL,
 	MD_MULTI_COOPSEL,
 	MD_MULTI_BATTLESEL,
+	MD_MULTI_CHARSEL,
+	MD_MULTI_STGSEL_SPD,
+	MD_MULTI_STGSEL_FLY,
 	MD_MULTI_STGSEL_EME,
-	MD_MULTI_STGSEL_TC,
+	MD_MULTI_STGSEL_EGROB,
 	MD_MULTI_STGSEL_FISH,
-	MD_MULTI_STGSEL_SNC,
+	MD_MULTI_STGSEL_SHOOT,
+	MD_MULTI_STGSEL_TC,
+	MD_MULTI_STGSEL_VS,
 	MD_MULTI_STGASK
+};
+
+enum CharSelChara
+{
+	CharSelChara_Sonic,
+	CharSelChara_Tails,
+	CharSelChara_Knuckles,
+	CharSelChara_Amy,
+	CharSelChara_Big,
+	CharSelChara_Gamma,
+	CharSelChara_Tikal,
+	CharSelChara_Eggman,
 };
 
 struct MultiMenuWK
@@ -158,11 +179,46 @@ PanelPrmType PanelPrmMenuMultiModeSel[] {
 	 { 100.0f,	0.0f, AVAMULTITEX_BATTLE }
 };
 
+PanelPrmType PanelPrmMenuMultiCoopSel[]{
+	 { -180.0f,	-52.0f, AVAMULTITEX_MD_SPD },
+	 { -60.0f,	-52.0f, AVAMULTITEX_MD_FLY },
+	 { 60.0f,	-52.0f, AVAMULTITEX_MD_EME },
+	 { 180.0f,	-52.0f, AVAMULTITEX_MD_EGROB },
+	 { -180.0f,	68.0f, AVAMULTITEX_MD_FISH },
+	 { -60.0f,	68.0f, AVAMULTITEX_MD_SHOOT }
+};
+
 PanelPrmType PanelPrmMenuMultiBattleSel[] {
-	 { -180.0f,	8.0f, AVAMULTITEX_MD_SPD   },
-	 { -60.0f,	8.0f, AVAMULTITEX_MD_EME   },
-	 { 60.0f,	8.0f, AVAMULTITEX_MD_TC    },
-	 { 180.0f,	8.0f,  AVAMULTITEX_MD_FISH },
+	 { -180.0f,	-52.0f, AVAMULTITEX_MD_SPD },
+	 { -60.0f,	-52.0f, AVAMULTITEX_MD_FLY },
+	 { 60.0f,	-52.0f, AVAMULTITEX_MD_EME },
+	 { 180.0f,	-52.0f, AVAMULTITEX_MD_EGROB },
+	 { -180.0f,	68.0f, AVAMULTITEX_MD_FISH },
+	 { -60.0f,	68.0f, AVAMULTITEX_MD_SHOOT },
+	 { 60.0f,	68.0f, AVAMULTITEX_MD_TC },
+	 { 180.0f,	68.0f, AVAMULTITEX_MD_VS }
+};
+
+PanelPrmType PanelPrmMenuMultiStgSelSonic[]{
+	 { -150.0f,	-120.0f, AVAMULTITEX_STG1  },
+	 { 0.0f,	-120.0f, AVAMULTITEX_STG2  },
+	 { 150.0f,	-120.0f, AVAMULTITEX_STG3  },
+	 { -150.0f,	-40.0f,  AVAMULTITEX_STG4  },
+	 { 0.0f,	-40.0f,  AVAMULTITEX_STG5  },
+	 { 150.0f,	-40.0f,  AVAMULTITEX_STG6  },
+	 { -150.0f,	40.0f,   AVAMULTITEX_STG7  },
+	 { 0.0f,	40.0f,   AVAMULTITEX_STG8  },
+	 { 150.0f,	40.0f,   AVAMULTITEX_STG9  },
+	 { -75.0f,	120.0f,  AVAMULTITEX_STG10 },
+	 { 75.0f,	120.0f,  AVAMULTITEX_STGBOARD },
+};
+
+PanelPrmType PanelPrmMenuMultiStgSelFly[]{
+	 { -150.0f,	-40.0f, AVAMULTITEX_STG2 },
+	 { 0.0f,	-40.0f, AVAMULTITEX_STG3 },
+	 { 150.0f,	-40.0f, AVAMULTITEX_STG4 },
+	 { -75.0f,	40.0f,  AVAMULTITEX_STG8 },
+	 { 75.0f,	40.0f,  AVAMULTITEX_STG6 }
 };
 
 PanelPrmType PanelPrmMenuMultiStgSelEme[]{
@@ -180,20 +236,6 @@ PanelPrmType PanelPrmMenuMultiStgSelBig[]{
 	 { 100.0f,	65.0f,  AVAMULTITEX_STGBIG4 }
 };
 
-PanelPrmType PanelPrmMenuMultiStgSelSonic[]{
-	 { -150.0f,	-120.0f, AVAMULTITEX_STG1  },
-	 { 0.0f,	-120.0f, AVAMULTITEX_STG2  },
-	 { 150.0f,	-120.0f, AVAMULTITEX_STG3  },
-	 { -150.0f,	-40.0f,  AVAMULTITEX_STG4  },
-	 { 0.0f,	-40.0f,  AVAMULTITEX_STG5  },
-	 { 150.0f,	-40.0f,  AVAMULTITEX_STG6  },
-	 { -150.0f,	40.0f,   AVAMULTITEX_STG7  },
-	 { 0.0f,	40.0f,   AVAMULTITEX_STG8  },
-	 { 150.0f,	40.0f,   AVAMULTITEX_STG9  },
-	 { -75.0f,	120.0f,  AVAMULTITEX_STG10 },
-	 { 75.0f,	120.0f,  AVAMULTITEX_STG11 },
-};
-
 PanelPrmType PanelPrmMenuMultiStgSelTwinkle[]{
 	 { -150.0f,	-40.0f, AVAMULTITEX_STGTC1 },
 	 { 0.0f,	-40.0f, AVAMULTITEX_STGTC2 },
@@ -205,17 +247,19 @@ PanelPrmType PanelPrmMenuMultiStgSelTwinkle[]{
 
 PanelPrmType PanelPrmMenuMultiStgConfirm[4] {};
 
-void multi_menu_confirmdialog_proc(DDlgType* ddltype);
+void menu_multi_confirmdialog_proc(DDlgType* ddltype);
 
 const DialogPrmType MultiMenuModeSelDialog = { DLG_PNLSTYLE_MARU2, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiModeSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 10.0f, 568.0f, 120.0f, 1.625f, 0.8f, LengthOfArray(PanelPrmMenuMultiModeSel), 2 };
-const DialogPrmType MultiMenuBattleSelDialog = { DLG_PNLSTYLE_MARU2, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiBattleSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 180.0f, 1.2f, 1.2f, LengthOfArray(PanelPrmMenuMultiBattleSel), 4};
+const DialogPrmType MultiMenuCoopSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiCoopSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray(PanelPrmMenuMultiCoopSel), 6};
+const DialogPrmType MultiMenuBattleSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiBattleSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray(PanelPrmMenuMultiBattleSel), 8};
+const DialogPrmType MultiMenuStageSelSonicDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelSonic, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelSonic), 11 };
+const DialogPrmType MultiMenuStageSelFlyDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelFly, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelFly), 5 };
+const DialogPrmType MultiMenuStageSelEmeDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEme, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelEme), 5 };
 const DialogPrmType MultiMenuStageSelBigDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelBig, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray(PanelPrmMenuMultiStgSelBig), 4};
-const DialogPrmType MultiMenuStageSelSonicDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelSonic, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelSonic), 11};
 const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelTwinkle, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelTwinkle), 6};
-const DialogPrmType MultiMenuStageSelEmeDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEme, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelEme), 5};
-DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, multi_menu_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 4, 3 };
+DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, menu_multi_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 4, 3 };
 
-std::pair<int, int> sonic_level_link[] = {
+std::pair<int, int> spd_level_link_btl[] = {
 	{ LevelAndActIDs_EmeraldCoast1, 2 },
 	{ LevelAndActIDs_WindyValley1, 3 },
 	{ LevelAndActIDs_Casinopolis2, 1 },
@@ -226,13 +270,13 @@ std::pair<int, int> sonic_level_link[] = {
 	{ LevelAndActIDs_SkyDeck1, 3 },
 	{ LevelAndActIDs_LostWorld1, 2 },
 	{ LevelAndActIDs_FinalEgg1, 3 },
-	{ LevelAndActIDs_HotShelter1, 2 }
+	{ LevelAndActIDs_SandHill, 1 }
 };
 
-int coop_level_link[]{
+int spd_level_link[]{
 	LevelAndActIDs_EmeraldCoast1,
 	LevelAndActIDs_WindyValley1,
-	LevelAndActIDs_Casinopolis2,
+	LevelAndActIDs_Casinopolis1,
 	LevelAndActIDs_IceCap1,
 	LevelAndActIDs_TwinklePark1,
 	LevelAndActIDs_SpeedHighway1,
@@ -240,6 +284,30 @@ int coop_level_link[]{
 	LevelAndActIDs_SkyDeck1,
 	LevelAndActIDs_LostWorld1,
 	LevelAndActIDs_FinalEgg1,
+	LevelAndActIDs_HotShelter1,
+	LevelAndActIDs_SandHill
+};
+
+int fly_level_link[]{
+	LevelAndActIDs_WindyValley3,
+	LevelAndActIDs_Casinopolis2,
+	LevelAndActIDs_IceCap3,
+	LevelAndActIDs_SkyDeck1,
+	LevelAndActIDs_SpeedHighway1
+};
+
+int eme_level_link[]{
+	LevelAndActIDs_SpeedHighway3,
+	LevelAndActIDs_Casinopolis1,
+	LevelAndActIDs_RedMountain3,
+	LevelAndActIDs_LostWorld2,
+	LevelAndActIDs_SkyDeck3
+};
+
+int fish_level_link[]{
+	LevelAndActIDs_TwinklePark2,
+	LevelAndActIDs_IceCap2,
+	LevelAndActIDs_EmeraldCoast3,
 	LevelAndActIDs_HotShelter1
 };
 
@@ -252,28 +320,13 @@ int twinkle_level_link[]{
 	LevelAndActIDs_TwinkleCircuit6
 };
 
-int big_level_link[]{
-	LevelAndActIDs_TwinklePark2,
-	LevelAndActIDs_IceCap2,
-	LevelAndActIDs_EmeraldCoast3,
-	LevelAndActIDs_HotShelter1
-};
-
-int eme_level_link[]{
-	LevelAndActIDs_SpeedHighway3,
-	LevelAndActIDs_Casinopolis1,
-	LevelAndActIDs_RedMountain3,
-	LevelAndActIDs_LostWorld2,
-	LevelAndActIDs_SkyDeck3
-};
-
 int charsel_voicelist[] {
 	1098,
 	569,
 	528,
 	392,
-	921,
 	510,
+	921,
 	394,
 	1346,
 	2047
@@ -308,7 +361,6 @@ int pcount;
 bool enabled_characters[8];
 MD_MULTI saved_mode;
 MD_MULTI next_mode;
-int charsel_mode;
 int gNextDialogStat;
 multiplayer::mode gNextMultiMode;
 
@@ -347,22 +399,22 @@ int menu_multi_getplayerno(int num)
 {
 	switch (num)
 	{
-	case 0:
+	case CharSelChara_Sonic:
 	default:
 		return Characters_Sonic;
-	case 1:
+	case CharSelChara_Tails:
 		return Characters_Tails;
-	case 2:
+	case CharSelChara_Knuckles:
 		return Characters_Knuckles;
-	case 3:
+	case CharSelChara_Amy:
 		return Characters_Amy;
-	case 4:
-		return Characters_Gamma;
-	case 5:
+	case CharSelChara_Big:
 		return Characters_Big;
-	case 6:
+	case CharSelChara_Gamma:
+		return Characters_Gamma;
+	case CharSelChara_Tikal:
 		return Characters_Tikal;
-	case 7:
+	case CharSelChara_Eggman:
 		return Characters_Eggman;
 	}
 }
@@ -416,24 +468,39 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 		menu_multi_unready();
 		saved_mode = wk->SubMode;
 		break;
-	case MD_MULTI_CHARSEL: // Open character select
-		menu_multi_getcharaenable();
-		menu_multi_charsel_unready();
-		break;
 	case MD_MULTI_MODESEL:
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_MODESEL;
 		OpenDialogCsrLet(&MultiMenuModeSelDialog, nextdial, 0);
 		break;
 	case MD_MULTI_COOPSEL:
-		menu_multi_setsqrcursor();
+		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_COOPSEL;
-		OpenDialogCsrLet(&MultiMenuStageSelSonicDialog, nextdial, 0);
+		OpenDialogCsrLet(&MultiMenuCoopSelDialog, nextdial, 0);
 		break;
 	case MD_MULTI_BATTLESEL:
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_BATTLESEL;
 		OpenDialogCsrLet(&MultiMenuBattleSelDialog, nextdial, 0);
+		break;
+	case MD_MULTI_CHARSEL: // Open character select
+		menu_multi_getcharaenable();
+		menu_multi_charsel_unready();
+
+		if (gNextMultiMode == multiplayer::mode::coop)
+		{
+			chara_ready[0] = true;
+		}
+		break;
+	case MD_MULTI_STGSEL_SPD:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_SPD;
+		OpenDialogCsrLet(&MultiMenuStageSelSonicDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGSEL_FLY:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_FLY;
+		OpenDialogCsrLet(&MultiMenuStageSelFlyDialog, nextdial, 0);
 		break;
 	case MD_MULTI_STGSEL_EME:
 		menu_multi_setsqrcursor();
@@ -449,11 +516,6 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_FISH;
 		OpenDialogCsrLet(&MultiMenuStageSelBigDialog, nextdial, 0);
-		break;
-	case MD_MULTI_STGSEL_SNC:
-		menu_multi_setsqrcursor();
-		saved_mode = MD_MULTI_STGSEL_SNC;
-		OpenDialogCsrLet(&MultiMenuStageSelSonicDialog, nextdial, 0);
 		break;
 	case MD_MULTI_STGASK: // Open prompt to ask level confirmation
 		menu_multi_setrndcursor();
@@ -492,7 +554,7 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 	wk->T = 0.0f;
 }
 
-void multi_menu_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
+void menu_multi_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
 {
 	auto act = ConvertLevelActsID_ToAct(level);
 
@@ -524,7 +586,19 @@ void multi_menu_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
 	wk->actreq = ConvertLevelActsID_ToAct(level);
 }
 
-void multi_menu_confirmdialog_proc(DDlgType* ddltype)
+void menu_multi_tomodesel(MultiMenuWK* wk)
+{
+	if (gNextMultiMode == multiplayer::mode::battle)
+	{
+		menu_multi_change(wk, MD_MULTI_BATTLESEL);
+	}
+	else
+	{
+		menu_multi_change(wk, MD_MULTI_COOPSEL);
+	}
+}
+
+void menu_multi_confirmdialog_proc(DDlgType* ddltype)
 {
 	DrawSADXText(stg_confirm_texts[TextLanguage], 315);
 	
@@ -534,7 +608,7 @@ void multi_menu_confirmdialog_proc(DDlgType* ddltype)
 	njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_STG, -100, NJD_SPRITE_ALPHA);
 }
 
-void multi_menu_stg_confirm(MultiMenuWK* wk)
+void menu_multi_stg_confirm(MultiMenuWK* wk)
 {
 	auto stat = GetDialogStat();
 
@@ -562,157 +636,63 @@ void multi_menu_stg_confirm(MultiMenuWK* wk)
 	}
 }
 
-void menu_multi_stgsel_snc(MultiMenuWK* wk)
+void menu_multi_stgsel_regular(MultiMenuWK* wk, const DialogPrmType* dialog, int* list, int back)
+{
+	auto stat = GetDialogStat();
+
+	if (stat == dialog->CsrCancel) // go back request
+	{
+		gNextDialogStat = back;
+		menu_multi_change(wk, MD_MULTI_BATTLESEL);
+	}
+	else if (stat != -1) // launch game request
+	{
+		gNextDialogStat = stat;
+		menu_multi_request_stg(wk, list[stat], 1, stat);
+	}
+}
+
+void menu_multi_stgsel_spd(MultiMenuWK* wk)
 {
 	auto stat = GetDialogStat();
 
 	if (stat == MultiMenuStageSelSonicDialog.CsrCancel) // go back request
 	{
 		gNextDialogStat = 0;
-		menu_multi_change(wk, MD_MULTI_BATTLESEL);
+		menu_multi_tomodesel(wk);
 	}
 	else if (stat != -1) // launch game request
 	{
 		gNextDialogStat = stat;
-		gNextMultiMode = multiplayer::mode::battle;
-		multi_menu_request_stg(wk, sonic_level_link[stat].first, sonic_level_link[stat].second, stat);
-	}
-}
 
-void menu_multi_stgsel_twinkle(MultiMenuWK* wk)
-{
-	auto stat = GetDialogStat();
+		if (gNextMultiMode == multiplayer::mode::battle)
+		{
+			menu_multi_request_stg(wk, spd_level_link_btl[stat].first, spd_level_link_btl[stat].second, stat);
 
-	if (stat == MultiMenuStageSelTwinkleDialog.CsrCancel) // go back request
-	{
-		gNextDialogStat = 3;
-		menu_multi_change(wk, MD_MULTI_BATTLESEL);
-	}
-	else if (stat != -1) // launch game request
-	{
-		gNextDialogStat = stat;
-		gNextMultiMode = multiplayer::mode::battle;
-		multi_menu_request_stg(wk, twinkle_level_link[stat], 1, stat);
-	}
-}
-
-void menu_multi_stgsel_big(MultiMenuWK* wk)
-{
-	auto stat = GetDialogStat();
-
-	if (stat == MultiMenuStageSelBigDialog.CsrCancel) // go back request
-	{
-		gNextDialogStat = 3;
-		menu_multi_change(wk, MD_MULTI_BATTLESEL);
-	}
-	else if (stat != -1) // launch game request
-	{
-		gNextDialogStat = stat;
-		gNextMultiMode = multiplayer::mode::battle;
-		menu_multi_setallcharacters(5);
-		multi_menu_request_stg(wk, big_level_link[stat], 1, stat);
-	}
-}
-
-void menu_multi_stgsel_eme(MultiMenuWK* wk)
-{
-	auto stat = GetDialogStat();
-
-	if (stat == MultiMenuStageSelEmeDialog.CsrCancel) // go back request
-	{
-		gNextDialogStat = 1;
-		menu_multi_change(wk, MD_MULTI_BATTLESEL);
-	}
-	else if (stat != -1) // launch game request
-	{
-		gNextDialogStat = stat;
-		gNextMultiMode = multiplayer::mode::battle;
-		menu_multi_setallcharacters(2);
-		multi_menu_request_stg(wk, eme_level_link[stat], 1, stat);
-	}
-}
-
-void menu_multi_coopsel(MultiMenuWK* wk)
-{
-	auto stat = GetDialogStat();
-
-	if (stat == MultiMenuStageSelSonicDialog.CsrCancel) // go back request
-	{
-		gNextDialogStat = 0;
-		menu_multi_change(wk, MD_MULTI_MODESEL);
-	}
-	else if (stat != -1) // launch game request
-	{
-		gNextDialogStat = stat;
-		gNextMultiMode = multiplayer::mode::coop;
-		multi_menu_request_stg(wk, coop_level_link[stat], 1, stat);
-	}
-}
-
-void menu_multi_battlesel(MultiMenuWK* wk)
-{
-	auto stat = GetDialogStat();
-
-	switch (stat)
-	{
-	case 0:
-		charsel_mode = 1;
-		gNextDialogStat = 0;
-		next_mode = MD_MULTI_STGSEL_SNC;
-		menu_multi_change(wk, MD_MULTI_CHARSEL);
-		break;
-	case 1:
-		menu_multi_change(wk, MD_MULTI_STGSEL_EME);
-		break;
-	case 2:
-		charsel_mode = 1;
-		gNextDialogStat = 2;
-		next_mode = MD_MULTI_STGSEL_TC;
-		menu_multi_change(wk, MD_MULTI_CHARSEL);
-		break;
-	case 3:
-		menu_multi_change(wk, MD_MULTI_STGSEL_FISH);
-		break;
-	case 4:
-		gNextDialogStat = 1;
-		menu_multi_change(wk, MD_MULTI_MODESEL);
-		break;
-	}
-}
-
-void menu_multi_modesel(MultiMenuWK* wk)
-{
-	auto stat = GetDialogStat();
-
-	switch (stat)
-	{
-	case 0:
-		charsel_mode = 0;
-		next_mode = MD_MULTI_COOPSEL;
-		menu_multi_change(wk, MD_MULTI_CHARSEL);
-		break;
-	case 1:
-		menu_multi_change(wk, MD_MULTI_BATTLESEL);
-		break;
-	case 2:
-		menu_multi_change(wk, MD_MULTI_CONNECT);
-		break;
+		}
+		else
+		{
+			menu_multi_request_stg(wk, spd_level_link[stat], 1, stat);
+		}
 	}
 }
 
 void menu_multi_charsel(MultiMenuWK* wk)
 {
 	bool done = true;
-	
+
 	// Return to main menu
 	if (MenuBackButtonsPressed())
 	{
-		menu_multi_change(wk, saved_mode);
-		return;
+		if (gNextMultiMode == multiplayer::mode::coop || chara_ready[0] == false)
+		{
+			menu_multi_change(wk, saved_mode);
+			return;
+		}
 	}
 
 	// Manage input
-	for (int i = 0; i < PLAYER_MAX; ++i)
+	for (int i = gNextMultiMode == multiplayer::mode::coop ? 1 : 0; i < PLAYER_MAX; ++i)
 	{
 		auto& sel = selected_characters[i];
 		auto press = PressedButtons[i];
@@ -771,11 +751,120 @@ void menu_multi_charsel(MultiMenuWK* wk)
 			}
 		}
 	}
-	
+
 	// If everyone has selected
 	if (done == true)
 	{
 		menu_multi_change(wk, next_mode);
+	}
+}
+
+void menu_multi_coopsel(MultiMenuWK* wk)
+{
+	auto stat = GetDialogStat();
+
+	if (stat >= 0)
+	{
+		if (stat == MultiMenuCoopSelDialog.CsrCancel)
+		{
+			gNextDialogStat = 0;
+			menu_multi_change(wk, MD_MULTI_MODESEL);
+		}
+		else
+		{
+			switch (stat)
+			{
+			case 0:
+				next_mode = MD_MULTI_STGSEL_SPD;
+				break;
+			case 1:
+				next_mode = MD_MULTI_STGSEL_FLY;
+				break;
+			case 2:
+				next_mode = MD_MULTI_STGSEL_EME;
+				break;
+			case 3:
+				next_mode = MD_MULTI_STGSEL_EGROB;
+				break;
+			case 4:
+				next_mode = MD_MULTI_STGSEL_FISH;
+				break;
+			case 5:
+				next_mode = MD_MULTI_STGSEL_SHOOT;
+				break;
+			}
+
+			selected_characters[0] = stat;
+			gNextDialogStat = stat;
+			menu_multi_change(wk, MD_MULTI_CHARSEL);
+		}
+	}
+}
+
+void menu_multi_battlesel(MultiMenuWK* wk)
+{
+	auto stat = GetDialogStat();
+
+	switch (stat)
+	{
+	case 0:
+		menu_multi_change(wk, MD_MULTI_STGSEL_SPD);
+		menu_multi_setallcharacters(CharSelChara_Sonic);
+		break;
+	case 1:
+		menu_multi_change(wk, MD_MULTI_STGSEL_FLY);
+		menu_multi_setallcharacters(CharSelChara_Tails);
+		break;
+	case 2:
+		menu_multi_change(wk, MD_MULTI_STGSEL_EME);
+		menu_multi_setallcharacters(CharSelChara_Knuckles);
+		break;
+	case 3:
+		menu_multi_change(wk, MD_MULTI_STGSEL_EGROB);
+		menu_multi_setallcharacters(CharSelChara_Amy);
+		break;
+	case 4:
+		menu_multi_change(wk, MD_MULTI_STGSEL_FISH);
+		menu_multi_setallcharacters(CharSelChara_Big);
+		break;
+	case 5:
+		menu_multi_change(wk, MD_MULTI_STGSEL_SHOOT);
+		menu_multi_setallcharacters(CharSelChara_Gamma);
+		break;
+	case 6:
+		gNextDialogStat = 6;
+		next_mode = MD_MULTI_STGSEL_TC;
+		menu_multi_change(wk, MD_MULTI_CHARSEL);
+		break;
+	case 7:
+		gNextDialogStat = 7;
+		next_mode = MD_MULTI_STGSEL_VS;
+		menu_multi_change(wk, MD_MULTI_CHARSEL);
+		break;
+	case 8:
+		gNextDialogStat = 1;
+		menu_multi_change(wk, MD_MULTI_MODESEL);
+		break;
+	}
+}
+
+void menu_multi_modesel(MultiMenuWK* wk)
+{
+	auto stat = GetDialogStat();
+
+	switch (stat)
+	{
+	case 0:
+		gNextMultiMode = multiplayer::mode::coop;
+		menu_multi_change(wk, MD_MULTI_COOPSEL);
+		break;
+	case 1:
+		gNextMultiMode = multiplayer::mode::battle;
+		menu_multi_change(wk, MD_MULTI_BATTLESEL);
+		break;
+	case 2:
+		menu_multi_change(wk, MD_MULTI_CONNECT);
+		break;
 	}
 }
 
@@ -845,27 +934,30 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	case MD_MULTI_BATTLESEL:
 		menu_multi_battlesel(wk);
 		break;
+	case MD_MULTI_STGSEL_SPD:
+		menu_multi_stgsel_spd(wk);
+		break;
+	case MD_MULTI_STGSEL_FLY:
+		menu_multi_stgsel_regular(wk, &MultiMenuStageSelFlyDialog, fly_level_link, 1);
+		break;
 	case MD_MULTI_STGSEL_EME:
-		menu_multi_stgsel_eme(wk);
+		menu_multi_stgsel_regular(wk, &MultiMenuStageSelEmeDialog, eme_level_link, 2);
 		break;
 	case MD_MULTI_STGSEL_TC:
-		menu_multi_stgsel_twinkle(wk);
+		menu_multi_stgsel_regular(wk, &MultiMenuStageSelTwinkleDialog, twinkle_level_link, 6);
 		break;
 	case MD_MULTI_STGSEL_FISH:
-		menu_multi_stgsel_big(wk);
-		break;
-	case MD_MULTI_STGSEL_SNC:
-		menu_multi_stgsel_snc(wk);
+		menu_multi_stgsel_regular(wk, &MultiMenuStageSelBigDialog, fish_level_link, 4);
 		break;
 	case MD_MULTI_STGASK:
-		multi_menu_stg_confirm(wk);
+		menu_multi_stg_confirm(wk);
 		break;
 	}
 }
 
-void multi_menu_disp_controls(MultiMenuWK* wk)
+void menu_multi_disp_controls(MultiMenuWK* wk)
 {
-	if (wk->SubMode != MD_MULTI_COOPSEL && wk->SubMode != MD_MULTI_STGSEL_SNC && wk->SubMode > MD_MULTI_ONLINECON && wk->SubMode != MD_MULTI_STGASK && wk->Stat != ADVA_STAT_FADEOUT)
+	if (wk->SubMode != MD_MULTI_COOPSEL && wk->SubMode != MD_MULTI_STGSEL_SPD && wk->SubMode > MD_MULTI_ONLINECON && wk->SubMode != MD_MULTI_STGASK && wk->Stat != ADVA_STAT_FADEOUT)
 	{
 		if (wk->alphaControls < 1.0f) wk->alphaControls += 0.05f;
 	}
@@ -899,7 +991,7 @@ void multi_menu_disp_controls(MultiMenuWK* wk)
 	gHelperFunctions->PopScaleUI();
 }
 
-void multi_menu_disp_charsel(MultiMenuWK* wk)
+void menu_multi_disp_charsel(MultiMenuWK* wk)
 {
 	if (wk->SubMode == MD_MULTI_CHARSEL && wk->Stat != ADVA_STAT_FADEOUT)
 	{
@@ -963,7 +1055,7 @@ void multi_menu_disp_charsel(MultiMenuWK* wk)
 	}
 }
 
-void multi_menu_disp_localcon(MultiMenuWK* wk)
+void menu_multi_disp_localcon(MultiMenuWK* wk)
 {
 	if (wk->SubMode == MD_MULTI_LOCALCON && wk->Stat != ADVA_STAT_FADEOUT)
 	{
@@ -1053,13 +1145,13 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		ghDrawPvrTexture(AVAMULTITEX_TITLE, 40.0f, 47.0f, wk->BaseZ - 18);
 
 		// Draw local player connection
-		multi_menu_disp_localcon(wk);
+		menu_multi_disp_localcon(wk);
 
 		// Draw charsel background and items
-		multi_menu_disp_charsel(wk);
+		menu_multi_disp_charsel(wk);
 
 		// Draw controls
-		multi_menu_disp_controls(wk);
+		menu_multi_disp_controls(wk);
 
 		ResetMaterial();
 		gHelperFunctions->PopScaleUI();
