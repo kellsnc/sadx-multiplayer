@@ -68,6 +68,12 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_STGEME4,
 	AVAMULTITEX_STGEME5,
 	AVAMULTITEX_STGBOARD,
+	AVAMULTITEX_STG0202,
+	AVAMULTITEX_STG0302A,
+	AVAMULTITEX_STG1000A,
+	AVAMULTITEX_STG1002E,
+	AVAMULTITEX_STG0501E,
+	AVAMULTITEX_STG1202E
 };
 
 enum AVA_MULTI_ANM
@@ -229,11 +235,25 @@ PanelPrmType PanelPrmMenuMultiStgSelEme[]{
 	 { 75.0f,	40.0f,  AVAMULTITEX_STGEME5 }
 };
 
+PanelPrmType PanelPrmMenuMultiStgSelEgRob[]{
+	 { -100.0f,	-65.0f, AVAMULTITEX_STG0302A },
+	 { 100.0f,	-65.0f, AVAMULTITEX_STGBIG4 },
+	 { 0.0f,    65.0f,  AVAMULTITEX_STG1000A }
+};
+
 PanelPrmType PanelPrmMenuMultiStgSelBig[]{
-	 { -100.0f,	-65.0f, AVAMULTITEX_STGBIG1 },
-	 { 100.0f,	-65.0f, AVAMULTITEX_STGBIG2 },
-	 { -100.0f,	65.0f,  AVAMULTITEX_STGBIG3 },
-	 { 100.0f,	65.0f,  AVAMULTITEX_STGBIG4 }
+	 { -100.0f, -65.0f, AVAMULTITEX_STGBIG1 },
+	 { 100.0f,  -65.0f, AVAMULTITEX_STGBIG2 },
+	 { -100.0f, 65.0f,  AVAMULTITEX_STGBIG3 },
+	 { 100.0f,  65.0f,  AVAMULTITEX_STGBIG4 }
+};
+
+PanelPrmType PanelPrmMenuMultiStgSelShoot[]{
+	 { -150.0f,	-40.0f, AVAMULTITEX_STG1002E },
+	 { 0.0f,	-40.0f, AVAMULTITEX_STG1 },
+	 { 150.0f,	-40.0f, AVAMULTITEX_STG2 },
+	 { -75.0f,	40.0f,  AVAMULTITEX_STG0501E },
+	 { 75.0f,	40.0f,  AVAMULTITEX_STG1202E }
 };
 
 PanelPrmType PanelPrmMenuMultiStgSelTwinkle[]{
@@ -255,7 +275,9 @@ const DialogPrmType MultiMenuBattleSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &A
 const DialogPrmType MultiMenuStageSelSonicDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelSonic, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelSonic), 11 };
 const DialogPrmType MultiMenuStageSelFlyDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelFly, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelFly), 5 };
 const DialogPrmType MultiMenuStageSelEmeDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEme, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelEme), 5 };
+const DialogPrmType MultiMenuStageSelEgRobDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEgRob, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray(PanelPrmMenuMultiStgSelEgRob), 3};
 const DialogPrmType MultiMenuStageSelBigDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelBig, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray(PanelPrmMenuMultiStgSelBig), 4};
+const DialogPrmType MultiMenuStageSelShootDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelShoot, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelShoot), 5 };
 const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelTwinkle, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelTwinkle), 6};
 DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, menu_multi_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 4, 3 };
 
@@ -304,11 +326,25 @@ int eme_level_link[]{
 	LevelAndActIDs_SkyDeck3
 };
 
+int egrob_level_link[]{
+	LevelAndActIDs_TwinklePark2,
+	LevelAndActIDs_HotShelter1,
+	LevelAndActIDs_FinalEgg2
+};
+
 int fish_level_link[]{
 	LevelAndActIDs_TwinklePark2,
 	LevelAndActIDs_IceCap2,
 	LevelAndActIDs_EmeraldCoast3,
 	LevelAndActIDs_HotShelter1
+};
+
+int shoot_level_link[]{
+	LevelAndActIDs_FinalEgg3,
+	LevelAndActIDs_EmeraldCoast1,
+	LevelAndActIDs_WindyValley1,
+	LevelAndActIDs_RedMountain2,
+	LevelAndActIDs_HotShelter3
 };
 
 int twinkle_level_link[]{
@@ -507,15 +543,25 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 		saved_mode = MD_MULTI_STGSEL_EME;
 		OpenDialogCsrLet(&MultiMenuStageSelEmeDialog, nextdial, 0);
 		break;
-	case MD_MULTI_STGSEL_TC:
+	case MD_MULTI_STGSEL_EGROB:
 		menu_multi_setsqrcursor();
-		saved_mode = MD_MULTI_STGSEL_TC;
-		OpenDialogCsrLet(&MultiMenuStageSelTwinkleDialog, nextdial, 0);
+		saved_mode = MD_MULTI_STGSEL_EGROB;
+		OpenDialogCsrLet(&MultiMenuStageSelEgRobDialog, nextdial, 0);
 		break;
 	case MD_MULTI_STGSEL_FISH:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_FISH;
 		OpenDialogCsrLet(&MultiMenuStageSelBigDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGSEL_SHOOT:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_SHOOT;
+		OpenDialogCsrLet(&MultiMenuStageSelShootDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGSEL_TC:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_TC;
+		OpenDialogCsrLet(&MultiMenuStageSelTwinkleDialog, nextdial, 0);
 		break;
 	case MD_MULTI_STGASK: // Open prompt to ask level confirmation
 		menu_multi_setrndcursor();
@@ -526,9 +572,11 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 
 void menu_multi_launch_level(MultiMenuWK* wk, int act)
 {
+	CloseDialog();
+
 	// Enable multiplayer mode
 	multiplayer::Enable(pcount, gNextMultiMode);
-	
+
 	for (int i = 0; i < pcount; ++i)
 	{
 		SetCurrentCharacter(i, menu_multi_getplayerno(selected_characters[i]));
@@ -794,9 +842,9 @@ void menu_multi_coopsel(MultiMenuWK* wk)
 				break;
 			}
 
+			menu_multi_change(wk, MD_MULTI_CHARSEL);
 			selected_characters[0] = stat;
 			gNextDialogStat = stat;
-			menu_multi_change(wk, MD_MULTI_CHARSEL);
 		}
 	}
 }
@@ -943,11 +991,17 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	case MD_MULTI_STGSEL_EME:
 		menu_multi_stgsel_regular(wk, &MultiMenuStageSelEmeDialog, eme_level_link, 2);
 		break;
-	case MD_MULTI_STGSEL_TC:
-		menu_multi_stgsel_regular(wk, &MultiMenuStageSelTwinkleDialog, twinkle_level_link, 6);
+	case MD_MULTI_STGSEL_EGROB:
+		menu_multi_stgsel_regular(wk, &MultiMenuStageSelEgRobDialog, egrob_level_link, 3);
 		break;
 	case MD_MULTI_STGSEL_FISH:
 		menu_multi_stgsel_regular(wk, &MultiMenuStageSelBigDialog, fish_level_link, 4);
+		break;
+	case MD_MULTI_STGSEL_SHOOT:
+		menu_multi_stgsel_regular(wk, &MultiMenuStageSelShootDialog, shoot_level_link, 5);
+		break;
+	case MD_MULTI_STGSEL_TC:
+		menu_multi_stgsel_regular(wk, &MultiMenuStageSelTwinkleDialog, twinkle_level_link, 6);
 		break;
 	case MD_MULTI_STGASK:
 		menu_multi_stg_confirm(wk);
@@ -957,7 +1011,7 @@ void menu_multi_subexec(MultiMenuWK* wk)
 
 void menu_multi_disp_controls(MultiMenuWK* wk)
 {
-	if (wk->SubMode != MD_MULTI_COOPSEL && wk->SubMode != MD_MULTI_STGSEL_SPD && wk->SubMode > MD_MULTI_ONLINECON && wk->SubMode != MD_MULTI_STGASK && wk->Stat != ADVA_STAT_FADEOUT)
+	if (wk->SubMode != MD_MULTI_STGSEL_SPD && wk->SubMode > MD_MULTI_ONLINECON && wk->SubMode != MD_MULTI_STGASK && wk->Stat != ADVA_STAT_FADEOUT)
 	{
 		if (wk->alphaControls < 1.0f) wk->alphaControls += 0.05f;
 	}
@@ -1178,6 +1232,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		}
 		else
 		{
+			gNextDialogStat = 0;
 			menu_multi_change(wk, saved_mode);
 			wk->Stat = ADVA_STAT_KEEP;
 			wk->T = 1.0f;
@@ -1251,6 +1306,11 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 void __cdecl LoadMultiMenu(ModeSelPrmType* prmp)
 {
+	if (MultiMenuTp)
+	{
+		return;
+	}
+
 	auto tp = MultiMenuTp = CreateElementalTask(0, LEV_4, MultiMenuExec_Main);
 
 	auto wk = (MultiMenuWK*)AllocateArray(1, sizeof(MultiMenuWK));
