@@ -640,7 +640,7 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 
 void menu_multi_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
 {
-	auto act = ConvertLevelActsID_ToAct(level);
+	auto act = toactnum(level);
 
 	MultiMenuStageConfirmDialog.CsrMax = actcnt + 1;
 	MultiMenuStageConfirmDialog.CsrCancel = actcnt;
@@ -666,8 +666,8 @@ void menu_multi_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
 
 	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[item].PvrIdx;
 	menu_multi_change(wk, MD_MULTI_STGASK);
-	wk->stgreq = ConvertLevelActsID_ToLevel(level);
-	wk->actreq = ConvertLevelActsID_ToAct(level);
+	wk->stgreq = tolevelnum(level);
+	wk->actreq = toactnum(level);
 }
 
 void menu_multi_tomodesel(MultiMenuWK* wk)
@@ -1068,7 +1068,7 @@ void menu_multi_disp_controls(MultiMenuWK* wk)
 
 	SetMaterial(wk->alphaControls, 1.0f, 1.0f, 1.0f);
 
-	gHelperFunctions->PushScaleUI((uiscale::Align)(Align_Bottom | Align_Center_Horizontal), false, 1.0f, 1.0f);
+	gHelperFunctions->PushScaleUI((uiscale::Align)(uiscale::Align::Align_Bottom | uiscale::Align::Align_Center_Horizontal), false, 1.0f, 1.0f);
 
 	AVA_MULTI_SPRITE.p.y = 432.0f;
 

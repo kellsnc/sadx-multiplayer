@@ -9,23 +9,22 @@ void DrawSADXText(const char* text, __int16 y)
 	MSG_LoadTexture(&jimakumsgc);
 }
 
-int MenuSelectButtonsPressed_r(int pnum)
+int MenuSelectButtonsPressedM(int pnum)
 {
 	return PressedButtons[pnum] & (Buttons_Start | Buttons_A);
-
 }
 
-int MenuBackButtonsPressed_r(int pnum)
+int MenuBackButtonsPressedM(int pnum)
 {
 	return PressedButtons[pnum] & (Buttons_X | Buttons_B);
 }
 
-short ConvertLevelActsID_ToLevel(short level) {
-
-	return level >> 8;
+short tolevelnum(short num)
+{
+	return num >> 8;
 }
 
-short ConvertLevelActsID_ToAct(short act) {
-
-	return act & 0xf;
+short toactnum(short num)
+{
+	return num & 0xf;
 }
