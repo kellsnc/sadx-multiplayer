@@ -185,17 +185,36 @@ void RemovePlayersDamage(taskwk* twp)
     }
 }
 
+void SetPlayerTargetable(taskwk* twp)
+{
+    if (twp->cwp)
+    {
+        twp->cwp->flag |= 0x40;
+        twp->cwp->id = 3;
+    }
+}
+
 void UpdatePlayersInfo()
 {
     rings[0] = ssNumRing;
     lives[0] = scNumPlayer;
     score[0] = slEnemyScore;
 
-    if (IsIngame() && multiplayer::IsCoopMode())
+    if (IsIngame())
     {
-        for (int i = 0; i < PLAYER_MAX; ++i)
+        bool coop = multiplayer::IsCoopMode();
+        bool vs = multiplayer::IsFightMode();
+
+        if (coop || vs)
         {
-            if (playertwp[i]) RemovePlayersDamage(playertwp[i]);
+            for (int i = 0; i < PLAYER_MAX; ++i)
+            {
+                if (playertwp[i])
+                {
+                    if (coop) RemovePlayersDamage(playertwp[i]);
+                    if (vs) SetPlayerTargetable(playertwp[i]);
+                }
+            }
         }
     }
 }

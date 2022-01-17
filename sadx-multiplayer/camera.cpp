@@ -142,7 +142,12 @@ void RunMultiCamera(int num)
     auto plmwp = (motionwk2*)playermwp[num];
     auto plpwp = playerpwp[num];
     auto plper = &perG[num];
-    
+
+    if (multiplayer::IsFightMode())
+    {
+        cam->mode |= 0x80000008;
+    }
+
     if (!pltwp)
     {
         return;

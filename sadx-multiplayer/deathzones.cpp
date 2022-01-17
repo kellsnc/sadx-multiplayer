@@ -135,7 +135,14 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 
 	LoopTaskC(tp);
 
-	auto dz = KillingCollisionModelsListList[CurrentLevel][CurrentAct];
+	auto dzl = KillingCollisionModelsListList[CurrentLevel];
+
+	if (!dzl)
+	{
+		return;
+	}
+
+	auto dz = dzl[CurrentAct];
 
 	if (dz)
 	{

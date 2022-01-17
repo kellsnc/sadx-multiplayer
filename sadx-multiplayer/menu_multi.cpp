@@ -73,7 +73,15 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_STG1000A,
 	AVAMULTITEX_STG1002E,
 	AVAMULTITEX_STG0501E,
-	AVAMULTITEX_STG1202E
+	AVAMULTITEX_STG1202E,
+	AVAMULTITEX_STG1500,
+	AVAMULTITEX_STG1600,
+	AVAMULTITEX_STG1700,
+	AVAMULTITEX_STG1800,
+	AVAMULTITEX_STG2000,
+	AVAMULTITEX_STG2100,
+	AVAMULTITEX_STG2400,
+	AVAMULTITEX_STG2500
 };
 
 enum AVA_MULTI_ANM
@@ -265,6 +273,17 @@ PanelPrmType PanelPrmMenuMultiStgSelTwinkle[]{
 	 { 150.0f,	40.0f,  AVAMULTITEX_STGTC6 }
 };
 
+PanelPrmType PanelPrmMenuMultiStgSelVs[]{
+	 { -150.0f,	-80.0f, AVAMULTITEX_STG1500 },
+	 { 0.0f,	-80.0f, AVAMULTITEX_STG1600 },
+	 { 150.0f,	-80.0f, AVAMULTITEX_STG1700 },
+	 { -150.0f,	0.0f,   AVAMULTITEX_STG1800 },
+	 { 0.0f,	0.0f,   AVAMULTITEX_STG2000 },
+	 { 150.0f,	0.0f,   AVAMULTITEX_STG2100 },
+	 { -75.0f,	80.0f,  AVAMULTITEX_STG2400 },
+	 { 75.0f,	80.0f,  AVAMULTITEX_STG2500 }
+};
+
 PanelPrmType PanelPrmMenuMultiStgConfirm[4] {};
 
 void menu_multi_confirmdialog_proc(DDlgType* ddltype);
@@ -279,6 +298,7 @@ const DialogPrmType MultiMenuStageSelEgRobDialog = { DLG_PNLSTYLE_MARU4, nullptr
 const DialogPrmType MultiMenuStageSelBigDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelBig, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray(PanelPrmMenuMultiStgSelBig), 4};
 const DialogPrmType MultiMenuStageSelShootDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelShoot, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelShoot), 5 };
 const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelTwinkle, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelTwinkle), 6};
+const DialogPrmType MultiMenuStageSelVsDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelVs, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 2.1f, 1.2f, LengthOfArray(PanelPrmMenuMultiStgSelVs), 8 };
 DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, menu_multi_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 4, 3 };
 
 std::pair<int, int> spd_level_link_btl[] = {
@@ -366,6 +386,17 @@ int charsel_voicelist[] {
 	394,
 	1346,
 	2047
+};
+
+int vs_level_link[]{
+	LevelAndActIDs_Chaos0,
+	LevelAndActIDs_Chaos2,
+	LevelAndActIDs_Chaos4,
+	LevelAndActIDs_Chaos6,
+	LevelAndActIDs_EggHornet,
+	LevelAndActIDs_EggWalker,
+	LevelAndActIDs_E101,
+	LevelAndActIDs_E101R
 };
 
 const AvaTexLdEnum AvaTexLdListForMulti[]{
@@ -562,6 +593,11 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_TC;
 		OpenDialogCsrLet(&MultiMenuStageSelTwinkleDialog, nextdial, 0);
+		break;
+	case MD_MULTI_STGSEL_VS:
+		menu_multi_setsqrcursor();
+		saved_mode = MD_MULTI_STGSEL_VS;
+		OpenDialogCsrLet(&MultiMenuStageSelVsDialog, nextdial, 0);
 		break;
 	case MD_MULTI_STGASK: // Open prompt to ask level confirmation
 		menu_multi_setrndcursor();
@@ -1002,6 +1038,9 @@ void menu_multi_subexec(MultiMenuWK* wk)
 		break;
 	case MD_MULTI_STGSEL_TC:
 		menu_multi_stgsel_regular(wk, &MultiMenuStageSelTwinkleDialog, twinkle_level_link, 6);
+		break;
+	case MD_MULTI_STGSEL_VS:
+		menu_multi_stgsel_regular(wk, &MultiMenuStageSelVsDialog, vs_level_link, 7);
 		break;
 	case MD_MULTI_STGASK:
 		menu_multi_stg_confirm(wk);

@@ -16,6 +16,7 @@ Trampoline* GetPlayersInputData_t  = nullptr;
 Trampoline* PInitialize_t          = nullptr;
 Trampoline* NpcMilesSet_t          = nullptr;
 Trampoline* Ring_t                 = nullptr;
+Trampoline* PlayerVacumedRing_t    = nullptr;
 Trampoline* EnemyCheckDamage_t     = nullptr;
 Trampoline* EnemyDist2FromPlayer_t = nullptr;
 Trampoline* EnemyCalcPlayerAngle_t = nullptr;
@@ -427,11 +428,108 @@ void __cdecl MakeLandCollLandEntryRangeIn_r()
 	}
 }
 
+static BOOL PlayerVacumedRing_r(taskwk* twp)
+{
+	if (multiplayer::IsActive())
+	{
+		// Get closest players with magnetic field
+		taskwk* pltwp_ = nullptr;
+		playerwk* plpwp = nullptr;
+		float dist = 10000000.0f;
+
+		for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
+		{
+			auto pltwp = playertwp[i];
+			plpwp = playerpwp[i];
+
+			if (pltwp && plpwp && plpwp->item & Powerups_MagneticBarrier)
+			{
+				NJS_VECTOR v
+				{
+					twp->pos.x - pltwp->pos.x,
+					twp->pos.y - pltwp->pos.y,
+					twp->pos.z - pltwp->pos.z
+				};
+
+				auto curdist = njScalor(&v);
+
+				if (curdist < dist)
+				{
+					dist = curdist;
+					pltwp_ = pltwp;
+				}
+			}
+		}
+
+		// found one
+		if (pltwp_ && (dist < 50.0f || twp->wtimer))
+		{
+			NJS_VECTOR dir = { 0.0f, 7.0f, 0.0f };
+			njPushMatrix(_nj_unit_matrix_);
+			if (pltwp_->ang.z) njRotateZ(0, pltwp_->ang.z);
+			if (pltwp_->ang.x) njRotateX(0, pltwp_->ang.x);
+			if (pltwp_->ang.y) njRotateY(0, pltwp_->ang.y);
+			njCalcPoint(0, &dir, &dir);
+			njPopMatrixEx();
+
+			dir.x += pltwp_->pos.x;
+			dir.y += pltwp_->pos.y;
+			dir.z += pltwp_->pos.z;
+
+			// clamp
+			if (dist > 50.0f)
+			{
+				dist = 50.0f;
+			}
+
+			dist = min(5.0f, max(0.85f, dist * 0.026f));
+
+			if (plpwp)
+			{
+				dist *= (njScalor(&plpwp->spd) * 0.5f + 1.0f);
+			}
+
+			CalcAdvanceAsPossible(&twp->pos, &dir, dist, &twp->pos);
+			++twp->wtimer;
+
+			twp->counter.f = twp->counter.f + 3.0f;
+			EntryColliList(twp);
+			return TRUE;
+		}
+
+		return FALSE;
+	}
+	else
+	{
+		auto target = TARGET_DYNAMIC(PlayerVacumedRing);
+		BOOL result;
+		__asm
+		{
+			mov esi, [twp]
+			call target
+			mov result, eax
+		}
+		return result;
+	}
+}
+
+static void __declspec(naked) PlayerVacumedRing_w()
+{
+	__asm
+	{
+		push esi
+		call PlayerVacumedRing_r
+		pop esi
+		retn
+	}
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
 	GetPlayersInputData_t   = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
 	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
+	PlayerVacumedRing_t     = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);

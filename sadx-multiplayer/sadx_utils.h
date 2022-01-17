@@ -409,6 +409,19 @@ FastcallFunctionPointer(bool, njCollisionCheckSS, (float* p1, float* p2), 0x7893
 FunctionPointer(void, KillHimP, (int pno), 0x440CD0); // kill player
 FunctionPointer(void, DamegeRingScatter, (char pno), 0x4506F0);
 DataPointer(_OBJ_CAMERAENTRY*, pObjCameraEntry, 0x3B2CAA4);
+VoidFunc(SetTableBG_Chaos0, 0x545CE0);
+VoidFunc(SetTableBG_Chaos2, 0x54A540);
+VoidFunc(SetTableBG_Chaos4, 0x550840);
+VoidFunc(SetTableBG_Chaos6, 0x5577E0);
+VoidFunc(SetTableBG_E101, 0x566AF0);
+VoidFunc(setRainEffect, 0x546320);
+VoidFunc(C4SuimenYurashiSet, 0x5535D0);
+VoidFunc(C4LeafSetOld, 0x554480);
+VoidFunc(InitIndirectEffect3D_Bossegm1, 0x5723E0);
+TaskFunc(BossChaos0, 0x548640);
+TaskFunc(Chaos2Column, 0x548640);
+TaskFunc(EggCarrierCloud_c6, 0x557690);
+DataPointer(taskwk*, chaostwp, 0x3C5A7D8);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);

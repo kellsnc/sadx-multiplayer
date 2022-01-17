@@ -8,8 +8,16 @@ Level-related adjustements for multiplayer
 */
 
 Trampoline* FogColorChange_t    = nullptr;
-Trampoline* PlayerVacumedRing_t = nullptr;
 Trampoline* SetPlayerInitialPosition_t = nullptr;
+
+Trampoline* Rd_Chaos0_t   = nullptr;
+Trampoline* Rd_Chaos2_t   = nullptr;
+Trampoline* Rd_Chaos4_t   = nullptr;
+Trampoline* Rd_Chaos6_t   = nullptr;
+Trampoline* Rd_Bossegm1_t = nullptr;
+Trampoline* Rd_Bossegm2_t = nullptr;
+Trampoline* Rd_E101_t      = nullptr;
+Trampoline* Rd_E101_R_t    = nullptr;
 
 // Put players side by side
 void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
@@ -56,106 +64,225 @@ static void __declspec(naked) FogColorChange_w()
 	}
 }
 
-static BOOL PlayerVacumedRing_r(taskwk* twp)
+void MultiArena(task* tp)
 {
-	if (multiplayer::IsActive())
+	auto twp = tp->twp;
+
+	if (twp->mode == 0)
 	{
-		// Get closest players with magnetic field
-		taskwk* pltwp_ = nullptr;
-		playerwk* plpwp = nullptr;
-		float dist = 10000000.0f;
+		PlayMusic(MusicIDs_bossall);
 
-		for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
+		switch (CurrentLevel)
 		{
-			auto pltwp = playertwp[i];
-			plpwp = playerpwp[i];
+		case LevelIDs_Chaos0:
+			setRainEffect();
+			SetTableBG_Chaos0();
+			CreateElementalTask(LoadObj_Data1 | LoadObj_Data2, LEV_2, BossChaos0);
+			break;
+		case LevelIDs_Chaos2:
+			SetTableBG_Chaos2();
+			CreateElementalTask(LoadObj_Data1, LEV_1, Chaos2Column);
+			break;
+		case LevelIDs_Chaos4:
+			SetTableBG_Chaos4();
+			C4SuimenYurashiSet();
+			C4LeafSetOld();
+			break;
+		case LevelIDs_Chaos6:
+			SetTableBG_Chaos6();
+			CreateElementalTask(LoadObj_Data1, LEV_3, EggCarrierCloud_c6);
+			break;
+		case LevelIDs_EggHornet:
+			InitIndirectEffect3D_Bossegm1();
+			break;
+		case LevelIDs_EggWalker:
+			CurrentCharacter = Characters_Tails;
 
-			if (pltwp && plpwp && plpwp->item & Powerups_MagneticBarrier)
+			for (int i = 0; i < PLAYER_MAX; ++i)
 			{
-				NJS_VECTOR v
+				if (playertwp[i])
 				{
-					twp->pos.x - pltwp->pos.x,
-					twp->pos.y - pltwp->pos.y,
-					twp->pos.z - pltwp->pos.z
-				};
-
-				auto curdist = njScalor(&v);
-
-				if (curdist < dist)
-				{
-					dist = curdist;
-					pltwp_ = pltwp;
+					SetPlayerInitialPosition(playertwp[i]);
 				}
 			}
-		}
+			break;
+		case LevelIDs_E101:
+			SetTableBG_E101();
+			break;
+		case LevelIDs_E101R:
+			CurrentCharacter = Characters_Gamma;
 
-		// found one
-		if (pltwp_ && (dist < 50.0f || twp->wtimer))
-		{
-			NJS_VECTOR dir = { 0.0f, 7.0f, 0.0f };
-			njPushMatrix(_nj_unit_matrix_);
-			if (pltwp_->ang.z) njRotateZ(0, pltwp_->ang.z);
-			if (pltwp_->ang.x) njRotateX(0, pltwp_->ang.x);
-			if (pltwp_->ang.y) njRotateY(0, pltwp_->ang.y);
-			njCalcPoint(0, &dir, &dir);
-			njPopMatrixEx();
-
-			dir.x += pltwp_->pos.x;
-			dir.y += pltwp_->pos.y;
-			dir.z += pltwp_->pos.z;
-
-			// clamp
-			if (dist > 50.0f)
+			for (int i = 0; i < PLAYER_MAX; ++i)
 			{
-				dist = 50.0f;
+				if (playertwp[i])
+				{
+					SetPlayerInitialPosition(playertwp[i]);
+				}
 			}
 
-			dist = min(5.0f, max(0.85f, dist * 0.026f));
-
-			if (plpwp)
-			{
-				dist *= (njScalor(&plpwp->spd) * 0.5f + 1.0f);
-			}
-
-			CalcAdvanceAsPossible(&twp->pos, &dir, dist, &twp->pos);
-			++twp->wtimer;
-
-			twp->counter.f = twp->counter.f + 3.0f;
-			EntryColliList(twp);
-			return TRUE;
+			break;
 		}
 
-		return FALSE;
+		twp->mode = 1;
 	}
 	else
 	{
-		auto target = TARGET_DYNAMIC(PlayerVacumedRing);
-		BOOL result;
-		__asm
+		switch (CurrentLevel)
 		{
-			mov esi, [twp]
-			call target
-			mov result, eax
+		case LevelIDs_Chaos0:
+			chaostwp->pos.y = -1000;
+			chaostwp->mode = 0x13;
+			break;
+		case LevelIDs_EggWalker:
+			for (int i = 0; i < PLAYER_MAX; ++i)
+			{
+				if (!playertwp[i])
+				{
+					continue;
+				}
+
+				if (playertwp[i]->pos.z >= 930.0f)
+				{
+					if (playertwp[i]->pos.z > 1480.0f)
+					{
+						playertwp[i]->pos.z = 1480.0f;
+					}
+				}
+				else
+				{
+					playertwp[i]->pos.z = 930.0f;
+				}
+
+				if (playertwp[i]->pos.x >= -515.0f)
+				{
+					if (playertwp[i]->pos.x > -375.0)
+					{
+						playertwp[i]->pos.x = -375.0;
+					}
+				}
+				else
+				{
+					playertwp[i]->pos.x = -515.0f;
+				}
+
+				if (playertwp[i]->pos.y >= -3.0f)
+				{
+					if (playertwp[i]->pos.y > 45.0f)
+					{
+						playertwp[i]->pos.y = 45.0f;
+					}
+				}
+				else
+				{
+					playertwp[i]->pos.y = -3.0f;
+				}
+			}
+
+			break;
 		}
-		return result;
 	}
 }
 
-static void __declspec(naked) PlayerVacumedRing_w()
+void __cdecl Rd_Chaos0_r(task* tp)
 {
-	__asm
+	if (multiplayer::IsFightMode())
 	{
-		push esi
-		call PlayerVacumedRing_r
-		pop esi
-		retn
+		MultiArena(tp);
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_Chaos0)(tp);
 	}
 }
+
+void __cdecl Rd_Chaos2_r(task* tp)
+{
+	if (multiplayer::IsFightMode())
+	{
+		MultiArena(tp);
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_Chaos2)(tp);
+	}
+}
+
+void __cdecl Rd_Chaos4_r(task* tp)
+{
+	if (multiplayer::IsFightMode())
+	{
+		MultiArena(tp);
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_Chaos4)(tp);
+	}
+}
+
+void __cdecl Rd_Chaos6_r(task* tp)
+{
+	if (multiplayer::IsFightMode())
+	{
+		MultiArena(tp);
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_Chaos6)(tp);
+	}
+}
+
+void __cdecl Rd_Bossegm1_r(task* tp)
+{
+	if (multiplayer::IsFightMode())
+	{
+		MultiArena(tp);
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_Bossegm1)(tp);
+	}
+}
+
+void __cdecl Rd_Bossegm2_r(task* tp)
+{
+	if (multiplayer::IsFightMode())
+	{
+		MultiArena(tp);
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_Bossegm2)(tp);
+	}
+}
+
+void __cdecl Rd_E101_r(task* tp)
+{
+	if (multiplayer::IsFightMode())
+	{
+		MultiArena(tp);
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_E101)(tp);
+	}
+}
+
+void __cdecl Rd_E101_R_r(task* tp)
+{
+	if (multiplayer::IsFightMode())
+	{
+		MultiArena(tp);
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_E101_R)(tp);
+	}
+}
+
 void InitLevels()
 {
 	// Windy Valley tornade effects
 	FogColorChange_t    = new Trampoline(0x4DD240, 0x4DD246, FogColorChange_w);
-	PlayerVacumedRing_t = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
 	SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
 
 	// Patch Skyboxes (display function managing mode)
@@ -165,4 +292,13 @@ void InitLevels()
 	WriteData((void**)0x610A7E, (void*)0x6109E0); // Speed Highway
 	WriteData((void**)0x5E1FCE, (void*)0x5E1F30); // Lost World
 	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Ice Cap
+
+	Rd_Chaos0_t = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
+	Rd_Chaos2_t = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
+	Rd_Chaos4_t = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
+	Rd_Chaos6_t = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
+	Rd_Bossegm1_t = new Trampoline(0x571850, 0x571856, Rd_Bossegm1_r);
+	Rd_Bossegm2_t = new Trampoline(0x5758D0, 0x5758D6, Rd_Bossegm2_r);
+	Rd_E101_t = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
+	Rd_E101_R_t = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
 }
