@@ -309,6 +309,16 @@ struct _OBJ_CAMERAENTRY
 	float fDistance;
 };
 
+struct TaskInfo
+{
+	unsigned int size;
+	unsigned int initMode;
+	void(__cdecl* init_p)(task*, void*);
+	TaskFuncPtr exec_p;
+	TaskFuncPtr disp_p;
+	TaskFuncPtr dest_p;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -422,6 +432,8 @@ TaskFunc(BossChaos0, 0x548640);
 TaskFunc(Chaos2Column, 0x548640);
 TaskFunc(EggCarrierCloud_c6, 0x557690);
 DataPointer(taskwk*, chaostwp, 0x3C5A7D8);
+FunctionPointer(void, MirenInitTask, (task* task_p, const TaskInfo* info_p, void* param_p), 0x796B30);
+VoidFunc(ResetMleriRangeRad, 0x43B6F0);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -440,6 +452,7 @@ FunctionPointer(void, cartTopographicalCollision, (task* tp, taskwk* twp), 0x799
 DataPointer(CART_OTHER_PARAM, CartOtherParam, 0x38C5F88);
 DataPointer(BOOL, CartGoalFlag, 0x3D08E00);
 DataArray(CART_LOAD_DATA, cart_load, 0x38C7FF0, 18);
+TaskFunc(EnemyCart, 0x79A9E0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

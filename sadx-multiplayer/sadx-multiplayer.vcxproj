@@ -127,6 +127,7 @@
     <ClCompile Include="objects\ObjectBeachWave.cpp" />
     <ClCompile Include="objects\ObjectItemBox.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
+    <ClCompile Include="objects\Rd_MiniCart.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

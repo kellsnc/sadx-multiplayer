@@ -422,23 +422,37 @@ void cartSELoopM(task* tp, int se_no)
 	}
 }
 
-void setupCartStageM(task* tp, taskwk* twp)
+void setupCartStageM(task* tp, taskwk* twp, int pnum)
 {
-	setupCartStage(tp);
-
-	// place all players on the starting line
-	if (twp->mode == CARTMD_WARP)
+	if (CurrentLevel == LevelIDs_TwinkleCircuit)
 	{
+		twp->pos = { 1513.0f, 9.0f, 74.0f };
+		twp->ang.y = 0xC000;
+
 		static const int dists[]
 		{
-			-10.0f,
-			10.0f,
-			-20.0f,
-			20.0f
+			-15.0f,
+			15.0f,
+			-45.0f,
+			45.0f
 		};
 
-		twp->pos.x += njCos(twp->ang.y + 0x4000) * dists[twp->btimer];
-		twp->pos.z += njSin(twp->ang.y + 0x4000) * dists[twp->btimer];
+		twp->pos.x += njCos(twp->ang.y) * dists[pnum];
+		twp->pos.z += njSin(twp->ang.y) * dists[pnum];
+
+		cart_data->last_pos = twp->pos;
+
+		if (playertwp[pnum])
+		{
+			playertwp[pnum]->pos = twp->pos;
+			playertwp[pnum]->pos.x -= 10.0f;
+		}
+
+		if (++cart_data->start_wait >= 10)
+		{
+			twp->mode = CARTMD_WARP;
+			SetInputP(pnum, 18);
+		}
 	}													 
 }
 
@@ -624,7 +638,7 @@ void EnemyCartM(task* tp)
 		break;
 	case CARTMD_WAIT:
 		cart_data->flag &= ~1u;
-		setupCartStageM(tp, twp);
+		setupCartStageM(tp, twp, pnum);
 		cartSetVectorM(twp, pnum);
 		cartRideButtonCheckM(twp, cartparam, pnum);
 		cartShadowPos(twp);
