@@ -385,7 +385,8 @@ FunctionPointer(void, GetOutOfCartP, (int pno, float x, float y, float z), 0x441
 VoidFunc(MakeLandCollLandEntryALL, 0x43B580);
 DataPointer(float, mleriRangeRad, 0x915458); // minimum radius for ground collisions lookup
 DataPointer(Uint16, numLandCollList, 0x3B32724);
-DataArray(_OBJ_LANDCOLL, LandCollList, 0x3B32728, 128);
+DataArray(_OBJ_LANDCOLL, ri_landcoll, 0x3B32728, 128);
+DataArray(_OBJ_LANDCOLL, LandCollList, 0x3B2F720, 1024);
 DataPointer(int, ri_landcoll_nmb, 0x3B36D38);
 FunctionPointer(void, CalcAdvanceAsPossible, (NJS_POINT3* src, NJS_POINT3* dst, float dist, NJS_POINT3* ans), 0x4BA860);
 DataArray(ITEM_INFOMATION, item_info, 0x9BF190, 9);
@@ -434,6 +435,11 @@ TaskFunc(EggCarrierCloud_c6, 0x557690);
 DataPointer(taskwk*, chaostwp, 0x3C5A7D8);
 FunctionPointer(void, MirenInitTask, (task* task_p, const TaskInfo* info_p, void* param_p), 0x796B30);
 VoidFunc(ResetMleriRangeRad, 0x43B6F0);
+DataPointer(BOOL, boolLandCollision, 0x915460);
+DataArray(_OBJ_LANDENTRY*, pDisplayEntry, 0x3B2D518, 1024);
+DataArray(_OBJ_LANDENTRY, ri_landentry_buf, 0x3B2E518, 128);
+DataPointer(int, ri_landentry_nmb, 0x3B36D3C);
+DataPointer(_OBJ_LANDTABLE*, pObjLandTable, 0x3B2F718);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);

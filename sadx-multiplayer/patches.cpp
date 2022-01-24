@@ -415,12 +415,141 @@ void ObjectSpringB_r(task* tp)
 	TARGET_DYNAMIC(ObjectSpringB)(tp);
 }
 
+void QueueMobileLandColl() // guessed inline function
+{
+	// Temporary because somehow this decomp doesn't work:
+	MakeLandCollLandEntryALL();
+	return;
+
+	ri_landcoll_nmb = 0;
+
+	njPushMatrixEx();
+
+	for (int i = 0; i < numMobileEntry; ++i)
+	{
+		if (numLandCollList >= 1024 || ri_landcoll_nmb >= 128)
+		{
+			break;
+		}
+
+		auto& entry = MobileEntry[i];
+		auto& tp = entry.pTask;
+		auto& obj = entry.pObject;
+		NJS_VECTOR p;
+
+		// Task disabled collision
+		if (tp && tp->twp && tp->twp->flag & 0x100)
+		{
+			continue;
+		}
+
+		if (entry.slAttribute & ColFlags_UseRotation)
+		{
+			njUnitMatrix(0);
+			if (obj->ang[2]) njRotateZ(0, obj->ang[2]);
+			if (obj->ang[1]) njRotateX(0, obj->ang[1]);
+			if (obj->ang[0]) njRotateY(0, obj->ang[0]);
+			njCalcPoint(0, &obj->basicdxmodel->center, &p);
+			p.x += obj->pos[0];
+			p.y += obj->pos[1];
+			p.z += obj->pos[2];
+		}
+		else
+		{
+			p.x = obj->basicdxmodel->center.x + obj->pos[0];
+			p.y = obj->basicdxmodel->center.y + obj->pos[1];
+			p.z = obj->basicdxmodel->center.z + obj->pos[2];
+		}
+
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			taskwk* srctwp = i == 0 ? playertp[0] == nullptr ? camera_twp : playertwp[0] : playertwp[i];
+
+			if (!srctwp)
+			{
+				continue;
+			}
+
+			NJS_VECTOR cv
+			{
+				srctwp->pos.x - p.x,
+				srctwp->pos.y - p.y,
+				srctwp->pos.z - p.z
+			};
+
+			if (njScalor(&cv) - mleriRangeRad < obj->basicdxmodel->r)
+			{
+				ri_landcoll[ri_landcoll_nmb++] = entry;
+				LandCollList[numLandCollList++] = entry; // add entry to active list
+
+				break;
+			}
+		}
+	}
+
+	njPopMatrixEx();
+}
+
+void QueueLandCollLand() // guessed inline function
+{
+	ri_landentry_nmb = 0;
+
+	if (boolLandCollision == TRUE && pObjLandTable)
+	{
+		for (int i = 0; i < pObjLandTable->ssCount; ++i)
+		{
+			if (numLandCollList >= 1024 || ri_landentry_nmb >= 128)
+			{
+				break;
+			}
+
+			auto& lnd = pObjLandTable->pLandEntry[i];
+
+			if ((lnd.slAttribute & 0x400003) == 0)
+			{
+				continue;
+			}
+
+			for (int i = 0; i < PLAYER_MAX; ++i)
+			{
+				taskwk* srctwp = i == 0 ? playertp[0] == nullptr ? camera_twp : playertwp[0] : playertwp[i];
+
+				if (srctwp == nullptr)
+				{
+					continue;
+				}
+
+				NJS_VECTOR cv
+				{
+					lnd.xCenter - srctwp->pos.x,
+					lnd.yCenter - srctwp->pos.y,
+					lnd.zCenter - srctwp->pos.z
+				};
+
+				if (njScalor(&cv) - mleriRangeRad < lnd.xWidth)
+				{
+					ri_landentry_buf[ri_landentry_nmb++] = lnd;
+					LandCollList[numLandCollList++] = { lnd.slAttribute, lnd.pObject, nullptr };
+					break;
+				}
+			}
+		}
+	}
+}
+
+void __cdecl MakeLandCollLandEntryRangeInM()
+{
+	numLandCollList = 0;
+	QueueMobileLandColl();
+	QueueLandCollLand();
+}
+
 // Geometry collision lookup is hardcoded around P1 and P2, patching it for more
 void __cdecl MakeLandCollLandEntryRangeIn_r()
 {
-	if (multiplayer::IsActive() && multiplayer::GetPlayerCount() > 2)
+	if (multiplayer::IsActive() && multiplayer::GetPlayerCount() > 2 )
 	{
-		MakeLandCollLandEntryALL(); // todo: rewrite MakeLandCollLandEntryRangeIn
+		MakeLandCollLandEntryRangeInM();
 	}
 	else
 	{
