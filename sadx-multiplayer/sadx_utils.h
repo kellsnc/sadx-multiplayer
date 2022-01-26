@@ -319,6 +319,14 @@ struct TaskInfo
 	TaskFuncPtr dest_p;
 };
 
+struct CartDispTime
+{
+	char sign;
+	char min;
+	char sec;
+	char sec100;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -436,6 +444,10 @@ DataPointer(taskwk*, chaostwp, 0x3C5A7D8);
 FunctionPointer(void, MirenInitTask, (task* task_p, const TaskInfo* info_p, void* param_p), 0x796B30);
 FunctionPointer(void, MirenSetTask, (int level, const TaskInfo* info_p, void* param_p), 0x796B90);
 DataPointer(task*, RaceManageTask_p, 0x3C5D554);
+DataPointer(int, Cart_demo_flag, 0x3C4ACA8);
+FunctionPointer(void, CartInitLetter, (), 0x4DC740);
+DataArray(NJS_TEXANIM, cartsprite_score, 0x3C5D558, 13); // simply "score" in symbols
+FunctionPointer(CartDispTime, CartStateCentiSecToDispTime, (int sec100), 0x4DBBA0);
 VoidFunc(ResetMleriRangeRad, 0x43B6F0);
 DataPointer(BOOL, boolLandCollision, 0x915460);
 DataArray(_OBJ_LANDENTRY*, pDisplayEntry, 0x3B2D518, 1024);
