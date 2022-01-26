@@ -434,6 +434,8 @@ TaskFunc(Chaos2Column, 0x548640);
 TaskFunc(EggCarrierCloud_c6, 0x557690);
 DataPointer(taskwk*, chaostwp, 0x3C5A7D8);
 FunctionPointer(void, MirenInitTask, (task* task_p, const TaskInfo* info_p, void* param_p), 0x796B30);
+FunctionPointer(void, MirenSetTask, (int level, const TaskInfo* info_p, void* param_p), 0x796B90);
+DataPointer(task*, RaceManageTask_p, 0x3C5D554);
 VoidFunc(ResetMleriRangeRad, 0x43B6F0);
 DataPointer(BOOL, boolLandCollision, 0x915460);
 DataArray(_OBJ_LANDENTRY*, pDisplayEntry, 0x3B2D518, 1024);
