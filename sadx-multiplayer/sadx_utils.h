@@ -487,6 +487,18 @@ static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk*
 	}
 }
 
+static const void* const setCartDirectionPtr = (void*)0x798050;
+static inline void setCartDirection(taskwk* twp, NJS_POINT3* vec)
+{
+	__asm
+	{
+		push[vec]
+		mov esi, [twp]
+		call setCartDirectionPtr
+		add esp, 4
+	}
+}
+
 static const void* const cartExplosionPtr = (void*)0x797300;
 static inline void cartExplosion(taskwk* twp)
 {

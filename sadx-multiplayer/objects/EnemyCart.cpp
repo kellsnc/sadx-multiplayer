@@ -43,6 +43,8 @@ DataArray(int*, dword_3D08E40, 0x3D08E40, 30);
 DataArray(int, cart_se_num, 0x38A6D70, 6 * 2);
 DataPointer(float, hamariDist, 0x3D08E10);
 
+task* taskOfPlayerOn_m[PLAYER_MAX];
+
 Characters GetPlayerNumberM(int pnum)
 {
 	return playertwp[pnum] ? (Characters)TASKWK_CHARID(playertwp[pnum]) : Characters_Sonic;
@@ -491,7 +493,7 @@ static Angle calcAngle(Angle a, Angle b)
 	return ang <= 0x8000 ? ang / 30 : (0x10000 - ang) / -30;
 }
 
-void cartSonicRidingCartM(taskwk* twp, int pnum)
+void cartSonicRidingCartM(task* tp, taskwk* twp, int pnum)
 {
 	auto pltwp = playertwp[pnum];
 
@@ -535,7 +537,9 @@ void cartSonicRidingCartM(taskwk* twp, int pnum)
 		cart_data->player_colli_r = pltwp->cwp->info->a;
 		pltwp->cwp->info->a = cci_cart[GetPlayerNumberM(pnum)].a;
 
-		//taskOfPlayerOn = tp;
+		// Tell on which cart task the player is
+		taskOfPlayerOn_m[pnum] = tp;
+
 		//CameraSetEventCamera(49, 5u);
 	}
 	else
@@ -653,7 +657,7 @@ void EnemyCartM(task* tp)
 		cartSpdForceOfNature(twp);
 		cartCharactorCollisionM(twp, pnum);
 		cartTopographicalCollisionM(tp, twp, pnum);
-		cartSonicRidingCartM(twp, pnum);
+		cartSonicRidingCartM(tp, twp, pnum);
 		break;
 	case CARTMD_CTRL:
 		cart_data->flag &= ~1u;
@@ -730,5 +734,95 @@ void __cdecl EnemyCart_r(task* tp)
 	else
 	{
 		TARGET_STATIC(EnemyCart)(tp);
+	}
+}
+
+static bool IsTaskPlayerTask(task* tp)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (playertp[i] == tp)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd);
+Trampoline SetCartVelocity_t(0x79AF90, 0x79AF96, SetCartVelocity_r);
+void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd)
+{
+	if (multiplayer::IsActive())
+	{
+		if (IsTaskPlayerTask(tp))
+		{
+			auto pnum = TASKWK_PLAYERID(tp->twp);
+			auto ctp = taskOfPlayerOn_m[pnum];
+
+			if (ctp)
+			{
+				auto twp = ctp->twp;
+				cart_data = (ENEMY_CART_DATA*)ctp->awp;
+
+				setCartDirection(twp, spd);
+				twp->pos.x = cart_data->last_pos.x + spd->x;
+				twp->pos.y = cart_data->last_pos.y + spd->y;
+				twp->pos.z = cart_data->last_pos.z + spd->z;
+				playertwp[pnum]->pos = twp->pos;
+
+				cart_data->vector.x = spd->x;
+				cart_data->vector.y = spd->y;
+				cart_data->vector.z = spd->z;
+
+				// Onion effects
+			}
+			else
+			{
+				SetVelocityP(pnum, spd->x, spd->y, spd->z);
+			}
+		}
+		else if (tp->twp->id == 10)
+		{
+			auto twp = tp->twp;
+			cart_data = (ENEMY_CART_DATA*)tp->awp;
+
+			setCartDirection(twp, spd);
+			twp->pos.x = cart_data->last_pos.x + spd->x;
+			twp->pos.y = cart_data->last_pos.y + spd->y;
+			twp->pos.z = cart_data->last_pos.z + spd->z;
+			cart_data->vector.x = spd->x;
+			cart_data->vector.y = spd->y;
+			cart_data->vector.z = spd->z;
+		}
+	}
+	else
+	{
+		TARGET_STATIC(SetCartVelocity)(tp, spd);
+	}
+}
+
+void __cdecl CartGetOffPlayer_r(task* tp);
+Trampoline CartGetOffPlayer_t(0x798C60, 0x798C65, CartGetOffPlayer_r);
+void __cdecl CartGetOffPlayer_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		int pnum = tp->twp->btimer;
+		cart_data = (ENEMY_CART_DATA*)tp->awp;
+
+		tp->twp->mode = CARTMD_9;
+		tp->twp->cwp->info->attr &= ~0x10;
+		taskOfPlayerOn_m[pnum] = nullptr;
+		GetOutOfCartP(pnum, 0.0f, 2.0f, 2.0f);
+		cart_data->ignor_collision = 30;
+		playertwp[pnum]->cwp->info->a = cart_data->player_colli_r;
+
+		// Camera release
+	}
+	else
+	{
+		TARGET_STATIC(CartGetOffPlayer)(tp);
 	}
 }

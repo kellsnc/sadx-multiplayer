@@ -270,8 +270,6 @@ static void LoadAdditionalCarts()
 	}
 }
 
-
-
 static void __cdecl initRoundM(task* tp, void* param_p)
 {
 	InitFreeCamera();
