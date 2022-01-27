@@ -41,5 +41,7 @@ void ToggleControllers(bool enabled)
 		{
 			DisableController(i);
 		}
+
+		ControllerEnabled[i] = enabled;
 	}
 }

@@ -143,9 +143,18 @@ void RunMultiCamera(int num)
     auto plpwp = playerpwp[num];
     auto plper = &perG[num];
 
-    if (multiplayer::IsFightMode())
+    if (multiplayer::IsFightMode() || CurrentLevel == LevelIDs_TwinkleCircuit)
     {
         cam->mode |= 0x80000008;
+
+        // Force camera behind the player
+        if (ControllerEnabled[num] == FALSE)
+        {
+            NJS_VECTOR dir = { -100, 0, 0 };
+            PConvertVector_P2G(pltwp, &dir);
+            cam->pos = pltwp->pos;
+            njAddVector(&cam->pos, &dir);
+        }
     }
 
     if (!pltwp)

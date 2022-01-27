@@ -98,7 +98,7 @@ static void dispRaceSingle(RacerWk* rwp, int num)
 
 	// HISTORY:
 	OBJ_MINI_CART_SPRITE_TimeBest.p.x = 640.0f * scaleX - 240.5f * scale + 48.0f * scale + screenX;
-	OBJ_MINI_CART_SPRITE_TimeBest.p.y = 37.0f * scaleY + screenY;
+	OBJ_MINI_CART_SPRITE_TimeBest.p.y = 32.0f * scaleY + screenY;
 	OBJ_MINI_CART_SPRITE_TimeBest.sx = OBJ_MINI_CART_SPRITE_TimeBest.sy = scale;
 
 	// HISTORY TIMERS
