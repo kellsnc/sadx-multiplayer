@@ -23,6 +23,7 @@ struct RacerWk // custom
 	bool finished;
 };
 
+#pragma pack(push, 1)
 struct RaceWkM // multiplayer version of RaceWk in symbols
 {
 	char mode;
@@ -30,6 +31,7 @@ struct RaceWkM // multiplayer version of RaceWk in symbols
 	char dialState;
 	RacerWk racers[PLAYER_MAX];
 };
+#pragma pack(pop)
 
 enum RACEMD // guessed
 {
