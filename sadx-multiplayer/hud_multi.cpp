@@ -266,6 +266,8 @@ void DisplayMultiHud(int num)
 
     auto ratio = SplitScreen::GetScreenRatio(num);
 
+    float screenX = HorizontalResolution * ratio->x;
+    float screenY = VerticalResolution * ratio->y;
     float scaleY = VerticalStretch * ratio->h;
     float scale = min(HorizontalStretch * ratio->w, scaleY);
 
@@ -274,8 +276,8 @@ void DisplayMultiHud(int num)
     MULTIHUD_SPRITE.sx = MULTIHUD_SPRITE.sy = scale;
     MULTIHUDDIGIT_SPRITE.sx = MULTIHUDDIGIT_SPRITE.sy = scale;
 
-    float x = MULTIHUD_SPRITE.p.x = 16.0f * scale + HorizontalResolution * ratio->x;
-    MULTIHUD_SPRITE.p.y = 16.0f * scaleY + VerticalResolution * ratio->y;
+    float x = MULTIHUD_SPRITE.p.x = 16.0f * scale + screenX;
+    MULTIHUD_SPRITE.p.y = 16.0f * scaleY + screenY;
     njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
     MultiHudScore(num, scale);
 
@@ -295,7 +297,7 @@ void DisplayMultiHud(int num)
     if (HideLives >= 0)
     {
         MULTIHUDDIGIT_SPRITE.p.x = x;
-        MULTIHUDDIGIT_SPRITE.p.y = VerticalResolution * ratio->h - 16.0f * scaleY;
+        MULTIHUDDIGIT_SPRITE.p.y = VerticalResolution * ratio->h - 16.0f * scaleY + screenY;
         MultiHudLives(num, scale);
     }
 
