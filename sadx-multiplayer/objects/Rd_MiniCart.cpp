@@ -96,7 +96,7 @@ static void dispRaceSingle(RacerWk* rwp, int num)
 	OBJ_MINI_CART_SPRITE_LAPS_B.p.x = 640.0f * scaleX - 16.0f * scale - 96.0f * scale + 39.0f * scale + HorizontalResolution * ratio->x;
 	OBJ_MINI_CART_SPRITE_LAPS_B.p.y = 99.0f * scaleY + VerticalResolution * ratio->y;
 	OBJ_MINI_CART_SPRITE_LAPS_B.sx = OBJ_MINI_CART_SPRITE_LAPS_B.sy = scale;
-	njDrawSprite2D_Queue(&OBJ_MINI_CART_SPRITE_LAPS_B, 0, 22046.0, NJD_SPRITE_ALPHA, QueuedModelFlagsB_SomeTextureThing);
+	njDrawSprite2D_Queue(&OBJ_MINI_CART_SPRITE_LAPS_B, rwp->displayLap, 22046.0, NJD_SPRITE_ALPHA, QueuedModelFlagsB_SomeTextureThing);
 
 	// HISTORY:
 	OBJ_MINI_CART_SPRITE_TimeBest.p.x = 640.0f * scaleX - 240.5f * scale + 48.0f * scale + screenX;
@@ -296,5 +296,58 @@ void __cdecl Rd_MiniCart_r(task* tp)
 	else
 	{
 		TARGET_STATIC(Rd_MiniCart)(tp);
+	}
+}
+
+void __cdecl TwinkleCircuitZoneTask_r(task* tp);
+Trampoline TwinkleCircuitZoneTask_t(0x4DBCF0, 0x4DBCF8, TwinkleCircuitZoneTask_r);
+void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
+{
+	if (multiplayer::IsActive())
+	{
+		auto twp = tp->twp;
+		auto pltwp = CCL_IsHitPlayer(twp);
+
+		if (pltwp)
+		{
+			auto cpt = tp->mwp->work.b[0];
+			auto racewk = (RaceWkM*)RaceManageTask_p->mwp;
+			auto wk = &racewk->racers[TASKWK_PLAYERID(pltwp)];
+
+			if (cpt == 2)
+			{
+				if (!wk->lastChekPoint && wk->currentLap > -1)
+				{
+					--wk->currentLap;
+				}
+			}
+			else if (wk->lastChekPoint == 2 && wk->currentLap < 3)
+			{
+				if (++wk->currentLap < 3)
+				{
+					if (wk->currentLap > wk->displayLap)
+					{
+						wk->subTotal_a[wk->displayLap] = wk->totalIntrpt;
+						wk->displayLap = wk->currentLap;
+						racewk->timer = 180;
+						racewk->mode = RACEMD_CKPT;
+					}
+				}
+				else
+				{
+					wk->subTotal_a[wk->displayLap] = wk->totalIntrpt;
+					wk->displayLap = 2;
+					//goalRace(wk);
+				}
+			}
+
+			wk->lastChekPoint = cpt;
+		}
+
+		EntryColliList(twp);
+	}
+	else
+	{
+		TARGET_STATIC(TwinkleCircuitZoneTask)(tp);
 	}
 }
