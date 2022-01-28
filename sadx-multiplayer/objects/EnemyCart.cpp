@@ -45,6 +45,8 @@ DataPointer(float, hamariDist, 0x3D08E10);
 
 task* taskOfPlayerOn_m[PLAYER_MAX];
 
+extern bool cartGoalFlagM[PLAYER_MAX]; // Rd_MiniCart.cpp
+
 Characters GetPlayerNumberM(int pnum)
 {
 	return playertwp[pnum] ? (Characters)TASKWK_CHARID(playertwp[pnum]) : Characters_Sonic;
@@ -582,9 +584,9 @@ void cartTakeSonicM(taskwk* twp, int pnum)
 	// Camera stuff here
 }
 
-void cartCheckGoalM(taskwk* twp)
+void cartCheckGoalM(taskwk* twp, int pnum)
 {
-	if (CartGoalFlag == TRUE) // todo: update multiplayer
+	if (cartGoalFlagM[pnum] == true)
 	{
 		twp->mode = CARTMD_GOAL;
 		cart_data->load_line = 1;
@@ -678,7 +680,7 @@ void EnemyCartM(task* tp)
 		cartTopographicalCollisionM(tp, twp, pnum);
 		cartTakeSonicM(twp, pnum);
 		cartCheckPass(twp);
-		cartCheckGoalM(twp);
+		cartCheckGoalM(twp, pnum);
 		cartSELoopM(tp, 0);
 		break;
 	case CARTMD_PASS:
@@ -687,7 +689,7 @@ void EnemyCartM(task* tp)
 		cartSELoopM(tp, 0);
 		break;
 	case CARTMD_GOAL:
-		cart_data->flag |= 1u;
+		cart_data->flag &= ~1u;
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
 		cartSpdForceOfNature(twp);

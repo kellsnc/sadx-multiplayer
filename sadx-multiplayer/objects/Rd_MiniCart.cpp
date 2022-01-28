@@ -20,7 +20,6 @@ struct RacerWk // custom
 	int subTotal_a[3];
 	int bestSubTotal_a[3];
 	int bestLapTime_a[3];
-	bool finished;
 };
 
 #pragma pack(push, 1)
@@ -43,6 +42,8 @@ enum RACEMD // guessed
 	RACEMD_GOAL,
 	RACEMD_END,
 };
+
+bool cartGoalFlagM[PLAYER_MAX];
 
 static void DrawTimer(int time, int x, int y, float s)
 {
@@ -159,6 +160,7 @@ static void __cdecl dispRaceM(task* tp)
 static void __cdecl execRaceM(task* tp)
 {
 	auto wk = (RaceWkM*)tp->mwp;
+	bool finished = true;
 
 	switch (wk->mode)
 	{
@@ -208,10 +210,12 @@ static void __cdecl execRaceM(task* tp)
 				rwp->lastChekPoint = 0;
 			}
 
-			if (rwp->finished == true)
+			if (cartGoalFlagM[i] == true)
 			{
 				continue;
 			}
+
+			finished = false;
 
 			if (rwp->totalIntrpt < 360000)
 			{
@@ -223,6 +227,14 @@ static void __cdecl execRaceM(task* tp)
 				rwp->lapIntrpt_a[rwp->displayLap] += 2;
 			}
 		}
+
+		if (finished == true)
+		{
+			CartGoalFlag = TRUE;
+			wk->mode = RACEMD_GOAL;
+			wk->timer = 180;
+		}
+
 		break;
 	case RACEMD_GOAL:
 		if (--wk->timer <= 0)
@@ -242,6 +254,11 @@ static void __cdecl initRaceM(task* tp, void* param_p)
 	if (wk)
 	{
 		memset(wk, 0, sizeof(RaceWkM));
+	}
+
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		cartGoalFlagM[i] = false;
 	}
 
 	RaceManageTask_p = tp;
@@ -309,6 +326,40 @@ void __cdecl Rd_MiniCart_r(task* tp)
 	}
 }
 
+static void goalRaceM(taskwk* pltwp, int pnum)
+{
+	dsPlay_oneshot(703, 0, 0, 0);
+
+	cartGoalFlagM[pnum] = true;
+
+	switch (TASKWK_CHARID(pltwp))
+	{
+	case Characters_Sonic:
+		if (!MetalSonicFlag)
+		{
+			PlayVoice(1838);
+		}
+		break;
+	case Characters_Tails:
+		PlayVoice(1801);
+		break;
+	case Characters_Knuckles:
+		PlayVoice(1788);
+		break;
+	case Characters_Amy:
+		PlayVoice(1731);
+		break;
+	case Characters_Gamma:
+		PlayVoice(1768);
+		break;
+	case Characters_Big:
+		PlayVoice(1746);
+		break;
+	default:
+		return;
+	}
+}
+
 void __cdecl TwinkleCircuitZoneTask_r(task* tp);
 Trampoline TwinkleCircuitZoneTask_t(0x4DBCF0, 0x4DBCF8, TwinkleCircuitZoneTask_r);
 void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
@@ -321,8 +372,9 @@ void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
 		if (pltwp)
 		{
 			auto cpt = tp->mwp->work.b[0];
+			auto pnum = TASKWK_PLAYERID(pltwp);
 			auto racewk = (RaceWkM*)RaceManageTask_p->mwp;
-			auto wk = &racewk->racers[TASKWK_PLAYERID(pltwp)];
+			auto wk = &racewk->racers[pnum];
 
 			if (cpt == 2)
 			{
@@ -347,7 +399,7 @@ void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
 				{
 					wk->subTotal_a[wk->displayLap] = wk->totalIntrpt;
 					wk->displayLap = 2;
-					//goalRace(wk);
+					goalRaceM(pltwp, pnum);
 				}
 			}
 
