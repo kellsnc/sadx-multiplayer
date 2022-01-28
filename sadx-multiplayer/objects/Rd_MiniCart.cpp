@@ -196,7 +196,17 @@ static void __cdecl execRaceM(task* tp)
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
+			if (!playertp[i])
+			{
+				continue;
+			}
+
 			auto rwp = &wk->racers[i];
+
+			if (playerpwp[i]->item & Powerups_Dead)
+			{
+				rwp->lastChekPoint = 0;
+			}
 
 			if (rwp->finished == true)
 			{

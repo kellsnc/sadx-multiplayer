@@ -37,8 +37,13 @@ void __cdecl GamePlayerMissed_r(task* tp)
 			{
 				AddNumPlayerM(pNum, -1);
 				SetPlayerInitialPosition(playertwp[pNum]);
-				SetInputP(pNum, 24);
-				twp->mode = 1;
+
+				if (CurrentLevel != LevelIDs_TwinkleCircuit)
+				{
+					SetInputP(pNum, 24);
+					twp->mode = 1;
+				}
+
 				pwp->item &= ~Powerups_Dead;
 			}
 		}

@@ -330,7 +330,8 @@ void cartCharactorCollisionM(taskwk* twp, int pnum)
 			ptwp->cwp->info->damage |= 0xCu;
 			break;
 		case CARTMD_CTRL:
-			if (ptwp->wtimer)
+			// If player is hurt (and not in TC)
+			if (CurrentLevel != LevelIDs_TwinkleCircuit && ptwp->wtimer)
 			{
 				cart_data->vector.x *= 0.5f;
 				cart_data->vector.y *= 0.5f;
@@ -565,6 +566,14 @@ void cartSpdControlSonicOnTheCartM(taskwk* twp, int pnum)
 
 void cartTakeSonicM(taskwk* twp, int pnum)
 {
+	if (playerpwp[pnum]->item & Powerups_Dead)
+	{
+		twp->pos = playertwp[pnum]->pos;
+		twp->ang.y = 0xC000;
+		cart_data->vector = { 0.0f, 0.0f, 0.0f };
+		return;
+	}
+
 	playertwp[pnum]->pos = twp->pos;
 	playertwp[pnum]->ang.x = twp->ang.x;
 	playertwp[pnum]->ang.y = 0x4000 - twp->ang.y;
@@ -614,7 +623,7 @@ void cartRunPassM(taskwk* twp, int pnum)
 
 void EnemyCartM(task* tp)
 {
-	if (CheckRange(tp))
+	if (CurrentLevel != LevelIDs_TwinkleCircuit && CheckRange(tp))
 	{
 		return;
 	}
