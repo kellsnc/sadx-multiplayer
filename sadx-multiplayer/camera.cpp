@@ -143,7 +143,7 @@ void RunMultiCamera(int num)
     auto plpwp = playerpwp[num];
     auto plper = &perG[num];
 
-    if (multiplayer::IsFightMode() || CurrentLevel == LevelIDs_TwinkleCircuit)
+    if (multiplayer::IsFightMode() || pltwp->smode == 18)
     {
         cam->mode |= 0x80000008;
 

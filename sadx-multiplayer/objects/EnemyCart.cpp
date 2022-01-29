@@ -653,7 +653,7 @@ void EnemyCartM(task* tp)
 		break;
 	case CARTMD_WAIT:
 		cart_data->flag &= ~1u;
-		setupCartStageM(tp, twp, pnum);
+		setupCartStageM(tp, twp, twp->btimer);
 		cartSetVectorM(twp, pnum);
 		cartRideButtonCheckM(twp, cartparam, pnum);
 		cartShadowPos(twp);
