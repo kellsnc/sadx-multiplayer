@@ -308,6 +308,7 @@ static void __cdecl initRoundM(task* tp, void* param_p)
 	MirenSetTask(LEV_2, &infoM, 0);
 	SetFrameRateMode(1, 1);
 	EnablePause();
+	PlayMusic(MusicIDs_TwinkleCircuit);
 }
 
 static const TaskInfo RdTaskInfoM = { 1, 2, initRoundM, execRoundM, 0, deadRoundM };
