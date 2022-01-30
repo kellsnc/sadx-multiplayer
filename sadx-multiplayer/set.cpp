@@ -52,7 +52,7 @@ void CreateSetTask(OBJ_CONDITION* item, _OBJ_EDITENTRY* objentry, _OBJ_ITEMENTRY
 // Load objects around every players
 void __cdecl ProcessStatusTable_r()
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsBattleMode())
 	{
 		for (int i = 0; i < numStatusEntry; ++i)
 		{
