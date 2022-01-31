@@ -45,3 +45,18 @@ void ToggleControllers(bool enabled)
 		ControllerEnabled[i] = enabled;
 	}
 }
+
+void TeleportPlayersInitialPosition(int pNum)
+{
+	// Save time because SetPlayerInitialPosition resets it
+	auto min = TimeMinutes;
+	auto sec = TimeSeconds;
+	auto frm = TimeFrames;
+
+	SetPlayerInitialPosition(playertwp[pNum]);
+
+	// Restore time
+	TimeMinutes = min;
+	TimeSeconds = sec;
+	TimeFrames = frm;
+}
