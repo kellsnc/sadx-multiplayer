@@ -7,7 +7,6 @@ Level-related adjustements for multiplayer
 
 */
 
-Trampoline* FogColorChange_t    = nullptr;
 Trampoline* SetPlayerInitialPosition_t = nullptr;
 
 Trampoline* Rd_Chaos0_t   = nullptr;
@@ -16,8 +15,8 @@ Trampoline* Rd_Chaos4_t   = nullptr;
 Trampoline* Rd_Chaos6_t   = nullptr;
 Trampoline* Rd_Bossegm1_t = nullptr;
 Trampoline* Rd_Bossegm2_t = nullptr;
-Trampoline* Rd_E101_t      = nullptr;
-Trampoline* Rd_E101_R_t    = nullptr;
+Trampoline* Rd_E101_t     = nullptr;
+Trampoline* Rd_E101_R_t   = nullptr;
 
 // Put players side by side
 void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
@@ -36,31 +35,6 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 
 		twp->pos.x += njCos(twp->ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
 		twp->pos.z += njSin(twp->ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
-	}
-}
-
-static void FogColorChange_r(task* tp)
-{
-	if (!multiplayer::IsActive())
-	{
-		auto target = TARGET_DYNAMIC(FogColorChange);
-
-		__asm
-		{
-			mov eax, [tp]
-			call target
-		}
-	}
-}
-
-static void __declspec(naked) FogColorChange_w()
-{
-	__asm
-	{
-		push eax
-		call FogColorChange_r
-		pop eax
-		retn
 	}
 }
 
@@ -281,8 +255,7 @@ void __cdecl Rd_E101_R_r(task* tp)
 
 void InitLevels()
 {
-	// Windy Valley tornade effects
-	FogColorChange_t    = new Trampoline(0x4DD240, 0x4DD246, FogColorChange_w);
+	// Patch start positions
 	SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
 
 	// Patch Skyboxes (display function managing mode)
@@ -293,12 +266,13 @@ void InitLevels()
 	WriteData((void**)0x5E1FCE, (void*)0x5E1F30); // Lost World
 	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Ice Cap
 
-	Rd_Chaos0_t = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
-	Rd_Chaos2_t = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
-	Rd_Chaos4_t = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
-	Rd_Chaos6_t = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
+	// In battle mode, boss become fighting arenas
+	Rd_Chaos0_t   = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
+	Rd_Chaos2_t   = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
+	Rd_Chaos4_t   = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
+	Rd_Chaos6_t   = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
 	Rd_Bossegm1_t = new Trampoline(0x571850, 0x571856, Rd_Bossegm1_r);
 	Rd_Bossegm2_t = new Trampoline(0x5758D0, 0x5758D6, Rd_Bossegm2_r);
-	Rd_E101_t = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
-	Rd_E101_R_t = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
+	Rd_E101_t     = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
+	Rd_E101_R_t   = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
 }
