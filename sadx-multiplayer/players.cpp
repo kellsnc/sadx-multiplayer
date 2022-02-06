@@ -11,6 +11,8 @@ Multiplayer manager
 
 */
 
+Trampoline* DamegeRingScatter_t = nullptr;
+
 static int rings[PLAYER_MAX];
 static int lives[PLAYER_MAX];
 static int score[PLAYER_MAX];
@@ -173,6 +175,60 @@ void AddNumRingM(int pNum, int add)
     }
 }
 
+void ResetNumRingP(int pNum)
+{
+    if (multiplayer::IsBattleMode())
+    {
+        rings[pNum] = 0;
+    }
+    
+    if (pNum == 0)
+    {
+        Rings = 0;
+    }
+}
+
+void __cdecl DamegeRingScatter_r(uint8_t pno)
+{
+    if (multiplayer::IsBattleMode())
+    {
+        auto rings = GetNumRingM(pno);
+
+        if (rings > 0)
+        {
+            ResetNumRingP(pno);
+
+            float v6 = (float)((double)rand() * 0.000030517578 * 360.0);
+
+            for (int i = 0; i < min(20, rings); ++i)
+            {
+                auto tp = CreateElementalTask(LoadObj_UnknownB | LoadObj_Data1, 2, (TaskFuncPtr)0x44FD10);
+                tp->twp->pos = playertwp[pno]->pos;
+                tp->twp->ang.y = (Angle)((((i * 350) / rings) + v6) * 65536.0 * 0.002777777777777778);
+            }
+
+            dsPlay_oneshot(0, 0, 0, 0);
+        }
+        else
+        {
+            KillHimP(pno);
+
+            if (TASKWK_CHARID(playertwp[pno]) == Characters_Gamma)
+            {
+                dsPlay_oneshot(1431, 0, 0, 0);
+            }
+            else
+            {
+                dsPlay_oneshot(23, 0, 0, 0);
+            }
+        }
+    }
+    else
+    {
+        TARGET_DYNAMIC(DamegeRingScatter)(pno);
+    }
+}
+
 // Remove ability to be hurt by players
 void RemovePlayersDamage(taskwk* twp)
 {
@@ -199,6 +255,11 @@ void UpdatePlayersInfo()
     rings[0] = ssNumRing;
     lives[0] = scNumPlayer;
     score[0] = slEnemyScore;
+
+    if (PressedButtons[1] & Buttons_L)
+    {
+        playertwp[1]->pos = playertwp[0]->pos;
+    }
 
     if (IsIngame())
     {
@@ -274,4 +335,5 @@ void InitPlayerPatches()
 {
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteCall((void*)0x415A25, LoadCharacter_r);
+    DamegeRingScatter_t = new Trampoline(0x4506F0, 0x4506F7, DamegeRingScatter_r);
 }

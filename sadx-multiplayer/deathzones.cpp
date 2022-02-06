@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "deathzones.h"
 
-Trampoline* KillPlayer_t                  = nullptr;
+Trampoline* KillHimP_t                  = nullptr;
 Trampoline* KillPlayerFallingDownStageP_t = nullptr;
 
 void __cdecl GamePlayerMissedFree(task* tp)
@@ -53,7 +53,7 @@ void __cdecl GamePlayerMissed_r(task* tp)
 	}
 }
 
-void __cdecl KillPlayer_r(unsigned __int8 pNum)
+void __cdecl KillHimP_r(unsigned __int8 pNum)
 {
 	if (multiplayer::IsActive())
 	{
@@ -69,7 +69,7 @@ void __cdecl KillPlayer_r(unsigned __int8 pNum)
 	}
 	else
 	{
-		TARGET_DYNAMIC(KillPlayer)(pNum);
+		TARGET_DYNAMIC(KillHimP)(pNum);
 	}
 }
 
@@ -191,6 +191,6 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 // Series of hacks to not reset the game if player 1 dies and make every players able to die
 void InitDeathPatches()
 {
-	KillPlayer_t                  = new Trampoline(0x440CD0, 0x440CD7, KillPlayer_r);
+	KillHimP_t                  = new Trampoline(0x440CD0, 0x440CD7, KillHimP_r);
 	KillPlayerFallingDownStageP_t = new Trampoline(0x44AE80, 0x44AE88, KillPlayerFallingDownStageP_r);
 }
