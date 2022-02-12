@@ -300,18 +300,10 @@ int GetCurrentCharacter(int pnum)
 
 void LoadCharacter_r()
 {
-#ifdef _DEBUG
-    if (multiplayer::IsEnabled() == false)
-    {
-        multiplayer::Enable(2, multiplayer::mode::battle);
-        characters[0] = Characters_Sonic;
-        characters[1] = Characters_Sonic;
-    }
-#endif
-
     if (multiplayer::IsActive())
     {
-        CurrentCharacter = characters[0];
+        if (characters[0] >= 0)
+            CurrentCharacter = characters[0];
 
         TailsAI_ptr = (ObjectMaster*)1; // don't load tails AI; horrible patch for compatibility with CharSel
         LoadCharacter();

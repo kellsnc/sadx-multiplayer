@@ -8,6 +8,7 @@
 #include "deathzones.h"
 #include "set.h"
 #include "levels.h"
+#include "testspawn.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -27,6 +28,7 @@ extern "C"
 		MultiHudInit();
 		InitSET();
 		InitLevels();
+		TestSpawn();
 
 		delete config;
 	}

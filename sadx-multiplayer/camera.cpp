@@ -472,7 +472,10 @@ void __cdecl Camera_r(task* tp)
         {
             for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
             {
-                RunMultiCamera(i);
+                if (playertp[i])
+                {
+                    RunMultiCamera(i);
+                }
             }
 
             cameraready = TRUE;

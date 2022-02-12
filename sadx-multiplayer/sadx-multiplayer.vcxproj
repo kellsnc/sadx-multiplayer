@@ -110,6 +110,7 @@
     <ClInclude Include="sadx_utils.h" />
     <ClInclude Include="set.h" />
     <ClInclude Include="splitscreen.h" />
+    <ClInclude Include="testspawn.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -137,6 +138,7 @@
     <ClCompile Include="players.cpp" />
     <ClCompile Include="set.cpp" />
     <ClCompile Include="splitscreen.cpp" />
+    <ClCompile Include="testspawn.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

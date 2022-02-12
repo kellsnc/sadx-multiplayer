@@ -4,6 +4,7 @@
 struct IUnknown;
 
 #include "framework.h"
+#include <ShellAPI.h>
 #include <math.h>
 #include <utility>
 #include <vector>

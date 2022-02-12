@@ -67,6 +67,9 @@
     <ClCompile Include="objects\ObjectBeachOruka.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="testspawn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -124,6 +127,9 @@
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="multiplayer.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="testspawn.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
