@@ -299,6 +299,27 @@ static void __declspec(naked) dsDolbySound_w()
     }
 }
 
+void dsPlay_oneshot_miles(int tone, int id, int pri, int volofs)
+{
+    auto twp = gpCharTwp;
+
+    if (twp)
+    {
+        if (multiplayer::IsActive())
+        {
+            dsPlay_oneshot(tone, id, pri, volofs);
+        }
+        else
+        {
+            // Original behaviour:
+            if (TASKWK_PLAYERID(twp) != 1)
+            {
+                dsPlay_oneshot(tone, id, pri, volofs);
+            }
+        }
+    }
+}
+
 void InitSoundPatches()
 {
     dsGetVolume_t = new Trampoline(0x4244A0, 0x4244A7, dsGetVolume_r);
@@ -306,6 +327,15 @@ void InitSoundPatches()
     dsPlay_timer_vq_t = new Trampoline(0x424100, 0x424105, dsPlay_timer_vq_r);
     dsPlay_oneshot_v_t = new Trampoline(0x424FC0, 0x424FC5, dsPlay_oneshot_v_r);
     dsPlay_Dolby_timer_vq_t = new Trampoline(0x4249E0, 0x4249E5, dsPlay_Dolby_timer_vq_r);
-
     WriteJump((void*)0x4253B1, dsDolbySound_w);
+
+    // Allow 2P Tails sounds in multiplayer
+    WriteCall((void*)0x45C037, dsPlay_oneshot_miles); // jump
+    WriteData<2>((void*)0x45C02D, 0x90ui8);
+    WriteCall((void*)0x45BE01, dsPlay_oneshot_miles); // it's not always inlined!
+    WriteData<2>((void*)0x45BDF4, 0x90ui8);
+    WriteCall((void*)0x45BF8D, dsPlay_oneshot_miles); //hurt
+    WriteCall((void*)0x45BF5D, dsPlay_oneshot_miles);
+    WriteData<2>((void*)0x45BF80, 0x90ui8);
+    WriteData<2>((void*)0x45BF50, 0x90ui8);
 }
