@@ -70,6 +70,9 @@
     <ClCompile Include="testspawn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="multiapi.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -132,6 +135,9 @@
     <ClInclude Include="testspawn.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
+    <ClInclude Include="..\include\multiapi.h">
+      <Filter>Header FIles\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -151,6 +157,9 @@
     </Filter>
     <Filter Include="Header FIles\objects">
       <UniqueIdentifier>{25a58ace-4839-4bc1-ade4-5d673fc39e17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\include">
+      <UniqueIdentifier>{fead6788-8f1c-4b08-98a7-c22b00686774}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

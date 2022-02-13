@@ -288,7 +288,7 @@ void ResetCharactersArray()
     }
 }
 
-void SetCurrentCharacter(int pnum, int character)
+void SetCurrentCharacter(int pnum, Characters character)
 {
     characters[pnum] = character;
 }

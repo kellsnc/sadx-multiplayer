@@ -21,7 +21,7 @@ static multiplayer::mode parse_multi_mode(const std::wstring& str)
 	return multiplayer::mode::battle;
 }
 
-static const std::unordered_map<std::wstring, int16_t> character_name_ids_map = {
+static const std::unordered_map<std::wstring, Characters> character_name_ids_map = {
 	{ L"sonic",      Characters_Sonic },
 	{ L"eggman",     Characters_Eggman },
 	{ L"tails",      Characters_Tails },
@@ -33,7 +33,7 @@ static const std::unordered_map<std::wstring, int16_t> character_name_ids_map = 
 	{ L"metalsonic", Characters_MetalSonic }
 };
 
-static int16_t parse_character_id(const std::wstring& str)
+static Characters parse_character_id(const std::wstring& str)
 {
 	std::wstring lowercase = str;
 	transform(lowercase.begin(), lowercase.end(), lowercase.begin(), ::towlower);
@@ -43,7 +43,7 @@ static int16_t parse_character_id(const std::wstring& str)
 	if (it != character_name_ids_map.end())
 		return it->second;
 
-	return static_cast<int16_t>(std::stol(lowercase));
+	return static_cast<Characters>(std::stol(lowercase));
 }
 
 void TestSpawn()

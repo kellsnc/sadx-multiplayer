@@ -615,7 +615,7 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 
 	for (int i = 0; i < pcount; ++i)
 	{
-		SetCurrentCharacter(i, menu_multi_getplayerno(selected_characters[i]));
+		SetCurrentCharacter(i, (Characters)menu_multi_getplayerno(selected_characters[i]));
 	}
 
 	// Force trial return to this menu instead of charsel

@@ -10,10 +10,11 @@ int GetNumPlayerM(int pNum);
 
 void AddNumRingM(int pNum, int amount);
 int GetNumRingM(int pNum);
+void ResetNumRingP(int pNum);
 
 void UpdatePlayersInfo();
 
 void InitPlayerPatches();
-void SetCurrentCharacter(int pnum, int character);
+void SetCurrentCharacter(int pnum, Characters character);
 int GetCurrentCharacter(int pnum);
 void ResetCharactersArray();
