@@ -77,6 +77,27 @@ extern "C"
 	// Add rings to player pnum
 	API void multi_rings_add(int32_t pnum, int32_t amount);
 
+	// Returns true if multiplayer is currently enabled
+	API bool multi_is_enabled();
+
+	// Returns true if multiplayer is currently active (ingame)
+	API bool multi_is_active();
+
+	// Returns true if multiplayer is active and in battle mode
+	API bool multi_is_battle();
+
+	// Returns true if multiplayer is active and in coop mode
+	API bool multi_is_coop();
+
+	// Enable multiplayer mode
+	API void multi_enable(int player_count, bool battle);
+
+	// Disable multiplayer mode
+	API void multi_disable();
+
+	// Get the amount of connected players
+	API uint32_t multi_get_player_count();
+
 #ifdef __cplusplus
 }
 #endif

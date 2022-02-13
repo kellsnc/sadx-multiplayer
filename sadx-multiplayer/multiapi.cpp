@@ -99,3 +99,38 @@ void multi_rings_add(int32_t pnum, int32_t amount)
 {
 	AddNumRingM(pnum, amount);
 }
+
+bool multi_is_enabled()
+{
+	return multiplayer::IsEnabled();
+}
+
+bool multi_is_active()
+{
+	return multiplayer::IsActive();
+}
+
+bool multi_is_battle()
+{
+	return multiplayer::IsBattleMode();
+}
+
+bool multi_is_coop()
+{
+	return multiplayer::IsCoopMode();
+}
+
+void multi_enable(int player_count, bool battle)
+{
+	multiplayer::Enable(player_count, battle ? multiplayer::mode::battle : multiplayer::mode::coop);
+}
+
+void multi_disable()
+{
+	multiplayer::Disable();
+}
+
+uint32_t multi_get_player_count()
+{
+	return multiplayer::GetPlayerCount();
+}
