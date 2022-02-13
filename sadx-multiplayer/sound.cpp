@@ -154,7 +154,7 @@ void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, f
             sebuf[num].id = id;
             sebuf[num].mode |= 0x1130;
             
-            if (Get3DSoundEnabled() == 0)
+            if (Get3Dmode() == 0)
             {
                 sebuf[num].mode |= 0x20;
             }
@@ -301,21 +301,16 @@ static void __declspec(naked) dsDolbySound_w()
 
 void dsPlay_oneshot_miles(int tone, int id, int pri, int volofs)
 {
-    auto twp = gpCharTwp;
-
-    if (twp)
+    if (multiplayer::IsActive())
     {
-        if (multiplayer::IsActive())
+        dsPlay_oneshot(tone, id, pri, volofs);
+    }
+    else
+    {
+        // Original behaviour:
+        if (TASKWK_PLAYERID(gpCharTwp) != 1)
         {
             dsPlay_oneshot(tone, id, pri, volofs);
-        }
-        else
-        {
-            // Original behaviour:
-            if (TASKWK_PLAYERID(twp) != 1)
-            {
-                dsPlay_oneshot(tone, id, pri, volofs);
-            }
         }
     }
 }
