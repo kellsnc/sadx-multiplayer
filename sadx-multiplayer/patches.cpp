@@ -20,9 +20,11 @@ Trampoline* PlayerVacumedRing_t    = nullptr;
 Trampoline* EnemyCheckDamage_t     = nullptr;
 Trampoline* EnemyDist2FromPlayer_t = nullptr;
 Trampoline* EnemyCalcPlayerAngle_t = nullptr;
+Trampoline* EnemyTurnToPlayer_t    = nullptr;
 Trampoline* savepointCollision_t   = nullptr;
 Trampoline* TikalDisplay_t         = nullptr;
 Trampoline* ObjectSpringB_t        = nullptr;
+Trampoline* SpinnaDisplayer_t      = nullptr;
 Trampoline* CheckPlayerRideOnMobileLandObjectP_t = nullptr;
 Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 
@@ -276,6 +278,19 @@ Angle __cdecl EnemyCalcPlayerAngle_r(taskwk* twp, enemywk* ewp, unsigned __int8 
 	else
 	{
 		return TARGET_DYNAMIC(EnemyCalcPlayerAngle)(twp, ewp, pnum);
+	}
+}
+
+// Despite taking player id, it always gets 0 so let's check closest player
+Angle __cdecl EnemyTurnToPlayer_r(taskwk* twp, enemywk* ewp, unsigned __int8 pnum)
+{
+	if (multiplayer::IsActive() && pnum == 0)
+	{
+		return TARGET_DYNAMIC(EnemyTurnToPlayer)(twp, ewp, GetTheNearestPlayerNumber(&twp->pos));
+	}
+	else
+	{
+		return TARGET_DYNAMIC(EnemyTurnToPlayer)(twp, ewp, pnum);
 	}
 }
 
@@ -653,6 +668,77 @@ static void __declspec(naked) PlayerVacumedRing_w()
 	}
 }
 
+void SpinnaDrawShield(taskwk* twp)
+{
+	for (int i = 0; i < 16; ++i)
+	{
+		Angle mod1 = ((0.5 - rand() * 0.000030517578) * 180.0 * 65536.0 * 0.002777777777777778);
+		Angle mod2 = (rand() * 0.000030517578 * 360.0 * 65536.0 * 0.002777777777777778);
+		float mod3 = (rand() * 0.000030517578 + 0.5) * 10.0;
+		
+		NJS_VECTOR posm;
+		posm.x = njCos(mod1) * njCos(mod2) * mod3;
+		posm.y = njSin(mod1) * mod3;
+		posm.z = njCos(mod1) * njSin(mod2) * mod3;
+
+		NJS_VECTOR pos1 = twp->pos;
+		NJS_VECTOR pos2 = twp->pos;
+
+		njAddVector(&pos1, &posm);
+
+		pos1.y += 5.0f;
+		pos2.y += 5.0f;
+		DrawLineV(&pos2, &pos1);
+
+		pos2 = pos1;
+		mod1 = ((0.5 - rand() * 0.000030517578) * 120.0 * 65536.0 * 0.002777777777777778) + mod1;
+		mod2 = ((0.5 - rand() * 0.000030517578) * 80.0 * 65536.0 * 0.002777777777777778) + mod2;
+		mod3 = (rand() * 0.000030517578 + 1.0) * 4.0;
+		
+		posm.x = njCos(mod1) * njCos(mod2) * mod3;
+		posm.y = njSin(mod1) * mod3;
+		posm.z = njCos(mod1) * njSin(mod2) * mod3;
+
+		njAddVector(&pos1, &posm);
+		DrawLineV(&pos2, &pos1);
+
+		pos2 = pos1;
+		mod1 = ((0.5 - rand() * 0.000030517578) * 120.0 * 65536.0 * 0.002777777777777778) + mod1;
+		mod2 = ((0.5 - rand() * 0.000030517578) * 80.0 * 65536.0 * 0.002777777777777778) + mod2;
+		auto rnd = rand();
+		mod3 = rnd * 0.000030517578 + 1.0 + rnd * 0.000030517578 + 1.0;
+		
+		posm.x = njCos(mod1) * njCos(mod2) * mod3;
+		posm.y = njSin(mod1) * mod3;
+		posm.z = njCos(mod1) * njSin(mod2) * mod3;
+
+		njAddVector(&pos1, &posm);
+		DrawLineV(&pos2, &pos1);
+	}
+}
+
+void __cdecl SpinnaDisplayer_r(task* tp)
+{
+	if (SplitScreen::IsActive())
+	{
+		if (!MissedFrames)
+		{
+			auto twp = tp->twp;
+
+			SpinnaDraw(twp, (enemywk*)tp->mwp);
+
+			if (SplitScreen::GetCurrentScreenNum() > 0 && twp->smode == 0 && twp->wtimer != 0)
+			{
+				SpinnaDrawShield(twp);
+			}
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(SpinnaDisplayer)(tp);
+	}
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -675,7 +761,11 @@ void InitPatches()
 	// Enemy player checks
 	EnemyDist2FromPlayer_t = new Trampoline(0x4CD610, 0x4CD61B, EnemyDist2FromPlayer_r);
 	EnemyCalcPlayerAngle_t = new Trampoline(0x4CD670, 0x4CD675, EnemyCalcPlayerAngle_r);
+	EnemyTurnToPlayer_t    = new Trampoline(0x4CD6F0, 0x4CD6F5, EnemyTurnToPlayer_r);
 	WriteData((char*)0x4CCB3F, (char)PLAYER_MAX); // EnemySearchPlayer
+
+	// Enemies
+	SpinnaDisplayer_t = new Trampoline(0x4AFD80, 0x4AFD85, SpinnaDisplayer_r);
 
 	// Character shadows:
 	// Game draws shadow in logic sub but also in display sub *if* game is paused.

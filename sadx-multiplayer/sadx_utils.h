@@ -455,6 +455,7 @@ DataArray(_OBJ_LANDENTRY, ri_landentry_buf, 0x3B2E518, 128);
 DataPointer(int, ri_landentry_nmb, 0x3B36D3C);
 DataPointer(_OBJ_LANDTABLE*, pObjLandTable, 0x3B2F718);
 VoidFunc(dsEditLightInit, 0x40AEE0);
+FunctionPointer(void, DrawLineV, (NJS_VECTOR*, NJS_VECTOR*), 0x412990);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -637,6 +638,17 @@ static inline void RdMountainInit(task* tp)
 	{
 		mov esi, [tp]
 		call RdMountainInitPtr
+	}
+}
+
+static const void* const SpinnaDrawPtr = (void*)0x4AFB40;
+static inline void SpinnaDraw(taskwk* twp, enemywk* ewp)
+{
+	__asm
+	{
+		mov esi, [ewp]
+		mov ebx, [twp]
+		call SpinnaDrawPtr
 	}
 }
 
