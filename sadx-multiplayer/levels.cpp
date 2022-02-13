@@ -18,6 +18,10 @@ Trampoline* Rd_Bossegm2_t = nullptr;
 Trampoline* Rd_E101_t     = nullptr;
 Trampoline* Rd_E101_R_t   = nullptr;
 
+Trampoline* Rd_Beach_t = nullptr;
+Trampoline* Rd_Windy_t = nullptr;
+Trampoline* Rd_Mountain_t = nullptr;
+
 // Put players side by side
 void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 {
@@ -253,6 +257,66 @@ void __cdecl Rd_E101_R_r(task* tp)
 	}
 }
 
+void ChangeActM(int amount)
+{
+	ADX_Close();
+	LandChangeStage(amount);
+	AddSetStage(amount);
+	AddCameraStage(amount);
+	AdvanceAct(amount);
+	SetAllPlayersInitialPosition();
+}
+
+void __cdecl Rd_Beach_r(task* tp)
+{
+	if (ssActNumber == 0 && multiplayer::IsEnabled())
+	{
+		if (IsPlayerInSphere(5746.0f, 406.0f, 655.0f, 22.0f))
+		{
+			tp->twp->mode = 0;
+			ChangeActM(1);
+			return;
+		}
+	}
+
+	TARGET_DYNAMIC(Rd_Beach)(tp);
+}
+
+void __cdecl Rd_Windy_r(task* tp)
+{
+	if (ssActNumber == 1 && multiplayer::IsEnabled())
+	{
+		for (int i = 1; i < PLAYER_MAX; ++i)
+		{
+			if (playertwp && playertwp[i]->pos.y > 2250.0f)
+			{
+				tp->twp->mode = 0;
+				ChangeActM(1);
+				return;
+			}
+		}
+	}
+
+	TARGET_DYNAMIC(Rd_Windy)(tp);
+}
+
+void __cdecl Rd_Mountain_r(task* tp)
+{
+	if (ssActNumber == 0 && multiplayer::IsEnabled())
+	{
+		if (IsPlayerInSphere(-3667.0f, -400.0f, -2319.0f, 400.0f))
+		{
+			ChangeActM(1);
+			dsEditLightInit();
+			FreeTaskC(tp);
+			RdMountainInit(tp);
+			return;
+		}
+	}
+
+	TARGET_DYNAMIC(Rd_Mountain)(tp);
+}
+
 void InitLevels()
 {
 	// Patch start positions
@@ -275,4 +339,8 @@ void InitLevels()
 	Rd_Bossegm2_t = new Trampoline(0x5758D0, 0x5758D6, Rd_Bossegm2_r);
 	Rd_E101_t     = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
 	Rd_E101_R_t   = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
+
+	Rd_Beach_t = new Trampoline(0x4F6D60, 0x4F6D67, Rd_Beach_r);
+	Rd_Windy_t = new Trampoline(0x4DDB30, 0x4DDB37, Rd_Windy_r);
+	Rd_Mountain_t = new Trampoline(0x601550, 0x601558, Rd_Mountain_r);
 }

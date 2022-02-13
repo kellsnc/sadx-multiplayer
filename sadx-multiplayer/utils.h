@@ -7,3 +7,6 @@ short tolevelnum(short num);
 short toactnum(short num);
 void ToggleControllers(bool enabled);
 void TeleportPlayersInitialPosition(int pNum);
+void SetAllPlayersInitialPosition();
+bool IsPlayerInSphere(float x, float y, float z, float r);
+float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2);

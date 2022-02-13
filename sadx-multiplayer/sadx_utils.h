@@ -454,6 +454,7 @@ DataArray(_OBJ_LANDENTRY*, pDisplayEntry, 0x3B2D518, 1024);
 DataArray(_OBJ_LANDENTRY, ri_landentry_buf, 0x3B2E518, 128);
 DataPointer(int, ri_landentry_nmb, 0x3B36D3C);
 DataPointer(_OBJ_LANDTABLE*, pObjLandTable, 0x3B2F718);
+VoidFunc(dsEditLightInit, 0x40AEE0);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -626,6 +627,16 @@ static inline void DrawActionB(NJS_ACTION* action, float frame, int flgs, float 
 		mov eax, [action]
 		call DrawActionBPtr
 		add esp, 16
+	}
+}
+
+static const void* const RdMountainInitPtr = (void*)0x601390;
+static inline void RdMountainInit(task* tp)
+{
+	__asm
+	{
+		mov esi, [tp]
+		call RdMountainInitPtr
 	}
 }
 
