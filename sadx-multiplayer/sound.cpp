@@ -8,13 +8,11 @@ Trampoline* dsGetVolume_t = nullptr;
 Trampoline* dsPlay_timer_v_t = nullptr;
 Trampoline* dsPlay_timer_vq_t = nullptr;
 Trampoline* dsPlay_oneshot_v_t = nullptr;
-Trampoline* dsPlay_oneshot_Dolby_t = nullptr;
-Trampoline* dsPlay_Dolby_time_t = nullptr;
 Trampoline* dsPlay_Dolby_timer_vq_t = nullptr;
 
 void dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z)
 {
-    if (IsCameraInSphere(x, y, z, 400.0f))
+    if (IsCameraInSphere(x, y, z, 40000.0f))
     {
         int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
         if (num < 0)
@@ -92,7 +90,7 @@ void dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x
 
 int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, float z)
 {
-    if (SplitScreen::IsActive && IsCameraInSphere(x, y, z, 400.0f))
+    if (SplitScreen::IsActive && IsCameraInSphere(x, y, z, 40000.0f))
     {
         int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
         if (num < 0)
@@ -129,35 +127,52 @@ int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, 
     }
 }
 
-void dsPlay_oneshot_Dolby_r(int tone, int id, int pri, int volofs, int time, taskwk* pTaskwk)
-{
-    if (SplitScreen::IsActive)
-    {
-        dsPlay_timer_v_r(tone, id, pri, volofs, time, pTaskwk->pos.x, pTaskwk->pos.y, pTaskwk->pos.z);
-    }
-    else
-    {
-        TARGET_DYNAMIC(dsPlay_oneshot_Dolby)(tone, id, pri, volofs, time, pTaskwk);
-    }
-}
-
-void dsPlay_Dolby_time_r(int tone, int id, int pri, int volofs, int time, taskwk* pTaskwk)
-{
-    if (SplitScreen::IsActive)
-    {
-        dsPlay_timer_v_r(tone, id, pri, volofs, time, pTaskwk->pos.x, pTaskwk->pos.y, pTaskwk->pos.z);
-    }
-    else
-    {
-        TARGET_DYNAMIC(dsPlay_Dolby_time)(tone, id, pri, volofs, time, pTaskwk);
-    }
-}
-
 void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float rad, taskwk* pTaskwk)
 {
     if (SplitScreen::IsActive)
     {
-        dsPlay_timer_vq_r(tone, id, pri, volofs, timer, pTaskwk->pos.x, pTaskwk->pos.y, pTaskwk->pos.z, rad);
+        if (pTaskwk && IsCameraInSphere(&pTaskwk->pos, rad))
+        {
+            int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
+            if (num < 0)
+            {
+                num = SoundQueue_GetFreeIndex(pri); // dsCheckHandle
+                if (num < 0)
+                {
+                    return;
+                }
+                sebuf[num].mode = 1;
+                sebuf[num].qnum = -1;
+            }
+            else
+            {
+                sebuf[num].mode = 0;
+            }
+
+            sebuf[num].timer = timer + 1;
+            sebuf[num].pri = pri;
+            sebuf[num].id = id;
+            sebuf[num].mode |= 0x1130;
+            
+            if (Get3DSoundEnabled() == 0)
+            {
+                sebuf[num].mode |= 0x20;
+            }
+            else
+            {
+                sebuf[num].mode |= 0x4000;
+            }
+
+            sebuf[num].tone = tone;
+            sebuf[num].angle = 0;
+            sebuf[num].vol = volofs;
+            sebuf[num].volmax = volofs;
+            sebuf[num].pitch = 0;
+            sebuf[num].pos.x = pTaskwk->pos.x;
+            sebuf[num].pos.y = pTaskwk->pos.y;
+            sebuf[num].pos.z = pTaskwk->pos.z;
+            gpDolbyTask[num] = pTaskwk;
+        }
     }
     else
     {
@@ -232,13 +247,65 @@ static void __declspec(naked) dsGetVolume_w()
     }
 }
 
+static bool dsDolbySound_r()
+{
+    if (!SplitScreen::IsActive())
+    {
+        return false;
+    }
+
+    for (int i = 0; i < 36; ++i)
+    {
+        auto se = &sebuf[i];
+        auto twp = gpDolbyTask[i];
+
+        if (se->mode & 0x4000 && twp)
+        {
+            auto pnum = GetTheNearestPlayerNumber(&twp->pos);
+            NJS_VECTOR v = playertwp[pnum]->pos;
+            njSubVector(&v, &twp->pos);
+
+            njPushMatrix(0);
+            njUnitMatrix(0);
+            njRotateY(0, -HIWORD(GetCameraAngle(pnum)));
+            njCalcPoint(0, &v, &v);
+            njPopMatrix(1);
+
+            v.x *= 0.1f;
+            v.y *= 0.1f;
+            v.z *= 0.1f;
+
+            Set3DPositionPCM(i, v.x, v.y, v.z);
+        }
+    }
+
+    return true;
+}
+
+static const void* dsDolbySound_o = reinterpret_cast<void*>(0x00424B10);
+
+static void __declspec(naked) dsDolbySound_w()
+{
+    __asm
+    {
+        push eax
+        call dsDolbySound_r
+        test eax, eax
+        pop eax
+        jnz is_true
+        jmp dsDolbySound_o
+    is_true:
+        retn
+    }
+}
+
 void InitSoundPatches()
 {
     dsGetVolume_t = new Trampoline(0x4244A0, 0x4244A7, dsGetVolume_r);
     dsPlay_timer_v_t = new Trampoline(0x424000, 0x424005, dsPlay_timer_v_r);
     dsPlay_timer_vq_t = new Trampoline(0x424100, 0x424105, dsPlay_timer_vq_r);
     dsPlay_oneshot_v_t = new Trampoline(0x424FC0, 0x424FC5, dsPlay_oneshot_v_r);
-    dsPlay_oneshot_Dolby_t = new Trampoline(0x424880, 0x424885, dsPlay_oneshot_Dolby_r);
-    dsPlay_Dolby_time_t = new Trampoline(0x424920, 0x424925, dsPlay_Dolby_time_r);
     dsPlay_Dolby_timer_vq_t = new Trampoline(0x4249E0, 0x4249E5, dsPlay_Dolby_timer_vq_r);
+
+    WriteJump((void*)0x4253B1, dsDolbySound_w);
 }
