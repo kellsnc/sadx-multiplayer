@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "camera.h"
+#include "splitscreen.h"
 
 void DrawSADXText(const char* text, __int16 y)
 {
@@ -79,15 +81,13 @@ float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2)
 		(v2->z - v1->z) * (v2->z - v1->z));
 }
 
-bool IsPlayerInSphere(float x, float y, float z, float r)
+bool IsPlayerInSphere(NJS_POINT3* p, float r)
 {
-	NJS_VECTOR p = { x, y, z };
-
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		if (playertwp[i])
 		{
-			if (GetDistance(&playertwp[i]->pos, &p) < r)
+			if (GetDistance(&playertwp[i]->pos, p) < r)
 			{
 				return true;
 			}
@@ -95,4 +95,42 @@ bool IsPlayerInSphere(float x, float y, float z, float r)
 	}
 
 	return false;
+}
+
+bool IsPlayerInSphere(float x, float y, float z, float r)
+{
+	NJS_VECTOR p = { x, y, z };
+	return IsPlayerInSphere(&p, r);
+}
+
+bool IsCameraInSphere(NJS_POINT3* p, float r)
+{
+	if (SplitScreen::IsActive())
+	{
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			if (SplitScreen::IsScreenEnabled(i))
+			{
+				if (GetDistance(GetCameraPosition(i), p) < r)
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+	else if (camera_twp)
+	{
+		return GetDistance(&camera_twp->pos, p) < r;
+	}
+	else
+	{
+		return IsPlayerInSphere(p, r);
+	}
+}
+
+bool IsCameraInSphere(float x, float y, float z, float r)
+{
+	NJS_VECTOR p = { x, y, z };
+	return IsCameraInSphere(&p, r);
 }

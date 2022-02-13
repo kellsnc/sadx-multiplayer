@@ -456,6 +456,10 @@ DataPointer(int, ri_landentry_nmb, 0x3B36D3C);
 DataPointer(_OBJ_LANDTABLE*, pObjLandTable, 0x3B2F718);
 VoidFunc(dsEditLightInit, 0x40AEE0);
 FunctionPointer(void, DrawLineV, (NJS_VECTOR*, NJS_VECTOR*), 0x412990);
+DataArray(_SEcallbuf, sebuf, 0x3B292F8, 36); // 20 in xbox version
+DataArray(taskwk*, gpDolbyTask, 0x3B29B90, 36); // 20 in xbox version
+FunctionPointer(BOOL, Get3Dmode, (), 0x40FF40);
+FunctionPointer(int, dsPlay_oneshot_v, (int tone, int id, int pri, int volofs, float x, float y, float z), 0x424FC0);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -658,7 +662,6 @@ struct __declspec(align(4)) PanelPrmType
 	float OfsY;
 	unsigned __int8 PvrIdx;
 };
-
 
 enum AdvaStatEnum : __int32
 {

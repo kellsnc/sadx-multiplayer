@@ -18,4 +18,5 @@ namespace multiplayer
     bool IsBattleMode(); // Check if multiplayer is active and in battle mode
     bool IsCoopMode(); // Check if multiplayer is active and in coop mode
     bool IsFightMode(); // Check if multiplayer is active and in VS mode
+    bool IsOnline(); // Check if in networking mode (todo: move)
 }

@@ -73,6 +73,9 @@
     <ClCompile Include="multiapi.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="sound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -137,6 +140,9 @@
     </ClInclude>
     <ClInclude Include="..\include\multiapi.h">
       <Filter>Header FIles\include</Filter>
+    </ClInclude>
+    <ClInclude Include="sound.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

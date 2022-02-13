@@ -19,7 +19,7 @@ MultiCam MultiCams[PLAYER_MAX];
 
 NJS_VECTOR* GetCameraPosition(int pnum)
 {
-    if (SplitScreen::IsActive() && pnum < multiplayer::GetPlayerCount() && playertp[pnum])
+    if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
     {
         return &MultiCams[pnum].pos;
     }
@@ -31,7 +31,7 @@ NJS_VECTOR* GetCameraPosition(int pnum)
 
 Angle3* GetCameraAngle(int pnum)
 {
-    if (SplitScreen::IsActive() && pnum < multiplayer::GetPlayerCount() && playertp[pnum])
+    if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
     {
         return &MultiCams[pnum].ang;
     }
@@ -43,7 +43,7 @@ Angle3* GetCameraAngle(int pnum)
 
 void ApplyMultiCamera(int pnum)
 {
-    if (!camera_twp || !playertwp[pnum] || pnum > multiplayer::GetPlayerCount())
+    if (!camera_twp || !playertwp[pnum] || pnum >= LengthOfArray(MultiCams))
     {
         return;
     }

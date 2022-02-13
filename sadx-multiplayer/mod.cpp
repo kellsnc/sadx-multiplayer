@@ -8,6 +8,7 @@
 #include "deathzones.h"
 #include "set.h"
 #include "levels.h"
+#include "sound.h"
 #include "testspawn.h"
 
 const HelperFunctions* gHelperFunctions;
@@ -28,6 +29,7 @@ extern "C"
 		MultiHudInit();
 		InitSET();
 		InitLevels();
+		InitSoundPatches();
 		TestSpawn();
 
 		delete config;

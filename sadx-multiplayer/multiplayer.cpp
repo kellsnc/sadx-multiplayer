@@ -6,6 +6,7 @@ namespace multiplayer
     bool enabled = false;
     unsigned int pcount = 0;
     mode gMode = mode::coop;
+    bool online = false;
 
     unsigned int GetPlayerCount()
     {
@@ -52,5 +53,10 @@ namespace multiplayer
     bool IsFightMode()
     {
         return IsBattleMode() && CurrentLevel >= LevelIDs_Chaos0 && CurrentLevel <= LevelIDs_E101R;
+    }
+
+    bool IsOnline()
+    {
+        return online;
     }
 }

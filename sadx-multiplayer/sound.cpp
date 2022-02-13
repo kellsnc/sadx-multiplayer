@@ -1,0 +1,244 @@
+#include "pch.h"
+#include "multiplayer.h"
+#include "splitscreen.h"
+#include "camera.h"
+#include "sound.h"
+
+Trampoline* dsGetVolume_t = nullptr;
+Trampoline* dsPlay_timer_v_t = nullptr;
+Trampoline* dsPlay_timer_vq_t = nullptr;
+Trampoline* dsPlay_oneshot_v_t = nullptr;
+Trampoline* dsPlay_oneshot_Dolby_t = nullptr;
+Trampoline* dsPlay_Dolby_time_t = nullptr;
+Trampoline* dsPlay_Dolby_timer_vq_t = nullptr;
+
+void dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z)
+{
+    if (IsCameraInSphere(x, y, z, 400.0f))
+    {
+        int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
+        if (num < 0)
+        {
+            num = SoundQueue_GetFreeIndex(pri); // dsCheckHandle
+            if (num < 0)
+            {
+                return;
+            }
+            sebuf[num].mode = 1;
+            sebuf[num].qnum = -1;
+        }
+        else
+        {
+            sebuf[num].mode = 0;
+        }
+
+        sebuf[num].timer = timer + 1;
+        sebuf[num].pri = pri;
+        sebuf[num].id = id;
+        sebuf[num].mode |= 0x1130;
+        sebuf[num].tone = tone;
+        sebuf[num].angle = 0;
+        sebuf[num].vol = volofs;
+        sebuf[num].volmax = volofs;
+        sebuf[num].pitch = 0;
+        sebuf[num].pos.x = x;
+        sebuf[num].pos.y = y;
+        sebuf[num].pos.z = z;
+    }
+    else
+    {
+        TARGET_DYNAMIC(dsPlay_timer_v)(tone, id, pri, volofs, timer, x, y, z);
+    }
+}
+
+void dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z, float rad)
+{
+    if (SplitScreen::IsActive && IsCameraInSphere(x, y, z, rad))
+    {
+        int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
+        if (num < 0)
+        {
+            num = SoundQueue_GetFreeIndex(pri); // dsCheckHandle
+            if (num < 0)
+            {
+                return;
+            }
+            sebuf[num].mode = 1;
+            sebuf[num].qnum = -1;
+        }
+        else
+        {
+            sebuf[num].mode = 0;
+        }
+
+        sebuf[num].timer = timer + 1;
+        sebuf[num].pri = pri;
+        sebuf[num].id = id;
+        sebuf[num].mode |= 0x1130;
+        sebuf[num].tone = tone;
+        sebuf[num].angle = 0;
+        sebuf[num].vol = volofs;
+        sebuf[num].volmax = volofs;
+        sebuf[num].pitch = 0;
+        sebuf[num].pos.x = x;
+        sebuf[num].pos.y = y;
+        sebuf[num].pos.z = z;
+    }
+    else
+    {
+        TARGET_DYNAMIC(dsPlay_timer_vq)(tone, id, pri, volofs, timer, x, y, z, rad);
+    }
+}
+
+int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, float z)
+{
+    if (SplitScreen::IsActive && IsCameraInSphere(x, y, z, 400.0f))
+    {
+        int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
+        if (num < 0)
+        {
+            num = SoundQueue_GetFreeIndex(pri); // dsCheckHandle
+            if (num < 0)
+            {
+                return -1;
+            }
+            sebuf[num].mode = 1;
+            sebuf[num].qnum = -1;
+        }
+        else
+        {
+            sebuf[num].mode = 0;
+        }
+
+        sebuf[num].timer = 120;
+        sebuf[num].pri = -1;
+        sebuf[num].id = id;
+        sebuf[num].mode |= 0x1130;
+        sebuf[num].tone = tone;
+        sebuf[num].angle = 0;
+        sebuf[num].vol = volofs;
+        sebuf[num].volmax = volofs;
+        sebuf[num].pitch = 0;
+        sebuf[num].pos.x = x;
+        sebuf[num].pos.y = y;
+        sebuf[num].pos.z = z;
+    }
+    else
+    {
+        return TARGET_DYNAMIC(dsPlay_oneshot_v)(tone, id, pri, volofs, x, y, z);
+    }
+}
+
+void dsPlay_oneshot_Dolby_r(int tone, int id, int pri, int volofs, int time, taskwk* pTaskwk)
+{
+    if (SplitScreen::IsActive)
+    {
+        dsPlay_timer_v_r(tone, id, pri, volofs, time, pTaskwk->pos.x, pTaskwk->pos.y, pTaskwk->pos.z);
+    }
+    else
+    {
+        TARGET_DYNAMIC(dsPlay_oneshot_Dolby)(tone, id, pri, volofs, time, pTaskwk);
+    }
+}
+
+void dsPlay_Dolby_time_r(int tone, int id, int pri, int volofs, int time, taskwk* pTaskwk)
+{
+    if (SplitScreen::IsActive)
+    {
+        dsPlay_timer_v_r(tone, id, pri, volofs, time, pTaskwk->pos.x, pTaskwk->pos.y, pTaskwk->pos.z);
+    }
+    else
+    {
+        TARGET_DYNAMIC(dsPlay_Dolby_time)(tone, id, pri, volofs, time, pTaskwk);
+    }
+}
+
+void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float rad, taskwk* pTaskwk)
+{
+    if (SplitScreen::IsActive)
+    {
+        dsPlay_timer_vq_r(tone, id, pri, volofs, timer, pTaskwk->pos.x, pTaskwk->pos.y, pTaskwk->pos.z, rad);
+    }
+    else
+    {
+        TARGET_DYNAMIC(dsPlay_Dolby_timer_vq)(tone, id, pri, volofs, timer, rad, pTaskwk);
+    }
+}
+
+static int dsGetVolume_o(int ii)
+{
+    auto tgt = dsGetVolume_t->Target();
+    int ret;
+    __asm
+    {
+        mov eax, [ii]
+        call tgt
+        mov ret, eax
+    }
+    return ret;
+}
+
+int __cdecl dsGetVolume_r(int ii)
+{
+    if (SplitScreen::IsActive)
+    {
+        auto se = &sebuf[ii];
+        
+        auto pnum = GetTheNearestPlayerNumber(&se->pos);
+        float dist = GetDistance(&se->pos, GetCameraPosition(pnum));
+
+        int vol = 0;
+
+        if (dist > 20.0f)
+        {
+            dist = (dist - 20.0f) * 0.0017241379f;
+
+            if (dist < 0.0f)
+            {
+                dist = 0.0f;
+            }
+
+            vol = (int)-(dist * 127.0f);
+        }
+
+        vol += se->vol;
+
+        if (vol < -127)
+        {
+            vol = -127;
+        }
+
+        if (vol > se->volmax)
+        {
+            return se->volmax;
+        }
+
+        return vol;
+    }
+    else
+    {
+        return dsGetVolume_o(ii);
+    }
+}
+
+static void __declspec(naked) dsGetVolume_w()
+{
+    __asm
+    {
+        push eax
+        call dsGetVolume_r
+        add esp, 4
+        retn
+    }
+}
+
+void InitSoundPatches()
+{
+    dsGetVolume_t = new Trampoline(0x4244A0, 0x4244A7, dsGetVolume_r);
+    dsPlay_timer_v_t = new Trampoline(0x424000, 0x424005, dsPlay_timer_v_r);
+    dsPlay_timer_vq_t = new Trampoline(0x424100, 0x424105, dsPlay_timer_vq_r);
+    dsPlay_oneshot_v_t = new Trampoline(0x424FC0, 0x424FC5, dsPlay_oneshot_v_r);
+    dsPlay_oneshot_Dolby_t = new Trampoline(0x424880, 0x424885, dsPlay_oneshot_Dolby_r);
+    dsPlay_Dolby_time_t = new Trampoline(0x424920, 0x424925, dsPlay_Dolby_time_r);
+    dsPlay_Dolby_timer_vq_t = new Trampoline(0x4249E0, 0x4249E5, dsPlay_Dolby_timer_vq_r);
+}

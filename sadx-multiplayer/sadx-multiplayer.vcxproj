@@ -110,6 +110,7 @@
     <ClInclude Include="players.h" />
     <ClInclude Include="sadx_utils.h" />
     <ClInclude Include="set.h" />
+    <ClInclude Include="sound.h" />
     <ClInclude Include="splitscreen.h" />
     <ClInclude Include="testspawn.h" />
     <ClInclude Include="utils.h" />
@@ -139,6 +140,7 @@
     </ClCompile>
     <ClCompile Include="players.cpp" />
     <ClCompile Include="set.cpp" />
+    <ClCompile Include="sound.cpp" />
     <ClCompile Include="splitscreen.cpp" />
     <ClCompile Include="testspawn.cpp" />
     <ClCompile Include="utils.cpp" />
