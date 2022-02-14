@@ -8,6 +8,7 @@
 #include "deathzones.h"
 #include "set.h"
 #include "levels.h"
+#include "race.h"
 #include "sound.h"
 #include "testspawn.h"
 
@@ -29,6 +30,7 @@ extern "C"
 		MultiHudInit();
 		InitSET();
 		InitLevels();
+		InitRace();
 		InitSoundPatches();
 		TestSpawn();
 

@@ -61,9 +61,6 @@
     <ClCompile Include="objects\ObjectTPCoaster.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\Rd_MiniCart.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectBeachOruka.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
@@ -74,6 +71,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="sound.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="race.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -142,6 +142,9 @@
       <Filter>Header FIles\include</Filter>
     </ClInclude>
     <ClInclude Include="sound.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="race.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>

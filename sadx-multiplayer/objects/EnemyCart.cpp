@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "camera.h"
+#include "../race.h"
 
 enum CARTMD
 {
@@ -44,8 +45,6 @@ DataArray(int, cart_se_num, 0x38A6D70, 6 * 2);
 DataPointer(float, hamariDist, 0x3D08E10);
 
 task* taskOfPlayerOn_m[PLAYER_MAX];
-
-extern bool cartGoalFlagM[PLAYER_MAX]; // Rd_MiniCart.cpp
 
 Characters GetPlayerNumberM(int pnum)
 {

@@ -108,6 +108,7 @@
     <ClInclude Include="patches.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="players.h" />
+    <ClInclude Include="race.h" />
     <ClInclude Include="sadx_utils.h" />
     <ClInclude Include="set.h" />
     <ClInclude Include="sound.h" />
@@ -132,13 +133,13 @@
     <ClCompile Include="objects\ObjectBeachWave.cpp" />
     <ClCompile Include="objects\ObjectItemBox.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
-    <ClCompile Include="objects\Rd_MiniCart.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="players.cpp" />
+    <ClCompile Include="race.cpp" />
     <ClCompile Include="set.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="splitscreen.cpp" />

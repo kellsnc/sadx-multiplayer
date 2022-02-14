@@ -1,12 +1,16 @@
 #include "pch.h"
 #include "splitscreen.h"
 #include "utils.h"
+#include "race.h"
 
 /*
 
 Multiplayer Twinkle Circuit manager
 
 */
+
+Trampoline* TwinkleCircuitZoneTask_t = nullptr;
+Trampoline* Rd_MiniCart_t = nullptr;
 
 // RACE MANAGER:
 
@@ -313,8 +317,6 @@ static void __cdecl initRoundM(task* tp, void* param_p)
 
 static const TaskInfo RdTaskInfoM = { 1, 2, initRoundM, execRoundM, 0, deadRoundM };
 
-void __cdecl Rd_MiniCart_r(task* tp);
-Trampoline Rd_MiniCart_t(0x4DAA80, 0x4DAA86, Rd_MiniCart_r);
 void __cdecl Rd_MiniCart_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -323,7 +325,7 @@ void __cdecl Rd_MiniCart_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(Rd_MiniCart)(tp);
+		TARGET_DYNAMIC(Rd_MiniCart)(tp);
 	}
 }
 
@@ -361,9 +363,7 @@ static void goalRaceM(taskwk* pltwp, int pnum)
 	}
 }
 
-void __cdecl TwinkleCircuitZoneTask_r(task* tp);
-Trampoline TwinkleCircuitZoneTask_t(0x4DBCF0, 0x4DBCF8, TwinkleCircuitZoneTask_r);
-void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
+static void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
 {
 	if (multiplayer::IsActive())
 	{
@@ -411,6 +411,12 @@ void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
 	}
 	else
 	{
-		TARGET_STATIC(TwinkleCircuitZoneTask)(tp);
+		TARGET_DYNAMIC(TwinkleCircuitZoneTask)(tp);
 	}
+}
+
+void InitRace()
+{
+	TwinkleCircuitZoneTask_t = new Trampoline(0x4DBCF0, 0x4DBCF8, TwinkleCircuitZoneTask_r);
+	Rd_MiniCart_t = new Trampoline(0x4DAA80, 0x4DAA86, Rd_MiniCart_r);
 }
