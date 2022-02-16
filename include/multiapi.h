@@ -78,25 +78,31 @@ extern "C"
 	API void multi_rings_add(int32_t pnum, int32_t amount);
 
 	// Returns true if multiplayer is currently enabled
-	API bool multi_is_enabled();
+	API bool multi_is_enabled(void);
 
 	// Returns true if multiplayer is currently active (ingame)
-	API bool multi_is_active();
+	API bool multi_is_active(void);
 
 	// Returns true if multiplayer is active and in battle mode
-	API bool multi_is_battle();
+	API bool multi_is_battle(void);
 
 	// Returns true if multiplayer is active and in coop mode
-	API bool multi_is_coop();
+	API bool multi_is_coop(void);
 
 	// Enable multiplayer mode
 	API void multi_enable(int player_count, bool battle);
 
 	// Disable multiplayer mode
-	API void multi_disable();
+	API void multi_disable(void);
 
 	// Get the amount of connected players
-	API uint32_t multi_get_player_count();
+	API uint32_t multi_get_player_count(void);
+
+	// Get the ID of the winning player (-1 if none)
+	API int32_t multi_get_winner(void);
+
+	// Set the ID of the winning player (-1 to reset)
+	API void multi_set_winner(int32_t pnum);
 
 #ifdef __cplusplus
 }

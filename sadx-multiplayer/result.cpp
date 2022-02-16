@@ -9,6 +9,11 @@ int GetWinnerMulti()
 	return MRaceResult;
 }
 
+void SetWinnerMulti(int pnum)
+{
+	MRaceResult = pnum;
+}
+
 void SetFinishAction_r()
 {
 	if (multiplayer::IsActive())

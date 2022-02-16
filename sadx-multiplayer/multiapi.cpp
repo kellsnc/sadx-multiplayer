@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "splitscreen.h"
 #include "players.h"
+#include "result.h"
 #include "../include/multiapi.h"
 
 bool splitscreen_is_active()
@@ -133,4 +134,14 @@ void multi_disable()
 uint32_t multi_get_player_count()
 {
 	return multiplayer::GetPlayerCount();
+}
+
+int32_t multi_get_winner()
+{
+	return GetWinnerMulti();
+}
+
+void multi_set_winner(int32_t pnum)
+{
+	SetWinnerMulti(pnum);
 }
