@@ -10,6 +10,7 @@
 #include "levels.h"
 #include "race.h"
 #include "sound.h"
+#include "result.h"
 #include "testspawn.h"
 
 const HelperFunctions* gHelperFunctions;
@@ -32,6 +33,7 @@ extern "C"
 		InitLevels();
 		InitRace();
 		InitSoundPatches();
+		InitResult();
 		TestSpawn();
 
 		delete config;

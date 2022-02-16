@@ -98,6 +98,7 @@
     <ClInclude Include="deathzones.h" />
     <ClInclude Include="drawqueue.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="hud_result.h" />
     <ClInclude Include="levels.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="mod.h" />
@@ -109,6 +110,7 @@
     <ClInclude Include="pch.h" />
     <ClInclude Include="players.h" />
     <ClInclude Include="race.h" />
+    <ClInclude Include="result.h" />
     <ClInclude Include="sadx_utils.h" />
     <ClInclude Include="set.h" />
     <ClInclude Include="sound.h" />
@@ -121,6 +123,7 @@
     <ClCompile Include="deathzones.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
+    <ClCompile Include="hud_result.cpp" />
     <ClCompile Include="multiapi.cpp" />
     <ClCompile Include="levels.cpp" />
     <ClCompile Include="menu.cpp" />
@@ -141,6 +144,7 @@
     </ClCompile>
     <ClCompile Include="players.cpp" />
     <ClCompile Include="race.cpp" />
+    <ClCompile Include="result.cpp" />
     <ClCompile Include="set.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="splitscreen.cpp" />

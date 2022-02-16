@@ -79,6 +79,12 @@
     <ClCompile Include="objects\ObjectReleaseBox.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="result.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hud_result.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -149,6 +155,12 @@
     </ClInclude>
     <ClInclude Include="race.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="result.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_result.h">
+      <Filter>Header FIles\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
