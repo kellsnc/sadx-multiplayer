@@ -462,6 +462,9 @@ FunctionPointer(BOOL, Get3Dmode, (), 0x40FF40);
 FunctionPointer(int, dsPlay_oneshot_v, (int tone, int id, int pri, int volofs, float x, float y, float z), 0x424FC0);
 FunctionPointer(void, Set3DPositionPCM, (int, float, float, float), 0x4102C0);
 DataPointer(taskwk*, gpCharTwp, 0x3ABDF60);
+TaskFunc(relbox_switch_draw, 0x46A8D0);
+FunctionPointer(void, PClearSpeed, (motionwk2* mwp, playerwk* pwp), 0x43C550);
+DataPointer(int, MRaceResult, 0x3C53A94);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);

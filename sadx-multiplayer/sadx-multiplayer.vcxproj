@@ -132,6 +132,7 @@
     <ClCompile Include="objects\ObjectBeachOruka.cpp" />
     <ClCompile Include="objects\ObjectBeachWave.cpp" />
     <ClCompile Include="objects\ObjectItemBox.cpp" />
+    <ClCompile Include="objects\ObjectReleaseBox.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
