@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "players.h"
 #include "multiplayer.h"
+#include "result.h"
 
 /*
 
@@ -304,6 +305,8 @@ void LoadCharacter_r()
     {
         if (characters[0] >= 0)
             CurrentCharacter = characters[0];
+
+        SetWinnerMulti(-1);
 
         TailsAI_ptr = (ObjectMaster*)1; // don't load tails AI; horrible patch for compatibility with CharSel
         LoadCharacter();

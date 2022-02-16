@@ -465,6 +465,7 @@ DataPointer(taskwk*, gpCharTwp, 0x3ABDF60);
 TaskFunc(relbox_switch_draw, 0x46A8D0);
 FunctionPointer(void, PClearSpeed, (motionwk2* mwp, playerwk* pwp), 0x43C550);
 DataPointer(int, MRaceResult, 0x3C53A94);
+DataPointer(NJS_SPRITE, Spr_MRaceDisp, 0x3C53A98);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
