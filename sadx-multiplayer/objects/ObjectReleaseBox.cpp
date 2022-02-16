@@ -35,10 +35,12 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 		{
 			if (!twp->mode)
 			{
+				PadReadOff();
+				ToggleControllers(false);
+
 				for (int i = 0; i < PLAYER_MAX; ++i)
 				{
-					DisableController(i);
-					PClearSpeed(playermwp[0], playerpwp[0]);
+					PClearSpeed(playermwp[i], playerpwp[i]);
 				}
 
 				twp->mode = 1;
