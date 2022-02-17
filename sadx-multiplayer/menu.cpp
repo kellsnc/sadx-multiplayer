@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "menu.h"
 #include "menu_multi.h"
+#include "splitscreen.h"
 
 // Menu layout with minigames
 PanelPrmType PanelPrmTitleMenu1[]
@@ -36,7 +37,24 @@ const DialogPrmType MainMenuMultiDialog = { DLG_PNLSTYLE_SIKAKU2, nullptr, &ava_
 
 Trampoline* title_menu_sub_exec_t = nullptr;
 Trampoline* char_sel_exec_t = nullptr;
+Trampoline* dialog_disp_t = nullptr;
 int selected_multi_mode = 0;
+
+// Make sure ingame dialogs draw widescreen
+static void __cdecl dialog_disp_r(task* tp)
+{
+	if (SplitScreen::IsActive())
+	{
+		SplitScreen::SaveViewPort();
+		SplitScreen::ChangeViewPort(-1);
+		TARGET_DYNAMIC(dialog_disp)(tp);
+		SplitScreen::RestoreViewPort();
+	}
+	else
+	{
+		TARGET_DYNAMIC(dialog_disp)(tp);
+	}
+}
 
 bool AvaGetMultiEnable()
 {
@@ -178,6 +196,7 @@ void __cdecl InitMenu(const HelperFunctions& helperFunctions)
 {
 	title_menu_sub_exec_t = new Trampoline(0x50B630, 0x50B638, title_menu_sub_exec_r);
 	char_sel_exec_t = new Trampoline(0x5122D0, 0x5122DA, char_sel_exec_r);
+	dialog_disp_t = new Trampoline(0x432480, 0x432487, dialog_disp_r);
 
 	DialogPrm[2].PnlPrmPtr = PanelPrmTitleMenu1;
 	DialogPrm[2].CsrMax = 7;

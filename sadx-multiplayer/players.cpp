@@ -83,9 +83,9 @@ void __cdecl ResetNumPlayerM()
 {
     scNumPlayer = 4;
 
-    for (int i = 0; i < PLAYER_MAX; i++)
+    for (auto& i : lives)
     {
-        lives[i] = 4;
+        i = 4;
     }
 }
 
@@ -173,6 +173,19 @@ void AddNumRingM(int pNum, int add)
     else
     {
         AddNumRing(add);
+    }
+}
+
+void ResetNumRingM()
+{
+    Rings = 0;
+
+    if (multiplayer::IsBattleMode())
+    {
+        for (auto& i : rings)
+        {
+            i = 0;
+        }
     }
 }
 
@@ -329,6 +342,7 @@ void LoadCharacter_r()
 void InitPlayerPatches()
 {
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
+    WriteJump(ResetNumRing, ResetNumRingM);
     WriteCall((void*)0x415A25, LoadCharacter_r);
     DamegeRingScatter_t = new Trampoline(0x4506F0, 0x4506F7, DamegeRingScatter_r);
 }

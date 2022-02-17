@@ -259,6 +259,11 @@ void DisplayMultiHud(int num)
         return;
     }
 
+    if (HideTimerAndRings < 0 && HideHud < 0)
+    {
+        return;
+    }
+
     SplitScreen::SaveViewPort();
     SplitScreen::ChangeViewPort(-1);
 
@@ -277,23 +282,27 @@ void DisplayMultiHud(int num)
     MULTIHUDDIGIT_SPRITE.sx = MULTIHUDDIGIT_SPRITE.sy = scale;
 
     float x = MULTIHUD_SPRITE.p.x = 16.0f * scale + screenX;
-    MULTIHUD_SPRITE.p.y = 16.0f * scaleY + screenY;
-    njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
-    MultiHudScore(num, scale);
 
-    if (SplitScreen::numScreen == 0)
+    if (HideTimerAndRings >= 0)
     {
+        MULTIHUD_SPRITE.p.y = 16.0f * scaleY + screenY;
+        njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
+        MultiHudScore(num, scale);
+
+        if (SplitScreen::numScreen == 0)
+        {
+            MULTIHUD_SPRITE.p.x = x;
+            MULTIHUD_SPRITE.p.y += 24 * scale;
+            njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Time, 0, NJD_SPRITE_ALPHA);
+            MultiHudTime(num, scale);
+        }
+
         MULTIHUD_SPRITE.p.x = x;
         MULTIHUD_SPRITE.p.y += 24 * scale;
-        njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Time, 0, NJD_SPRITE_ALPHA);
-        MultiHudTime(num, scale);
+        njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Ring, 0, NJD_SPRITE_ALPHA);
+        MultiHudRings(num, scale);
     }
-
-    MULTIHUD_SPRITE.p.x = x;
-    MULTIHUD_SPRITE.p.y += 24 * scale;
-    njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Ring, 0, NJD_SPRITE_ALPHA);
-    MultiHudRings(num, scale);
-
+    
     if (HideLives >= 0)
     {
         MULTIHUDDIGIT_SPRITE.p.x = x;

@@ -327,6 +327,17 @@ struct CartDispTime
 	char sec100;
 };
 
+struct PLAYER_CONTINUE_DATA
+{
+	unsigned __int16 stage_number;
+	unsigned __int8 minutes;
+	unsigned __int8 second;
+	unsigned __int8 frame;
+	int continue_flag;
+	NJS_POINT3 pos;
+	Angle3 ang;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -370,6 +381,7 @@ DataPointer(int, slEnemyScore, 0x3B0F104);
 VoidFunc(InitActionScore, 0x427EF0);
 FunctionPointer(void, AddNumRing, (Sint16 amount), 0x425BE0);
 FunctionPointer(Sint16, GetNumRing, (), 0x425CC0);
+FunctionPointer(int, ResetNumRing, (), 0x425AB0);
 FunctionPointer(int, ResetNumPlayer, (), 0x425AF0);
 FunctionPointer(int, GetNumPlayer, (), 0x425FE0);
 FunctionPointer(void, AddNumPlayer, (__int16 lives), 0x425B60);
@@ -467,6 +479,8 @@ FunctionPointer(void, PClearSpeed, (motionwk2* mwp, playerwk* pwp), 0x43C550);
 DataPointer(int, MRaceResult, 0x3C53A94);
 DataPointer(NJS_SPRITE, Spr_MRaceDisp, 0x3C53A98);
 VoidFunc(SetFinishAction, 0x415540);
+DataPointer(PLAYER_CONTINUE_DATA, continue_data, 0x3B42F80);
+FunctionPointer(task*, SetDialogTask, (), 0x432C60);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -981,6 +995,7 @@ DataArray(const AvaTexLdEnum*, AvaTexLdLists, 0x10D7CC4, 14);
 DataPointer(AvaStgActT, AvaCmnPrm, 0x3C5FED0);
 DataPointer(ADVERTISE_WORK, AdvertiseWork, 0x3B2A2FA);
 DataArray(DialogPrmType, DialogPrm, 0x7EE328, 22); // Menu dialogs
+DataPointer(const DialogPrmType, DialogAskQuit, 0x7DD48C);
 TaskFunc(title_new_exec, 0x5101A0);
 TaskFunc(trial_act_sel_exec, 0x50B220);
 TaskFunc(trial_act_sel_disp, 0x50B410);
