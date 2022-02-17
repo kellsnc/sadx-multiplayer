@@ -58,6 +58,11 @@ static void __cdecl late_DisplayTotalScoreM(task* tp)
 	}
 }
 
+static void __cdecl CalcTotalScoreM_dest(task* tp)
+{
+	njReleaseTexture(&MILESRACE_TEXLIST);
+}
+
 static void __cdecl CalcTotalScoreM(task* tp)
 {
 	auto twp = tp->twp;
@@ -79,7 +84,6 @@ static void __cdecl CalcTotalScoreM(task* tp)
 		}
 		break;
 	case 2:
-		njReleaseTexture(&MILESRACE_TEXLIST);
 		SetChangeGameMode(1);
 		twp->mode = 3;
 		break;
@@ -92,6 +96,7 @@ void LoadMultiplayerResult()
 {
 	auto tp = CreateElementalTask(LoadObj_Data1, LEV_5, CalcTotalScoreM);
 	tp->disp = late_DisplayTotalScoreM;
+	tp->dest = CalcTotalScoreM_dest;
 
 	LoadPVM("MILESRACE", &MILESRACE_TEXLIST);
 }
