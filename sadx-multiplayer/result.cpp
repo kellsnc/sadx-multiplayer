@@ -62,8 +62,16 @@ void SetFinishAction_r()
 			ForcePlayerAction(i, 19);
 		}
 
-		Load_DelayedSound_BGM(75);
-		PlayCharaWinSound();
+		if (CurrentLevel == LevelIDs_TwinkleCircuit)
+		{
+			ADX_Close();
+		}
+		else
+		{
+			Load_DelayedSound_BGM(75);
+			PlayCharaWinSound();
+		}
+
 		LoadMultiplayerResult();
 	}
 	else

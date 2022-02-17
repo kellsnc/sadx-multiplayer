@@ -692,7 +692,7 @@ void EnemyCartM(task* tp)
 		cartSetVectorM(twp, pnum);
 		cartShadowPos(twp);
 		cartSpdForceOfNature(twp);
-		cartThinkM(tp, twp, pnum);
+		//cartThinkM(tp, twp, pnum); <- bot control once finish line passed, crashes in multiplayer
 		cartCharactorCollisionM(twp, pnum);
 		cartTopographicalCollisionM(tp, twp, pnum);
 		cartTakeSonicM(twp, pnum);

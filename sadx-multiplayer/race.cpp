@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "splitscreen.h"
 #include "utils.h"
+#include "result.h"
 #include "race.h"
 
 /*
@@ -32,6 +33,7 @@ struct RaceWkM // multiplayer version of RaceWk in symbols
 	char mode;
 	__int16 timer;
 	char dialState;
+	int winner;
 	RacerWk racers[PLAYER_MAX];
 };
 #pragma pack(pop)
@@ -234,6 +236,7 @@ static void __cdecl execRaceM(task* tp)
 
 		if (finished == true)
 		{
+			SleepTimer();
 			CartGoalFlag = TRUE;
 			wk->mode = RACEMD_GOAL;
 			wk->timer = 180;
@@ -243,6 +246,8 @@ static void __cdecl execRaceM(task* tp)
 	case RACEMD_GOAL:
 		if (--wk->timer <= 0)
 		{
+			SetWinnerMulti(wk->winner);
+			SetFinishAction();
 			wk->mode = RACEMD_END;
 		}
 		break;
@@ -255,10 +260,8 @@ static void __cdecl initRaceM(task* tp, void* param_p)
 {
 	auto wk = (RaceWkM*)tp->mwp;
 
-	if (wk)
-	{
-		memset(wk, 0, sizeof(RaceWkM));
-	}
+	memset(wk, 0, sizeof(RaceWkM));
+	wk->winner = -1;
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
@@ -401,6 +404,7 @@ static void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
 					wk->subTotal_a[wk->displayLap] = wk->totalIntrpt;
 					wk->displayLap = 2;
 					goalRaceM(pltwp, pnum);
+					if (racewk->winner == -1) racewk->winner = pnum;
 				}
 			}
 
