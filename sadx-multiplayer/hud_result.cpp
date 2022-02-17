@@ -13,6 +13,10 @@ static void DisplayMultiResultScreeen(taskwk* twp, int pnum)
 	float scaleX = HorizontalStretch * ratio->w;
 	float scale = min(scaleX, scaleY);
 
+	// Dim screen
+	DrawRect_Queue(screenX, screenY, screenX + 640.0f * scaleX, screenY + 480.0f * scaleY, 22048.0, static_cast<int>(twp->value.f * 30.0f) << 24, QueuedModelFlagsB_EnableZWrite);
+
+	// Draw win/lose status
 	Spr_MRaceDisp.tlist = &MILESRACE_TEXLIST;
 	Spr_MRaceDisp.sx = Spr_MRaceDisp.sy = scale * twp->value.f;
 	Spr_MRaceDisp.tanim = &TailsRace_TEXANIM;
@@ -37,10 +41,15 @@ static void late_DisplayTotalScoreM(task* tp)
 
 	if (SplitScreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
-		DisplayMultiResultScreeen(tp->twp, SplitScreen::GetCurrentScreenNum());
-		SplitScreen::RestoreViewPort();
+		auto pnum = SplitScreen::GetCurrentScreenNum();
+
+		if (SplitScreen::IsScreenEnabled(pnum))
+		{
+			SplitScreen::SaveViewPort();
+			SplitScreen::ChangeViewPort(-1);
+			DisplayMultiResultScreeen(tp->twp, pnum);
+			SplitScreen::RestoreViewPort();
+		}
 	}
 	else
 	{
@@ -64,10 +73,15 @@ static void __cdecl CalcTotalScoreM(task* tp)
 		}
 		break;
 	case 1:
+		if (++twp->timer.l > 500 || MenuSelectButtonsPressed())
+		{
+			twp->mode = 2;
+		}
 		break;
 	case 2:
 		njReleaseTexture(&MILESRACE_TEXLIST);
 		SetChangeGameMode(1);
+		twp->mode = 3;
 		break;
 	}
 	
