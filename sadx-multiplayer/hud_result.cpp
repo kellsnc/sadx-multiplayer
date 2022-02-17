@@ -29,7 +29,7 @@ static void DisplayMultiResultScreeen(taskwk* twp, int pnum)
 	}
 }
 
-static void late_DisplayTotalScoreM(task* tp)
+static void __cdecl late_DisplayTotalScoreM(task* tp)
 {
 	if (MissedFrames)
 	{

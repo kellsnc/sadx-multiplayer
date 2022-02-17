@@ -14,6 +14,41 @@ void SetWinnerMulti(int pnum)
 	MRaceResult = pnum;
 }
 
+static void PlayCharaWinSound()
+{
+	auto pnum = GetWinnerMulti();
+
+	if (pnum >= 0)
+	{
+		auto twp = playertwp[pnum];
+
+		if (twp)
+		{
+			switch (TASKWK_CHARID(twp))
+			{
+			case Characters_Sonic:
+				Load_DelayedSound_SFX(1495);
+				break;
+			case Characters_Tails:
+				Load_DelayedSound_SFX(1458);
+				break;
+			case Characters_Knuckles:
+				Load_DelayedSound_SFX(1445);
+				break;
+			case Characters_Amy:
+				Load_DelayedSound_SFX(1388);
+				break;
+			case Characters_Gamma:
+				Load_DelayedSound_SFX(1425);
+				break;
+			case Characters_MetalSonic:
+				PlayVoice(2044);
+				break;
+			}
+		}
+	}
+}
+
 void SetFinishAction_r()
 {
 	if (multiplayer::IsActive())
@@ -27,6 +62,8 @@ void SetFinishAction_r()
 			ForcePlayerAction(i, 19);
 		}
 
+		Load_DelayedSound_BGM(75);
+		PlayCharaWinSound();
 		LoadMultiplayerResult();
 	}
 	else
