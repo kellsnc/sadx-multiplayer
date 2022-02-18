@@ -275,6 +275,15 @@ void __cdecl Rd_Beach_r(task* tp)
 		{
 			tp->twp->mode = 0;
 			ChangeActM(1);
+
+			DataPointer(task*, BeachWaveTp, 0x3C5E3D0);
+
+			if (BeachWaveTp)
+			{
+				FreeTask(BeachWaveTp);
+				BeachWaveTp = nullptr;
+			}
+
 			return;
 		}
 	}
