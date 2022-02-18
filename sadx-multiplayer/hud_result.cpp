@@ -94,6 +94,8 @@ static void __cdecl late_DisplayTotalScoreM(task* tp)
 
 static void __cdecl CalcTotalScoreM_dest(task* tp)
 {
+	ToggleControllers(true);
+
 	HideLives = 0;
 	HideTimerAndRings = 0;
 	HideHud = 0;
@@ -140,7 +142,6 @@ static void __cdecl CalcTotalScoreM(task* tp)
 		switch (GetDialogStat())
 		{
 		case 0:
-			ToggleControllers(true);
 			Lives += 1;
 			continue_data.continue_flag = FALSE;
 			SetChangeGameMode(2);
