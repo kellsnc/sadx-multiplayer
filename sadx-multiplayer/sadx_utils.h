@@ -481,6 +481,7 @@ DataPointer(NJS_SPRITE, Spr_MRaceDisp, 0x3C53A98);
 VoidFunc(SetFinishAction, 0x415540);
 DataPointer(PLAYER_CONTINUE_DATA, continue_data, 0x3B42F80);
 FunctionPointer(task*, SetDialogTask, (), 0x432C60);
+DataPointer(pathtag, pathtag_hw1_heli0807, 0x26A72D4);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -674,6 +675,30 @@ static inline void SpinnaDraw(taskwk* twp, enemywk* ewp)
 		mov esi, [ewp]
 		mov ebx, [twp]
 		call SpinnaDrawPtr
+	}
+}
+
+static const void* const HeliPathPtr = (void*)0x6134A0;
+static inline void HeliPath(taskwk* twp, pathtag* tag, pathinfo* info)
+{
+	__asm
+	{
+		push[info]
+		mov edx, [tag]
+		mov esi, [twp]
+		call HeliPathPtr
+		add esp, 4
+	}
+}
+
+static const void* const HeliPosCopyPlayerPtr = (void*)0x613540;
+static inline void HeliPosCopyPlayer(taskwk* PlayerWork, taskwk* twp)
+{
+	__asm
+	{
+		mov ebx, [twp]
+		mov esi, [PlayerWork]
+		call HeliPosCopyPlayerPtr
 	}
 }
 
