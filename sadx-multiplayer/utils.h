@@ -13,3 +13,6 @@ int IsPlayerInSphere(NJS_POINT3* p, float r);
 int IsPlayerInSphere(float x, float y, float z, float r);
 bool IsCameraInSphere(NJS_POINT3* p, float r);
 bool IsCameraInSphere(float x, float y, float z, float r);
+void njRotateX_(Angle ang);
+void njRotateY_(Angle ang);
+void njRotateZ_(Angle ang);

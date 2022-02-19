@@ -482,6 +482,9 @@ VoidFunc(SetFinishAction, 0x415540);
 DataPointer(PLAYER_CONTINUE_DATA, continue_data, 0x3B42F80);
 FunctionPointer(task*, SetDialogTask, (), 0x432C60);
 DataPointer(pathtag, pathtag_hw1_heli0807, 0x26A72D4);
+FunctionPointer(void, SetVelocityAndRotationAndNoconTimeP, (int pno, NJS_POINT3* v, Angle3* ang, int tm), 0x441490);
+DataPointer(NJS_OBJECT, object_turnasi_oya_koa, 0x267D3B4);
+DataPointer(NJS_OBJECT, object_turnasi_oya_kob, 0x267C7AC);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);

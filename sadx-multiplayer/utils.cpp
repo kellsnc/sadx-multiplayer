@@ -134,3 +134,27 @@ bool IsCameraInSphere(float x, float y, float z, float r)
 	NJS_VECTOR p = { x, y, z };
 	return IsCameraInSphere(&p, r);
 }
+
+void njRotateX_(Angle ang)
+{
+	if (ang)
+	{
+		njRotateX(nullptr, (uint16_t)ang);
+	}
+}
+
+void njRotateY_(Angle ang)
+{
+	if (ang)
+	{
+		njRotateY(nullptr, (uint16_t)ang);
+	}
+}
+
+void njRotateZ_(Angle ang)
+{
+	if (ang)
+	{
+		njRotateZ(nullptr, (uint16_t)ang);
+	}
+}
