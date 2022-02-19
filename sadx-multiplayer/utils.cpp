@@ -81,7 +81,7 @@ float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2)
 		(v2->z - v1->z) * (v2->z - v1->z));
 }
 
-bool IsPlayerInSphere(NJS_POINT3* p, float r)
+int IsPlayerInSphere(NJS_POINT3* p, float r)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
@@ -89,15 +89,15 @@ bool IsPlayerInSphere(NJS_POINT3* p, float r)
 		{
 			if (GetDistance(&playertwp[i]->pos, p) < r)
 			{
-				return true;
+				return i + 1;
 			}
 		}
 	}
 
-	return false;
+	return 0;
 }
 
-bool IsPlayerInSphere(float x, float y, float z, float r)
+int IsPlayerInSphere(float x, float y, float z, float r)
 {
 	NJS_VECTOR p = { x, y, z };
 	return IsPlayerInSphere(&p, r);

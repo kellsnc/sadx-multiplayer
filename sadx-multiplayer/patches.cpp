@@ -212,23 +212,7 @@ void __cdecl EBuyon_ScorePatch(task* tp)
 
 int __cdecl CheckCollisionP_r(NJS_POINT3* vp, float d)
 {
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		auto twp = playertwp[i];
-
-		if (twp && twp->cwp)
-		{
-			NJS_VECTOR v = twp->cwp->info->center;
-			njSubVector(&v, vp);
-
-			if (njScalor(&v) < d)
-			{
-				return i + 1;
-			}
-		}
-	}
-
-	return 0;
+	return IsPlayerInSphere(vp, d);
 }
 
 int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, float r, float h)
