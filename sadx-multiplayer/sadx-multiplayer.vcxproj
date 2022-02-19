@@ -134,6 +134,7 @@
     <ClCompile Include="objects\EnemyCart.cpp" />
     <ClCompile Include="objects\ObjectBeachOruka.cpp" />
     <ClCompile Include="objects\ObjectBeachWave.cpp" />
+    <ClCompile Include="objects\ObjectCrane.cpp" />
     <ClCompile Include="objects\ObjectHeli.cpp" />
     <ClCompile Include="objects\ObjectItemBox.cpp" />
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
