@@ -18,12 +18,12 @@ enum MD_HELI // made up
 	MD_HELI_STOP
 };
 
-enum MD_HELISUB
+enum MD_HELILIGHT
 {
-	MD_HELISUB_0,
-	MD_HELISUB_1,
-	MD_HELISUB_2,
-	MD_HELISUB_3
+	MD_HELILIGHT_CUSTOM,
+	MD_HELILIGHT_RIGHT,
+	MD_HELILIGHT_LEFT,
+	MD_HELILIGHT_TARGET
 };
 
 static void HeliWriteSub_m(task* tp, taskwk* twp)
@@ -37,26 +37,26 @@ static void HeliWriteSub_m(task* tp, taskwk* twp)
 
 	switch (twp->smode)
 	{
-	case MD_HELISUB_1:
+	case MD_HELILIGHT_RIGHT:
 		twp->timer.l += 384;
 		twp->value.l += 256;
 		if (twp->timer.l >= 6144)
 		{
-			twp->smode = MD_HELISUB_2;
+			twp->smode = MD_HELILIGHT_LEFT;
 		}
 		break;
-	case MD_HELISUB_2:
+	case MD_HELILIGHT_LEFT:
 		twp->timer.l -= 384;
 		twp->value.l -= 256;
 		if (twp->timer.l <= -6144)
 		{
-			twp->smode = MD_HELISUB_1;
+			twp->smode = MD_HELILIGHT_RIGHT;
 		}
 		break;
-	case MD_HELISUB_3:
+	case MD_HELILIGHT_TARGET:
 		heli_PosTmpZ = twp->pos.z - ptwp->pos.z;
 		heli_PosTmpX = twp->pos.x - ptwp->pos.x - -28.884884f;
-		heli_PosTmp = squareroot(((heli_PosTmpZ * heli_PosTmpZ) + (heli_PosTmpX * heli_PosTmpX)));
+		heli_PosTmp = squareroot(heli_PosTmpZ * heli_PosTmpZ + heli_PosTmpX * heli_PosTmpX);
 		
 		if (heli_PosTmp > 50.0f)
 		{
@@ -73,14 +73,14 @@ static void HeliWriteSub_m(task* tp, taskwk* twp)
 				twp->timer.l -= 64;
 		}
 
-		heli_AngTmp = (twp->value.l + twp->ang.y - NJM_RAD_ANG(atan2(heli_PosTmpX, heli_PosTmpZ)));
+		heli_AngTmp = static_cast<int16_t>(twp->value.l + twp->ang.y - NJM_RAD_ANG(atan2f(heli_PosTmpX, heli_PosTmpZ)));
 
 		if (heli_AngTmp > 0x180)
 		{
 			if (heli_AngTmp >= 0x8000)
-				twp->value.l += 384;
+				twp->value.l += 0x180;
 			else
-				twp->value.l -= 384;
+				twp->value.l -= 0x180;
 		}
 
 		break;
@@ -109,7 +109,7 @@ static void HeliWriteSub_m(task* tp, taskwk* twp)
 	}
 	
 	twp->pos.y += twp->scl.z;
-	twp->counter.l += twp->timer.l;
+	twp->counter.l += twp->wtimer;
 
 	tp->disp(tp);
 }
