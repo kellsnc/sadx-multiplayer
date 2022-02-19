@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "multiplayer.h"
 
 DataPointer(NJS_POINT3, heli_pos, 0x3C8107C);
 DataPointer(Angle, heli_angy_spd, 0x3C8108C);
