@@ -12,9 +12,11 @@ DataPointer(Float, heli_PosTmpX, 0x3C8109C);
 
 static void __cdecl ObjectHeliExec_r(task* tp);
 static void HeliWriteSub_w();
+static void __cdecl HeliWrite_r(task* tp);
 
 Trampoline ObjectHeliExec_t(0x6139F0, 0x6139FA, ObjectHeliExec_r);
 Trampoline HeliWriteSub_t(0x6137B0, 0x6137B5, HeliWriteSub_w);
+Trampoline HeliWrite_t(0x6136C0, 0x6136C5, HeliWrite_r);
 
 enum MD_HELI // made up
 {
@@ -32,6 +34,28 @@ enum MD_HELILIGHT
 	MD_HELILIGHT_LEFT,
 	MD_HELILIGHT_TARGET
 };
+
+#pragma region HeliWrite
+static void __cdecl HeliWrite_o(task* tp)
+{
+	TARGET_STATIC(HeliWrite)(tp);
+}
+
+static void __cdecl HeliWrite_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		if (IsCameraInSphere(&tp->twp->pos, 1000.0f))
+		{
+			HeliWrite_o(tp);
+		}
+	}
+	else
+	{
+		HeliWrite_o(tp);
+	}
+}
+#pragma endregion
 
 #pragma region HeliWriteSub
 static void HeliWriteSub_o(task* tp, taskwk* twp)
@@ -130,7 +154,7 @@ static void HeliWriteSub_m(task* tp, taskwk* ptwp)
 	twp->pos.y += twp->scl.z;
 	twp->counter.l += twp->wtimer;
 
-	tp->disp(tp);
+	HeliWrite_o(tp);
 }
 
 static void __cdecl HeliWriteSub_r(task* tp, taskwk* twp)
