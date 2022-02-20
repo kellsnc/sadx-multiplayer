@@ -329,6 +329,17 @@ void InitLevels()
 	WriteData((void**)0x5E1FCE, (void*)0x5E1F30); // Lost World
 	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Ice Cap
 
+	// Emerald Coast Bridge
+	WriteData<2>((void*)0x501B66, 0x90ui8);
+	WriteData<2>((void*)0x501B12, 0x90ui8);
+	WriteData((uint8_t*)0x501C2F, 0xEBui8);
+
+	// Windy Valley exec for hane, bigfloot, saku (static "exec" name in symbols)
+	WriteData<2>((void*)0x4E1399, 0x90ui8);
+	
+	// Speed Highway Act 2 skybox
+	WriteData((taskwk***)0x610765, &camera_twp);
+	
 	// In battle mode, boss become fighting arenas
 	Rd_Chaos0_t   = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
 	Rd_Chaos2_t   = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
