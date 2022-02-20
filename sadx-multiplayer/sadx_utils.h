@@ -705,6 +705,16 @@ static inline void HeliPosCopyPlayer(taskwk* PlayerWork, taskwk* twp)
 	}
 }
 
+static const void* const RdHighwayInitPtr = (void*)0x60FF80;
+static inline void RdHighwayInit(task* tp)
+{
+	__asm
+	{
+		mov edi, [tp]
+		call RdHighwayInitPtr
+	}
+}
+
 struct __declspec(align(4)) PanelPrmType
 {
 	float OfsX;

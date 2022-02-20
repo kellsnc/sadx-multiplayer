@@ -69,6 +69,8 @@ void SetAllPlayersInitialPosition()
 	{
 		if (playertwp[i])
 		{
+			PClearSpeed(playermwp[i], playerpwp[i]);
+			SetInputP(i, 24);
 			SetPlayerInitialPosition(playertwp[i]);
 		}
 	}
@@ -157,4 +159,14 @@ void njRotateZ_(Angle ang)
 	{
 		njRotateZ(nullptr, (uint16_t)ang);
 	}
+}
+
+void ChangeActM(int amount)
+{
+	ADX_Close();
+	LandChangeStage(amount);
+	AddSetStage(amount);
+	AddCameraStage(amount);
+	AdvanceAct(amount);
+	SetAllPlayersInitialPosition();
 }

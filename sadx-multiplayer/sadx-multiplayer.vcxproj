@@ -140,6 +140,7 @@
     <ClCompile Include="objects\ObjectItemBox.cpp" />
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
+    <ClCompile Include="objects\Rd_Highway.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

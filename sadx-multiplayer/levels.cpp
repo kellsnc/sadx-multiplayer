@@ -257,16 +257,6 @@ void __cdecl Rd_E101_R_r(task* tp)
 	}
 }
 
-void ChangeActM(int amount)
-{
-	ADX_Close();
-	LandChangeStage(amount);
-	AddSetStage(amount);
-	AddCameraStage(amount);
-	AdvanceAct(amount);
-	SetAllPlayersInitialPosition();
-}
-
 void __cdecl Rd_Beach_r(task* tp)
 {
 	if (ssActNumber == 0 && multiplayer::IsEnabled())
