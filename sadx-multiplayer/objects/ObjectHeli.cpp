@@ -10,6 +10,12 @@ DataPointer(Float, heli_PosTmp, 0x3C81094);
 DataPointer(Float, heli_PosTmpZ, 0x3C81098);
 DataPointer(Float, heli_PosTmpX, 0x3C8109C);
 
+static void __cdecl ObjectHeliExec_r(task* tp);
+static void HeliWriteSub_w();
+
+Trampoline ObjectHeliExec_t(0x6139F0, 0x6139FA, ObjectHeliExec_r);
+Trampoline HeliWriteSub_t(0x6137B0, 0x6137B5, HeliWriteSub_w);
+
 enum MD_HELI // made up
 {
 	MD_HELI_GROUND,
@@ -27,14 +33,26 @@ enum MD_HELILIGHT
 	MD_HELILIGHT_TARGET
 };
 
-static void HeliWriteSub_m(task* tp, taskwk* twp)
+#pragma region HeliWriteSub
+static void HeliWriteSub_o(task* tp, taskwk* twp)
 {
+	auto target = HeliWriteSub_t.Target();
+	__asm
+	{
+		mov eax, [twp]
+		mov ebx, [tp]
+		call target
+	}
+}
+
+static void HeliWriteSub_m(task* tp, taskwk* ptwp)
+{
+	auto twp = tp->twp;
+
 	if (!IsCameraInSphere(&twp->pos, 1000.0f))
 	{
 		return;
 	}
-
-	auto ptwp = playertwp[GetTheNearestPlayerNumber(&twp->pos)];
 
 	switch (twp->smode)
 	{
@@ -115,6 +133,33 @@ static void HeliWriteSub_m(task* tp, taskwk* twp)
 	tp->disp(tp);
 }
 
+static void __cdecl HeliWriteSub_r(task* tp, taskwk* twp)
+{
+	if (multiplayer::IsActive())
+	{
+		HeliWriteSub_m(tp, playertwp[GetTheNearestPlayerNumber(&twp->pos)]);
+	}
+	else
+	{
+		HeliWriteSub_o(tp, twp);
+	}
+}
+
+static void __declspec(naked) HeliWriteSub_w()
+{
+	__asm
+	{
+		push eax
+		push ebx
+		call HeliWriteSub_r
+		pop ebx
+		pop eax
+		retn
+	}
+}
+#pragma endregion
+
+#pragma region ObjectHeli
 static void ObjectHeli_Stop(taskwk* twp)
 {
 	if (twp->scl.x < 2200.0f)
@@ -299,8 +344,6 @@ static void ObjectHeliExec_m(task* tp)
 	}
 }
 
-static void __cdecl ObjectHeliExec_r(task* tp);
-Trampoline ObjectHeliExec_t(0x6139F0, 0x6139FA, ObjectHeliExec_r);
 static void __cdecl ObjectHeliExec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -312,3 +355,4 @@ static void __cdecl ObjectHeliExec_r(task* tp)
 		TARGET_STATIC(ObjectHeliExec)(tp);
 	}
 }
+#pragma endregion
