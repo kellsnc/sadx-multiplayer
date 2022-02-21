@@ -488,6 +488,9 @@ DataPointer(NJS_OBJECT, object_turnasi_oya_koa, 0x267D3B4);
 DataPointer(NJS_OBJECT, object_turnasi_oya_kob, 0x267C7AC);
 DataPointer(BOOL, tornade_flag, 0x3C5D670);
 FunctionPointer(BOOL, NearTornade, (NJS_POINT3* pos, Float* dist), 0x4BA860);
+DataPointer(NJS_OBJECT, object_goaleme_blue_blue, 0xC3FDA0);
+DataPointer(NJS_OBJECT, object_goaleme_white_white, 0xC3F050);
+DataPointer(NJS_OBJECT, object_goaleme_green_green, 0xC3E300);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
