@@ -320,7 +320,16 @@ void InitLevels()
 {
 	// Patch start positions
 	SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
-
+	WriteCall((void*)0x4150FA, SetAllPlayersInitialPosition); // General
+	WriteCall((void*)0x4151B1, SetAllPlayersInitialPosition); // General
+	WriteCall((void*)0x7B0B00, SetAllPlayersInitialPosition); // General
+	WriteCall((void*)0x4DD52D, SetAllPlayersInitialPosition); // Windy Valley
+	WriteCall((void*)0x5E15CA, SetAllPlayersInitialPosition); // Lost World
+	WriteCall((void*)0x5EDC66, SetAllPlayersInitialPosition); // Sky Deck
+	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPosition); // Sky Deck
+	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPosition); // Sky Deck
+	WriteCall((void*)0x5602F1, SetAllPlayersInitialPosition); // Perfect Chaos
+	
 	// Patch Skyboxes (display function managing mode)
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast
 	WriteData((void**)0x4DDBFE, (void*)0x4DDB60); // Windy Valley
