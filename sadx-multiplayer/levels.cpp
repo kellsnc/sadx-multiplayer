@@ -287,7 +287,7 @@ void __cdecl Rd_Windy_r(task* tp)
 	{
 		for (int i = 1; i < PLAYER_MAX; ++i)
 		{
-			if (playertwp && playertwp[i]->pos.y > 2250.0f)
+			if (playertwp[i] && playertwp[i]->pos.y > 2250.0f)
 			{
 				tp->twp->mode = 0;
 				ChangeActM(1);

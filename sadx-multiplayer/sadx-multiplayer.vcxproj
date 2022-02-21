@@ -141,6 +141,7 @@
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
     <ClCompile Include="objects\ObjectRMPathKassha.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
+    <ClCompile Include="objects\ObjectWindyTorout.cpp" />
     <ClCompile Include="objects\Rd_Highway.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">

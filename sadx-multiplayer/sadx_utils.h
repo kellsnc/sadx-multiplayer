@@ -434,6 +434,7 @@ FunctionPointer(int, GetGlobalTime, (), 0x4261B0);
 FunctionPointer(bool, dsCheckViewV, (NJS_POINT3* ft, float radius), 0x403330);
 FunctionPointer(void, DrawCustomObject, (NJS_OBJECT* top_object, CUSTOM_OBJ* custom), 0x4BA5D0);
 FunctionPointer(void, SetVelocityP, (uint8_t pno, float x, float y, float z), 0x441280);
+FunctionPointer(void, SetAscendPowerP, (uint8_t pno, float x, float y, float z), 0x446E90);
 FunctionPointer(void, VibShot, (int pno, int Time), 0x4BCBC0);
 FunctionPointer(void, VibConvergence, (int pno, int Power, int Freq, int Time), 0x4BCC10);
 FastcallFunctionPointer(bool, njCollisionCheckSS, (float* p1, float* p2), 0x789360);
@@ -485,6 +486,8 @@ DataPointer(pathtag, pathtag_hw1_heli0807, 0x26A72D4);
 FunctionPointer(void, SetVelocityAndRotationAndNoconTimeP, (int pno, NJS_POINT3* v, Angle3* ang, int tm), 0x441490);
 DataPointer(NJS_OBJECT, object_turnasi_oya_koa, 0x267D3B4);
 DataPointer(NJS_OBJECT, object_turnasi_oya_kob, 0x267C7AC);
+DataPointer(BOOL, tornade_flag, 0x3C5D670);
+FunctionPointer(BOOL, NearTornade, (NJS_POINT3* pos, Float* dist), 0x4BA860);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
