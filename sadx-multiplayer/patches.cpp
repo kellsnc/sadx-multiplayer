@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "deathzones.h"
+#include "death.h"
 #include "camera.h"
 #include "splitscreen.h"
 
