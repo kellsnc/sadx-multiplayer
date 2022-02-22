@@ -38,7 +38,7 @@ void __cdecl GamePlayerMissed_r(task* tp)
 			{
 				// Remove one life
 				AddNumPlayerM(pNum, -1);
-				TeleportPlayersInitialPosition(pNum);
+				SetPlayerInitialPosition(playertwp[pNum]);
 
 				if (CurrentLevel != LevelIDs_TwinkleCircuit)
 				{

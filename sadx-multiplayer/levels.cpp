@@ -7,8 +7,6 @@ Level-related adjustements for multiplayer
 
 */
 
-Trampoline* SetPlayerInitialPosition_t = nullptr;
-
 Trampoline* Rd_Chaos0_t   = nullptr;
 Trampoline* Rd_Chaos2_t   = nullptr;
 Trampoline* Rd_Chaos4_t   = nullptr;
@@ -21,26 +19,6 @@ Trampoline* Rd_E101_R_t   = nullptr;
 Trampoline* Rd_Beach_t = nullptr;
 Trampoline* Rd_Windy_t = nullptr;
 Trampoline* Rd_Mountain_t = nullptr;
-
-// Put players side by side
-void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
-{
-	TARGET_DYNAMIC(SetPlayerInitialPosition)(twp);
-
-	if (multiplayer::IsActive())
-	{
-		static const int dists[]
-		{
-			-5.0f,
-			5.0f,
-			-10.0f,
-			10.0f
-		};
-
-		twp->pos.x += njCos(twp->ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
-		twp->pos.z += njSin(twp->ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
-	}
-}
 
 void MultiArena(task* tp)
 {
@@ -319,7 +297,6 @@ void __cdecl Rd_Mountain_r(task* tp)
 void InitLevels()
 {
 	// Patch start positions
-	SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
 	WriteCall((void*)0x4150FA, SetAllPlayersInitialPosition); // General
 	WriteCall((void*)0x4151B1, SetAllPlayersInitialPosition); // General
 	WriteCall((void*)0x7B0B00, SetAllPlayersInitialPosition); // General
@@ -345,6 +322,9 @@ void InitLevels()
 
 	// Windy Valley exec for hane, bigfloot, saku (static "exec" name in symbols)
 	WriteData<2>((void*)0x4E1399, 0x90ui8);
+
+	// Ice Cap breath generator
+	WriteData((uint8_t*)0x4E91AE, (uint8_t)PLAYER_MAX);
 	
 	// Speed Highway Act 2 skybox
 	WriteData((taskwk***)0x610765, &camera_twp);

@@ -338,6 +338,20 @@ struct PLAYER_CONTINUE_DATA
 	Angle3 ang;
 };
 
+struct ADVPOS
+{
+	NJS_POINT3 pos;
+	int angy;
+};
+
+struct GM_START_POSANG
+{
+	__int16 stage;
+	__int16 act;
+	NJS_POINT3 p;
+	int angy;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -495,6 +509,7 @@ FunctionPointer(int, GetPlayerNumber, (), 0x4144E0);
 FunctionPointer(task*, ADXTaskInit, (), 0x4258B0);
 FunctionPointer(void, BGM_Play, (int no), 0x425690);
 FunctionPointer(void, KillHimByFallingDownP, (int pno), 0x446AD0);
+FunctionPointer(BOOL, CheckContinueData, (), 0x44ED70);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);

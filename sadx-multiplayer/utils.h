@@ -6,7 +6,6 @@ int MenuBackButtonsPressedM(int pnum);
 short tolevelnum(short num);
 short toactnum(short num);
 void ToggleControllers(bool enabled);
-void TeleportPlayersInitialPosition(int pNum);
 void SetAllPlayersInitialPosition();
 float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2);
 int IsPlayerInSphere(NJS_POINT3* p, float r);

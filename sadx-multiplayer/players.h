@@ -12,9 +12,12 @@ void AddNumRingM(int pNum, int amount);
 int GetNumRingM(int pNum);
 void ResetNumRingP(int pNum);
 
-void UpdatePlayersInfo();
+void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang);
 
-void InitPlayerPatches();
 void SetCurrentCharacter(int pnum, Characters character);
 int GetCurrentCharacter(int pnum);
 void ResetCharactersArray();
+
+void UpdatePlayersInfo();
+
+void InitPlayerPatches();

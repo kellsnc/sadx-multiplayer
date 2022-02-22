@@ -48,30 +48,21 @@ void ToggleControllers(bool enabled)
 	}
 }
 
-void TeleportPlayersInitialPosition(int pNum)
-{
-	// Save time because SetPlayerInitialPosition resets it
-	auto min = TimeMinutes;
-	auto sec = TimeSeconds;
-	auto frm = TimeFrames;
-
-	SetPlayerInitialPosition(playertwp[pNum]);
-
-	// Restore time
-	TimeMinutes = min;
-	TimeSeconds = sec;
-	TimeFrames = frm;
-}
-
 void SetAllPlayersInitialPosition()
 {
+	NJS_POINT3 pos; Angle3 ang;
+	GetPlayerInitialPositionM(&pos, &ang);
+
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		if (playertwp[i])
+		auto ptwp = playertwp[i];
+
+		if (ptwp)
 		{
 			PClearSpeed(playermwp[i], playerpwp[i]);
 			SetInputP(i, 24);
-			SetPlayerInitialPosition(playertwp[i]);
+			ptwp->pos = pos;
+			ptwp->ang = ang;
 		}
 	}
 }
