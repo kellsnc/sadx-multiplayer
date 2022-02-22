@@ -481,6 +481,7 @@ void __cdecl Camera_r(task* tp)
                 cam.pos = { 0.0f, 0.0f, 0.0f };
                 cam.ang = { 0, 0, 0 };
                 cam.mode = 0;
+                cam.fov = 0;
             }
 
             cameraready = FALSE;
