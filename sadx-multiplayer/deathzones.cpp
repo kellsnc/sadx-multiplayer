@@ -1,7 +1,8 @@
 #include "pch.h"
 #include "deathzones.h"
 
-Trampoline* KillHimP_t                  = nullptr;
+Trampoline* KillHimP_t                    = nullptr;
+Trampoline* KillHimByFallingDownP_t       = nullptr;
 Trampoline* KillPlayerFallingDownStageP_t = nullptr;
 
 void __cdecl GamePlayerMissedFree(task* tp)
@@ -73,16 +74,10 @@ void __cdecl KillHimP_r(unsigned __int8 pNum)
 	}
 }
 
-void ExecFallingDownP_r(task* tp, int pNum)
+void ExecFallingDownP_r(int pNum)
 {
 	auto ptwp = playertwp[pNum];
 	auto ppwp = playerpwp[pNum];
-
-	BYTEn(tp->twp->counter.l, pNum) = TRUE;
-
-	auto ctp = CreateChildTask(LoadObj_UnknownB, GamePlayerMissed_r, tp);
-	ctp->dest = GamePlayerMissedFree;
-	ctp->awp->work.ul[1] = pNum;
 
 	CameraSetEventCameraFunc(CameraStay, 0, 0);
 
@@ -131,6 +126,13 @@ void ExecFallingDownP_r(task* tp, int pNum)
 	}
 }
 
+void __cdecl KillHimByFallingDownP_r(int pno)
+{
+	auto ctp = CreateElementalTask(LoadObj_UnknownB, LEV_0, GamePlayerMissed_r);
+	ctp->awp->work.ul[1] = pno;
+	ExecFallingDownP_r(pno);
+}
+
 void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 {
 	if (!multiplayer::IsActive())
@@ -160,6 +162,7 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 			{
 				continue;
 			}
+
 			zxsdwstr carry;
 			carry.pos = ptwp->pos;
 
@@ -175,7 +178,13 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 						{
 							if (fabs(carry.pos.y - carry.upper.onpos) <= 30.0f)
 							{
-								ExecFallingDownP_r(tp, i); // also run the death cutscene
+								BYTEn(tp->twp->counter.l, i) = TRUE;
+
+								auto ctp = CreateChildTask(LoadObj_UnknownB, GamePlayerMissed_r, tp);
+								ctp->dest = GamePlayerMissedFree;
+								ctp->awp->work.ul[1] = i;
+
+								ExecFallingDownP_r(i);
 								break;
 							}
 						}
@@ -191,6 +200,7 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 // Series of hacks to not reset the game if player 1 dies and make every players able to die
 void InitDeathPatches()
 {
-	KillHimP_t                  = new Trampoline(0x440CD0, 0x440CD7, KillHimP_r);
+	KillHimP_t                    = new Trampoline(0x440CD0, 0x440CD7, KillHimP_r);
+	KillHimByFallingDownP_t       = new Trampoline(0x446AD0, 0x446AD7, KillHimByFallingDownP_r);
 	KillPlayerFallingDownStageP_t = new Trampoline(0x44AE80, 0x44AE88, KillPlayerFallingDownStageP_r);
 }
