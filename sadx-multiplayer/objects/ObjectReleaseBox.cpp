@@ -36,7 +36,7 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 			if (!twp->mode)
 			{
 				PadReadOff();
-				ToggleControllers(false);
+				PadReadOffP(-1);
 
 				for (int i = 0; i < PLAYER_MAX; ++i)
 				{

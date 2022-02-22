@@ -723,6 +723,36 @@ void __cdecl SpinnaDisplayer_r(task* tp)
 	}
 }
 
+void PadReadOnP_r(int8_t pnum)
+{
+	if (pnum == -1)
+	{
+		for (int i = 0; i < ucInputStatusForEachPlayer_Length; ++i)
+		{
+			ucInputStatusForEachPlayer[i] = TRUE;
+		}
+	}
+	else
+	{
+		ucInputStatusForEachPlayer[pnum] = TRUE;
+	}
+}
+
+void PadReadOffP_r(int8_t pnum)
+{
+	if (pnum < 0)
+	{
+		for (int i = 0; i < ucInputStatusForEachPlayer_Length; ++i)
+		{
+			ucInputStatusForEachPlayer[i] = FALSE;
+		}
+	}
+	else
+	{
+		ucInputStatusForEachPlayer[pnum] = FALSE;
+	}
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -767,6 +797,10 @@ void InitPatches()
 	ObjectSpringB_t = new Trampoline(0x7A4E50, 0x7A4E55, ObjectSpringB_r);
 	WriteData((uint8_t*)0x7A4DC4, (uint8_t)PLAYER_MAX); // ObjectSpring
 	WriteData((uint8_t*)0x79F77C, (uint8_t)PLAYER_MAX); // spring_h_exec
+
+	// Fix controller toggles
+	WriteJump(PadReadOnP, PadReadOnP_r);
+	WriteJump(PadReadOffP, PadReadOffP_r);
 
 	InitItemBoxPatches();
 }

@@ -191,7 +191,7 @@ static void __cdecl execRaceM(task* tp)
 			{
 				dsPlay_oneshot(702, 0, 0, 0);
 				wk->mode = RACEMD_GAME;
-				ToggleControllers(true);
+				PadReadOnP(-1);
 			}
 		}
 		break;
@@ -311,7 +311,7 @@ static void __cdecl initRoundM(task* tp, void* param_p)
 	InitFreeCamera();
 	LoadAdditionalCarts();
 	EnableControl();
-	ToggleControllers(false);
+	PadReadOffP(-1);
 	MirenSetTask(LEV_2, &infoM, 0);
 	SetFrameRateMode(1, 1);
 	EnablePause();

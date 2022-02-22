@@ -31,23 +31,6 @@ short toactnum(short num)
 	return num & 0xf;
 }
 
-void ToggleControllers(bool enabled)
-{
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		if (enabled)
-		{
-			EnableController(i);
-		}
-		else
-		{
-			DisableController(i);
-		}
-
-		ControllerEnabled[i] = enabled;
-	}
-}
-
 void SetAllPlayersInitialPosition()
 {
 	NJS_POINT3 pos; Angle3 ang;

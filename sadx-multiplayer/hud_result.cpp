@@ -94,7 +94,8 @@ static void __cdecl late_DisplayTotalScoreM(task* tp)
 
 static void __cdecl CalcTotalScoreM_dest(task* tp)
 {
-	ToggleControllers(true);
+	PadReadOn();
+	PadReadOnP(-1);
 
 	HideLives = 0;
 	HideTimerAndRings = 0;

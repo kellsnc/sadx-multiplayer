@@ -37,7 +37,7 @@ static void RdHighwayAct2Multi(taskwk* twp)
 					if (ptwp->pos.x >= 280.0f)
 					{
 						twp->mode = 7;
-						ToggleControllers(true);
+						PadReadOnP(-1);
 						ChangeActM(1);
 						dsPlay_iloop(961, -1, 8, 0);
 						auto tp = CreateElementalTask(LoadObj_Data1, LEV_0, (TaskFuncPtr)0x61CA90);
@@ -59,14 +59,14 @@ static void RdHighwayAct2Multi(taskwk* twp)
 					}
 
 					SetInputP(i, 43);
-					EnableController(i);
+					PadReadOnP(i);
 
 					if (!i) twp->mode = 4;
 				}
 			}
 			else if (ptwp->pos.x > 0.0f)
 			{
-				DisableController(i);
+				PadReadOffP(i);
 				if (!i) twp->mode = 3;
 			}
 		}

@@ -53,7 +53,7 @@ void SetFinishAction_r()
 {
 	if (multiplayer::IsActive())
 	{
-		ToggleControllers(false);
+		PadReadOffP(-1);
 		PauseEnabled = FALSE;
 		SleepTimer();
 
