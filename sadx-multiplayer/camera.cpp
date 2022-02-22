@@ -33,13 +33,13 @@ void ResetPerspectiveM(int pnum)
     MultiCams[pnum].fov = 0x31C7;
 }
 
-NJS_VECTOR* GetCameraPosition(int pnum)
+NJS_POINT3* GetCameraPosition(int pnum)
 {
     if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
     {
         return &MultiCams[pnum].pos;
     }
-    else
+    else if (pnum == 0)
     {
         return &camera_twp->pos;
     }
@@ -51,9 +51,33 @@ Angle3* GetCameraAngle(int pnum)
     {
         return &MultiCams[pnum].ang;
     }
-    else
+    else if (pnum == 0)
     {
         return &camera_twp->ang;
+    }
+}
+
+void SetCameraPosition(int pnum, float x, float y, float z)
+{
+    if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
+    {
+        MultiCams[pnum].pos = { x, y, z };
+    }
+    else if (pnum == 0)
+    {
+        camera_twp->pos = { x, y, z };
+    }
+}
+
+void SetCameraAngle(int pnum, Angle x, Angle y, Angle z)
+{
+    if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
+    {
+        MultiCams[pnum].ang = { x, y, z };
+    }
+    else if (pnum == 0)
+    {
+        camera_twp->ang = { x, y, z };
     }
 }
 

@@ -2,6 +2,7 @@
 #include "splitscreen.h"
 #include "players.h"
 #include "result.h"
+#include "camera.h"
 #include "../include/multiapi.h"
 
 bool splitscreen_is_active()
@@ -144,4 +145,59 @@ int32_t multi_get_winner()
 void multi_set_winner(int32_t pnum)
 {
 	SetWinnerMulti(pnum);
+}
+
+void camera_apply(uint32_t num)
+{
+	ApplyMultiCamera(num);
+}
+
+bool camera_get_pos(uint32_t num, NJS_POINT3* pos)
+{
+	auto p = GetCameraPosition(num);
+
+	if (p)
+	{
+		*pos = *p;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool camera_get_ang(uint32_t num, Angle3* ang)
+{
+	auto a = GetCameraAngle(num);
+
+	if (a)
+	{
+		*ang = *a;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+void camera_set_pos(uint32_t num, float x, float y, float z)
+{
+	SetCameraPosition(num, x, y, z);
+}
+
+void camera_set_ang(uint32_t num, Angle x, Angle y, Angle z)
+{
+	SetCameraAngle(num, x, y, z);
+}
+
+uint32_t camera_get_fov(uint32_t num)
+{
+	return ds_GetPerspectiveM(num);
+}
+
+void camera_set_fov(uint32_t num, Angle fov)
+{
+	njSetPerspectiveM(num, fov);
 }

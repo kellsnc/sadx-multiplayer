@@ -1,6 +1,7 @@
 #ifndef _MULTIAPI_H
 #define _MULTIAPI_H
 
+#include <SADXStructs.h>
 #include <SADXEnums.h>
 
 #ifdef __cplusplus
@@ -103,6 +104,28 @@ extern "C"
 
 	// Set the ID of the winning player (-1 to reset)
 	API void multi_set_winner(int32_t pnum);
+
+	// Calculate projection matrix of a player's camera
+	API void camera_apply(uint32_t num);
+
+	// Get camera position in `pos`, returns false if the camera does not exist
+	API bool camera_get_pos(uint32_t num, NJS_POINT3* pos);
+
+	// Get camera angle in `ang`, returns false if the camera does not exist
+	API bool camera_get_ang(uint32_t num, Angle3* ang);
+
+	// Set the position of a player's camera
+	API void camera_set_pos(uint32_t num, float x, float y, float z);
+
+	// Set the angle of a player's camera
+	API void camera_set_ang(uint32_t num, Angle x, Angle y, Angle z);
+
+	// Get the field of view of a player's camera
+	API uint32_t camera_get_fov(uint32_t num);
+
+	// Set the field of view of a player's camera
+	// Default is `0x31C7` or `NJM_DEG_ANG(70.0f)`
+	API void camera_set_fov(uint32_t num, Angle fov);
 
 #ifdef __cplusplus
 }
