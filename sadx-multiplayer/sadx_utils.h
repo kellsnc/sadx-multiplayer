@@ -491,6 +491,10 @@ FunctionPointer(BOOL, NearTornade, (NJS_POINT3* pos, Float* dist), 0x4BA860);
 DataPointer(NJS_OBJECT, object_goaleme_blue_blue, 0xC3FDA0);
 DataPointer(NJS_OBJECT, object_goaleme_white_white, 0xC3F050);
 DataPointer(NJS_OBJECT, object_goaleme_green_green, 0xC3E300);
+FunctionPointer(int, GetPlayerNumber, (), 0x4144E0);
+FunctionPointer(task*, ADXTaskInit, (), 0x4258B0);
+FunctionPointer(void, BGM_Play, (int no), 0x425690);
+FunctionPointer(void, KillHimByFallingDownP, (int pno), 0x446AD0);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -718,6 +722,36 @@ static inline void RdHighwayInit(task* tp)
 	{
 		mov edi, [tp]
 		call RdHighwayInitPtr
+	}
+}
+
+static const void* const RdSnowCheckEnterIceCavePtr = (void*)0x4E9260;
+static inline void RdSnowCheckEnterIceCave(task* tp)
+{
+	__asm
+	{
+		mov eax, [tp]
+		call RdSnowCheckEnterIceCavePtr
+	}
+}
+
+static const void* const RdSnowCheckExitIceCavePtr = (void*)0x4E9380;
+static inline void RdSnowCheckExitIceCave(task* tp)
+{
+	__asm
+	{
+		mov eax, [tp]
+		call RdSnowCheckExitIceCavePtr
+	}
+}
+
+static const void* const RdSnowInitPtr = (void*)0x4E9780;
+static inline void RdSnowInit(task* tp)
+{
+	__asm
+	{
+		mov eax, [tp]
+		call RdSnowInitPtr
 	}
 }
 
