@@ -128,9 +128,16 @@ void ExecFallingDownP_r(int pNum)
 
 void __cdecl KillHimByFallingDownP_r(int pno)
 {
-	auto ctp = CreateElementalTask(LoadObj_UnknownB, LEV_0, GamePlayerMissed_r);
-	ctp->awp->work.ul[1] = pno;
-	ExecFallingDownP_r(pno);
+	if (multiplayer::IsActive())
+	{
+		auto ctp = CreateElementalTask(LoadObj_UnknownB, LEV_0, GamePlayerMissed_r);
+		ctp->awp->work.ul[1] = pno;
+		ExecFallingDownP_r(pno);
+	}
+	else
+	{
+		TARGET_DYNAMIC(KillHimByFallingDownP)(pno);
+	}
 }
 
 void __cdecl KillPlayerFallingDownStageP_r(task* tp)
