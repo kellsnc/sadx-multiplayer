@@ -34,7 +34,7 @@
     <ClCompile Include="drawqueue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="deathzones.cpp">
+    <ClCompile Include="death.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="patches.cpp">
@@ -150,7 +150,7 @@
     <ClInclude Include="d3d8vars.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="deathzones.h">
+    <ClInclude Include="death.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="patches.h">

@@ -95,7 +95,7 @@
     <ClInclude Include="..\include\multiapi.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="d3d8vars.h" />
-    <ClInclude Include="deathzones.h" />
+    <ClInclude Include="death.h" />
     <ClInclude Include="drawqueue.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="hud_result.h" />
@@ -120,7 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
-    <ClCompile Include="deathzones.cpp" />
+    <ClCompile Include="death.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
     <ClCompile Include="hud_result.cpp" />

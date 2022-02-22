@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "deathzones.h"
+#include "death.h"
 
 Trampoline* KillHimP_t                    = nullptr;
 Trampoline* KillHimByFallingDownP_t       = nullptr;
