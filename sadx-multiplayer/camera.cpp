@@ -13,9 +13,25 @@ struct MultiCam
     Angle3 ang;
     int timer;
     int mode;
+    int fov;
 };
 
 MultiCam MultiCams[PLAYER_MAX];
+
+Angle ds_GetPerspectiveM(int pnum)
+{
+    return MultiCams[pnum].fov == 0 ? 0x31C7 : MultiCams[pnum].fov;
+}
+
+void njSetPerspectiveM(int pnum, Angle bams)
+{
+    MultiCams[pnum].fov = bams;
+}
+
+void ResetPerspectiveM(int pnum)
+{
+    MultiCams[pnum].fov = 0x31C7;
+}
 
 NJS_VECTOR* GetCameraPosition(int pnum)
 {
@@ -51,6 +67,7 @@ void ApplyMultiCamera(int pnum)
     camera_twp->pos = MultiCams[pnum].pos;
     camera_twp->ang = MultiCams[pnum].ang;
 
+    njSetPerspective(MultiCams[pnum].fov ? MultiCams[pnum].fov : 0x31C7);
     CameraSetView(camera_twp);
 }
 

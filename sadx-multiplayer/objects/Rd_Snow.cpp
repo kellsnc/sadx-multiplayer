@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "camera.h"
 #include "multiplayer.h"
 
 DataPointer(NJS_POINT3, pos_7E9628, 0x7E9628);
@@ -80,7 +81,6 @@ static void RdSnowBoardingRegular_m(task* tp)
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		auto ptwp = playertwp[i];
-		bool done = true;
 
 		if (!ptwp || ptwp->smode == 24)
 		{
@@ -105,7 +105,18 @@ static void RdSnowBoardingRegular_m(task* tp)
 			awp->work.ul[1] = i;
 		}
 
-		// Todo: FOV
+		float deg = playerpwp[i]->spd.x;
+
+		if (deg < 7.82f)
+		{
+			deg *= 0.12787724f;
+		}
+		else
+		{
+			deg = 1.0f;
+		}
+
+		njSetPerspectiveM(i, AdjustAngle(ds_GetPerspectiveM(i), 0x31C7 - (sqrtf(deg) * -5461.0f), 512));
 	}
 
 	if (done == true)
