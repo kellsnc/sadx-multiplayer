@@ -106,7 +106,7 @@ static void RdSnowBoardingRegular_m(task* tp)
 			awp->work.ul[1] = i;
 		}
 
-		float deg = playerpwp[i]->spd.x;
+		float deg = fabsf(playerpwp[i]->spd.x);
 
 		if (deg < 7.82f)
 		{
