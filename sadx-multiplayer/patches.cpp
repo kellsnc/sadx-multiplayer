@@ -4,6 +4,7 @@
 #include "splitscreen.h"
 
 #include "objects/ObjectItemBox.h"
+#include "objects/SnowBoard.h"
 
 /*
 
@@ -803,4 +804,5 @@ void InitPatches()
 	WriteJump(PadReadOffP, PadReadOffP_r);
 
 	InitItemBoxPatches();
+	InitSnowBoardPatches();
 }

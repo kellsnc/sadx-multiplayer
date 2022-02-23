@@ -106,6 +106,7 @@
     <ClInclude Include="hud_multi.h" />
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="objects\ObjectItemBox.h" />
+    <ClInclude Include="objects\SnowBoard.h" />
     <ClInclude Include="patches.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="players.h" />
@@ -146,6 +147,7 @@
     <ClCompile Include="objects\ObjectWindyTorout.cpp" />
     <ClCompile Include="objects\Rd_Highway.cpp" />
     <ClCompile Include="objects\Rd_Snow.cpp" />
+    <ClCompile Include="objects\SnowBoard.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

@@ -112,6 +112,9 @@
     <ClCompile Include="objects\ObjectJumpPanel.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\SnowBoard.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -188,6 +191,9 @@
     </ClInclude>
     <ClInclude Include="hud_result.h">
       <Filter>Header FIles\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\SnowBoard.h">
+      <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
