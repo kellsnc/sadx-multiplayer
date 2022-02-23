@@ -818,6 +818,8 @@ void InitPatches()
 	// dsCheckViewV in exec functions
 	WriteCall((void*)0x4E138F, dsCheckViewV_r); // wv hane, bigfloot, saku...
 	WriteCall((void*)0x4DF5C8, dsCheckViewV_r); // ObjectWindySetInEff
+	WriteCall((void*)0x5D3D54, dsCheckViewV_r); // ObjectCasinoCris
+	WriteCall((void*)0x5E8327, dsCheckViewV_r); // ObjectRuinFire
 
 	InitItemBoxPatches();
 	InitSnowBoardPatches();
