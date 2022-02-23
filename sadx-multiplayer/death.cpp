@@ -40,7 +40,8 @@ void __cdecl GamePlayerMissed_r(task* tp)
 				AddNumPlayerM(pNum, -1);
 				SetPlayerInitialPosition(playertwp[pNum]);
 
-				if (CurrentLevel != LevelIDs_TwinkleCircuit)
+				// Don't reset mode in levels where the player is riding something
+				if (ssStageNumber != LevelIDs_TwinkleCircuit && ssStageNumber != LevelIDs_SandHill && !(ssStageNumber == LevelIDs_IceCap && ssActNumber == 2))
 				{
 					SetInputP(pNum, 24);
 					twp->mode = 1;

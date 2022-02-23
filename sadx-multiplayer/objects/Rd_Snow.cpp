@@ -132,6 +132,8 @@ static void __cdecl Rd_Snow_r(task* tp)
 	{
 		auto twp = tp->twp;
 		
+		NadareStart = FALSE;
+
 		switch (twp->mode)
 		{
 		case 0:

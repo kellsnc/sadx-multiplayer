@@ -514,6 +514,7 @@ FunctionPointer(void, PadReadOnP, (unsigned __int8 pno), 0x40EF70);
 FunctionPointer(void, PadReadOffP, (unsigned __int8 pno), 0x40EFA0);
 FunctionPointer(BOOL, CheckPadReadModeP, (unsigned __int8 pno), 0x40EFD0);
 FunctionPointer(int, CheckWhichJumpPanelKicked, (), 0x4B84D0);
+DataPointer(unsigned __int8, NadareStart, 0x3C5E200);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
