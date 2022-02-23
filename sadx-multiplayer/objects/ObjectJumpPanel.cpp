@@ -17,7 +17,7 @@ Trampoline CheckCollisionedForJumpPanel_t(0x4B83C0, 0x4B83C7, CheckCollisionedFo
 
 DataArray(task*, jumppanel_tp_list, 0x3C5A27C, 10);
 
-taskwk* CCL_IsHitPanel(taskwk* twp)
+static taskwk* CCL_IsHitPanel(taskwk* twp)
 {
 	auto cwp = twp->cwp;
 
@@ -41,6 +41,38 @@ taskwk* CCL_IsHitPanel(taskwk* twp)
 	return nullptr;
 }
 
+static bool AreJumpPanelsActive()
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto ptwp = playertwp[i];
+
+		if (ptwp)
+		{
+			switch (TASKWK_CHARID(ptwp))
+			{
+			case Characters_Sonic:
+			case Characters_Tails:
+				if (ptwp->mode == 40 || ptwp->mode == 41)
+				{
+					return true;
+				}
+				break;
+			case Characters_Knuckles:
+			case Characters_Amy:
+				if (ptwp->mode == 46 || ptwp->mode == 47)
+				{
+					return true;
+				}
+				break;
+			}
+		}
+	}
+
+	return false;
+}
+
+#pragma region CheckCollisionedForJumpPanel
 static BOOL __cdecl CheckCollisionedForJumpPanel_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
@@ -52,6 +84,7 @@ static BOOL __cdecl CheckCollisionedForJumpPanel_r(taskwk* twp)
 		return TARGET_STATIC(CheckCollisionedForJumpPanel)(twp);
 	}
 }
+#pragma endregion
 
 #pragma region StartPlayerPanelJump
 static void StartPlayerPanelJump_m(taskwk* twp)
@@ -96,9 +129,16 @@ static void __cdecl StartPlayerPanelJump_r(taskwk* twp)
 static signed int CanIMakePanelJump_m(taskwk* twp)
 {
 	auto panel_twp = CCL_IsHitPanel(twp);
+	auto panel_active = AreJumpPanelsActive();
 
 	if (panel_twp)
 	{
+		// Disable if a player is already on the jump panel chain
+		if (panel_active && panel_twp->wtimer == 1)
+		{
+			return 0;
+		}
+
 		if (panel_twp->wtimer)
 		{
 			if (panel_twp->timer.l < 30)
@@ -113,7 +153,10 @@ static signed int CanIMakePanelJump_m(taskwk* twp)
 		}
 	}
 
-	ResetJumpPanels();
+	// Only reset if no player are on the jump panel chain
+	if (!panel_active)
+		ResetJumpPanels();
+
 	return 0;
 }
 
