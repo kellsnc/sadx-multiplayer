@@ -138,6 +138,7 @@
     <ClCompile Include="objects\ObjectHeli.cpp" />
     <ClCompile Include="objects\ObjectHighwayTurnasi.cpp" />
     <ClCompile Include="objects\ObjectItemBox.cpp" />
+    <ClCompile Include="objects\ObjectJumpPanel.cpp" />
     <ClCompile Include="objects\ObjectKaosEme.cpp" />
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
     <ClCompile Include="objects\ObjectRMPathKassha.cpp" />
