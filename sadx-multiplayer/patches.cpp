@@ -754,6 +754,18 @@ void PadReadOffP_r(int8_t pnum)
 	}
 }
 
+BOOL dsCheckViewV_r(NJS_POINT3* ft, float radius)
+{
+	if (multiplayer::IsActive())
+	{
+		return TRUE;
+	}
+	else
+	{
+		return dsCheckViewV(ft, radius);
+	}
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -802,6 +814,10 @@ void InitPatches()
 	// Fix controller toggles
 	WriteJump(PadReadOnP, PadReadOnP_r);
 	WriteJump(PadReadOffP, PadReadOffP_r);
+
+	// dsCheckViewV in exec functions
+	WriteCall((void*)0x4E138F, dsCheckViewV_r); // wv hane, bigfloot, saku...
+	WriteCall((void*)0x4DF5C8, dsCheckViewV_r); // ObjectWindySetInEff
 
 	InitItemBoxPatches();
 	InitSnowBoardPatches();

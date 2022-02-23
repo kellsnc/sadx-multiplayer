@@ -320,9 +320,6 @@ void InitLevels()
 	WriteData<2>((void*)0x501B12, 0x90ui8);
 	WriteData((uint8_t*)0x501C2F, 0xEBui8);
 
-	// Windy Valley exec for hane, bigfloot, saku (static "exec" name in symbols)
-	WriteData<2>((void*)0x4E1399, 0x90ui8);
-
 	// Ice Cap breath generator
 	WriteData((uint8_t*)0x4E91AE, (uint8_t)PLAYER_MAX);
 	
