@@ -603,6 +603,7 @@ DataArray(CART_LOAD_DATA, cart_load, 0x38C7FF0, 18);
 TaskFunc(EnemyCart, 0x79A9E0);
 DataPointer(E102WK*, e102_work_ptr, 0x3C53B70);
 DataPointer(NJS_OBJECT*, e102_arm, 0x3C53F80);
+DataPointer(int, e102_hover_flag, 0x3C53C40);
 FunctionPointer(BOOL, CalcMMMatrix, (NJS_MATRIX_PTR impmat, NJS_ACTION* actptr, float mtnfrm, Uint32 srcnmb, NJS_MATRIX_PTR ansmat), 0x4B81F0);
 FunctionPointer(BOOL, GetMMMatrix, (unsigned int srcnmb, NJS_MATRIX_PTR ansmat), 0x4B82D0);
 FunctionPointer(void, clrObjFlags, (NJS_OBJECT** obj, unsigned int flag), 0x4399D0);

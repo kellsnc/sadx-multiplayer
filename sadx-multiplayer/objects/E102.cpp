@@ -4,20 +4,24 @@
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 
-void __cdecl E102_r(task* tp);
-Trampoline E102_t(0x47FD50, 0x47FD57, E102_r);
-void __cdecl E102_r(task* tp)
+void __cdecl E102Display_r(task* tp);
+Trampoline E102Display_t(0x47FD50, 0x47FD57, E102Display_r);
+void __cdecl E102Display_r(task* tp)
 {
     if (multiplayer::IsActive())
     {
+        auto twp = tp->twp;
         auto pwp = (playerwk*)tp->mwp->work.ptr;
         auto ewk = (E102WK*)pwp->free.ptr[0];
 
-        // Recalculate submodel positions for splitscreen compatibility
+        // SplitScreen compatibility patches
         if (SplitScreen::IsActive())
         {
+            // Set global variables again
             e102_work_ptr = ewk;
-            
+            e102_hover_flag = perG[TASKWK_PLAYERID(twp)].on & JumpButtons && (twp->mode == 44 || twp->mode == 7 || twp->mode == 22 || twp->mode == 36);
+
+            // Recalculate submodel positions:
 
             if (pwp->mj.mtnmode == 2)
             {
@@ -47,7 +51,7 @@ void __cdecl E102_r(task* tp)
         }
     }
     
-	TARGET_STATIC(E102)(tp);
+	TARGET_STATIC(E102Display)(tp);
 }
 
 void __cdecl E102LockOnCursor_r(task* tp);
