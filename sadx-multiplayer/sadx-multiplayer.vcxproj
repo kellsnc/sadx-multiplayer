@@ -132,6 +132,7 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
+    <ClCompile Include="objects\E102.cpp" />
     <ClCompile Include="objects\EnemyCart.cpp" />
     <ClCompile Include="objects\ObjectBeachOruka.cpp" />
     <ClCompile Include="objects\ObjectBeachWave.cpp" />

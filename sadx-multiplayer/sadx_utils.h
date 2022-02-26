@@ -352,6 +352,73 @@ struct GM_START_POSANG
 	int angy;
 };
 
+struct _INPUT
+{
+	int angle;
+	float stroke;
+};
+
+struct WIREMODEL
+{
+	NJS_POINT3* pos;
+	NJS_COLOR* color;
+	__int16* index;
+	__int16 nbLine;
+	NJS_POINT3COL p3col;
+};
+
+struct E102WK
+{
+	char laser_mode;
+	char gun_mode;
+	char lockon_noshot_num;
+	char ctrl_mode;
+	char lock_num;
+	char beam_num;
+	char actgundir;
+	__int16 generaltimer;
+	__int16 lock_combo_num;
+	__int16 shot_combo_num;
+	__int16 add_sec_total;
+	__int16 laser_tmr;
+	__int16 laser_lock_tmr;
+	__int16 dead_eye_tmr;
+	__int16 se_flag;
+	float fan_yofs;
+	int fan_ydif_ang;
+	int fan_ang[3];
+	int wrun_mov_yang;
+	task* lock_now_cs;
+	NJS_POINT3 laser_pos;
+	NJS_POINT3 laser_vec;
+	float laser_dist;
+	float laser_dist2;
+	NJS_POINT3 gunarm_pos;
+	NJS_POINT3 gunarm_vec;
+	task* searchtp;
+	float arm_frame;
+	int arm_ang_y;
+	int arm_ang_z;
+	NJS_ACTION* actwkptr;
+	NJS_ACTION* actgunptr;
+	float scope_frame;
+	int headfl_tmr;
+	int head_ang;
+	float shot_shock;
+	NJS_POINT3 koshi_pos[2];
+	float yspdbak;
+	WIREMODEL cursor1;
+	WIREMODEL cursor2;
+	task* shot_now_csp;
+	task* lock_tp[32];
+	task* beam_tp[32];
+	_INPUT input_buf[8];
+	float ground_ypos;
+	float ground_ydist;
+	unsigned int ground_attr;
+	float walk_dist;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -534,6 +601,12 @@ DataPointer(CART_OTHER_PARAM, CartOtherParam, 0x38C5F88);
 DataPointer(BOOL, CartGoalFlag, 0x3D08E00);
 DataArray(CART_LOAD_DATA, cart_load, 0x38C7FF0, 18);
 TaskFunc(EnemyCart, 0x79A9E0);
+DataPointer(E102WK*, e102_work_ptr, 0x3C53B70);
+DataPointer(NJS_OBJECT*, e102_arm, 0x3C53F80);
+FunctionPointer(BOOL, CalcMMMatrix, (NJS_MATRIX_PTR impmat, NJS_ACTION* actptr, float mtnfrm, Uint32 srcnmb, NJS_MATRIX_PTR ansmat), 0x4B81F0);
+FunctionPointer(BOOL, GetMMMatrix, (unsigned int srcnmb, NJS_MATRIX_PTR ansmat), 0x4B82D0);
+FunctionPointer(void, clrObjFlags, (NJS_OBJECT** obj, unsigned int flag), 0x4399D0);
+FunctionPointer(void, setObjFlags, (NJS_OBJECT** obj, unsigned int flag), 0x4399A0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
