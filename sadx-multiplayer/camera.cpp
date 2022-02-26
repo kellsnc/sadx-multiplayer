@@ -41,7 +41,11 @@ NJS_POINT3* GetCameraPosition(int pnum)
     }
     else if (pnum == 0)
     {
-        return &camera_twp->pos;
+        return camera_twp ? &camera_twp->pos : nullptr;
+    }
+    else
+    {
+        return nullptr;
     }
 }
 
@@ -53,7 +57,11 @@ Angle3* GetCameraAngle(int pnum)
     }
     else if (pnum == 0)
     {
-        return &camera_twp->ang;
+        return camera_twp ? &camera_twp->ang : nullptr;
+    }
+    else
+    {
+        return nullptr;
     }
 }
 
@@ -110,7 +118,7 @@ void __cdecl CameraDisplay_r(task* tp)
 
 void __cdecl CameraPause_r(task* tp)
 {
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         ApplyMultiCamera(SplitScreen::numScreen);
     }

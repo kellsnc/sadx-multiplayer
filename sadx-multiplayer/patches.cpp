@@ -32,23 +32,27 @@ Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 // Patch forward calculation to use multiplayer cameras
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
-	if (multiplayer::IsActive() && camera_twp)
+	if (SplitScreen::IsActive())
 	{
-		auto backup = camera_twp->ang;
-		camera_twp->ang = *GetCameraAngle(TASKWK_PLAYERID(twp));
-		TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
-		camera_twp->ang = backup;
+		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
+
+		if (cam_ang)
+		{
+			auto backup = camera_twp->ang;
+			camera_twp->ang = *cam_ang;
+			TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
+			camera_twp->ang = backup;
+			return;
+		}
 	}
-	else
-	{
-		TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
-	}
+
+	TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
 }
 
 // Patch analog forward calculation to use multiplayer cameras
 void __cdecl GetPlayersInputData_r()
 {
-	if (!multiplayer::IsActive())
+	if (!SplitScreen::IsActive())
 	{
 		TARGET_DYNAMIC(GetPlayersInputData)();
 		return;
@@ -70,9 +74,11 @@ void __cdecl GetPlayersInputData_r()
 
 			strk = atan2f(ly, lx) * 65536.0f;
 
-			if (camera_twp)
+			auto cam_ang = GetCameraAngle(i);
+
+			if (cam_ang)
 			{
-				ang = -(GetCameraAngle(i)->y) - (strk * -0.1591549762031479);
+				ang = -cam_ang->y - (strk * -0.1591549762031479);
 			}
 			else
 			{

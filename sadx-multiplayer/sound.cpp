@@ -195,12 +195,13 @@ static int dsGetVolume_o(int ii)
 
 int __cdecl dsGetVolume_r(int ii)
 {
-    if (SplitScreen::IsActive)
+    if (SplitScreen::IsActive())
     {
         auto se = &sebuf[ii];
         
         auto pnum = GetTheNearestPlayerNumber(&se->pos);
-        float dist = GetDistance(&se->pos, GetCameraPosition(pnum));
+        auto cam_pos = GetCameraPosition(pnum);
+        float dist = GetDistance(&se->pos, cam_pos ? cam_pos : &playertwp[pnum]->pos);
 
         int vol = 0;
 
@@ -251,7 +252,7 @@ static bool dsDolbySound_r()
 {
     if (!SplitScreen::IsActive())
     {
-        return false;
+        return false; // call original
     }
 
     for (int i = 0; i < 36; ++i)
@@ -267,7 +268,7 @@ static bool dsDolbySound_r()
 
             njPushMatrix(0);
             njUnitMatrix(0);
-            njRotateY(0, -HIWORD(GetCameraAngle(pnum)));
+            njRotateY(0, -HIWORD(GetCameraAngle(pnum)->y));
             njCalcPoint(0, &v, &v);
             njPopMatrix(1);
 

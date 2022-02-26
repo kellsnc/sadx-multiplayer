@@ -111,7 +111,8 @@ void __cdecl ProcessStatusTable_r()
 				{
 					if (!playertwp[i]) continue;
 
-					NJS_POINT3 pos = camera_twp ? *GetCameraPosition(i) : playertwp[i]->pos;
+					auto cam_pos = GetCameraPosition(i);
+					NJS_POINT3 pos = cam_pos ? *cam_pos : playertwp[i]->pos;
 					njSubVector(&pos, (NJS_POINT3*)&objentry->xpos);
 
 					if (njScalor2(&pos) < dist)
@@ -140,9 +141,10 @@ BOOL CheckRangeWithR_m(task* tp, float fRange)
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		if (playertp[i])
+		if (playertwp[i])
 		{
-			NJS_POINT3 pos = *GetCameraPosition(i);
+			auto cam_pos = GetCameraPosition(i);
+			NJS_POINT3 pos = cam_pos ? *cam_pos : playertwp[i]->pos;
 			pos.x -= tp->twp->pos.x;
 			pos.y -= tp->twp->pos.y;
 			pos.z -= tp->twp->pos.z;
