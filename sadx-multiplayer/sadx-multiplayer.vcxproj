@@ -133,6 +133,7 @@
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
     <ClCompile Include="objects\ObjectFinalEggTarget.cpp" />
+    <ClCompile Include="objects\ObjectFinalEggUptarget.cpp" />
     <ClCompile Include="objects\ObjectFrog.cpp" />
     <ClCompile Include="objects\E102.cpp" />
     <ClCompile Include="objects\EnemyCart.cpp" />
