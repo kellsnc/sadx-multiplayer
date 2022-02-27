@@ -468,7 +468,9 @@ void LoadCharacter_r()
 void InitPlayerPatches()
 {
     SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
+    
     DamegeRingScatter_t = new Trampoline(0x4506F0, 0x4506F7, DamegeRingScatter_r);
+    WriteCall((void*)((int)DamegeRingScatter_t->Target() + 2), rand); // Patch trampoline
 
     WriteCall((void*)0x415A25, LoadCharacter_r);
 
