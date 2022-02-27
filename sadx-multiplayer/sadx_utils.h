@@ -608,6 +608,10 @@ FunctionPointer(BOOL, CalcMMMatrix, (NJS_MATRIX_PTR impmat, NJS_ACTION* actptr, 
 FunctionPointer(BOOL, GetMMMatrix, (unsigned int srcnmb, NJS_MATRIX_PTR ansmat), 0x4B82D0);
 FunctionPointer(void, clrObjFlags, (NJS_OBJECT** obj, unsigned int flag), 0x4399D0);
 FunctionPointer(void, setObjFlags, (NJS_OBJECT** obj, unsigned int flag), 0x4399A0);
+DataArray(NJS_COLOR, e102laser_color, 0x91C648, 2);
+DataArray(NJS_POINT3, e102laser_pos, 0x3C53F68, 2);
+DataPointer(NJS_POINT3COL, e102laser_p3c, 0x3C53B60);
+FunctionPointer(void, late_DrawLine3D, (NJS_POINT3COL* p, int n, unsigned int atr, int flgs), 0x404310);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
