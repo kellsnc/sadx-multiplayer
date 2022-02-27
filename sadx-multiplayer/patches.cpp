@@ -153,11 +153,11 @@ BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 	{
 		ewp->buyoscale = 0.35f;
 
-		auto player = CCL_IsHitPlayer(twp);
+		auto hit_twp = CCL_IsHitPlayer(twp);
 
-		if (player)
+		if (hit_twp)
 		{
-			int pID = TASKWK_PLAYERID(player);
+			auto pID = TASKWK_PLAYERID(hit_twp);
 
 			ewp->flag |= 0x1000u;
 			AddEnemyScoreM(pID, 10);
@@ -175,9 +175,13 @@ BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 
 			return TRUE;
 		}
-		else if (CCL_IsHitBullet(twp))
+
+		hit_twp = CCL_IsHitBullet(twp);
+
+		if (hit_twp)
 		{
 			ewp->flag |= 0x1000u;
+			AddEnemyScoreM(hit_twp->btimer, 10);
 
 			if ((twp->cwp->hit_cwp->info[twp->cwp->hit_num].attr & 0x1000) != 0)
 			{
