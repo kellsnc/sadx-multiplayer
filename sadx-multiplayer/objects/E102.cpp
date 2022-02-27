@@ -4,9 +4,9 @@
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 
-void __cdecl E102Display_r(task* tp);
+static void __cdecl E102Display_r(task* tp);
 Trampoline E102Display_t(0x47FD50, 0x47FD57, E102Display_r);
-void __cdecl E102Display_r(task* tp)
+static void __cdecl E102Display_r(task* tp)
 {
     if (multiplayer::IsActive())
     {
@@ -54,10 +54,27 @@ void __cdecl E102Display_r(task* tp)
 	TARGET_STATIC(E102Display)(tp);
 }
 
-void __cdecl E102LockOnCursor_r(task* tp);
+static void __cdecl E102LockOnCursor_r(task* tp);
 Trampoline E102LockOnCursor_t(0x4CF090, 0x4CF097, E102LockOnCursor_r);
-void __cdecl E102LockOnCursor_r(task* tp)
+static void __cdecl E102LockOnCursor_r(task* tp)
 {
     e102_work_ptr = (E102WK*)tp->awp[1].work.ul[0];
     TARGET_STATIC(E102LockOnCursor)(tp);
+}
+
+static void __cdecl E102AddSecTotalNewDisplay_r(task* tp);
+Trampoline E102AddSecTotalNewDisplay_t(0x49FDA0, 0x49FDA5, E102AddSecTotalNewDisplay_r);
+static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
+{
+    if (SplitScreen::IsActive())
+    {
+        SplitScreen::SaveViewPort();
+        SplitScreen::ChangeViewPort(-1);
+        TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+        SplitScreen::RestoreViewPort();
+    }
+    else
+    {
+        TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+    }
 }
