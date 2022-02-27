@@ -62,6 +62,25 @@ static void __cdecl E102LockOnCursor_r(task* tp)
     TARGET_STATIC(E102LockOnCursor)(tp);
 }
 
+static void __cdecl E102Beam_r(task* tp);
+Trampoline E102Beam_t(0x4C40B0, 0x4C40B5, E102Beam_r);
+static void __cdecl E102Beam_r(task* tp)
+{
+    if (multiplayer::IsActive())
+    {
+        auto twp = tp->twp;
+
+        if (twp->mode == 0)
+        {
+            // Beams have the player number stored in them, but it's immediately overwritten
+            // Let's store it somewhere else before it gets overwritten
+            twp->btimer = TASKWK_PLAYERID(twp);
+        }
+    }
+
+    TARGET_STATIC(E102Beam)(tp);
+}
+
 static void __cdecl E102AddSecTotalNewDisplay_r(task* tp);
 Trampoline E102AddSecTotalNewDisplay_t(0x49FDA0, 0x49FDA5, E102AddSecTotalNewDisplay_r);
 static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
