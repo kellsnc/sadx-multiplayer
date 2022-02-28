@@ -130,6 +130,12 @@
     <ClCompile Include="objects\dispE102Laser.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\EnemyWindyE103.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyWindyTgtMissile.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -208,6 +214,9 @@
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
     <ClInclude Include="objects\SnowBoard.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\EnemyWindyE103.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>

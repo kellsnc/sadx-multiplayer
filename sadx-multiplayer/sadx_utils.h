@@ -419,6 +419,43 @@ struct E102WK
 	float walk_dist;
 };
 
+struct TGT_WK
+{
+	bosswk bwk;
+	float fHitPoint;
+	int timerGeneral;
+	int timerShot;
+	int flag;
+	int mode_req;
+	int mode_old;
+	int spotTarget;
+	int angHead;
+	int angSpdX;
+	float fGroundY;
+	float fGroundDist;
+	float fTargetDist2;
+	NJS_POINT3 oldPos;
+	NJS_POINT3 spd;
+	NJS_POINT3 posBody;
+	NJS_POINT3 posShoulder[2];
+	NJS_POINT3 posMuzzle[2];
+	NJS_POINT3 vecMissile[2];
+	int angFan;
+	float fFanOfsY;
+	int ColliEntryFlag;
+};
+
+struct MISSILE_WK
+{
+	NJS_POINT3 spd;
+	int nLifeTime;
+	int type;
+	int flag;
+	int flagBrink;
+	float fShadowY;
+	colliwk* pIgnoreColliWk;
+};
+
 VoidFunc(DisplayTask, 0x40B540);
 TaskFunc(Camera, 0x438090);
 DataPointer(taskwk*, camera_twp, 0x3B2CBB0);
@@ -582,6 +619,8 @@ FunctionPointer(void, PadReadOffP, (unsigned __int8 pno), 0x40EFA0);
 FunctionPointer(BOOL, CheckPadReadModeP, (unsigned __int8 pno), 0x40EFD0);
 FunctionPointer(int, CheckWhichJumpPanelKicked, (), 0x4B84D0);
 DataPointer(unsigned __int8, NadareStart, 0x3C5E200);
+FunctionPointer(BOOL, ChkE104ColliLandXZ, (NJS_POINT3* pPos, float fDistChk, float* pfGroundY, NJS_POINT3* pVec), 0x568AF0);
+DataPointer(uint8_t, ccsi_flag, 0x3C4ABB4);
 
 DataPointer(ENEMY_CART_DATA*, cart_data, 0x3D08E0C);
 DataArray(__int16, cartColor, 0x88C004, 7);
@@ -850,6 +889,17 @@ static inline void RdSnowInit(task* tp)
 	{
 		mov eax, [tp]
 		call RdSnowInitPtr
+	}
+}
+
+static const void* const SpringAnglePtr = (void*)0x566FE0;
+static inline void SpringAngle(Angle* pAng, Angle* pAngSpd)
+{
+	__asm
+	{
+		mov edi, [pAng]
+		mov esi, [pAngSpd]
+		call SpringAnglePtr
 	}
 }
 
