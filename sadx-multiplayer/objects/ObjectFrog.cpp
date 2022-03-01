@@ -34,13 +34,13 @@ static void ObjectFrogCollision_m(taskwk* twp)
 
 static void __cdecl ObjectFrogCollision_r(task* tp)
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsBattleMode())
 	{
 		ObjectFrogCollision_m(tp->twp);
 	}
 	else
 	{
-		return ObjectFrogCollision_o(tp);
+		ObjectFrogCollision_o(tp);
 	}
 }
 

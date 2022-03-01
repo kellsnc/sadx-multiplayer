@@ -1,8 +1,10 @@
 #include "pch.h"
 #include "result.h"
 #include "hud_result.h"
+#include "splitscreen.h"
 
 Trampoline* SetFinishAction_t = nullptr;
+Trampoline* CalcTotalScore_t = nullptr;
 
 int GetWinnerMulti()
 {
@@ -49,9 +51,9 @@ static void PlayCharaWinSound()
 	}
 }
 
-void SetFinishAction_r()
+static void __cdecl SetFinishAction_r()
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsBattleMode())
 	{
 		PadReadOffP(-1);
 		PauseEnabled = FALSE;
@@ -80,7 +82,16 @@ void SetFinishAction_r()
 	}
 }
 
+static void __cdecl CalcTotalScore_r(task* tp)
+{
+	SplitScreen::SaveViewPort();
+	SplitScreen::ChangeViewPort(-1);
+	TARGET_DYNAMIC(CalcTotalScore)(tp);
+	SplitScreen::RestoreViewPort();
+}
+
 void InitResult()
 {
 	SetFinishAction_t = new Trampoline(0x415540, 0x415545, SetFinishAction_r);
+	CalcTotalScore_t = new Trampoline(0x42BCC0, 0x42BCC5, CalcTotalScore_r);
 }

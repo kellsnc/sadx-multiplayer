@@ -48,7 +48,7 @@ static void __cdecl ObjectKaosEmeDisp(task* tp)
 
 static void CheckGameClear_m(task* tp)
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsBattleMode())
 	{
 		auto twp = tp->twp;
 		auto pnum = IsPlayerInSphere(&twp->pos, (twp->scl.x + 1.0f) * 14.0f) - 1;
