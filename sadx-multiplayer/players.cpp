@@ -394,11 +394,12 @@ void UpdatePlayersInfo()
     lives[0] = scNumPlayer;
     score[0] = EnemyScore;
 
+#ifdef _DEBUG
     if (PressedButtons[1] & Buttons_L)
     {
-        playertwp[0]->pos = { 2695, -589, -1303 };
-        playertwp[1]->pos = { 2695, -589, -1303 };
+        playertwp[1]->pos = playertwp[0]->pos;
     }
+#endif
 
     if (IsIngame())
     {
