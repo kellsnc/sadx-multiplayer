@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "multiplayer.h"
+#include "result.h"
 
 Trampoline* e103_move_t                 = nullptr;
 Trampoline* e103_chkPlayerRadius_t      = nullptr;
 Trampoline* e103_chkPlayerRangeIn_t     = nullptr;
 Trampoline* e103_turnBody_t             = nullptr;
+Trampoline* e103_chkDamage_t            = nullptr;
 
 #pragma region move
 static void e103_move_o(task* tp)
@@ -52,7 +54,7 @@ static void e103_move_m(task* tp)
     {
         twp->pos.y = wk->fGroundY;
         wk->spd.y = 0.0f;
-        if (wk->flag & 0x80u)
+        if (!(wk->flag & 0x80u))
         {
             wk->flag |= 0x80u;
             dsPlay_oneshot_v(830, 0, 0, 0, twp->pos.x, twp->pos.y, twp->pos.z);
@@ -251,11 +253,55 @@ static void __declspec(naked) e103_turnBody_w()
 }
 #pragma endregion
 
+#pragma region chkDamage
+static void e103_chkDamage_o(task* tp)
+{
+    auto target = e103_chkDamage_t->Target();
+    __asm
+    {
+        mov esi, [tp]
+        call target
+    }
+}
+
+static void __cdecl e103_chkDamage_r(task* tp)
+{
+    if (multiplayer::IsBattleMode())
+    {
+        auto twp = tp->twp;
+
+        if (twp->mode != 6 && twp->mode != 8)
+        {
+            auto hit_twp = CCL_IsHitBullet(twp);
+
+            if (hit_twp)
+            {
+                SetWinnerMulti(hit_twp->btimer); // player number is stored in btimer thanks to patch in E102.cpp
+            }
+        }
+    }
+    
+    e103_chkDamage_o(tp);
+}
+
+static void __declspec(naked) e103_chkDamage_w()
+{
+    __asm
+    {
+        push esi
+        call e103_chkDamage_r
+        pop esi
+        retn
+    }
+}
+#pragma endregion
+
 void InitE103Patches()
 {
     e103_move_t                 = new Trampoline(0x4E6D00, 0x4E6D07, e103_move_w);
     e103_chkPlayerRadius_t      = new Trampoline(0x4E6900, 0x4E6908, e103_chkPlayerRadius_w);
     e103_turnBody_t             = new Trampoline(0x4E6940, 0x4E6949, e103_turnBody_w);
+    e103_chkDamage_t            = new Trampoline(0x4E6790, 0x4E6796, e103_chkDamage_w);
 
     e103_chkPlayerRangeIn_t = new Trampoline(0x4E6B30, 0x4E6B37, e103_chkPlayerRangeIn_r);
     WriteCall((void*)((int)e103_chkPlayerRangeIn_t->Target() + 2), (void*)0x441AC0); // Patch trampoline
