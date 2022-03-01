@@ -4,20 +4,35 @@
 Trampoline* EntryItemBoxPanel_t = nullptr;
 Trampoline* TBarrier_t = nullptr;
 
-void play_itembox_sound(int num)
+void play_itembox_sound(int pnum)
 {
+	auto num = TASKWK_CHARID(playertwp[pnum]);
 	if (num == Characters_Gamma)
 		dsPlay_oneshot(1306, 0, 0, 0);
 	dsPlay_oneshot(11, 0, 0, 0);
+}
+
+int itembox_getpnum(taskwk* twp)
+{
+	auto pltwp = twp->cwp->hit_cwp->mytask->twp;
+
+	if (!pltwp)
+	{
+		return 0;
+	}
+	else
+	{
+		return pltwp->cwp->id == 1 ? pltwp->btimer : TASKWK_PLAYERID(pltwp);
+	}
 }
 
 void __cdecl ef_muteki_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
-		GetInvincibleBodyP(TASKWK_PLAYERID(pltwp));
-		play_itembox_sound(TASKWK_CHARID(pltwp));
+		auto pnum = itembox_getpnum(twp);
+		GetInvincibleBodyP(pnum);
+		play_itembox_sound(pnum);
 	}
 	else
 	{
@@ -29,9 +44,9 @@ void __cdecl ef_5ring_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
-		AddNumRingM(TASKWK_PLAYERID(pltwp), 5);
-		play_itembox_sound(TASKWK_CHARID(pltwp));
+		auto pnum = itembox_getpnum(twp);
+		AddNumRingM(pnum, 5);
+		play_itembox_sound(pnum);
 	}
 	else
 	{
@@ -43,9 +58,9 @@ void __cdecl ef_10ring_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
-		AddNumRingM(TASKWK_PLAYERID(pltwp), 10);
-		play_itembox_sound(TASKWK_CHARID(pltwp));
+		auto pnum = itembox_getpnum(twp);
+		AddNumRingM(pnum, 10);
+		play_itembox_sound(pnum);
 	}
 	else
 	{
@@ -57,10 +72,10 @@ void __cdecl ef_random_ring_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
+		auto pnum = itembox_getpnum(twp);
 		RandomRingNum = RandomRingAmounts[(int)-(rand() * 0.000030517578 * -6.0) % 6];
-		AddNumRingM(TASKWK_PLAYERID(pltwp), RandomRingNum);
-		play_itembox_sound(TASKWK_CHARID(pltwp));
+		AddNumRingM(pnum, RandomRingNum);
+		play_itembox_sound(pnum);
 	}
 	else
 	{
@@ -72,9 +87,9 @@ void __cdecl ef_baria_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
-		GetBarrierP(TASKWK_PLAYERID(pltwp));
-		play_itembox_sound(TASKWK_CHARID(pltwp));
+		auto pnum = itembox_getpnum(twp);
+		GetBarrierP(pnum);
+		play_itembox_sound(pnum);
 	}
 	else
 	{
@@ -86,9 +101,9 @@ void __cdecl ef_1up_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
-		AddNumPlayerM(TASKWK_PLAYERID(pltwp), 1);
-		play_itembox_sound(TASKWK_CHARID(pltwp));
+		auto pnum = itembox_getpnum(twp);
+		AddNumPlayerM(pnum, 1);
+		play_itembox_sound(pnum);
 	}
 	else
 	{
@@ -100,8 +115,8 @@ void __cdecl ef_explosion_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
-		play_itembox_sound(TASKWK_CHARID(pltwp));
+		play_itembox_sound(itembox_getpnum(twp));
+
 		//ItemBox_Explosion:
 		explosion_pos = twp->pos;
 		explosion_r = 10.0f;
@@ -118,9 +133,9 @@ void __cdecl ef_th_baria_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pltwp = twp->cwp->hit_cwp->mytask->twp;
-		GetThunderBarrierP(TASKWK_PLAYERID(pltwp));
-		play_itembox_sound(TASKWK_CHARID(pltwp));
+		auto pnum = itembox_getpnum(twp);
+		GetThunderBarrierP(pnum);
+		play_itembox_sound(pnum);
 	}
 	else
 	{
