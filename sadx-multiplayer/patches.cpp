@@ -19,6 +19,7 @@ Trampoline* GetPlayersInputData_t  = nullptr;
 Trampoline* PInitialize_t          = nullptr;
 Trampoline* NpcMilesSet_t          = nullptr;
 Trampoline* Ring_t                 = nullptr;
+Trampoline* Tobitiri_t             = nullptr;
 Trampoline* PlayerVacumedRing_t    = nullptr;
 Trampoline* EnemyCheckDamage_t     = nullptr;
 Trampoline* EnemyDist2FromPlayer_t = nullptr;
@@ -141,6 +142,43 @@ void __cdecl Ring_r(task* tp)
 	}
 
 	TARGET_DYNAMIC(Ring)(tp);
+}
+
+// Patch for other players to collect scattered rings
+void __cdecl Tobitiri_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		taskwk* twp = tp->twp;
+
+		if (twp->mode == 1 || twp->mode == 2)
+		{
+			auto player = CCL_IsHitPlayer(twp);
+
+			if (player)
+			{
+				twp->mode = 4;
+				twp->pos.y += 3.44f;
+				twp->scl.x = -2.0f;
+				twp->scl.z = -4.0f;
+				twp->counter.l = 0;
+
+				ResetParticle((EntityData1*)twp, (NJS_SPRITE*)0x3B42FC0);
+
+				int pID = TASKWK_PLAYERID(player);
+
+				if (!(playerpwp[pID]->item & 0x4000))
+				{
+					AddNumRingM(pID, 1);
+					dsPlay_oneshot(7, 0, 0, 0);
+					tp->disp = RingDoneDisplayer;
+					return;
+				}
+			}
+		}
+	}
+
+	TARGET_DYNAMIC(Tobitiri)(tp);
 }
 
 // Patch for other players to get kill score
@@ -783,6 +821,7 @@ void InitPatches()
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
 	GetPlayersInputData_t   = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
 	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
+	Tobitiri_t              = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);
 	PlayerVacumedRing_t     = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);
