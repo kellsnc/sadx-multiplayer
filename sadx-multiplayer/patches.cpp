@@ -739,7 +739,7 @@ void PadReadOnP_r(int8_t pnum)
 {
 	if (pnum == -1)
 	{
-		for (int i = 0; i < ucInputStatusForEachPlayer_Length; ++i)
+		for (int i = 0; i < ucInputStatusForEachPlayer.size(); ++i)
 		{
 			ucInputStatusForEachPlayer[i] = TRUE;
 		}
@@ -754,7 +754,7 @@ void PadReadOffP_r(int8_t pnum)
 {
 	if (pnum < 0)
 	{
-		for (int i = 0; i < ucInputStatusForEachPlayer_Length; ++i)
+		for (int i = 0; i < ucInputStatusForEachPlayer.size(); ++i)
 		{
 			ucInputStatusForEachPlayer[i] = FALSE;
 		}

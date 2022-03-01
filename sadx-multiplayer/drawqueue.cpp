@@ -147,7 +147,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
         }
         njSetScreenDist_(0x31C7);
         njSetMatrix(0, data->po2d.mtx);
-        ___SAnjDrawPolygon2D(&data->po2d.p2c, no, data->po2d.pri > -1.0f ? -1.0f : data->po2d.pri, data->po2d.atr);
+        njDrawPolygon2D(&data->po2d.p2c, no, data->po2d.pri > -1.0f ? -1.0f : data->po2d.pri, data->po2d.atr);
         break;
     case QueuedModelType_ActionPtr:
         njSetMatrix(0, data->act.mtx);
@@ -160,7 +160,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
     case QueuedModelType_Object:
         njSetTexture(data->rq.texLst);
         njSetMatrix(0, data->obj.mtx);
-        ___dsDrawObject((NJS_OBJECT*)data->rq.etc);
+        dsDrawObject((NJS_OBJECT*)data->rq.etc);
         break;
     case QueuedModelType_Action:
         njSetMatrix(0, data->act.mtx);

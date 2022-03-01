@@ -105,7 +105,7 @@ void cartDisplayM(task* tp)
 
 		if (cart_data->flag & CARTFLG_SHOWSARU)
 		{
-			___dsDrawObject(&object_sarucart_saru_body_saru_body);
+			dsDrawObject(&object_sarucart_saru_body_saru_body);
 		}
 
 		njPopMatrixEx();

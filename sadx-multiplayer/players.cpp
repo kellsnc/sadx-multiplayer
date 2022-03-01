@@ -72,7 +72,7 @@ int GetEnemyScoreM(int pNum)
     }
     else
     {
-        return slEnemyScore;
+        return EnemyScore;
     }
 }
 
@@ -84,7 +84,7 @@ void AddEnemyScoreM(int pNum, int add)
 
         if (pNum == 0)
         {
-            slEnemyScore = score[0];
+            EnemyScore = score[0];
         }
     }
     else
@@ -392,11 +392,12 @@ void UpdatePlayersInfo()
 {
     rings[0] = ssNumRing;
     lives[0] = scNumPlayer;
-    score[0] = slEnemyScore;
+    score[0] = EnemyScore;
 
     if (PressedButtons[1] & Buttons_L)
     {
-        playertwp[1]->pos = playertwp[0]->pos;
+        playertwp[0]->pos = { 2695, -589, -1303 };
+        playertwp[1]->pos = { 2695, -589, -1303 };
     }
 
     if (IsIngame())

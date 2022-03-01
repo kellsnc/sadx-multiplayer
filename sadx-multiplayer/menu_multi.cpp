@@ -1375,5 +1375,5 @@ void InitMultiMenu()
 {
 	CreateModeFncPtrs[ADVA_MODE_EXPLAIN] = LoadMultiMenu; // Replace unused menu
 	FreeModeFncPtrs[ADVA_MODE_EXPLAIN] = FreeMultiMenu;
-	AvaTexLdLists[ADVA_MODE_EXPLAIN] = AvaTexLdListForMulti;
+	AvaTexLdLists[ADVA_MODE_EXPLAIN] = (int*)AvaTexLdListForMulti;
 }
