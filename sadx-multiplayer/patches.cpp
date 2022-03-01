@@ -6,6 +6,7 @@
 #include "objects/ObjectItemBox.h"
 #include "objects/SnowBoard.h"
 #include "objects/EnemyWindyE103.h"
+#include "objects/EnemyWindyE104.h"
 
 /*
 
@@ -835,4 +836,5 @@ void InitPatches()
 	InitItemBoxPatches();
 	InitSnowBoardPatches();
 	InitE103Patches();
+	InitE104Patches();
 }

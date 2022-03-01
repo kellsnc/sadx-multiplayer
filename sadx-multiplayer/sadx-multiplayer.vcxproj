@@ -106,6 +106,7 @@
     <ClInclude Include="hud_multi.h" />
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="objects\EnemyWindyE103.h" />
+    <ClInclude Include="objects\EnemyWindyE104.h" />
     <ClInclude Include="objects\ObjectItemBox.h" />
     <ClInclude Include="objects\SnowBoard.h" />
     <ClInclude Include="patches.h" />
@@ -134,7 +135,9 @@
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
+    <ClCompile Include="objects\EnemyMountainTgtMissile.cpp" />
     <ClCompile Include="objects\EnemyWindyE103.cpp" />
+    <ClCompile Include="objects\EnemyWindyE104.cpp" />
     <ClCompile Include="objects\EnemyWindyTgtMissile.cpp" />
     <ClCompile Include="objects\ObjectFinalEggTarget.cpp" />
     <ClCompile Include="objects\ObjectFinalEggUptarget.cpp" />
