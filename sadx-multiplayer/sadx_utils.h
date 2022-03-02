@@ -48,6 +48,19 @@ enum AvaTexLdEnum : __int32
 	TENUM_NMAX_SADXPC = 30 // custom, enum is different
 };
 
+enum TGT_MODE : __int32
+{
+	MODE_WAIT_PLAYER = 0x0,
+	MODE_NORMAL = 0x1,
+	MODE_JUMP = 0x2,
+	MODE_HOVER = 0x3,
+	MODE_FALL = 0x4,
+	MODE_DAMAGE = 0x5,
+	MODE_ATTACK = 0x6,
+	MODE_DEATH = 0x7,
+	MODE_MAX = 0x8,
+};
+
 struct CUSTOM_OBJ
 {
 	NJS_OBJECT* obj;
@@ -208,6 +221,22 @@ static inline void SpringAngle(Angle* pAng, Angle* pAngSpd)
 		mov edi, [pAng]
 		mov esi, [pAngSpd]
 		call SpringAnglePtr
+	}
+}
+
+static const void* const springAnglePtr = (void*)0x5A36E0;
+static inline void springAngle(Angle angTarget, Angle* pAng, Angle* pAngSpd, Angle angMaxSpd, float fSpringRate, float fSpringReduction)
+{
+	__asm
+	{
+		push[fSpringReduction]
+		push[fSpringRate]
+		push[angMaxSpd]
+		mov esi, [pAngSpd]
+		mov edi, [pAng]
+		mov eax, [angTarget]
+		call springAnglePtr
+		add esp, 12
 	}
 }
 

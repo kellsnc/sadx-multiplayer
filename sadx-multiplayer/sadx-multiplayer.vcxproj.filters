@@ -145,6 +145,12 @@
     <ClCompile Include="objects\ObjShelterElevator.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\EnemyHotE105.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyHotTgtMissile.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -229,6 +235,9 @@
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="objects\EnemyMountainE104.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\EnemyHotE105.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>

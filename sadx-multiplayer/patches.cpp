@@ -7,6 +7,7 @@
 #include "objects/SnowBoard.h"
 #include "objects/EnemyWindyE103.h"
 #include "objects/EnemyMountainE104.h"
+#include "objects/EnemyHotE105.h"
 
 /*
 
@@ -876,4 +877,5 @@ void InitPatches()
 	InitSnowBoardPatches();
 	InitE103Patches();
 	InitE104Patches();
+	InitE105Patches();
 }
