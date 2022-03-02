@@ -4,7 +4,7 @@
 
 static auto chkDamage = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x4E8090, rEAX);
 static auto smoke = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x4E8260, rEAX);
-static auto calcSpd = GenerateUsercallWrapper<void (*)(Angle3* ang, MISSILE_WK* wk, float force)>(noret, 0x568280, rEDI, rESI, stack4); // custom name
+static auto addVectorAng = GenerateUsercallWrapper<void (*)(Angle3* ang, MISSILE_WK* wk, float force)>(noret, 0x568280, rEDI, rESI, stack4); // custom name
 
 static void updownHeight_m(taskwk* twp, MISSILE_WK* wk, taskwk* ptwp)
 {
@@ -42,7 +42,7 @@ static void exec_m(task* tp)
     twp->ang.y += min(910, max(-910, SubAngle(twp->ang.y, NJM_RAD_ANG(-atan2f(twp->pos.z - ptwp->pos.z, twp->pos.x - ptwp->pos.x)))));
 
     updownHeight_m(twp, wk, ptwp);
-    calcSpd(&twp->ang, wk, 0.4f);
+    addVectorAng(&twp->ang, wk, 0.4f);
 
     auto len = njScalor(&wk->spd);
     if (len > 1.0f)
@@ -80,7 +80,7 @@ static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp);
 Trampoline EnemyWindyTgtMissile_exec_t(0x4E84B0, 0x4E84B6, EnemyWindyTgtMissile_exec_r);
 static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp)
 {
-    if (multiplayer::IsEnabled())
+    if (multiplayer::IsActive())
     {
         exec_m(tp);
     }

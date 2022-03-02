@@ -272,7 +272,7 @@ static void __cdecl e104_chkDamage_r(task* tp)
     {
         auto twp = tp->twp;
 
-        if (twp->mode != 6 && twp->mode != 8)
+        if (twp->mode != MODE_ATTACK && twp->mode != MODE_DEATH)
         {
             auto hit_twp = CCL_IsHitBullet(twp);
 
