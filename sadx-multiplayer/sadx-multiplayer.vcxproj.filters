@@ -136,7 +136,7 @@
     <ClCompile Include="objects\EnemyWindyTgtMissile.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\EnemyWindyE104.cpp">
+    <ClCompile Include="objects\EnemyMountainE104.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\EnemyMountainTgtMissile.cpp">
@@ -228,7 +228,7 @@
     <ClInclude Include="objects\EnemyWindyE103.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
-    <ClInclude Include="objects\EnemyWindyE104.h">
+    <ClInclude Include="objects\EnemyMountainE104.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>

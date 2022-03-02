@@ -6,7 +6,7 @@
 #include "objects/ObjectItemBox.h"
 #include "objects/SnowBoard.h"
 #include "objects/EnemyWindyE103.h"
-#include "objects/EnemyWindyE104.h"
+#include "objects/EnemyMountainE104.h"
 
 /*
 
