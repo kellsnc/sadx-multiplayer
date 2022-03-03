@@ -159,6 +159,7 @@
     <ClCompile Include="objects\ObjectRMPathKassha.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
     <ClCompile Include="objects\ObjectWindyTorout.cpp" />
+    <ClCompile Include="objects\ObjShelterBridge.cpp" />
     <ClCompile Include="objects\ObjShelterElevator.cpp" />
     <ClCompile Include="objects\Rd_Highway.cpp" />
     <ClCompile Include="objects\Rd_Snow.cpp" />
