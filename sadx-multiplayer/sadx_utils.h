@@ -138,6 +138,7 @@ FunctionPointer(void, PlayMenuMusicID, (MusicIDs id), 0x505900);
 FunctionPointer(void, PlayMenuMusic, (int id), 0x505990);
 DataPointer(MSGC, jimakumsgc, 0x3ABDC18);
 DataPointer(void*, jimakubuf, 0x3ABDF84);
+FunctionPointer(int, GetSwitchOnOff, (unsigned int ID), 0x4CB4F0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
