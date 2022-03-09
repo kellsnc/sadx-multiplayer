@@ -107,20 +107,23 @@ static void ObjShelterCargostartExec_m(task* tp)
 		{
 			PadReadOffP(twp->btimer);
 			twp->mode = MDCARGO_CHECKGROUND;
-			twp->flag |= 1;
+			twp->flag |= 1; // enables dyncol
 		}
 		else
 		{
-			twp->flag &= ~1;
+			twp->flag &= ~1; // disables dyncol
 		}
 
 		break;
 	case MDCARGO_CHECKGROUND:
 		if (CheckPlayerRideOnMobileLandObjectP(twp->btimer, tp))
 		{
-			twp->wtimer = 0ui16;
-			twp->mode = MDCARGO_WAIT;
-			twp->timer.f = 0.0;
+			// Changes made here so that the train departs faster
+			// That way it's ready in time for the next player
+
+			twp->wtimer = 30ui16; // 0ui16
+			twp->mode = MDCARGO_STARTFADE; // MDCARGO_WAIT
+			twp->timer.f = 0.0f;
 		}
 
 		break;
@@ -134,7 +137,7 @@ static void ObjShelterCargostartExec_m(task* tp)
 
 		if (twp->wtimer > 210ui16)
 		{
-			twp->wtimer = 0;
+			twp->wtimer = 0ui16;
 			twp->mode = MDCARGO_STARTFADE;
 		}
 
@@ -144,7 +147,7 @@ static void ObjShelterCargostartExec_m(task* tp)
 		dsPlay_timer(325, (int)tp, 1, 0, 2);
 		if (twp->wtimer > 60ui16)
 		{
-			twp->wtimer = 0;
+			twp->wtimer = 0ui16;
 			twp->mode = MDCARGO_TELEPORT;
 			CreateObjShelterFade(twp->btimer);
 		}
