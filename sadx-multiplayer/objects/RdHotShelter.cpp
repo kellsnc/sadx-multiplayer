@@ -61,7 +61,7 @@ static void __cdecl ObjShelterFadeDisp_r(task* tp)
 
 static void CreateObjShelterFade(char pnum)
 {
-	auto tp = CreateElementalTask(2u, 3, ObjShelterFadeDisp_r);
+	auto tp = CreateElementalTask(2u, 3, ObjShelterFade);
 	tp->twp->btimer = pnum;
 }
 #pragma endregion
