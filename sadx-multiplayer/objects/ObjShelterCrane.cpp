@@ -28,9 +28,6 @@ static void ObjShelterCrane_m(task* tp)
 	auto twp = tp->twp;
 	auto mwp = tp->mwp;
 
-	NJS_VECTOR v{ twp->pos.x + mwp->spd.x, twp->pos.y + twp->counter.f - 113.0f, twp->pos.z + mwp->spd.z };
-	DrawCollisionSphere(&v, 10.0f);
-
 	if (twp->wtimer > 0)
 	{
 		--twp->wtimer;
@@ -126,11 +123,10 @@ static void ObjShelterCrane_m(task* tp)
 		}
 		break;
 	case MDCRANE_END:
-		twp->cwp->info[1].attr |= 0x10u;
-		twp->cwp->info[2].attr |= 0x10u;
+		twp->smode = 0;
 		SetInputP(twp->btimer, 24);
 		twp->mode = MDCRANE_RELEASE;
-		twp->smode = 0;
+		sub_5A4F10(twp);
 		break;
 	case MDCRANE_RELEASE:
 		mwp->ang_spd.x -= 224;
