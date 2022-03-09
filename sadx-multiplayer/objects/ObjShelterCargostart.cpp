@@ -4,12 +4,6 @@
 
 // Objects in Gamma's Hot Shelter that teleports player to cargo area
 
-static void __cdecl ObjShelterFadeDisp_r(task* tp); // "Disp"
-static void __cdecl ObjShelterCargostartExec_r(task* tp); // "Exec"
-
-Trampoline ObjShelterFadeDisp_t(0x5ABB80, 0x5ABB85, ObjShelterFadeDisp_r);
-Trampoline ObjShelterCargostartExec_t(0x5A4B30, 0x5A4B38, ObjShelterCargostartExec_r);
-
 enum MD_CARGO // made up
 {
 	MDCARGO_CHECKBOUNDS,
@@ -20,54 +14,10 @@ enum MD_CARGO // made up
 	MDCARGO_OUT
 };
 
-#pragma region ObjShelterFade
-static void ObjShelterFadeDisp_m(task* tp)
-{
-	auto twp = tp->twp;
-
-	if (MissedFrames || SplitScreen::GetCurrentScreenNum() != tp->twp->btimer)
-	{
-		return;
-	}
-
-	SplitScreen::SaveViewPort();
-	SplitScreen::ChangeViewPort(-1);
-
-	ghDefaultBlendingMode();
-	SetMaterial(twp->counter.f, 0.0, 0.0, 0.0);
-
-	auto ratio = SplitScreen::GetScreenRatio(twp->btimer);
-
-	sprite_fade.p.x = HorizontalStretch * 320.0f * ratio->w + ratio->x * HorizontalResolution;
-	sprite_fade.p.y = VerticalStretch * 240.0f * ratio->h + ratio->y * VerticalResolution;
-	sprite_fade.sx = (ratio->w * HorizontalStretch * 640.0f) * 0.015625f;
-	sprite_fade.sy = (ratio->h * VerticalStretch * 480.0f) * 0.015625f;
-
-	late_DrawSprite2D(&sprite_fade, 0, 22047.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, 4u);
-	
-	ResetMaterial();
-
-	SplitScreen::RestoreViewPort();
-}
-
-static void __cdecl ObjShelterFadeDisp_r(task* tp)
-{
-	if (SplitScreen::IsActive())
-	{
-		ObjShelterFadeDisp_m(tp);
-	}
-	else
-	{
-		TARGET_STATIC(ObjShelterFadeDisp)(tp);
-	}
-}
-#pragma endregion
-
-#pragma region ObjShelterCargostart
 static void CreateObjShelterFade(char pnum)
 {
 	auto tp = CreateElementalTask(2u, 3, ObjShelterFade);
-	tp->twp->btimer = pnum;
+	tp->twp->btimer = pnum + 1;
 }
 
 static void Move(task* tp, float x)
@@ -190,6 +140,8 @@ static void ObjShelterCargostartExec_m(task* tp)
 	tp->disp(tp);
 }
 
+static void __cdecl ObjShelterCargostartExec_r(task* tp); // "Exec"
+Trampoline ObjShelterCargostartExec_t(0x5A4B30, 0x5A4B38, ObjShelterCargostartExec_r);
 static void __cdecl ObjShelterCargostartExec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -201,4 +153,3 @@ static void __cdecl ObjShelterCargostartExec_r(task* tp)
 		TARGET_STATIC(ObjShelterCargostartExec)(tp);
 	}
 }
-#pragma endregion
