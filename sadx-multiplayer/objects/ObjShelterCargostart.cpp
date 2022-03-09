@@ -17,7 +17,7 @@ enum MD_CARGO // made up
 static void CreateObjShelterFade(char pnum)
 {
 	auto tp = CreateElementalTask(2u, 3, ObjShelterFade);
-	tp->twp->btimer = pnum + 1;
+	tp->twp->btimer = pnum;
 }
 
 static void Move(task* tp, float x)

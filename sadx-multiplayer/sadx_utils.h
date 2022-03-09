@@ -142,6 +142,9 @@ FunctionPointer(int, GetSwitchOnOff, (unsigned int ID), 0x4CB4F0);
 TaskFunc(ObjShelterFade, 0x5ABD00);
 DataPointer(NJS_SPRITE, sprite_fade, 0x19C7C24);
 FunctionPointer(void, late_DrawSprite2D, (NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE atr, int flgs), 0x404660);
+TaskFunc(ObjShelterTunnelscroll, 0x5AC4A0);
+TaskFunc(ObjShelterNo2cargo, 0x5ABED0);
+FunctionPointer(void, SetSwitchOnOff, (unsigned int ID, int OnOff), 0x4CB4C0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

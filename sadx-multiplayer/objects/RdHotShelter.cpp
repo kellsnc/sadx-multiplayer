@@ -2,14 +2,17 @@
 #include "multiplayer.h"
 #include "splitscreen.h"
 
-DataPointer(int, tunnel_flag, 0x3C72A78);
-DataPointer(int, clear_flag, 0x3C72A7C);
+DataPointer(NJS_POINT3, tunnel_pos, 0x17D0AE8);
+DataPointer(BOOL, tunnel_flag, 0x3C72A78);
+DataPointer(BOOL, clear_flag, 0x3C72A7C);
 
 static void __cdecl ObjShelterFadeDisp_r(task* tp); // "Disp"
 static void __cdecl ObjShelterTunnelscrollExec_r(task* tp); // "Exec"
+static void __cdecl TunnelManagerExec_r(task* tp); // "Exec"
 
 Trampoline ObjShelterFadeDisp_t(0x5ABB80, 0x5ABB85, ObjShelterFadeDisp_r);
 Trampoline ObjShelterTunnelscrollExec_t(0x5AC3B0, 0x5AC3B5, ObjShelterTunnelscrollExec_r);
+Trampoline TunnelManagerExec_t(0x59AD50, 0x59AD57, TunnelManagerExec_r);
 
 #pragma region ObjShelterFade
 static void ObjShelterFadeDisp_m(task* tp)
@@ -20,16 +23,9 @@ static void ObjShelterFadeDisp_m(task* tp)
 	}
 
 	auto twp = tp->twp;
-	auto pnum = twp->btimer - 1;
+	auto pnum = twp->btimer;
 
-	if (pnum == -1)
-	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
-		TARGET_STATIC(ObjShelterFadeDisp)(tp);
-		SplitScreen::RestoreViewPort();
-	}
-	else if (SplitScreen::GetCurrentScreenNum() == pnum)
+	if (SplitScreen::GetCurrentScreenNum() == pnum)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
@@ -62,42 +58,22 @@ static void __cdecl ObjShelterFadeDisp_r(task* tp)
 		TARGET_STATIC(ObjShelterFadeDisp)(tp);
 	}
 }
+
+static void CreateObjShelterFade(char pnum)
+{
+	auto tp = CreateElementalTask(2u, 3, ObjShelterFadeDisp_r);
+	tp->twp->btimer = pnum;
+}
 #pragma endregion
 
 #pragma region ObjShelterTunnelscroll
-static void GetAveragePosition(NJS_VECTOR* v)
-{
-	*v = playertwp[0]->pos;
-
-	for (int i = 1; i < PLAYER_MAX; ++i)
-	{
-		auto ptwp = playertwp[i];
-
-		if (ptwp)
-		{
-			v->x += ptwp->pos.x;
-			v->y += ptwp->pos.y;
-			v->z += ptwp->pos.z;
-		}
-	}
-
-	auto pcount = GetPlayerCount();
-
-	v->x /= pcount;
-	v->y /= pcount;
-	v->z /= pcount;
-}
-
 static void ObjShelterTunnelscrollExec_m(task* tp)
 {
 	if (tunnel_flag)
 	{
 		auto twp = tp->twp;
-		NJS_VECTOR v;
-
-		GetAveragePosition(&v);
 		
-		twp->pos.z += floorf((v.z - twp->pos.z) * 0.0019230769f) * 520.0f;
+		twp->pos.z = 1500.0f;
 
 		if (clear_flag)
 		{
@@ -130,6 +106,127 @@ static void __cdecl ObjShelterTunnelscrollExec_r(task* tp)
 	if (multiplayer::IsActive())
 	{
 		ObjShelterTunnelscrollExec_m(tp);
+	}
+	else
+	{
+		TARGET_STATIC(ObjShelterTunnelscrollExec)(tp);
+	}
+}
+#pragma endregion
+
+#pragma region TunnelManager
+static NJS_VECTOR end_pos = { -70.0f, 10007.0f, 3250.0f };
+
+static void CreateTunnelcol_m()
+{
+	// todo: patch this horror
+}
+
+static void TunnelManagerExec_m(task* tp)
+{
+	auto twp = tp->twp;
+
+	if (twp->wtimer != GetStageNumber())
+	{
+		tunnel_flag = FALSE;
+		FreeTask(tp);
+		return;
+	}
+
+	switch (twp->mode)
+	{
+	case 0:
+		if (IsPlayerInsideSphere(&tunnel_pos, 3000.0f))
+		{
+			tunnel_flag = TRUE;
+			twp->mode = 1;
+			CreateElementalTask(2u, 3, ObjShelterTunnelscroll);
+			CreateTunnelcol_m();
+			CreateElementalTask(2u, 3, ObjShelterNo2cargo);
+		}
+		break;
+	case 1:
+		if (!IsPlayerInsideSphere(&tunnel_pos, 3000.0f))
+		{
+			tunnel_flag = FALSE;
+			twp->mode = 0;
+			break;
+		}
+
+		if (IsSwitchPressed(16))
+		{
+			SetSwitchOnOff(16, 0);
+			clear_flag = TRUE;
+			twp->timer.l = 0;
+			twp->mode = 2;
+		}
+
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			if (playertwp[i] && playertwp[i]->pos.z > 3440.0f)
+			{
+				playertwp[i]->pos.z = 3440.0f;
+			}
+		}
+
+		break;
+	case 2:
+		dsPlay_timer(325, (int)tp, 1, 0, 2);
+
+		if (++twp->timer.l > 120)
+		{
+			twp->timer.l = 0;
+			twp->mode = 3i8;
+
+			for (int i = 0; i < PLAYER_MAX; ++i)
+			{
+				if (playertwp[i] && GetDistance(&end_pos, &playertwp[i]->pos) < 200.0f)
+				{
+					CreateObjShelterFade(i);
+					PadReadOffP(i);
+				}
+			}
+		}
+		break;
+	case 3:
+		dsPlay_timer(325, (int)tp, 1, 0, 2);
+		
+		if (++twp->timer.l > 170)
+		{
+			for (int i = 0; i < PLAYER_MAX; ++i)
+			{
+				if (playertwp[i] && GetDistance(&end_pos, &playertwp[i]->pos) < 200.0f)
+				{
+					SetPositionP(i, -850.0f, 3030.0f, -3183.0f);
+					PadReadOnP(i);
+				}
+			}
+
+			twp->mode = 4;
+			twp->timer.l = 0;
+		}
+		break;
+	case 4:
+		if (twp->timer.l < 240)
+		{
+			++twp->timer.l;
+		}
+
+		if (twp->timer.l > 240 && IsPlayerInsideSphere(&tunnel_pos, 3000.0f))
+		{
+			clear_flag = FALSE;
+			twp->mode = 1;
+			twp->timer.l = 0;
+		}
+		break;
+	}
+}
+
+void __cdecl TunnelManagerExec_r(task* tp)
+{
+	if (multiplayer::IsEnabled())
+	{
+		TunnelManagerExec_m(tp);
 	}
 	else
 	{
