@@ -285,7 +285,7 @@ void RunMultiCamera(int num)
 
             freecampos = cam->wk.campos;
             dyncolpos = { 0.0f, 0.0f, 0.0f };
-            MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, 0, 0x400002 | ColFlags_Water, 10.0);
+            MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, nullptr, 0x400002 | ColFlags_Water, 10.0f);
 
             cam->wk.campos.x = dyncolpos.x + freecampos.x;
             cam->wk.campos.y = dyncolpos.y + freecampos.y;
@@ -387,13 +387,13 @@ void RunMultiCamera(int num)
     dyncolpos = cam->wk.camspd;
     int water_cdt = 0;
 
-    if (MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, 0, 0x400002 | ColFlags_Water, 10.0))
+    if (MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, nullptr, 0x400002 | ColFlags_Water, 10.0f))
     {
         freecampos = cam->wk.campos;
         dyncolpos = cam->wk.camspd;
         water_cdt = 1;
 
-        if (MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, 0, 0x400002 | ColFlags_Water, 8.0))
+        if (MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, nullptr, 0x400002 | ColFlags_Water, 8.0f))
         {
             water_cdt = 2;
         }
