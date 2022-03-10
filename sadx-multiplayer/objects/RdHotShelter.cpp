@@ -8,10 +8,14 @@ DataPointer(BOOL, clear_flag, 0x3C72A7C);
 
 static void __cdecl ObjShelterFadeDisp_r(task* tp); // "Disp"
 static void __cdecl ObjShelterTunnelscrollExec_r(task* tp); // "Exec"
+static void __cdecl ObjShelterTunnelscrollDisp_r(task* tp); // "Disp"
+static void __cdecl ObjShelterTunnelcolExec_r(task* tp); // "Exec"
 static void __cdecl TunnelManagerExec_r(task* tp); // "Exec"
 
 Trampoline ObjShelterFadeDisp_t(0x5ABB80, 0x5ABB85, ObjShelterFadeDisp_r);
 Trampoline ObjShelterTunnelscrollExec_t(0x5AC3B0, 0x5AC3B5, ObjShelterTunnelscrollExec_r);
+Trampoline ObjShelterTunnelscrollDisp_t(0x5AC2F0, 0x5AC2F5, ObjShelterTunnelscrollDisp_r);
+Trampoline ObjShelterTunnelcolExec_t(0x5AC050, 0x5AC055, ObjShelterTunnelcolExec_r);
 Trampoline TunnelManagerExec_t(0x59AD50, 0x59AD57, TunnelManagerExec_r);
 
 #pragma region ObjShelterFade
@@ -67,14 +71,27 @@ static void CreateObjShelterFade(char pnum)
 #pragma endregion
 
 #pragma region ObjShelterTunnelscroll
+static void __cdecl ObjShelterTunnelscrollDisp_r(task* tp)
+{
+	if (SplitScreen::IsActive() && tunnel_flag)
+	{
+		auto pnum = SplitScreen::GetCurrentScreenNum();
+
+		if (pnum >= 0)
+		{
+			tp->twp->pos.z = playertwp[pnum]->pos.z;
+		}
+	}
+
+	TARGET_STATIC(ObjShelterTunnelscrollDisp)(tp);
+}
+
 static void ObjShelterTunnelscrollExec_m(task* tp)
 {
 	if (tunnel_flag)
 	{
 		auto twp = tp->twp;
 		
-		twp->pos.z = 1500.0f;
-
 		if (clear_flag)
 		{
 			twp->timer.f = max(2.0f, twp->timer.f - 0.1f);
@@ -114,13 +131,43 @@ static void __cdecl ObjShelterTunnelscrollExec_r(task* tp)
 }
 #pragma endregion
 
+#pragma region ObjShelterTunnelcol
+static void __cdecl ObjShelterTunnelcolExec_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		auto twp = tp->twp;
+
+		if (twp->wtimer != GetStageNumber())
+		{
+			FreeTask(tp);
+			return;
+		}
+
+		if (tunnel_flag)
+		{
+			// Hack: make collision so large it works for both players
+			auto obj = (NJS_OBJECT*)tp->twp->counter.ptr;
+			obj->pos[2] = 1500.0f;
+			obj->scl[2] = 20.0f;
+			obj->basicdxmodel->r = 3000.0f;
+
+			twp->flag |= 1;
+		}
+		else
+		{
+			twp->flag &= ~1;
+		}
+	}
+	else
+	{
+		TARGET_STATIC(ObjShelterTunnelcolExec)(tp);
+	}
+}
+#pragma endregion
+
 #pragma region TunnelManager
 static NJS_VECTOR end_pos = { -70.0f, 10007.0f, 3250.0f };
-
-static void CreateTunnelcol_m()
-{
-	// todo: patch this horror
-}
 
 static void TunnelManagerExec_m(task* tp)
 {
@@ -140,8 +187,9 @@ static void TunnelManagerExec_m(task* tp)
 		{
 			tunnel_flag = TRUE;
 			twp->mode = 1;
+
 			CreateElementalTask(2u, 3, ObjShelterTunnelscroll);
-			CreateTunnelcol_m();
+			CreateTunnelcol();
 			CreateElementalTask(2u, 3, ObjShelterNo2cargo);
 		}
 		break;
@@ -211,8 +259,7 @@ static void TunnelManagerExec_m(task* tp)
 		{
 			++twp->timer.l;
 		}
-
-		if (twp->timer.l > 240 && IsPlayerInsideSphere(&tunnel_pos, 3000.0f))
+		else if (IsPlayerInsideSphere(&tunnel_pos, 3000.0f)) // Restart train if needed
 		{
 			clear_flag = FALSE;
 			twp->mode = 1;
