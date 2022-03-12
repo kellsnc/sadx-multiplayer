@@ -201,7 +201,7 @@ static void TunnelManagerExec_m(task* tp)
 			break;
 		}
 
-		if (IsSwitchPressed(16))
+		if (GetSwitchOnOff(16))
 		{
 			SetSwitchOnOff(16, 0);
 			clear_flag = TRUE;
