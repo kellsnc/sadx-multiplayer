@@ -30,7 +30,6 @@ Trampoline* savepointCollision_t   = nullptr;
 Trampoline* TikalDisplay_t         = nullptr;
 Trampoline* ObjectSpringB_t        = nullptr;
 Trampoline* SpinnaDisplayer_t      = nullptr;
-Trampoline* CheckPlayerRideOnMobileLandObjectP_t = nullptr;
 Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 
 // Patch forward calculation to use multiplayer cameras
@@ -403,27 +402,6 @@ static void __declspec(naked) savepointCollision_w()
 		pop edi // tp
 		pop esi // twp
 		retn
-	}
-}
-
-// Patch mobile land detection to detect every player
-bool CheckPlayerRideOnMobileLandObjectP_r(unsigned __int8 pno, task* ttp)
-{
-	if (multiplayer::IsActive() && pno == 0)
-	{
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			if (TARGET_DYNAMIC(CheckPlayerRideOnMobileLandObjectP)(i, ttp))
-			{
-				return true;
-			}
-		}
-
-		return false;
-	}
-	else
-	{
-		return TARGET_DYNAMIC(CheckPlayerRideOnMobileLandObjectP)(pno, ttp);
 	}
 }
 
@@ -842,6 +820,26 @@ static int __cdecl GammaTickTimePatch()
 	return multiplayer::IsActive() ? 0 : CurrentCharacter;
 }
 
+bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
+{
+	if (multiplayer::IsActive())
+	{
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			if (CheckPlayerRideOnMobileLandObjectP(i, ttp))
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+	else
+	{
+		return CheckPlayerRideOnMobileLandObjectP(pno, ttp);
+	}
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -850,7 +848,6 @@ void InitPatches()
 	Tobitiri_t              = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);
 	PlayerVacumedRing_t     = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
-	CheckPlayerRideOnMobileLandObjectP_t = new Trampoline(0x441C30, 0x441C35, CheckPlayerRideOnMobileLandObjectP_r);
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
 
 	// Score patches
@@ -903,6 +900,28 @@ void InitPatches()
 	WriteJump((void*)0x427F10, InitTime_r);
 	WriteCall((void*)0x426081, GammaTickTimePatch);
 
+	// Patch CheckPlayerRideOnMobileLandObjectP occurences that don't need full rewrites
+	WriteCall((void*)0x4CB36C, CheckAnyPlayerRideOnMobileLandObjectP); // Switch
+	WriteCall((void*)0x52130E, CheckAnyPlayerRideOnMobileLandObjectP); // OStation
+	WriteCall((void*)0x522F7E, CheckAnyPlayerRideOnMobileLandObjectP); // OSidelift
+	WriteCall((void*)0x523185, CheckAnyPlayerRideOnMobileLandObjectP); // OSidelift
+	WriteCall((void*)0x526AAE, CheckAnyPlayerRideOnMobileLandObjectP); // OBlift
+	WriteCall((void*)0x52A5CE, CheckAnyPlayerRideOnMobileLandObjectP); // OStation
+	WriteCall((void*)0x59DC87, CheckAnyPlayerRideOnMobileLandObjectP); // OUkijima
+	WriteCall((void*)0x59DCA0, CheckAnyPlayerRideOnMobileLandObjectP); // OUkijima
+	WriteCall((void*)0x5AC110, CheckAnyPlayerRideOnMobileLandObjectP); // Cargo
+	WriteCall((void*)0x5AC153, CheckAnyPlayerRideOnMobileLandObjectP); // Cargo
+	WriteCall((void*)0x5E6B26, CheckAnyPlayerRideOnMobileLandObjectP); // Aokiswitch
+	WriteCall((void*)0x5FA25C, CheckAnyPlayerRideOnMobileLandObjectP); // Edge
+	WriteCall((void*)0x5E6B26, CheckAnyPlayerRideOnMobileLandObjectP); // Connect
+	WriteCall((void*)0x5E6B26, CheckAnyPlayerRideOnMobileLandObjectP); // Talap
+	WriteCall((void*)0x601FB0, CheckAnyPlayerRideOnMobileLandObjectP);
+	WriteCall((void*)0x63D865, CheckAnyPlayerRideOnMobileLandObjectP);
+	WriteCall((void*)0x63D90D, CheckAnyPlayerRideOnMobileLandObjectP);
+	WriteCall((void*)0x63D940, CheckAnyPlayerRideOnMobileLandObjectP);
+	WriteCall((void*)0x63DFB6, CheckAnyPlayerRideOnMobileLandObjectP);
+	WriteCall((void*)0x63DFED, CheckAnyPlayerRideOnMobileLandObjectP);
+	
 	InitItemBoxPatches();
 	InitSnowBoardPatches();
 	InitE103Patches();
