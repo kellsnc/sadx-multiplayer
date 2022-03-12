@@ -817,6 +817,31 @@ BOOL dsCheckViewV_r(NJS_POINT3* ft, float radius)
 	}
 }
 
+static void __cdecl InitTimer_r()
+{
+	TimeFrames = 0;
+	TimeSeconds = 0;
+	TimeMinutes = 0;
+	GameTimer = 0;
+
+	if (GetPlayerNumber() == Characters_Gamma && !multiplayer::IsEnabled())
+	{
+		TimeMinutes = 3;
+		TimeSeconds = 0;
+	}
+}
+
+static void __cdecl InitTime_r()
+{
+	ulGlobalTimer = 0;
+	InitTimer_r();
+}
+
+static int __cdecl GammaTickTimePatch()
+{
+	return multiplayer::IsActive() ? 0 : CurrentCharacter;
+}
+
 void InitPatches()
 {
 	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -872,6 +897,11 @@ void InitPatches()
 	WriteCall((void*)0x4DF5C8, dsCheckViewV_r); // ObjectWindySetInEff
 	WriteCall((void*)0x5D3D54, dsCheckViewV_r); // ObjectCasinoCris
 	WriteCall((void*)0x5E8327, dsCheckViewV_r); // ObjectRuinFire
+
+	// Normal timer for Gamma in multiplayer
+	WriteJump((void*)0x425FF0, InitTimer_r);
+	WriteJump((void*)0x427F10, InitTime_r);
+	WriteCall((void*)0x426081, GammaTickTimePatch);
 
 	InitItemBoxPatches();
 	InitSnowBoardPatches();
