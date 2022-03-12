@@ -163,6 +163,7 @@
     <ClCompile Include="objects\ObjShelterCargostart.cpp" />
     <ClCompile Include="objects\ObjShelterCrane.cpp" />
     <ClCompile Include="objects\ObjShelterElevator.cpp" />
+    <ClCompile Include="objects\ObjShelterKaitendai.cpp" />
     <ClCompile Include="objects\RdHotShelter.cpp" />
     <ClCompile Include="objects\Rd_Highway.cpp" />
     <ClCompile Include="objects\Rd_Snow.cpp" />
