@@ -1,9 +1,17 @@
 #include "pch.h"
 #include <UsercallFunctionHandler.h>
 
-//imagine making array of 1
-DataArray(CCL_INFO, palley_colli, 0x24C8C70, 1);
+enum : char
+{
+    INIT,   // symbol
+    WAIT,   // symbol
+    ACTIVE, // custom
+    STOP,   // custom
+};
+
+DataPointer(CCL_INFO, palley_colli, 0x24C8C70);
 TaskFunc(PathKassha, 0x603640);
+TaskFunc(KasshaDisplayer, 0x603590);
 
 auto SetPath2Taskwk_0 = GenerateUsercallWrapper<void (*)(pathtag* a1, taskwk* a2, float a3)>(noret, 0x602A50, rEDX, rESI, noret);
 auto DrawHuck = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x602B10, rEAX);
@@ -14,104 +22,90 @@ void PathKassha_r(task* tp);
 Trampoline PathKassha_t(0x603640, 0x603647, PathKassha_r);
 void PathKassha_r(task* tp)
 {
-
     if (!multiplayer::IsActive())
     {
         return TARGET_STATIC(PathKassha)(tp);
     }
 
-    taskwk* data = tp->twp;
-    pathtag* path;
+    auto twp = tp->twp;
+    auto path = (pathtag*)twp->value.l;
+    auto pnum = twp->smode;
+
     NJS_VECTOR pos;
-    float result;
-    int v29[4];
-    float resultScaleZ;
-    float cosRes;
-    float sinRes;
+    int pnt;
 
-    int lvlActThing = ssStageNumber << 8;
-
-    if ((lvlActThing | ssActNumber) != data->timer.w[0])
+    if (twp->timer.w[0] != GetStageNumber())
     {
         FreeTask(tp);
         return;
     }
 
-    unsigned __int8 mode = data->mode;
-    char pnum;
-
-    switch (mode)
+    switch (twp->mode)
     {
-    case 0:
-        tp->disp = (TaskFuncPtr)0x603590;
+    case INIT:
+        tp->disp = KasshaDisplayer;
 
-        CCL_Init(tp, palley_colli, 1, 4u);
-        path = (pathtag*)data->value.l;
-        SetPath2Taskwk_0(path, data, data->counter.f);
-        data->wtimer = 0;
-        data->mode++;
-        data->counter.f = 0.0;
-        data->scl.z = path->totallen;
+        CCL_Init(tp, &palley_colli, 1, 4u);
+        SetPath2Taskwk_0(path, twp, twp->counter.f);
+
+        twp->wtimer = 0i16;
+        twp->mode = WAIT;
+        twp->counter.f = 0.0f;
+        twp->scl.z = path->totallen;
         break;
-    case 1:
-        if ((data->cwp->flag & 1) != 0)
+    case WAIT:
+        if ((twp->cwp->flag & 1) != 0)
         {
-            auto ptwp = CCL_IsHitPlayer(data);
+            auto ptwp = CCL_IsHitPlayer(twp);
 
             if (!ptwp)
-            {
-                ptwp = playertwp[GetTheNearestPlayerNumber(&data->pos)];
-            }
+                ptwp = playertwp[GetTheNearestPlayerNumber(&twp->pos)];
 
-            data->btimer = TASKWK_PLAYERID(ptwp);
+            pnum = twp->smode = TASKWK_PLAYERID(ptwp);
 
-            SetInputP(data->btimer, 16);
-            data->mode++;
+            SetInputP(pnum, 16);
+            twp->mode = ACTIVE;
         }
-        EntryColliList(data);
 
-        pnum = data->btimer;
-        pos = { data->pos.x - playertwp[pnum]->pos.x, data->pos.y - playertwp[pnum]->pos.y, data->pos.z - playertwp[pnum]->pos.z };
-        result = pos.x * pos.x + pos.y * pos.y + pos.z * pos.z;
-        if (squareroot(result) < 100.0f)
+        EntryColliList(twp);
+
+        pos = { twp->pos.x - playertwp[pnum]->pos.x, twp->pos.y - playertwp[pnum]->pos.y, twp->pos.z - playertwp[pnum]->pos.z };
+        if (njScalor(&pos) < 100.0f)
         {
-            path = (pathtag*)data->value.l;
-            SetPath2Taskwk_0(path, data, 0.0f);
+            path = (pathtag*)twp->value.l;
+            SetPath2Taskwk_0(path, twp, 0.0f);
             DrawHuck(tp);
-            SCPathOnposToPntnmb(path, data->counter.f, v29);
-            DrawWireTarumi(tp, v29[0], 0);
-            DrawWireTarumi(tp, v29[0] +1, 0);
+            SCPathOnposToPntnmb(path, twp->counter.f, &pnt);
+            DrawWireTarumi(tp, pnt, 0);
+            DrawWireTarumi(tp, pnt + 1, 0);
             return;
         }
 
         break;
-    case 2:
-        pnum = data->btimer;
-        SCPathOnposToPntnmb((pathtag*)data->value.l, data->counter.f, v29);
-        DrawWireTarumi(tp, v29[0] + 1, 0);
-        DrawWireTarumi(tp, v29[0] + 2, 0);
+    case ACTIVE:
+        SCPathOnposToPntnmb((pathtag*)twp->value.l, twp->counter.f, &pnt);
+        DrawWireTarumi(tp, pnt + 1, 0);
+        DrawWireTarumi(tp, pnt + 2, 0);
         DrawWire(tp);
-        resultScaleZ = (float)(data->counter.f + (float)8.0f);
-        data->counter.f += 8.0f;
-        if (resultScaleZ > data->scl.z)
+
+        twp->counter.f += 8.0f;
+        if (twp->counter.f > twp->scl.z)
         {
-            data->mode++;
+            twp->mode = STOP;
             SetInputP(pnum, 24);
-            cosRes = njCos(-playertwp[pnum]->ang.y);
-            sinRes = njSin(-playertwp[pnum]->ang.y);
-            SetVelocityP(pnum, cosRes * 2.2f, 1.0f, sinRes);
-            SCPathOnposToPntnmb((pathtag*)data->value.l, data->scl.z, v29);
-            data->btimer = v29[0];
+            SetVelocityP(pnum, njCos(-playertwp[pnum]->ang.y) * 2.2f, 1.0f, njSin(-playertwp[pnum]->ang.y) * -2.2f);
+            SCPathOnposToPntnmb((pathtag*)twp->value.l, twp->scl.z, &pnt);
+            twp->btimer = pnt;
         }
-        QueueSound_DualEntity(132, data, 1, 0, 10);
+
+        dsPlay_timer(132, (int)tp, 1, 0, 10);
         return;
     case 3:
-        pnum = data->btimer;
-        pos = { data->pos.x - playertwp[pnum]->pos.x, data->pos.y - playertwp[pnum]->pos.y, data->pos.z - playertwp[pnum]->pos.z };
-        result = pos.x * pos.x + pos.y * pos.y + pos.z * pos.z;
-        if (squareroot(result) < 100.0f)
+        pos = { twp->pos.x - playertwp[pnum]->pos.x, twp->pos.y - playertwp[pnum]->pos.y, twp->pos.z - playertwp[pnum]->pos.z };
+        
+        if (njScalor(&pos) < 100.0f)
         {
-            DrawWireTarumi(tp, (unsigned __int8)data->btimer, 1);
+            DrawWireTarumi(tp, twp->btimer, 1);
         }
         break;
     default:
