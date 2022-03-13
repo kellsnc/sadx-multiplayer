@@ -15,7 +15,7 @@ DataPointer(CCL_INFO, palley_colli, 0x24C8C70);
 
 auto SetPath2Taskwk_0 = GenerateUsercallWrapper<void (*)(pathtag* a1, taskwk* a2, float a3)>(noret, 0x602A50, rEDX, rESI, noret);
 auto DrawHuck = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x602B10, rEAX);
-auto DrawWireTarumi = GenerateUsercallWrapper<void (*)(task* a1, int a2, char a3)>(noret, 0x603330, rEAX, rECX, noret);
+auto DrawWireTarumi = GenerateUsercallWrapper<void (*)(task* a1, int a2, char a3)>(noret, 0x603330, rEAX, rECX, stack1);
 auto DrawWire = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x602DF0, rEAX);
 
 // The wire displayer also moves the player for some reason

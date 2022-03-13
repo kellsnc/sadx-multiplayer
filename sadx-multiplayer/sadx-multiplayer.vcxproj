@@ -136,6 +136,7 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
+    <ClCompile Include="ObjectExplosionRock.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
     <ClCompile Include="objects\ef_spark.cpp" />
     <ClCompile Include="objects\EnemyHotE105.cpp" />
