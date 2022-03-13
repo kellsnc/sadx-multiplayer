@@ -83,11 +83,11 @@ void __cdecl BlowPlayer2_r(float x, float y, float z)
         if (!EntityData1Ptrs[i])
             continue;
 
-        pPosX = EntityData1Ptrs[0]->Position.x;
-        pPosY = EntityData1Ptrs[0]->Position.y;
-        pPosZ = EntityData1Ptrs[0]->Position.z;
-        pGrav = GetCharObj2(0)->PhysicsData.Gravity;
-        pSpdCap = GetCharObj2(0)->PhysicsData.VSpeedCap;
+        pPosX = EntityData1Ptrs[i]->Position.x;
+        pPosY = EntityData1Ptrs[i]->Position.y;
+        pPosZ = EntityData1Ptrs[i]->Position.z;
+        pGrav = GetCharObj2(i)->PhysicsData.Gravity;
+        pSpdCap = GetCharObj2(i)->PhysicsData.VSpeedCap;
         v5 = (pPosZ - z) * (pPosZ - z) + (pPosX - x) * (pPosX - x);
         v3 = squareroot(v5) / flt_24987A8;
         v.x = (x - pPosX) * (1.0 / v3);
@@ -108,4 +108,3 @@ void __cdecl BlowPlayer2_r(float x, float y, float z)
         SetParabolicMotionP(i, v4, &pos);
     }
 }
-
