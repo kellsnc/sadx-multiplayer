@@ -146,6 +146,7 @@ TaskFunc(ObjShelterTunnelscroll, 0x5AC4A0);
 TaskFunc(ObjShelterNo2cargo, 0x5ABED0);
 FunctionPointer(void, SetSwitchOnOff, (unsigned int ID, int OnOff), 0x4CB4C0);
 VoidFunc(CreateTunnelcol, 0x5AC2C0);
+TaskFunc(EffectSpark, 0x4CE830);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

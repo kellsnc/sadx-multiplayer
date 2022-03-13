@@ -8,6 +8,7 @@
 #include "objects/EnemyWindyE103.h"
 #include "objects/EnemyMountainE104.h"
 #include "objects/EnemyHotE105.h"
+#include "objects/ef_spark.h"
 
 /*
 
@@ -894,6 +895,8 @@ void InitPatches()
 	WriteCall((void*)0x4DF5C8, dsCheckViewV_r); // ObjectWindySetInEff
 	WriteCall((void*)0x5D3D54, dsCheckViewV_r); // ObjectCasinoCris
 	WriteCall((void*)0x5E8327, dsCheckViewV_r); // ObjectRuinFire
+	WriteCall((void*)0x4AB41A, dsCheckViewV_r); // EnemySaru
+	WriteCall((void*)0x7AA307, dsCheckViewV_r); // EnemyPondSkater
 
 	// Normal timer for Gamma in multiplayer
 	WriteJump((void*)0x425FF0, InitTimer_r);
@@ -927,4 +930,5 @@ void InitPatches()
 	InitE103Patches();
 	InitE104Patches();
 	InitE105Patches();
+	PatchEffectSpark();
 }

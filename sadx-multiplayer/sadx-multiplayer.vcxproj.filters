@@ -166,6 +166,12 @@
     <ClCompile Include="objects\ObjShelterKaitendai.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\EnemyPondSkater.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ef_spark.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -253,6 +259,9 @@
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="objects\EnemyHotE105.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\ef_spark.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
