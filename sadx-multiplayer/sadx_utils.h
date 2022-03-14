@@ -66,6 +66,16 @@ struct CUSTOM_OBJ
 	void(__cdecl* exad)(NJS_OBJECT*);
 };
 
+struct KnFragmSetStr
+{
+	int id;
+	int boutflag;
+	int psflag;
+	int cpflag;
+	NJS_POINT3 pos;
+	NJS_POINT3 contpos;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -149,6 +159,11 @@ TaskFunc(EffectSpark, 0x4CE830);
 TaskFunc(PathKassha, 0x603640);
 TaskFunc(KasshaDisplayer, 0x603590);
 FunctionPointer(void, SetVelocityAndRotationAndNoconTimeWithSpinDashP, (unsigned __int8 pno, NJS_POINT3* v, Angle3* ang, __int16 tm), 0x441540);
+DataPointer(int, ke_ongame_flg, 0x3C52AD8);
+DataPointer(int, found_feme_nmb, 0x3C52C04);
+FunctionPointer(BOOL, isMissionClearDisp, (), 0x414FE0);
+DataArray(KnFragmSetStr, fragmset_tbl, 0x3C52B20, 3);
+TaskFunc(KnucklesLaterSE, 0x474F50);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

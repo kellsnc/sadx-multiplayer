@@ -178,6 +178,9 @@
     <ClCompile Include="objects\ObjectExplosionRock.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="emeraldhunt.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -269,6 +272,9 @@
     </ClInclude>
     <ClInclude Include="objects\ef_spark.h">
       <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="emeraldhunt.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

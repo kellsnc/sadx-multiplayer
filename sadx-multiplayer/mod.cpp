@@ -9,6 +9,7 @@
 #include "set.h"
 #include "levels.h"
 #include "race.h"
+#include "emeraldhunt.h"
 #include "sound.h"
 #include "result.h"
 #include "testspawn.h"
@@ -32,6 +33,7 @@ extern "C"
 		InitSET();
 		InitLevels();
 		InitRace();
+		InitEmeraldHunt();
 		InitSoundPatches();
 		InitResult();
 		TestSpawn();

@@ -97,6 +97,7 @@
     <ClInclude Include="d3d8vars.h" />
     <ClInclude Include="death.h" />
     <ClInclude Include="drawqueue.h" />
+    <ClInclude Include="emeraldhunt.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="hud_result.h" />
     <ClInclude Include="levels.h" />
@@ -128,6 +129,7 @@
     <ClCompile Include="death.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
+    <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="hud_result.cpp" />
     <ClCompile Include="multiapi.cpp" />
     <ClCompile Include="levels.cpp" />
