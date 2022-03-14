@@ -51,7 +51,6 @@ enum AvaTexLdEnum : __int32
 enum TGT_MODE : __int32
 {
 	MODE_WAIT_PLAYER = 0x0,
-	MODE_NORMAL = 0x1,
 	MODE_JUMP = 0x2,
 	MODE_HOVER = 0x3,
 	MODE_FALL = 0x4,
@@ -149,6 +148,7 @@ VoidFunc(CreateTunnelcol, 0x5AC2C0);
 TaskFunc(EffectSpark, 0x4CE830);
 TaskFunc(PathKassha, 0x603640);
 TaskFunc(KasshaDisplayer, 0x603590);
+FunctionPointer(void, SetVelocityAndRotationAndNoconTimeWithSpinDashP, (unsigned __int8 pno, NJS_POINT3* v, Angle3* ang, __int16 tm), 0x441540);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
