@@ -136,7 +136,6 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
-    <ClCompile Include="ObjectExplosionRock.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
     <ClCompile Include="objects\ef_spark.cpp" />
     <ClCompile Include="objects\EnemyHotE105.cpp" />
@@ -146,6 +145,7 @@
     <ClCompile Include="objects\EnemyWindyE103.cpp" />
     <ClCompile Include="objects\EnemyMountainE104.cpp" />
     <ClCompile Include="objects\EnemyWindyTgtMissile.cpp" />
+    <ClCompile Include="objects\ObjectExplosionRock.cpp" />
     <ClCompile Include="objects\ObjectFinalEggTarget.cpp" />
     <ClCompile Include="objects\ObjectFinalEggUptarget.cpp" />
     <ClCompile Include="objects\ObjectFrog.cpp" />
