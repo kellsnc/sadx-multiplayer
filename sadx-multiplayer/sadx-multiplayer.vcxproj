@@ -147,6 +147,7 @@
     <ClCompile Include="objects\EnemyWindyE103.cpp" />
     <ClCompile Include="objects\EnemyMountainE104.cpp" />
     <ClCompile Include="objects\EnemyWindyTgtMissile.cpp" />
+    <ClCompile Include="objects\FragmEmeraldDigDisplay.cpp" />
     <ClCompile Include="objects\ObjectEmeraldPRegular.cpp" />
     <ClCompile Include="objects\ObjectExplosionRock.cpp" />
     <ClCompile Include="objects\ObjectFinalEggTarget.cpp" />

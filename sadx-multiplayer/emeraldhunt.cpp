@@ -69,6 +69,8 @@ void Knuckles_KakeraGame_Set_PutEme_m(int pnum, unsigned __int8 emeid, NJS_POINT
 			auto ef_tp = CreateElementalTask(2u, 6, FragmEmeraldDigDisplay);
 			if (ef_tp)
 			{
+				ef_tp->twp->btimer = pnum;
+
 				if (emeid & 0x70 && playertwp[pnum])
 				{
 					ef_tp->twp->pos = playertwp[pnum]->pos;

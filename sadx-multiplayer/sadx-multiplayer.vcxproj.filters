@@ -184,6 +184,9 @@
     <ClCompile Include="objects\ObjectEmeraldPRegular.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\FragmEmeraldDigDisplay.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
