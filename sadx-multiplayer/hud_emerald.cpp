@@ -3,7 +3,8 @@
 #include "splitscreen.h"
 #include "hud_emerald.h"
 
-
+Trampoline* Knuckles_KakeraGameExec_t = nullptr;
+Trampoline* Knuckles_KakeraGamePutRadar1C_t = nullptr;
 
 void DrawBattleEmeRadar(int pnum, int scalors)
 {
@@ -59,4 +60,40 @@ void DrawBattleEmeRadar(int pnum, int scalors)
 			EmeraldRadarHud_Draw(&pos, 0, sprite_scale, 1.0f);
 		}
 	}
+}
+
+void __cdecl Knuckles_KakeraGameExec_r(task* tp)
+{
+	if (SplitScreen::IsActive())
+	{
+		SplitScreen::SaveViewPort();
+		SplitScreen::ChangeViewPort(-1);
+		TARGET_DYNAMIC(Knuckles_KakeraGameExec)(tp);
+		SplitScreen::RestoreViewPort();
+	}
+	else
+	{
+		TARGET_DYNAMIC(Knuckles_KakeraGameExec)(tp);
+	}
+}
+
+void __cdecl Knuckles_KakeraGamePutRadar1C_r(task* tp)
+{
+	if (SplitScreen::IsActive())
+	{
+		SplitScreen::SaveViewPort();
+		SplitScreen::ChangeViewPort(-1);
+		TARGET_DYNAMIC(Knuckles_KakeraGamePutRadar1C)(tp);
+		SplitScreen::RestoreViewPort();
+	}
+	else
+	{
+		TARGET_DYNAMIC(Knuckles_KakeraGamePutRadar1C)(tp);
+	}
+}
+
+void InitEmeraldRadar()
+{
+	Knuckles_KakeraGameExec_t = new Trampoline(0x475E50, 0x475E55, Knuckles_KakeraGameExec_r);
+	Knuckles_KakeraGamePutRadar1C_t = new Trampoline(0x475A70, 0x475A75, Knuckles_KakeraGamePutRadar1C_r);
 }

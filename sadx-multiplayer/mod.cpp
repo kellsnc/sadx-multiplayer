@@ -10,6 +10,7 @@
 #include "levels.h"
 #include "race.h"
 #include "emeraldhunt.h"
+#include "hud_emerald.h"
 #include "sound.h"
 #include "result.h"
 #include "testspawn.h"
@@ -37,6 +38,7 @@ extern "C"
 		InitSoundPatches();
 		InitResult();
 		TestSpawn();
+		InitEmeraldRadar();
 
 		delete config;
 	}
