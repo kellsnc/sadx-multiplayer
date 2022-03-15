@@ -92,7 +92,7 @@ namespace SplitScreen
 
     bool IsScreenEnabled(int num)
     {
-        return playertp[num] != nullptr;
+        return num == 0 ? true : IsActive() && playertp[num] != nullptr;
     }
 
     // Change the viewport (-1 is whole screen)
