@@ -187,6 +187,9 @@
     <ClCompile Include="objects\FragmEmeraldDigDisplay.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="hud_emerald.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -281,6 +284,9 @@
     </ClInclude>
     <ClInclude Include="emeraldhunt.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_emerald.h">
+      <Filter>Header FIles\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
