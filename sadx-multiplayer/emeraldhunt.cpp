@@ -26,7 +26,7 @@ static void __cdecl Knuckles_KakeraGameFinish_m(task* tp)
 	}
 }
 
-void Knuckles_KakeraGame_Set_PutEme_m(int pnum, int emeid, NJS_POINT3* emepos)
+void Knuckles_KakeraGame_Set_PutEme_m(int pnum, unsigned __int8 emeid, NJS_POINT3* emepos)
 {
 	if (found_feme_nmb >= 3 || ke_ongame_flg == FALSE || emeid < 0x10u || emeid > 0x4Fu)
 	{
@@ -64,6 +64,19 @@ void Knuckles_KakeraGame_Set_PutEme_m(int pnum, int emeid, NJS_POINT3* emepos)
 				SetWinnerMulti(-1);
 				CreateElementalTask(2u, LEV_0, Knuckles_KakeraGameFinish_m);
 				win = true;
+			}
+
+			auto ef_tp = CreateElementalTask(2u, 6, FragmEmeraldDigDisplay);
+			if (ef_tp)
+			{
+				if (emeid & 0x70 && playertwp[pnum])
+				{
+					ef_tp->twp->pos = playertwp[pnum]->pos;
+				}
+				else
+				{
+					ef_tp->twp->pos = *emepos;
+				}
 			}
 
 			auto se_tp = CreateElementalTask(2u, 3, KnucklesLaterSE);

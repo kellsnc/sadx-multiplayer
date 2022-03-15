@@ -164,6 +164,8 @@ DataPointer(int, found_feme_nmb, 0x3C52C04);
 FunctionPointer(BOOL, isMissionClearDisp, (), 0x414FE0);
 DataArray(KnFragmSetStr, fragmset_tbl, 0x3C52B20, 3);
 TaskFunc(KnucklesLaterSE, 0x474F50);
+TaskFunc(FragmEmeraldDigDisplay, 0x4A31D0);
+FunctionPointer(int, Knuckles_Status, (int plnmb), 0x475600);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
