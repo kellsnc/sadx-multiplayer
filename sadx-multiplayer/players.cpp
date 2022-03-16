@@ -442,23 +442,18 @@ void LoadCharacter_r()
 {
     if (multiplayer::IsActive())
     {
-        if (characters[0] >= 0)
-            CurrentCharacter = characters[0];
-
-        SetWinnerMulti(-1);
-
-        TailsAI_ptr = (ObjectMaster*)1; // don't load tails AI; horrible patch for compatibility with CharSel
-        LoadCharacter();
-        TailsAI_ptr = nullptr;
-
-        for (int i = 1; i < multiplayer::GetPlayerCount(); i++)
+        // Load all characters
+        for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
         {
-            if (characters[i] >= 0)
+            int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
+
+            if (playernum >= 0)
             {
-                LoadCharObj(i, characters[i]);
+                LoadCharObj(i, playernum);
             }
         }
 
+        SetWinnerMulti(-1);
         SetAllPlayersInitialPosition();
     }
     else
