@@ -196,6 +196,9 @@
     <ClCompile Include="objects\ObjectTogedai.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="milesrace.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -293,6 +296,9 @@
     </ClInclude>
     <ClInclude Include="hud_emerald.h">
       <Filter>Header FIles\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="milesrace.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

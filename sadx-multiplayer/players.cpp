@@ -2,6 +2,7 @@
 #include "players.h"
 #include "multiplayer.h"
 #include "result.h"
+#include "milesrace.h"
 
 /*
 
@@ -457,9 +458,17 @@ void SetPlayer_r()
         // Load game mechanics:
         switch (CurrentCharacter)
         {
+        case Characters_Tails:
+            if (multiplayer::IsCoopMode())
+            {
+                Set_NPC_Sonic_m(7); // load opponent into slot 7
+            }
+            break;
         case Characters_Knuckles:
             if (!EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
+            {
                 CreateElementalTask(2u, 6, Knuckles_KakeraGame);
+            }
             break;
         }
 

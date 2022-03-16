@@ -103,6 +103,7 @@
     <ClInclude Include="hud_result.h" />
     <ClInclude Include="levels.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="milesrace.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="menu_multi.h" />
     <ClInclude Include="hud_multi.h" />
@@ -133,6 +134,7 @@
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="hud_emerald.cpp" />
     <ClCompile Include="hud_result.cpp" />
+    <ClCompile Include="milesrace.cpp" />
     <ClCompile Include="multiapi.cpp" />
     <ClCompile Include="levels.cpp" />
     <ClCompile Include="menu.cpp" />

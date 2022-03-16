@@ -13,6 +13,7 @@
 #include "hud_emerald.h"
 #include "sound.h"
 #include "result.h"
+#include "milesrace.h"
 #include "testspawn.h"
 
 const HelperFunctions* gHelperFunctions;
@@ -39,6 +40,7 @@ extern "C"
 		InitResult();
 		TestSpawn();
 		InitEmeraldRadar();
+		InitMilesRace();
 
 		delete config;
 	}
