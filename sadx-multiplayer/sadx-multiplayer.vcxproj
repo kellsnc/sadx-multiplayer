@@ -167,6 +167,7 @@
     <ClCompile Include="objects\ObjectKaosEme.cpp" />
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
     <ClCompile Include="objects\ObjectRMPathKassha.cpp" />
+    <ClCompile Include="objects\ObjectSkyLever.cpp" />
     <ClCompile Include="objects\ObjectTPCatapult.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
     <ClCompile Include="objects\ObjectWindyTorout.cpp" />
