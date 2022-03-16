@@ -41,12 +41,6 @@ static void __cdecl Knuckles_KakeraGame_MultiDisp(task* tp)
 static void Knuckles_KakeraGame_Timer(int pnum)
 {
 	auto ptwp = playertwp[pnum];
-
-	if (!SplitScreen::IsScreenEnabled(pnum))
-	{
-		return;
-	}
-
 	auto& timer = timers[pnum];
 	auto& scale = scales[pnum];
 
@@ -124,7 +118,10 @@ static void __cdecl Knuckles_KakeraGame_MultiExec(task* tp)
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		Knuckles_KakeraGame_Timer(i);
+		if (SplitScreen::IsScreenEnabled(i))
+		{
+			Knuckles_KakeraGame_Timer(i);
+		}
 	}
 	
 	tp->disp(tp);
