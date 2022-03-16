@@ -24,7 +24,7 @@ void DrawBattleEmeRadar(int pnum, int scalors)
 		{
 			NJS_VECTOR pos;
 			pos.x = screenX + (scaleX * 640.0f) - (52.0f * scale) - ((70.0f * scale) * i);
-			pos.y = screenY + scaleY * 70.0f;
+			pos.y = screenY + scaleY * 16.0f + scale * 32.0f;
 			EmeraldRadarHud_Draw(&pos, 3, scale, 1.0f);
 		}
 		else if(fragm.boutflag == 0) // Draw as non collected
