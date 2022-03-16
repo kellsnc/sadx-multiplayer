@@ -175,6 +175,8 @@ TaskFunc(FragmEmeraldDigDisplay, 0x4A31D0);
 FunctionPointer(int, Knuckles_Status, (int plnmb), 0x475600);
 FunctionPointer(void, CreateKiranR, (NJS_POINT3* pos, NJS_POINT3* velo, float scl, Angle ang), 0x4BAD80);
 FunctionPointer(BOOL, EV_CheckCansel, (), 0x42FB00);
+TaskFunc(Knuckles_KakeraGame, 0x476440);
+DataPointer(int, ulGlobalMode, 0x3ABDC7C);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

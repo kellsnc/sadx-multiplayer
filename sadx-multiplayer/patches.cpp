@@ -851,6 +851,9 @@ void InitPatches()
 	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
 
+	// Object patches
+	WriteData<2>((void*)0x7A2061, 0x90u); // Make balloon work for all characters (MainMemory)
+
 	// Score patches
 	EnemyCheckDamage_t = new Trampoline(0x4CE030, 0x4CE036, EnemyCheckDamage_r);
 	WriteCall((void*)0x7B3273, EBuyon_ScorePatch); // EBuyon: add 100 points to proper player

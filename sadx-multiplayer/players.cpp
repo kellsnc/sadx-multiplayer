@@ -28,6 +28,7 @@ DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
 
 Trampoline* SetPlayerInitialPosition_t = nullptr;
 Trampoline* DamegeRingScatter_t = nullptr;
+Trampoline* SetPlayer_t = nullptr;
 
 static int rings[PLAYER_MAX];
 static int lives[PLAYER_MAX];
@@ -438,11 +439,11 @@ int GetCurrentCharacter(int pnum)
     return characters[pnum];
 }
 
-void LoadCharacter_r()
+void SetPlayer_r()
 {
     if (multiplayer::IsActive())
     {
-        // Load all characters
+        // Load all characters:
         for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
         {
             int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
@@ -453,12 +454,21 @@ void LoadCharacter_r()
             }
         }
 
+        // Load game mechanics:
+        switch (CurrentCharacter)
+        {
+        case Characters_Knuckles:
+            if (!EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
+                CreateElementalTask(2u, 6, Knuckles_KakeraGame);
+            break;
+        }
+
         SetWinnerMulti(-1);
         SetAllPlayersInitialPosition();
     }
     else
     {
-        LoadCharacter();
+        TARGET_DYNAMIC(SetPlayer)();
     }
 }
 
@@ -469,8 +479,11 @@ void InitPlayerPatches()
     DamegeRingScatter_t = new Trampoline(0x4506F0, 0x4506F7, DamegeRingScatter_r);
     WriteCall((void*)((int)DamegeRingScatter_t->Target() + 2), rand); // Patch trampoline
 
-    WriteCall((void*)0x415A25, LoadCharacter_r);
+    SetPlayer_t = new Trampoline(0x4157C0, 0x4157C8, SetPlayer_r);
+    WriteCall((void*)0x415A25, SetPlayer_r);
 
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteJump(ResetNumRing, ResetNumRingM);
+
+    WriteJump((void*)0x47A907, (void*)0x47A936); // prevent Knuckles from automatically loading Emerald radar (MainMemory)
 }
