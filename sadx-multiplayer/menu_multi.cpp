@@ -618,6 +618,8 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 		SetCurrentCharacter(i, (Characters)menu_multi_getplayerno(selected_characters[i]));
 	}
 
+	ResetNumPlayerM();
+
 	// Force trial return to this menu instead of charsel
 	WriteData((int*)0x7EEB58, (int)ADVA_MODE_MULTI);
 
