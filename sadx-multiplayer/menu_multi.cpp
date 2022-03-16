@@ -144,7 +144,7 @@ struct MultiMenuWK
 	int actreq;
 };
 
-NJS_TEXNAME AVA_MULTI_TEXNAME[59];
+NJS_TEXNAME AVA_MULTI_TEXNAME[78]{};
 NJS_TEXLIST AVA_MULTI_TEXLIST = { arrayptrandlength(AVA_MULTI_TEXNAME) };
 
 NJS_TEXANIM AVA_MULTI_TEXANIM[] {
@@ -722,7 +722,7 @@ void menu_multi_stg_confirm(MultiMenuWK* wk)
 	}
 }
 
-void menu_multi_stgsel_regular(MultiMenuWK* wk, const DialogPrmType* dialog, int* list, int back)
+void menu_multi_stgsel(MultiMenuWK* wk, const DialogPrmType* dialog, int* list, int back)
 {
 	auto stat = GetDialogStat();
 
@@ -735,31 +735,6 @@ void menu_multi_stgsel_regular(MultiMenuWK* wk, const DialogPrmType* dialog, int
 	{
 		gNextDialogStat = stat;
 		menu_multi_request_stg(wk, list[stat], 1, stat);
-	}
-}
-
-void menu_multi_stgsel_spd(MultiMenuWK* wk)
-{
-	auto stat = GetDialogStat();
-
-	if (stat == MultiMenuStageSelSonicDialog.CsrCancel) // go back request
-	{
-		gNextDialogStat = 0;
-		menu_multi_tomodesel(wk);
-	}
-	else if (stat != -1) // launch game request
-	{
-		gNextDialogStat = stat;
-
-		if (gNextMultiMode == multiplayer::mode::battle)
-		{
-			menu_multi_request_stg(wk, spd_level_link_btl[stat].first, spd_level_link_btl[stat].second, stat);
-
-		}
-		else
-		{
-			menu_multi_request_stg(wk, spd_level_link[stat], 1, stat);
-		}
 	}
 }
 
@@ -1021,28 +996,28 @@ void menu_multi_subexec(MultiMenuWK* wk)
 		menu_multi_battlesel(wk);
 		break;
 	case MD_MULTI_STGSEL_SPD:
-		menu_multi_stgsel_spd(wk);
+		menu_multi_stgsel(wk, &MultiMenuStageSelSonicDialog, spd_level_link, 0);
 		break;
 	case MD_MULTI_STGSEL_FLY:
-		menu_multi_stgsel_regular(wk, &MultiMenuStageSelFlyDialog, fly_level_link, 1);
+		menu_multi_stgsel(wk, &MultiMenuStageSelFlyDialog, fly_level_link, 1);
 		break;
 	case MD_MULTI_STGSEL_EME:
-		menu_multi_stgsel_regular(wk, &MultiMenuStageSelEmeDialog, eme_level_link, 2);
+		menu_multi_stgsel(wk, &MultiMenuStageSelEmeDialog, eme_level_link, 2);
 		break;
 	case MD_MULTI_STGSEL_EGROB:
-		menu_multi_stgsel_regular(wk, &MultiMenuStageSelEgRobDialog, egrob_level_link, 3);
+		menu_multi_stgsel(wk, &MultiMenuStageSelEgRobDialog, egrob_level_link, 3);
 		break;
 	case MD_MULTI_STGSEL_FISH:
-		menu_multi_stgsel_regular(wk, &MultiMenuStageSelBigDialog, fish_level_link, 4);
+		menu_multi_stgsel(wk, &MultiMenuStageSelBigDialog, fish_level_link, 4);
 		break;
 	case MD_MULTI_STGSEL_SHOOT:
-		menu_multi_stgsel_regular(wk, &MultiMenuStageSelShootDialog, shoot_level_link, 5);
+		menu_multi_stgsel(wk, &MultiMenuStageSelShootDialog, shoot_level_link, 5);
 		break;
 	case MD_MULTI_STGSEL_TC:
-		menu_multi_stgsel_regular(wk, &MultiMenuStageSelTwinkleDialog, twinkle_level_link, 6);
+		menu_multi_stgsel(wk, &MultiMenuStageSelTwinkleDialog, twinkle_level_link, 6);
 		break;
 	case MD_MULTI_STGSEL_VS:
-		menu_multi_stgsel_regular(wk, &MultiMenuStageSelVsDialog, vs_level_link, 7);
+		menu_multi_stgsel(wk, &MultiMenuStageSelVsDialog, vs_level_link, 7);
 		break;
 	case MD_MULTI_STGASK:
 		menu_multi_stg_confirm(wk);
