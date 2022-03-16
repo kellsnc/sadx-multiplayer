@@ -31,13 +31,12 @@ void __cdecl GamePlayerMissed_r(task* tp)
 		{
 			if (GetNumPlayerM(pNum) <= 0)
 			{
-				SetChangeGameMode(2);
+				SetChangeGameMode(1);
 				TempEraseSound();
 			}
 			else
 			{
-				// Remove one life
-				AddNumPlayerM(pNum, -1);
+				if (multiplayer::IsBattleMode() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
 				SetPlayerInitialPosition(playertwp[pNum]);
 
 				// Don't reset mode in levels where the player is riding something
