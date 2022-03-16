@@ -8,13 +8,7 @@ DataPointer(int, MRaceStageNumber, 0x3C539EC);
 TaskFunc(InitMoble2PControl, 0x47D8C0);
 TaskFunc(InitSonic2PControl, 0x47D820);
 
-enum Levels2P {
-	Levels2P_WValley,
-	Levels2P_SHighway,
-	Levels2P_SDeck,
-	Levels2P_Icecap,
-	Levels2P_Casinopolis
-};
+
 
 struct sMRacePath
 {
@@ -117,7 +111,7 @@ static void SonicAI_IceCapInit(EntityData1* data, EntityData1* sonicData, Entity
 	SonicCtrlBuff.path_flag = pathTbl[1].flag;
 }
 
-static void __cdecl Sonic2PAI_Main(ObjectMaster* task)
+static void __cdecl Sonic2PAI_Main_r(ObjectMaster* task)
 {
 	EntityData1* AIptr;
 	EntityData1* data;
@@ -155,21 +149,21 @@ static void __cdecl Sonic2PAI_Main(ObjectMaster* task)
 
 	switch (AICourse)
 	{
-		case Levels2P_WValley:
+		case Levels2P_WindyValley:
 			if (!data->Action)
 			{
 				goto LABEL_17;
 			}
 			goto LABEL_13;
-		case Levels2P_SHighway:
+		case Levels2P_SpeedHighway:
 			break;
-		case Levels2P_SDeck:
+		case Levels2P_SkyDeck:
 			if (data->Action)
 			{
 				goto LABEL_13;
 			}
 			goto LABEL_17;
-		case Levels2P_Icecap:
+		case Levels2P_IceCap:
 			if (data->Action)
 			{
 				goto LABEL_13;
