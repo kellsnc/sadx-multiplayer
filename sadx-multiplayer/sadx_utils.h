@@ -169,7 +169,7 @@ DataPointer(int, ke_ongame_flg, 0x3C52AD8);
 DataPointer(int, found_feme_nmb, 0x3C52C04);
 FunctionPointer(BOOL, isMissionClearDisp, (), 0x414FE0);
 DataArray(KnFragmSetStr, fragmset_tbl, 0x3C52B20, 3);
-DataArray(KnFragmNmbStr, fragmnmb_tbl, 0x7E0CDC, 6);
+DataArray(KnFragmNmbStr, fragmnmb_tbl, 0x7E0CD8, 6);
 TaskFunc(KnucklesLaterSE, 0x474F50);
 TaskFunc(FragmEmeraldDigDisplay, 0x4A31D0);
 FunctionPointer(int, Knuckles_Status, (int plnmb), 0x475600);

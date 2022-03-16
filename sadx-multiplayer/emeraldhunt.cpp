@@ -150,21 +150,13 @@ static void __cdecl Knuckles_KakeraGame_r(task* tp)
 
 	if (multiplayer::IsBattleMode())
 	{
-		if (GetStageNumber() == LevelAndActIDs_RedMountain3)
+		for (int i = 0; i < 5; ++i)
 		{
-			tp->exec = Knuckles_KakeraGame_MultiExec;
-			tp->disp = Knuckles_KakeraGame_MultiDisp;
-		}
-		else
-		{
-			for (int i = 0; i < 5; ++i)
+			if (fragmnmb_tbl[i].stgnmb == GetStageNumber())
 			{
-				if (fragmnmb_tbl[i].stgnmb == GetStageNumber())
-				{
-					tp->exec = Knuckles_KakeraGame_MultiExec;
-					tp->disp = Knuckles_KakeraGame_MultiDisp;
-					return;
-				}
+				tp->exec = Knuckles_KakeraGame_MultiExec;
+				tp->disp = Knuckles_KakeraGame_MultiDisp;
+				return;
 			}
 		}
 	}
