@@ -177,6 +177,7 @@ FunctionPointer(void, CreateKiranR, (NJS_POINT3* pos, NJS_POINT3* velo, float sc
 FunctionPointer(BOOL, EV_CheckCansel, (), 0x42FB00);
 TaskFunc(Knuckles_KakeraGame, 0x476440);
 DataPointer(int, ulGlobalMode, 0x3ABDC7C);
+TaskFunc(SonicTheHedgehog, 0x49A9B0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

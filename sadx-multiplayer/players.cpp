@@ -37,7 +37,7 @@ static int score[PLAYER_MAX];
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
 TaskFuncPtr charfuncs[] = {
-    (TaskFuncPtr)Sonic_Main,
+    SonicTheHedgehog,
     (TaskFuncPtr)Eggman_Main,
     (TaskFuncPtr)Tails_Main,
     (TaskFuncPtr)Knuckles_Main,
