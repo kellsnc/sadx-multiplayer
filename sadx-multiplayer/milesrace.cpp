@@ -2,62 +2,32 @@
 #include "multiplayer.h"
 #include "milesrace.h"
 
-FunctionPointer(int, GetMRaceLevel, (), 0x47C200);
-DataPointer(int, MRaceLevel, 0x3C53AB8);
-DataPointer(int, MRaceStageNumber, 0x3C539EC);
-TaskFunc(InitMoble2PControl, 0x47D8C0);
-TaskFunc(InitSonic2PControl, 0x47D820);
-
-struct sMRacePath
-{
-	int flag;
-	NJS_POINT3 pos;
-};
-
-struct sSonicCtrl
-{
-	NJS_POINT3 now_path_pos;
-	NJS_POINT3 tgt_path_pos;
-	NJS_POINT3 vec_snc_tgt;
-	float dist_snc_tgt;
-	int path_flag;
-	int path_flag_bak;
-	int last_ang;
-	float pl_last_spd;
-	int jump_cnt;
-};
-
 DataPointer(sSonicCtrl, SonicCtrlBuff, 0x3C539F8);
 DataPointer(sMRacePath*, PathTbl_Sonic, 0x03C539F4);
 DataPointer(sMRacePath*, PathTbl_Miles, 0x3C53A64);
 
-//auto GetNearestPath = GenerateUsercallWrapper<int (*)(sMRacePath* path_tbl, __int16 max_path, NJS_POINT3* pos)>(rAX, 0x47B7F0, rECX, rBX, noret);
-auto SonicAI_Casino_Init = GenerateUsercallWrapper<void (*)(taskwk* data, taskwk* sonicData, taskwk* milesData)>(noret, 0x47C540, rEAX, rEDI, rESI);
-
+auto Casino_Init = GenerateUsercallWrapper<void (*)(taskwk* data, taskwk* sonicData, taskwk* milesData)>(noret, 0x47C540, rEAX, rEDI, rESI);
 FunctionPointer(void, Windy_Normal, (task* tp, taskwk* stwp, taskwk* mtwp), 0x47D3A0);
 
-static void SonicAI_IceCapInit(EntityData1* data, EntityData1* sonicData, EntityData1* milesData)
+static void Icecap_Init_m(task* tp, taskwk* stwp, taskwk* mtwp)
 {
-	sMRacePath* pathTbl; 
-	float v5; 
-	int max;
-
-	pathTbl = PathTbl_Sonic;
-	data->Action = 1;
-	ForcePlayerAction(sonicData->CharIndex, 44);
-	sonicData->Rotation = milesData->Rotation;
-	MiscEntityVector.x = 0.0;
-	MiscEntityVector.y = 1.0;
-	MiscEntityVector.z = 10.0;
-	PConvertVector_P2G((taskwk*)milesData, &MiscEntityVector);
-	sonicData->Position.x = MiscEntityVector.x + milesData->Position.x;
-	sonicData->Position.y = MiscEntityVector.y + milesData->Position.y;
-	sonicData->Position.z = MiscEntityVector.z + milesData->Position.z;
+	sMRacePath* pathTbl = PathTbl_Sonic;
+	tp->twp->mode = 1;
+	ForcePlayerAction(TASKWK_PLAYERID(stwp), 44);
+	stwp->ang = mtwp->ang;
+	MiscEntityVector.x = 0.0f;
+	MiscEntityVector.y = 1.0f;
+	MiscEntityVector.z = 10.0f;
+	PConvertVector_P2G(mtwp, &MiscEntityVector);
+	stwp->pos.x = MiscEntityVector.x + mtwp->pos.x;
+	stwp->pos.y = MiscEntityVector.y + mtwp->pos.y;
+	stwp->pos.z = MiscEntityVector.z + mtwp->pos.z;
 	ObjectMaster* board = LoadObject((LoadObj)(LoadObj_Data1 | LoadObj_Data2), 2, Snowboard_Sonic_Load);
-	board->Data1->CharIndex = sonicData->CharIndex;
+	board->Data1->CharIndex = TASKWK_PLAYERID(stwp);
 	memset(&SonicCtrlBuff, 0, 60u);
+
 	sMRacePath** v7 = &PathTbl_Sonic;
-	max = 15;
+	int max = 15;
 	do
 	{
 		*++v7 = 0;
@@ -71,99 +41,80 @@ static void SonicAI_IceCapInit(EntityData1* data, EntityData1* sonicData, Entity
 	SonicCtrlBuff.path_flag = pathTbl[1].flag;
 }
 
-static void __cdecl Sonic2PAI_Main_r(ObjectMaster* task_)
+static void __cdecl Sonic2PAI_Main_r(task* tp)
 {
-	EntityData1* AIptr;
-	EntityData1* data;
-	EntityData1* P1ptr; 
-	CollisionInfo* colInfo;
-	int colMax;
-	int colCount;
-	int sonicAction;
-	data = task_->Data1;
-	char pnum = data->CharIndex;
-	AIptr = EntityData1Ptrs[pnum];
-	P1ptr = EntityData1Ptrs[0];
+	auto twp = tp->twp;
+	auto pnum = twp->btimer;
+	auto AIptr = playertwp[pnum];
+	auto P1ptr = playertwp[0];
 
-	if (!AIptr || !P1ptr) {
-		CheckThingButThenDeleteObject(task_);
+	if (!AIptr || !P1ptr)
+	{
+		FreeTask(tp);
 		return;
 	}
 
-	colInfo = EntityData1Ptrs[pnum]->CollisionInfo;
-	colMax = 0;
-
-	if (colInfo->nbInfo)
+	auto colInfo = AIptr->cwp;
+	for (int i = 0; i < colInfo->nbInfo; ++i)
 	{
-		colCount = 0;
-		do
-		{
-			colInfo->CollisionArray[colCount].damage &= 0xDFu;
-			colInfo = AIptr->CollisionInfo;
-			++colMax;
-			++colCount;
-		} while (colMax < colInfo->nbInfo);
+		colInfo->info[i].damage &= 0xDFu;
 	}
 
-	sonicAction = data->Action;
-
-	switch (AICourse)
-	{
+	switch (AICourse) {
 		case Levels2P_WindyValley:
-			if (!data->Action)
+			if (twp->mode)
 			{
-				SonicAI_Casino_Init((taskwk*)data, (taskwk*)AIptr, (taskwk*)P1ptr);
+				Windy_Normal(tp, AIptr, P1ptr);
 			}
-			Windy_Normal((task*)task_, (taskwk*)AIptr, (taskwk*)P1ptr);
+			else
+			{
+				Casino_Init(twp, AIptr, P1ptr);
+			}
 			break;
 		case Levels2P_SpeedHighway:
 			break;
 		case Levels2P_SkyDeck:
-			if (data->Action)
+			if (twp->mode)
 			{
-				Windy_Normal((task*)task_, (taskwk*)AIptr, (taskwk*)P1ptr);
-			}
-			SonicAI_Casino_Init((taskwk*)data, (taskwk*)AIptr, (taskwk*)P1ptr);
-			break;
-		case Levels2P_IceCap:
-			if (data->Action)
-			{
-				Windy_Normal((task*)task_, (taskwk*)AIptr, (taskwk*)P1ptr);
-			}
-			SonicAI_IceCapInit(data, AIptr, P1ptr);
-			break;
-		case Levels2P_Casinopolis:
-
-			if (data->Action)
-			{
-				if (sonicAction == 1)
-				{
-					Windy_Normal((task*)task_, (taskwk*)AIptr, (taskwk*)P1ptr);
-				}
+				Windy_Normal(tp, AIptr, P1ptr);
 			}
 			else
 			{
-				SonicAI_Casino_Init((taskwk*)data, (taskwk*)AIptr, (taskwk*)P1ptr);
+				Casino_Init(twp, AIptr, P1ptr);
+			}
+			break;
+		case Levels2P_IceCap:
+			if (twp->mode)
+			{
+				Windy_Normal(tp, AIptr, P1ptr);
+			}
+			else
+			{
+				Icecap_Init_m(tp, AIptr, P1ptr);
+			}
+			break;
+		case Levels2P_Casinopolis:
+			if (twp->mode)
+			{
+				Windy_Normal(tp, AIptr, P1ptr);
+			}
+			else
+			{
+				Casino_Init(twp, AIptr, P1ptr);
 			}
 			break;
 		default:
-			CheckThingButThenDeleteObject(task_);
+			FreeTask(tp);
 			return;
 	}
 
-	late_SetFunc(
-		(void(__cdecl*)(void*))TailsVS_DrawBarThing,
-		task_,
-		22046.5,
-		QueuedModelFlagsB_EnableZWrite);
-	
+	late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
 }
 
 static void LoadNPCSonicTask(int num)
 {
 	auto tp = CreateElementalTask(0xAu, 0, InitSonic2PControl);
-	TASKWK_CHARID(tp->twp) = Characters_Sonic;
-	TASKWK_PLAYERID(tp->twp) = num;
+	tp->twp->btimer = num;
 
 	tp = CreateElementalTask(7u, 1, SonicTheHedgehog);
 	TASKWK_CHARID(tp->twp) = Characters_Sonic;

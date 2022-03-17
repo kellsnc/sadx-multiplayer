@@ -82,6 +82,25 @@ struct KnFragmSetStr
 	NJS_POINT3 contpos;
 };
 
+struct sMRacePath
+{
+	int flag;
+	NJS_POINT3 pos;
+};
+
+struct sSonicCtrl
+{
+	NJS_POINT3 now_path_pos;
+	NJS_POINT3 tgt_path_pos;
+	NJS_POINT3 vec_snc_tgt;
+	float dist_snc_tgt;
+	int path_flag;
+	int path_flag_bak;
+	int last_ang;
+	float pl_last_spd;
+	int jump_cnt;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -178,6 +197,12 @@ FunctionPointer(BOOL, EV_CheckCansel, (), 0x42FB00);
 TaskFunc(Knuckles_KakeraGame, 0x476440);
 DataPointer(int, ulGlobalMode, 0x3ABDC7C);
 TaskFunc(SonicTheHedgehog, 0x49A9B0);
+FunctionPointer(int, GetMRaceLevel, (), 0x47C200);
+DataPointer(int, MRaceLevel, 0x3C53AB8);
+DataPointer(int, MRaceStageNumber, 0x3C539EC);
+TaskFunc(InitMoble2PControl, 0x47D8C0);
+TaskFunc(InitSonic2PControl, 0x47D820);
+TaskFunc(late_DispMilesMeter2P, 0x47C260);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
