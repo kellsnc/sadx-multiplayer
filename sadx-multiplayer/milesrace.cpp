@@ -7,8 +7,27 @@ DataPointer(sSonicCtrl, SonicCtrlBuff, 0x3C539F8);
 DataPointer(sMRacePath*, PathTbl_Sonic, 0x03C539F4);
 DataPointer(sMRacePath*, PathTbl_Miles, 0x3C53A64);
 
-auto Casino_Init = GenerateUsercallWrapper<void (*)(taskwk* data, taskwk* sonicData, taskwk* milesData)>(noret, 0x47C540, rEAX, rEDI, rESI);
-FunctionPointer(void, Windy_Normal, (task* tp, taskwk* stwp, taskwk* mtwp), 0x47D3A0);
+auto Casino_Init = GenerateUsercallWrapper<void (*)(taskwk* twp, taskwk* stwp, taskwk* mtwp)>(noret, 0x47C540, rESI, rEAX, rEDI);
+auto GetNearestPath = GenerateUsercallWrapper<__int16 (*)(sMRacePath* path_tbl, __int16 maxpath, NJS_POINT3* pos)>(noret, 0x47B7F0, rECX, rBX, stack4);
+auto ChkSonicPathPos = GenerateUsercallWrapper<__int16 (*)(taskwk* stwp, sSonicCtrl* sonic_ctrl, taskwk* twp)>(noret, 0x47C6A0, rEBX, rESI, stack4);
+auto SonicControl = GenerateUsercallWrapper<void (*)(taskwk* stwp, taskwk* twp, sSonicCtrl* sonic_ctrl)>(noret, 0x47C9F0, rEAX, stack4, stack4);
+auto MRaceVoiceCtrl = GenerateUsercallWrapper<void (*)(task* tp, __int16 new_m_path, __int16 new_s_path)>(noret, 0x47D1D0, rEAX, rDX, rCX);
+
+static void Windy_Nomal_m(task* tp, taskwk* stwp, taskwk* mtwp)
+{
+	auto twp = tp->twp;
+
+	SonicCtrlBuff.vec_snc_tgt.x = SonicCtrlBuff.tgt_path_pos.x - stwp->cwp->info->center.x;
+	SonicCtrlBuff.vec_snc_tgt.y = SonicCtrlBuff.tgt_path_pos.y - stwp->cwp->info->center.y;
+	SonicCtrlBuff.vec_snc_tgt.z = SonicCtrlBuff.tgt_path_pos.z - stwp->cwp->info->center.z;
+	SonicCtrlBuff.dist_snc_tgt = njScalor2(&SonicCtrlBuff.vec_snc_tgt);
+
+	twp->timer.w[0] = GetNearestPath(PathTbl_Miles, twp->counter.w[0], &mtwp->pos);
+	twp->timer.w[1] = ChkSonicPathPos(stwp, &SonicCtrlBuff, twp); // <-- rewrite
+
+	SonicControl(stwp, twp, &SonicCtrlBuff); // <-- rewrite
+	MRaceVoiceCtrl(tp, twp->timer.w[1], twp->timer.w[0]);
+}
 
 static void Icecap_Init_m(task* tp, taskwk* stwp, taskwk* mtwp)
 {
@@ -63,67 +82,35 @@ static void __cdecl Sonic2PControl_r(task* tp)
 {
 	auto twp = tp->twp;
 	auto pnum = twp->btimer;
-	auto AIptr = playertwp[pnum];
-	auto P1ptr = playertwp[0];
+	auto stwp = playertwp[pnum];
+	auto mtwp = playertwp[0];
 
-	if (!AIptr || !P1ptr)
+	if (!stwp || !mtwp)
 	{
 		FreeTask(tp);
 		return;
 	}
 
-	auto colInfo = AIptr->cwp;
+	auto colInfo = stwp->cwp;
 	for (int i = 0; i < colInfo->nbInfo; ++i)
 	{
 		colInfo->info[i].damage &= 0xDFu;
 	}
 
-	switch (AICourse) {
-		case Levels2P_WindyValley:
-			if (twp->mode)
-			{
-				Windy_Normal(tp, AIptr, P1ptr);
-			}
-			else
-			{
-				Casino_Init(twp, AIptr, P1ptr);
-			}
-			break;
-		case Levels2P_SpeedHighway:
-			break;
-		case Levels2P_SkyDeck:
-			if (twp->mode)
-			{
-				Windy_Normal(tp, AIptr, P1ptr);
-			}
-			else
-			{
-				Casino_Init(twp, AIptr, P1ptr);
-			}
-			break;
-		case Levels2P_IceCap:
-			if (twp->mode)
-			{
-				Windy_Normal(tp, AIptr, P1ptr);
-			}
-			else
-			{
-				Icecap_Init_m(tp, AIptr, P1ptr);
-			}
-			break;
-		case Levels2P_Casinopolis:
-			if (twp->mode)
-			{
-				Windy_Normal(tp, AIptr, P1ptr);
-			}
-			else
-			{
-				Casino_Init(twp, AIptr, P1ptr);
-			}
-			break;
-		default:
-			FreeTask(tp);
-			return;
+	if (twp->mode)
+	{
+		Windy_Nomal_m(tp, stwp, mtwp);
+	}
+	else
+	{
+		if (AICourse == 3)
+		{
+			Icecap_Init_m(tp, stwp, mtwp);
+		}
+		else
+		{
+			Casino_Init(twp, stwp, mtwp);
+		}
 	}
 
 	tp->disp(tp);
