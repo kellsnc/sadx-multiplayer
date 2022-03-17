@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "multiplayer.h"
 #include "milesrace.h"
+#include "splitscreen.h"
 
 DataPointer(sSonicCtrl, SonicCtrlBuff, 0x3C539F8);
 DataPointer(sMRacePath*, PathTbl_Sonic, 0x03C539F4);
@@ -108,7 +109,17 @@ static void __cdecl Sonic2PAI_Main_r(task* tp)
 			return;
 	}
 
-	late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
+	if (SplitScreen::IsActive())
+	{
+		SplitScreen::SaveViewPort();
+		SplitScreen::ChangeViewPort(-1);
+		late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
+		SplitScreen::RestoreViewPort();
+	}
+	else
+	{
+		late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
+	}
 }
 
 static void LoadNPCSonicTask(int num)
