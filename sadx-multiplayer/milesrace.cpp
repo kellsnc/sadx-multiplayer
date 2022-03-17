@@ -8,8 +8,6 @@ DataPointer(int, MRaceStageNumber, 0x3C539EC);
 TaskFunc(InitMoble2PControl, 0x47D8C0);
 TaskFunc(InitSonic2PControl, 0x47D820);
 
-
-
 struct sMRacePath
 {
 	int flag;
@@ -29,52 +27,14 @@ struct sSonicCtrl
 	int jump_cnt;
 };
 
-
 DataPointer(sSonicCtrl, SonicCtrlBuff, 0x3C539F8);
 DataPointer(sMRacePath*, PathTbl_Sonic, 0x03C539F4);
 DataPointer(sMRacePath*, PathTbl_Miles, 0x3C53A64);
 
-auto GetNearestPath = GenerateUsercallWrapper<int (*)(sMRacePath* path_tbl, __int16 max_path, NJS_POINT3* pos)>(rAX, 0x47B7F0, rECX, rBX, noret);
+//auto GetNearestPath = GenerateUsercallWrapper<int (*)(sMRacePath* path_tbl, __int16 max_path, NJS_POINT3* pos)>(rAX, 0x47B7F0, rECX, rBX, noret);
+auto SonicAI_Casino_Init = GenerateUsercallWrapper<void (*)(taskwk* data, taskwk* sonicData, taskwk* milesData)>(noret, 0x47C540, rEAX, rEDI, rESI);
 
-static void SonicAI_Casino_Init(taskwk* twp, taskwk* stwp, taskwk* mtwp)
-{
-	sMRacePath* v6; // r4
-	__int16 v7; // r3
-	__int16 v8; // r4
-	sMRacePath* v9; // r10
-	sMRacePath** v10; // r8
-	sMRacePath* v11; // r10
-	int v12; // ctr
-
-	twp->mode = 1;
-	stwp->ang = mtwp->ang;
-	MiscEntityVector.y = 1.0;
-	MiscEntityVector.z = 10.0;
-	MiscEntityVector.x = 0.0;
-	PConvertVector_P2G(mtwp, &MiscEntityVector);
-	stwp->pos.x = mtwp->pos.x + MiscEntityVector.x;
-	v6 = PathTbl_Miles;
-	stwp->pos.y = mtwp->pos.y + MiscEntityVector.y;
-	stwp->pos.z = mtwp->pos.z + MiscEntityVector.z;
-	twp->timer.w[0] = GetNearestPath(v6, twp->counter.w[0], &mtwp->pos);
-	v7 = GetNearestPath(PathTbl_Sonic, twp->counter.w[1], &stwp->pos);
-	v8 = twp->timer.w[0];
-	v9 = PathTbl_Sonic;
-	twp->timer.w[1] = v7;
-	v10 = &PathTbl_Sonic;
-	v11 = &v9[v8];
-	v12 = 15;
-	do
-	{
-		*++v10 = 0;
-		--v12;
-	} while (v12);
-	SonicCtrlBuff.now_path_pos.x = v11->pos.x;
-	SonicCtrlBuff.now_path_pos.y = v11->pos.y;
-	SonicCtrlBuff.now_path_pos.z = v11->pos.z;
-	SonicCtrlBuff.tgt_path_pos = v11[1].pos;
-	SonicCtrlBuff.path_flag = v11[1].flag;
-}
+FunctionPointer(void, Windy_Normal, (task* tp, taskwk* stwp, taskwk* mtwp), 0x47D3A0);
 
 static void SonicAI_IceCapInit(EntityData1* data, EntityData1* sonicData, EntityData1* milesData)
 {
@@ -111,7 +71,7 @@ static void SonicAI_IceCapInit(EntityData1* data, EntityData1* sonicData, Entity
 	SonicCtrlBuff.path_flag = pathTbl[1].flag;
 }
 
-static void __cdecl Sonic2PAI_Main_r(ObjectMaster* task)
+static void __cdecl Sonic2PAI_Main_r(ObjectMaster* task_)
 {
 	EntityData1* AIptr;
 	EntityData1* data;
@@ -120,13 +80,13 @@ static void __cdecl Sonic2PAI_Main_r(ObjectMaster* task)
 	int colMax;
 	int colCount;
 	int sonicAction;
-	data = task->Data1;
+	data = task_->Data1;
 	char pnum = data->CharIndex;
 	AIptr = EntityData1Ptrs[pnum];
 	P1ptr = EntityData1Ptrs[0];
 
 	if (!AIptr || !P1ptr) {
-		CheckThingButThenDeleteObject(task);
+		CheckThingButThenDeleteObject(task_);
 		return;
 	}
 
@@ -152,21 +112,23 @@ static void __cdecl Sonic2PAI_Main_r(ObjectMaster* task)
 		case Levels2P_WindyValley:
 			if (!data->Action)
 			{
-				goto LABEL_17;
+				SonicAI_Casino_Init((taskwk*)data, (taskwk*)AIptr, (taskwk*)P1ptr);
 			}
-			goto LABEL_13;
+			Windy_Normal((task*)task_, (taskwk*)AIptr, (taskwk*)P1ptr);
+			break;
 		case Levels2P_SpeedHighway:
 			break;
 		case Levels2P_SkyDeck:
 			if (data->Action)
 			{
-				goto LABEL_13;
+				Windy_Normal((task*)task_, (taskwk*)AIptr, (taskwk*)P1ptr);
 			}
-			goto LABEL_17;
+			SonicAI_Casino_Init((taskwk*)data, (taskwk*)AIptr, (taskwk*)P1ptr);
+			break;
 		case Levels2P_IceCap:
 			if (data->Action)
 			{
-				goto LABEL_13;
+				Windy_Normal((task*)task_, (taskwk*)AIptr, (taskwk*)P1ptr);
 			}
 			SonicAI_IceCapInit(data, AIptr, P1ptr);
 			break;
@@ -174,26 +136,24 @@ static void __cdecl Sonic2PAI_Main_r(ObjectMaster* task)
 
 			if (data->Action)
 			{
-			LABEL_13:
 				if (sonicAction == 1)
 				{
-					//SonicAI_Casino_Init(task AIptr, P1ptr);
+					Windy_Normal((task*)task_, (taskwk*)AIptr, (taskwk*)P1ptr);
 				}
 			}
 			else
 			{
-			LABEL_17:
 				SonicAI_Casino_Init((taskwk*)data, (taskwk*)AIptr, (taskwk*)P1ptr);
 			}
 			break;
 		default:
-			CheckThingButThenDeleteObject(task);
+			CheckThingButThenDeleteObject(task_);
 			return;
 	}
 
 	late_SetFunc(
 		(void(__cdecl*)(void*))TailsVS_DrawBarThing,
-		task,
+		task_,
 		22046.5,
 		QueuedModelFlagsB_EnableZWrite);
 	
@@ -257,5 +217,5 @@ void Set_NPC_Sonic_m(int num)
 
 void InitMilesRace()
 {
-
+	WriteJump(Sonic2PAI_Main, Sonic2PAI_Main_r);
 }
