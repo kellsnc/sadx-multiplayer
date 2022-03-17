@@ -42,7 +42,24 @@ static void Icecap_Init_m(task* tp, taskwk* stwp, taskwk* mtwp)
 	SonicCtrlBuff.path_flag = pathTbl[1].flag;
 }
 
-static void __cdecl Sonic2PAI_Main_r(task* tp)
+static void __cdecl DispMilesMeter2P_r(task* tp)
+{
+	if (SplitScreen::IsActive())
+	{
+		if (SplitScreen::GetCurrentScreenNum() == 0)
+		{
+			SplitScreen::ChangeViewPort(-1);
+			late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
+			SplitScreen::ChangeViewPort(0);
+		}
+	}
+	else
+	{
+		late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
+	}
+}
+
+static void __cdecl Sonic2PControl_r(task* tp)
 {
 	auto twp = tp->twp;
 	auto pnum = twp->btimer;
@@ -109,17 +126,7 @@ static void __cdecl Sonic2PAI_Main_r(task* tp)
 			return;
 	}
 
-	if (SplitScreen::IsActive())
-	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
-		late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
-		SplitScreen::RestoreViewPort();
-	}
-	else
-	{
-		late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
-	}
+	tp->disp(tp);
 }
 
 static void LoadNPCSonicTask(int num)
@@ -179,5 +186,6 @@ void Set_NPC_Sonic_m(int num)
 
 void InitMilesRace()
 {
-	WriteJump(Sonic2PAI_Main, Sonic2PAI_Main_r);
+	WriteJump((void*)0x47D640, Sonic2PControl_r);
+	WriteJump((void*)0x47D2E0, DispMilesMeter2P_r);
 }
