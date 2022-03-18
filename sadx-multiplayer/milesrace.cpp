@@ -361,7 +361,7 @@ static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 		else
 			sonic_ctrl->path_flag = sonic_ctrl->path_flag_bak;
 		break;
-	case 14u:
+	case 14:
 	{
 		if (stwp->flag & 0x2000)
 		{
@@ -462,11 +462,10 @@ static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 
 			if (stwp->flag & (Status_Ground | Status_OnColli))
 			{
-				// func here
+				twp->smode = 2i8;
+				twp->wtimer = 0i16;
 			}
 
-			twp->smode = 2i8;
-			twp->wtimer = 0i16;
 			break;
 		case 2i8:
 			if (MRaceResult)
@@ -504,11 +503,10 @@ static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 		case 4i8:
 			if (stwp->flag & (Status_Ground | Status_OnColli))
 			{
-				// func here
+				twp->smode = 2i8;
+				twp->wtimer = 0i16;
 			}
 
-			twp->smode = 2i8;
-			twp->wtimer = 0i16;
 			break;
 		}
 		break;
@@ -517,6 +515,68 @@ static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 			sonic_ctrl->path_flag = sonic_ctrl->path_flag_bak;
 		break;
 	}
+
+	switch (LOBYTE(sonic_ctrl->path_flag))
+	{
+	case 0:
+	case 1:
+	case 7:
+		if (twp->value.w[0] > 420)
+		{
+			twp->value.w[0] = 0;
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+		break;
+	case 3:
+	case 4:
+	case 5:
+	case 8:
+		if (twp->value.w[0] > 1200)
+		{
+			twp->value.w[0] = 0;
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+		break;
+	case 6:
+	case 12:
+	case 13:
+	case 14:
+	case 18:
+		if (twp->value.w[0] > 600)
+		{
+			twp->value.w[0] = 0;
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+		break;
+	case 9:
+	case 10:
+		if (twp->value.w[0] > 900)
+		{
+			twp->value.w[0] = 0;
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+		break;
+	case 15:
+		if (stwp->flag & (Status_Ground | Status_OnColli))
+		{
+			twp->value.w[0] = 0;
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+		else if (twp->value.w[0] > 12000)
+		{
+			twp->value.w[0] = 0;
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+		break;
+	}
+
+	sonic_ctrl->pl_last_spd = spwp->spd.x;
 }
 
 static __int16 GetNearestPath_m(NJS_POINT3* pos, sMRacePath* path_tbl, __int16 max_path)
@@ -559,34 +619,38 @@ static void Windy_Nomal_m(task* tp, taskwk* stwp, taskwk* mtwp)
 	MRaceVoiceCtrl(tp, twp->timer.w[1], twp->timer.w[0]);
 }
 
-static void Icecap_Init_m(task* tp, taskwk* stwp, taskwk* mtwp)
+static void Icecap_Init_m(taskwk* twp, taskwk* stwp, taskwk* mtwp)
 {
-	sMRacePath* pathTbl = PathTbl_Sonic;
-	tp->twp->mode = 1;
-	ForcePlayerAction(TASKWK_PLAYERID(stwp), 44);
-	stwp->ang = mtwp->ang;
-	MiscEntityVector.x = 0.0f;
-	MiscEntityVector.y = 1.0f;
-	MiscEntityVector.z = 10.0f;
-	PConvertVector_P2G(mtwp, &MiscEntityVector);
-	stwp->pos.x = MiscEntityVector.x + mtwp->pos.x;
-	stwp->pos.y = MiscEntityVector.y + mtwp->pos.y;
-	stwp->pos.z = MiscEntityVector.z + mtwp->pos.z;
-	ObjectMaster* board = LoadObject((LoadObj)(LoadObj_Data1 | LoadObj_Data2), 2, Snowboard_Sonic_Load);
-	board->Data1->CharIndex = TASKWK_PLAYERID(stwp);
-	memset(&SonicCtrlBuff, 0, 60u);
+	auto pnum = TASKWK_PLAYERID(stwp);
+	twp->mode = 1;
 
-	sMRacePath** v7 = &PathTbl_Sonic;
+	SetInputP(pnum, 44);
+	stwp->ang = mtwp->ang;
+
+	VecTemp0.x = 0.0f;
+	VecTemp0.y = 1.0f;
+	VecTemp0.z = 10.0f;
+	PConvertVector_P2G(mtwp, &VecTemp0);
+	stwp->pos.x = VecTemp0.x + mtwp->pos.x;
+	stwp->pos.y = VecTemp0.y + mtwp->pos.y;
+	stwp->pos.z = VecTemp0.z + mtwp->pos.z;
+
+	auto board = CreateElementalTask(3u, 2, (TaskFuncPtr)0x4959E0);
+	TASKWK_PLAYERID(board->twp) = pnum;
+
+	memset(&SonicCtrlBuff, 0, sizeof(SonicCtrlBuff));
+
+	sMRacePath** i = &PathTbl_Sonic;
 	int max = 15;
 	do
 	{
-		*++v7 = 0;
+		*++i = 0;
 		--max;
-	} while (max);
+	}
+	while (max);
 
-	SonicCtrlBuff.now_path_pos.x = pathTbl->pos.x;
-	SonicCtrlBuff.now_path_pos.y = pathTbl->pos.y;
-	SonicCtrlBuff.now_path_pos.z = pathTbl->pos.z;
+	auto pathTbl = PathTbl_Sonic;
+	SonicCtrlBuff.now_path_pos = pathTbl->pos;
 	SonicCtrlBuff.tgt_path_pos = pathTbl[1].pos;
 	SonicCtrlBuff.path_flag = pathTbl[1].flag;
 }
@@ -635,7 +699,7 @@ static void __cdecl Sonic2PControl_r(task* tp)
 	{
 		if (AICourse == 3)
 		{
-			Icecap_Init_m(tp, stwp, mtwp);
+			Icecap_Init_m(twp, stwp, mtwp);
 		}
 		else
 		{
