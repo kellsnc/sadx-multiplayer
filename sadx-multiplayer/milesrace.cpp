@@ -8,7 +8,12 @@
 Rewrite the Sonic AI to use any player number
 Necessary for tails levels in coop mode (disabled in battle mode)
 
+Also patch the eggmobile using task slot 0 (which shouldn't be
+used for drawing since the camera runs in slot 0)
+
 */
+
+Trampoline* DrawMoble2P_t = nullptr;
 
 DataPointer(float, AnalogRatio_High, 0x3C539E8);
 DataArray(int, AnalogTbl, 0x7E4AC4, 4);
@@ -655,7 +660,7 @@ static void Icecap_Init_m(taskwk* twp, taskwk* stwp, taskwk* mtwp)
 	SonicCtrlBuff.path_flag = pathTbl[1].flag;
 }
 
-static void __cdecl DispMilesMeter2P_r(task* tp)
+static void __cdecl DispMilesMeter2P_m(task* tp)
 {
 	if (SplitScreen::IsActive())
 	{
@@ -672,7 +677,36 @@ static void __cdecl DispMilesMeter2P_r(task* tp)
 	}
 }
 
-static void __cdecl Sonic2PControl_r(task* tp)
+static void __cdecl DrawMoble2P_r(task* tp)
+{
+	if (SplitScreen::IsActive())
+	{
+		if (!MissedFrames && MRACE_EGGMOBLE_TEXLIST.textures->texaddr)
+		{
+			auto twp = tp->twp;
+			njSetTexture(&MRACE_EGGMOBLE_TEXLIST);
+			njPushMatrixEx();
+			njTranslateEx(&twp->pos);
+			njRotateY_(twp->ang.y);
+			njRotateZ_(twp->ang.z);
+			dsDrawObject((NJS_OBJECT*)0x269D214);
+			dsDrawObject(&Eggman2P_Model);
+			njPopMatrixEx();
+			DispMilesMeter2P_m(tp);
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(DrawMoble2P)(tp);
+	}
+}
+
+static void __cdecl LoadMoble2PControl()
+{
+	CreateElementalTask(0xAu, 1, InitMoble2PControl);
+}
+
+static void __cdecl Sonic2PControl_m(task* tp)
 {
 	auto twp = tp->twp;
 	auto pnum = twp->btimer;
@@ -710,9 +744,36 @@ static void __cdecl Sonic2PControl_r(task* tp)
 	tp->disp(tp);
 }
 
+static void __cdecl InitSonic2PControl_m(task* tp)
+{
+	auto twp = tp->twp;
+	int raceid = 2 * MRaceStageNumber;
+
+	twp->counter.b[0] = 1;
+	twp->counter.b[1] = 0;
+
+	PathTbl_Miles = PPT_MRaceEachStage[raceid];
+	PathTbl_Sonic = PPT_MRaceEachStage[raceid + 1];
+	twp->counter.w[0] = *MPT_MRaceEachStage[raceid] - 1;
+	twp->counter.w[1] = *MPT_MRaceEachStage[raceid + 1] - 1;
+
+	if (MRaceLevel)
+	{
+		slJudge = 1;
+		AnalogRatio_High = 1.0f;
+	}
+	else
+	{
+		AnalogRatio_High = 0.6f;
+	}
+
+	tp->disp = DispMilesMeter2P_m;
+	tp->exec = Sonic2PControl_m;
+}
+
 static void LoadNPCSonicTask(int num)
 {
-	auto tp = CreateElementalTask(0xAu, 0, InitSonic2PControl);
+	auto tp = CreateElementalTask(0xAu, 0, InitSonic2PControl_m);
 	tp->twp->btimer = num;
 
 	tp = CreateElementalTask(7u, 1, SonicTheHedgehog);
@@ -738,8 +799,11 @@ void Set_NPC_Sonic_m(int num)
 		}
 		break;
 	case LevelIDs_SpeedHighway:
-		MRaceStageNumber = 1;
-		CreateElementalTask(0xAu, 0, InitMoble2PControl);
+		if (CurrentAct == 0)
+		{
+			MRaceStageNumber = 1;
+			LoadMoble2PControl();
+		}
 		break;
 	case LevelIDs_SkyDeck:
 		if (CurrentAct == 0)
@@ -767,6 +831,6 @@ void Set_NPC_Sonic_m(int num)
 
 void InitMilesRace()
 {
-	WriteJump((void*)0x47D640, Sonic2PControl_r);
-	WriteJump((void*)0x47D2E0, DispMilesMeter2P_r);
+	WriteCall((void*)0x47D9B6, LoadMoble2PControl); // patch task level for eggman ai
+	DrawMoble2P_t = new Trampoline(0x47D5B0, 0x47D5B5, DrawMoble2P_r);
 }
