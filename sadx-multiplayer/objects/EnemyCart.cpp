@@ -631,7 +631,7 @@ void EnemyCartM(task* tp)
 
 	auto twp = tp->twp;
 	cart_data = (ENEMY_CART_DATA*)tp->awp;
-	auto pnum = twp->mode < 3 ? GetTheNearestPlayerNumber(&twp->pos) : twp->btimer;
+	auto pnum = twp->mode < 3 ? GetClosestPlayerNum(&twp->pos) : twp->btimer;
 	player_no = GetPlayerNumberM(pnum);
 	auto cartparam = &CartParameter[GetPlayerNumberM(pnum)];
 

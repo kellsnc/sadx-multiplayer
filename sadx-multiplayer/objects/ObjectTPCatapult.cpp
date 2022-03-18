@@ -76,7 +76,7 @@ static void inhallPlayer_m(taskwk* twp)
 
 static void manipulateArm_m(taskwk* twp)
 {
-    auto ptwp = playertwp[GetTheNearestPlayerNumber(&twp->pos)];
+    auto ptwp = playertwp[GetClosestPlayerNum(&twp->pos)];
     NJS_POINT3 v = { ptwp->pos.x - twp->pos.x, 0.0f, ptwp->pos.z - twp->pos.z };
     
     njPushMatrix(_nj_unit_matrix_);

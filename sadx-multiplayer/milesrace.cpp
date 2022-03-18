@@ -3,6 +3,13 @@
 #include "milesrace.h"
 #include "splitscreen.h"
 
+/*
+
+Rewrite the Sonic AI to use any player number
+Necessary for tails levels in coop mode (disabled in battle mode)
+
+*/
+
 DataPointer(float, AnalogRatio_High, 0x3C539E8);
 DataArray(int, AnalogTbl, 0x7E4AC4, 4);
 

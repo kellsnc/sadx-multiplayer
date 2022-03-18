@@ -23,7 +23,7 @@ static void __cdecl e105_calcSomeValue_r(task* tp)
     {
         auto pltp = playertp[0];
         auto plmwp = playermwp[0];
-        auto pnum = GetTheNearestPlayerNumber(&tp->twp->pos);
+        auto pnum = GetClosestPlayerNum(&tp->twp->pos);
         playertp[0] = playertp[pnum];
         playermwp[0] = playermwp[pnum];
         e105_calcSomeValue_o(tp);
@@ -54,7 +54,7 @@ static void __cdecl e105_moveBattery_r(task* tp)
     if (multiplayer::IsActive())
     {
         auto pltp = playertp[0];
-        playertp[0] = playertp[GetTheNearestPlayerNumber(&tp->twp->pos)];
+        playertp[0] = playertp[GetClosestPlayerNum(&tp->twp->pos)];
         TARGET_DYNAMIC(e105_moveBattery)(tp);
         playertp[0] = pltp;
     }

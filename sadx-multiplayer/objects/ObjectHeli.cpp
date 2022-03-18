@@ -161,7 +161,7 @@ static void __cdecl HeliWriteSub_r(task* tp, taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		HeliWriteSub_m(tp, playertwp[GetTheNearestPlayerNumber(&twp->pos)]);
+		HeliWriteSub_m(tp, playertwp[GetClosestPlayerNum(&twp->pos)]);
 	}
 	else
 	{

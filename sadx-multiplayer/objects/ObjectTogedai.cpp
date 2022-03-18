@@ -18,7 +18,7 @@ enum : char
 
 static void effect(taskwk* twp)
 {
-    auto pnum = GetTheNearestPlayerNumber(&twp->pos);
+    auto pnum = GetClosestPlayerNum(&twp->pos);
     auto cam_pos = GetCameraPosition(pnum);
 
     auto ang = NJM_RAD_ANG(atan2f(cam_pos->x - twp->pos.x, cam_pos->z - twp->pos.z));

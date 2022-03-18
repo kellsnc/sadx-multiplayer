@@ -57,6 +57,26 @@ float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2)
 		(v2->z - v1->z) * (v2->z - v1->z));
 }
 
+int GetClosestPlayerNum(NJS_POINT3* pos)
+{
+	float max = 100000000.0f;
+	int num = 0;
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto ptwp = playertwp[i];
+		if (ptwp)
+		{
+			auto dist = GetDistance(pos, &ptwp->pos);
+			if (dist < max)
+			{
+				max = dist;
+				num = i;
+			}
+		}
+	}
+	return num;
+}
+
 int IsPlayerInSphere(NJS_POINT3* p, float r)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)

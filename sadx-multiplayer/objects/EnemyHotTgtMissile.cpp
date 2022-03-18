@@ -14,7 +14,7 @@ static void __cdecl EnemyHotTgtMissile_exec_r(task* tp)
     if (multiplayer::IsActive())
     {
         auto pltwp = playertwp[0];
-        playertwp[0] = playertwp[GetTheNearestPlayerNumber(&tp->twp->pos)];
+        playertwp[0] = playertwp[GetClosestPlayerNum(&tp->twp->pos)];
         TARGET_STATIC(EnemyHotTgtMissile_exec)(tp);
         playertwp[0] = pltwp;
     }

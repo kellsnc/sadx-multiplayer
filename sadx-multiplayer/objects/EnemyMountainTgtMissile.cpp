@@ -40,7 +40,7 @@ static void exec_m(task* tp)
 
     chkDamage(tp);
 
-    auto ptwp = playertwp[GetTheNearestPlayerNumber(&twp->pos)];
+    auto ptwp = playertwp[GetClosestPlayerNum(&twp->pos)];
     twp->ang.y += min(455, max(-455, SubAngle(twp->ang.y, NJM_RAD_ANG(-atan2f(twp->pos.z - ptwp->pos.z, twp->pos.x - ptwp->pos.x)))));
 
     updownHeight_m(twp, wk, ptwp);

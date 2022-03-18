@@ -78,7 +78,7 @@ static void e104_move_m(task* tp)
         wk->spd.z = 0.0f;
     }
 
-    auto ptwp = playertwp[GetTheNearestPlayerNumber(&twp->pos)];
+    auto ptwp = playertwp[GetClosestPlayerNum(&twp->pos)];
     Angle ang = 0;
 
     if ((wk->flag & 2) && ptwp)
@@ -226,7 +226,7 @@ static void __cdecl e104_turnBody_r(task* pTask, NJS_POINT3* posTarget, Angle an
 {
     if (multiplayer::IsActive())
     {
-        auto ptwp = playertwp[GetTheNearestPlayerNumber(&pTask->twp->pos)];
+        auto ptwp = playertwp[GetClosestPlayerNum(&pTask->twp->pos)];
 
         if (ptwp)
         {

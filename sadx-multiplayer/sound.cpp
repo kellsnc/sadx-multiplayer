@@ -198,7 +198,7 @@ int __cdecl dsGetVolume_r(int ii)
     {
         auto se = &sebuf[ii];
         
-        auto pnum = GetTheNearestPlayerNumber(&se->pos);
+        auto pnum = GetClosestPlayerNum(&se->pos);
         auto cam_pos = GetCameraPosition(pnum);
         float dist = GetDistance(&se->pos, cam_pos ? cam_pos : &playertwp[pnum]->pos);
 
@@ -261,21 +261,24 @@ static bool dsDolbySound_r()
 
         if (se->mode & 0x4000 && twp)
         {
-            auto pnum = GetTheNearestPlayerNumber(&twp->pos);
+            auto pnum = GetClosestPlayerNum(&twp->pos);
             NJS_VECTOR v = playertwp[pnum]->pos;
             njSubVector(&v, &twp->pos);
+            auto cam_ang = GetCameraAngle(pnum);
 
-            njPushMatrix(0);
-            njUnitMatrix(0);
-            njRotateY(0, -HIWORD(GetCameraAngle(pnum)->y));
-            njCalcPoint(0, &v, &v);
-            njPopMatrix(1);
+            if (cam_ang)
+            {
+                njPushMatrix(_nj_unit_matrix_);
+                njRotateY(0, -HIWORD(GetCameraAngle(pnum)->y));
+                njCalcPoint(0, &v, &v);
+                njPopMatrixEx();
 
-            v.x *= 0.1f;
-            v.y *= 0.1f;
-            v.z *= 0.1f;
+                v.x *= 0.1f;
+                v.y *= 0.1f;
+                v.z *= 0.1f;
 
-            Set3DPositionPCM(i, v.x, v.y, v.z);
+                Set3DPositionPCM(i, v.x, v.y, v.z);
+            }
         }
     }
 

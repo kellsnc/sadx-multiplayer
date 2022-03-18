@@ -262,7 +262,7 @@ static void __cdecl Knuckles_KakeraGame_Set_PutEme_r(int emeid, NJS_POINT3* emep
 {
 	if (multiplayer::IsBattleMode())
 	{
-		Knuckles_KakeraGame_Set_PutEme_m(GetTheNearestPlayerNumber(emepos), emeid, emepos);
+		Knuckles_KakeraGame_Set_PutEme_m(GetClosestPlayerNum(emepos), emeid, emepos);
 	}
 	else
 	{

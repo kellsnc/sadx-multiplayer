@@ -79,7 +79,7 @@ static void AsiCollisionCollision_m(task* tp)
 
 					if (!ptwp)
 					{
-						ptwp = playertwp[GetTheNearestPlayerNumber(&twp->pos)];
+						ptwp = playertwp[GetClosestPlayerNum(&twp->pos)];
 					}
 
 					twp->btimer = TASKWK_PLAYERID(ptwp);

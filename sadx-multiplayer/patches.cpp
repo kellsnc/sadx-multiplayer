@@ -296,7 +296,7 @@ float __cdecl EnemyDist2FromPlayer_r(taskwk* twp, int num)
 {
 	if (multiplayer::IsActive() && num == 0)
 	{
-		return TARGET_DYNAMIC(EnemyDist2FromPlayer)(twp, GetTheNearestPlayerNumber(&twp->pos));
+		return TARGET_DYNAMIC(EnemyDist2FromPlayer)(twp, GetClosestPlayerNum(&twp->pos));
 	}
 	else
 	{
@@ -309,7 +309,7 @@ Angle __cdecl EnemyCalcPlayerAngle_r(taskwk* twp, enemywk* ewp, unsigned __int8 
 {
 	if (multiplayer::IsActive() && pnum == 0)
 	{
-		return TARGET_DYNAMIC(EnemyCalcPlayerAngle)(twp, ewp, GetTheNearestPlayerNumber(&twp->pos));
+		return TARGET_DYNAMIC(EnemyCalcPlayerAngle)(twp, ewp, GetClosestPlayerNum(&twp->pos));
 	}
 	else
 	{
@@ -322,7 +322,7 @@ Angle __cdecl EnemyTurnToPlayer_r(taskwk* twp, enemywk* ewp, unsigned __int8 pnu
 {
 	if (multiplayer::IsActive() && pnum == 0)
 	{
-		return TARGET_DYNAMIC(EnemyTurnToPlayer)(twp, ewp, GetTheNearestPlayerNumber(&twp->pos));
+		return TARGET_DYNAMIC(EnemyTurnToPlayer)(twp, ewp, GetClosestPlayerNum(&twp->pos));
 	}
 	else
 	{
