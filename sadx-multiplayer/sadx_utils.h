@@ -101,6 +101,15 @@ struct sSonicCtrl
 	int jump_cnt;
 };
 
+struct sParabola
+{
+	NJS_POINT3 pos_start;
+	NJS_POINT3 pos_end;
+	float gravity;
+	int time;
+	NJS_POINT3 speed;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -203,6 +212,14 @@ DataPointer(int, MRaceStageNumber, 0x3C539EC);
 TaskFunc(InitMoble2PControl, 0x47D8C0);
 TaskFunc(InitSonic2PControl, 0x47D820);
 TaskFunc(late_DispMilesMeter2P, 0x47C260);
+DataPointer(sSonicCtrl, SonicCtrlBuff, 0x3C539F8);
+DataPointer(sMRacePath*, PathTbl_Sonic, 0x03C539F4);
+DataPointer(sMRacePath*, PathTbl_Miles, 0x3C53A64);
+DataPointer(sParabola, SonicPaboBuff, 0x3C53A68);
+DataPointer(NJS_POINT3, VecTemp0, 0x3B0F140);
+DataPointer(NJS_POINT3, VecTemp1, 0x3B0F12C);
+FunctionPointer(void, MakeParabolaInitSpeed, (sParabola* twp), 0x4BD2D0);
+FunctionPointer(void, CharColliOff, (taskwk* twp), 0x4BD1B0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

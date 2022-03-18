@@ -3,15 +3,286 @@
 #include "milesrace.h"
 #include "splitscreen.h"
 
-DataPointer(sSonicCtrl, SonicCtrlBuff, 0x3C539F8);
-DataPointer(sMRacePath*, PathTbl_Sonic, 0x03C539F4);
-DataPointer(sMRacePath*, PathTbl_Miles, 0x3C53A64);
+DataPointer(float, AnalogRatio_High, 0x3C539E8);
 
 auto Casino_Init = GenerateUsercallWrapper<void (*)(taskwk* twp, taskwk* stwp, taskwk* mtwp)>(noret, 0x47C540, rESI, rEAX, rEDI);
-auto GetNearestPath = GenerateUsercallWrapper<__int16 (*)(sMRacePath* path_tbl, __int16 maxpath, NJS_POINT3* pos)>(noret, 0x47B7F0, rECX, rBX, stack4);
-auto ChkSonicPathPos = GenerateUsercallWrapper<__int16 (*)(taskwk* stwp, sSonicCtrl* sonic_ctrl, taskwk* twp)>(noret, 0x47C6A0, rEBX, rESI, stack4);
-auto SonicControl = GenerateUsercallWrapper<void (*)(taskwk* stwp, taskwk* twp, sSonicCtrl* sonic_ctrl)>(noret, 0x47C9F0, rEAX, stack4, stack4);
 auto MRaceVoiceCtrl = GenerateUsercallWrapper<void (*)(task* tp, __int16 new_m_path, __int16 new_s_path)>(noret, 0x47D1D0, rEAX, rDX, rCX);
+auto MakeDirAngle = GenerateUsercallWrapper<int (*)(taskwk* stwp, sSonicCtrl* sonic_ctrl, taskwk* twp)>(rEAX, 0x47B9B0, rEBX, rESI, stack4);
+
+static void InitJumpSonicToPoint_m(taskwk* stwp, NJS_POINT3* pos, int time)
+{
+	auto pnum = TASKWK_PLAYERID(stwp);
+	SonicCtrlBuff.path_flag_bak = SonicCtrlBuff.path_flag;
+	SetInputP(pnum, 13);
+	SonicPaboBuff.pos_start.x = stwp->pos.x;
+	SonicPaboBuff.pos_start.y = stwp->pos.y;
+	SonicPaboBuff.pos_start.z = stwp->pos.z;
+	SonicPaboBuff.pos_end = *pos;
+	SonicPaboBuff.gravity = playerpwp[pnum]->p.weight;
+	SonicPaboBuff.time = time;
+	MakeParabolaInitSpeed(&SonicPaboBuff);
+	CharColliOff(stwp);
+}
+
+static __int16 SetSonicNextPath_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl, __int16 sonic_path)
+{
+	__int16 max_path = twp->counter.w[1];
+	__int16 next_path = sonic_path + 1;
+
+	bool jump = false;
+	if (next_path < max_path && LOBYTE(sonic_ctrl->path_flag) != 18)
+	{
+		twp->smode = 0;
+		twp->wtimer = 0;
+		twp->value.w[0] = 0;
+
+		if (sonic_ctrl->path_flag & 0x20000000)
+		{
+			Controllers[TASKWK_PLAYERID(stwp)].PressedButtons |= JumpButtons;
+		}
+
+		if (sonic_ctrl->path_flag & 0x10000000)
+		{
+			jump = true;
+		}
+
+		auto item = &PathTbl_Sonic[next_path];
+		sonic_ctrl->now_path_pos = item->pos;
+		sonic_ctrl->tgt_path_pos = item[1].pos;
+		sonic_ctrl->path_flag = item[1].flag;
+		sonic_ctrl->vec_snc_tgt.x = sonic_ctrl->tgt_path_pos.x - stwp->pos.x;
+		sonic_ctrl->vec_snc_tgt.y = sonic_ctrl->tgt_path_pos.y - stwp->pos.y;
+		sonic_ctrl->vec_snc_tgt.z = sonic_ctrl->tgt_path_pos.z - stwp->pos.z;
+		sonic_ctrl->dist_snc_tgt = njScalor2(&sonic_ctrl->vec_snc_tgt);
+		sonic_ctrl->pl_last_spd = 0.0;
+		if (jump)
+		{
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+		return next_path;
+	}
+	return max_path;
+}
+
+static __int16 ChkSonicPathPos_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
+{
+	__int16 pathnum = twp->timer.w[1];
+	auto pnum = TASKWK_PLAYERID(stwp);
+
+	switch (LOBYTE(sonic_ctrl->path_flag))
+	{
+	case 0:
+	case 6:
+	case 13:
+		VecTemp0.x = sonic_ctrl->tgt_path_pos.x - sonic_ctrl->now_path_pos.x;
+		VecTemp0.y = sonic_ctrl->tgt_path_pos.y - sonic_ctrl->now_path_pos.y;
+		VecTemp0.z = sonic_ctrl->tgt_path_pos.z - sonic_ctrl->now_path_pos.z;
+		break;
+	case 1:
+		VecTemp0.x = sonic_ctrl->tgt_path_pos.x - sonic_ctrl->now_path_pos.x;
+		VecTemp0.y = 0.0f;
+		VecTemp0.z = sonic_ctrl->tgt_path_pos.z - sonic_ctrl->now_path_pos.z;
+
+		VecTemp1.x = sonic_ctrl->vec_snc_tgt.x;
+		VecTemp1.y = 0.0f;
+		VecTemp1.z = sonic_ctrl->vec_snc_tgt.z;
+
+		if (njInnerProduct(&VecTemp1, &VecTemp0) <= 0.001f || sonic_ctrl->dist_snc_tgt < 25.0f)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+		break;
+	case 3:
+	case 11:
+		if (sonic_ctrl->dist_snc_tgt < 25.0f)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+		break;
+	case 4:
+	case 5:
+	case 14:
+	case 15:
+		VecTemp0.x = sonic_ctrl->tgt_path_pos.x - sonic_ctrl->now_path_pos.x;
+		VecTemp0.y = sonic_ctrl->tgt_path_pos.y - sonic_ctrl->now_path_pos.y;
+		VecTemp0.z = sonic_ctrl->tgt_path_pos.z - sonic_ctrl->now_path_pos.z;
+		if (njInnerProduct(&sonic_ctrl->vec_snc_tgt, &VecTemp0) <= 0.0f)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+		break;
+	case 7:
+		if (stwp->smode == 4 || stwp->smode == 3 || stwp->smode == 25)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+		break;
+	case 8:
+		if (stwp->flag & 0x1000)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+		break;
+	case 9:
+		if (((sonic_ctrl->vec_snc_tgt.x * sonic_ctrl->vec_snc_tgt.x)
+			+ (sonic_ctrl->vec_snc_tgt.z * sonic_ctrl->vec_snc_tgt.z)) < 25.0f)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+		break;
+	case 10:
+		if (stwp->smode == 31)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+		break;
+	case 12:
+		if ((stwp->flag & 3) != 0)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+		break;
+	case 16:
+		if (twp->timer.w[0] > pathnum || FastSonicAI || ((sonic_ctrl->path_flag & 0xF00000) != 0 && twp->value.w[0] > 120 * ((sonic_ctrl->path_flag & 0xF00000) >> 20)))
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
+	case 17:
+		VecTemp0.x = sonic_ctrl->tgt_path_pos.x - sonic_ctrl->now_path_pos.x;
+		VecTemp0.y = sonic_ctrl->tgt_path_pos.y - sonic_ctrl->now_path_pos.y;
+		VecTemp0.z = sonic_ctrl->tgt_path_pos.z - sonic_ctrl->now_path_pos.z;
+		if (njInnerProduct(&sonic_ctrl->vec_snc_tgt, &VecTemp0) <= 0.001 || sonic_ctrl->dist_snc_tgt < 25.0)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+			if ((sonic_ctrl->path_flag & 0x8000000) != 0)
+			{
+				SetInputP(pnum, 24);
+				PadReadOffP(1u);
+			}
+		}
+		break;
+	}
+
+	if (pathnum == twp->timer.w[1])
+	{
+		auto v15 = twp->value.w[0];
+		twp->value.w[0] = v15 + 1;
+		if (sonic_ctrl->path_flag == 17 && v15 > 180)
+		{
+			if (twp->timer.w[0] - twp->timer.w[1] >= 20)
+			{
+				pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+				stwp->pos.x = sonic_ctrl->now_path_pos.x;
+				stwp->pos.y = sonic_ctrl->now_path_pos.y;
+				stwp->pos.z = sonic_ctrl->now_path_pos.z;
+			}
+			else
+			{
+				perG[pnum].press |= JumpButtons;
+			}
+		}
+	}
+
+	if (sonic_ctrl->dist_snc_tgt > 1000000.0f || twp->timer.w[0] - pathnum > (MRaceLevel != 1 ? 40 : 20))
+	{
+		pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		SetPositionP(pnum, sonic_ctrl->now_path_pos.x, sonic_ctrl->now_path_pos.y + 5.0f, sonic_ctrl->now_path_pos.z);
+		if (sonic_ctrl->path_flag != 17)
+		{
+			SetInputP(pnum, 24);
+		}
+	}
+
+	return pathnum;
+}
+
+static float MakeStrokeWithDist_m(NJS_POINT3* vec, float range, float ratio)
+{
+	auto r = min(sqrtf((vec->x * vec->x) + (vec->z * vec->z)), range);
+	return max(r / range * ratio, 0.2f);
+}
+
+static float MakeStroke_m(sSonicCtrl* sonic_ctrl)
+{
+	if (sonic_ctrl->path_flag & 0x4000000)
+	{
+		return 1.0f;
+	}
+	else if (sonic_ctrl->path_flag & 0x2000000)
+	{
+		return 0.8f;
+	}
+	else
+	{
+		return AnalogRatio_High;
+	}
+}
+
+static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
+{
+	__int16 pathnum = twp->timer.w[1];
+	auto pnum = TASKWK_PLAYERID(stwp);
+
+	switch (LOBYTE(sonic_ctrl->path_flag))
+	{
+	case 0:
+	case 1:
+		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+		input_dataG[pnum].stroke = MakeStroke_m(sonic_ctrl);
+		break;
+	case 16:
+		if (twp->smode)
+		{
+			if (twp->smode == 1i8)
+			{
+				if (++twp->wtimer > 300i16)
+				{
+					ForcePlayerAction(pnum, 34);
+					twp->wtimer = 0i16;
+				}
+			}
+		}
+		else
+		{
+			input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+			input_dataG[pnum].stroke = MakeStrokeWithDist_m(&sonic_ctrl->vec_snc_tgt, 40.0f, 0.6f);
+			VecTemp0.x = sonic_ctrl->tgt_path_pos.x - sonic_ctrl->now_path_pos.x;
+			VecTemp0.y = sonic_ctrl->tgt_path_pos.y - sonic_ctrl->now_path_pos.y;
+			VecTemp0.z = sonic_ctrl->tgt_path_pos.z - sonic_ctrl->now_path_pos.z;
+			if (njInnerProduct(&sonic_ctrl->vec_snc_tgt, &VecTemp0) <= 0.0f || sonic_ctrl->dist_snc_tgt < 25.0f)
+			{
+				twp->smode = 1i8;
+				SetInputP(pnum, 34);
+			}
+		}
+		break;
+	}
+}
+
+static __int16 GetNearestPath_m(NJS_POINT3* pos, sMRacePath* path_tbl, __int16 max_path)
+{
+	float max = 100000000.0f;
+	__int16 num = 0;
+
+	for (__int16 i = 0; i < max_path; ++i)
+	{
+		auto& item = path_tbl[i];
+
+		VecTemp0.x = pos->x - item.pos.x;
+		VecTemp0.y = pos->y - item.pos.y;
+		VecTemp0.z = pos->z - item.pos.z;
+
+		auto dist = njScalor2(&VecTemp0);
+		if (dist < max)
+		{
+			max = dist;
+			num = i;
+		}
+	}
+
+	return num;
+}
 
 static void Windy_Nomal_m(task* tp, taskwk* stwp, taskwk* mtwp)
 {
@@ -22,10 +293,10 @@ static void Windy_Nomal_m(task* tp, taskwk* stwp, taskwk* mtwp)
 	SonicCtrlBuff.vec_snc_tgt.z = SonicCtrlBuff.tgt_path_pos.z - stwp->cwp->info->center.z;
 	SonicCtrlBuff.dist_snc_tgt = njScalor2(&SonicCtrlBuff.vec_snc_tgt);
 
-	twp->timer.w[0] = GetNearestPath(PathTbl_Miles, twp->counter.w[0], &mtwp->pos);
-	twp->timer.w[1] = ChkSonicPathPos(stwp, &SonicCtrlBuff, twp); // <-- rewrite
+	twp->timer.w[0] = GetNearestPath_m(&mtwp->pos, PathTbl_Miles, twp->counter.w[0]);
+	twp->timer.w[1] = ChkSonicPathPos_m(twp, stwp, &SonicCtrlBuff);
 
-	SonicControl(stwp, twp, &SonicCtrlBuff); // <-- rewrite
+	SonicControl_m(twp, stwp, &SonicCtrlBuff);
 	MRaceVoiceCtrl(tp, twp->timer.w[1], twp->timer.w[0]);
 }
 
