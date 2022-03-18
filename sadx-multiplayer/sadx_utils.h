@@ -218,8 +218,11 @@ DataPointer(sMRacePath*, PathTbl_Miles, 0x3C53A64);
 DataPointer(sParabola, SonicPaboBuff, 0x3C53A68);
 DataPointer(NJS_POINT3, VecTemp0, 0x3B0F140);
 DataPointer(NJS_POINT3, VecTemp1, 0x3B0F12C);
-FunctionPointer(void, MakeParabolaInitSpeed, (sParabola* twp), 0x4BD2D0);
+FunctionPointer(void, MakeParabolaInitSpeed, (sParabola* para), 0x4BD2D0);
+FunctionPointer(int, ChkParabolaEnd, (sParabola* para), 0x4BD380);
+FunctionPointer(void, CharColliOn, (taskwk* twp), 0x4BD180);
 FunctionPointer(void, CharColliOff, (taskwk* twp), 0x4BD1B0);
+FunctionPointer(void, SetAccelerationP, (unsigned __int8 pno, float x, float y, float z), 0x441750);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

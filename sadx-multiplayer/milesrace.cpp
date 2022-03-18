@@ -4,10 +4,38 @@
 #include "splitscreen.h"
 
 DataPointer(float, AnalogRatio_High, 0x3C539E8);
+DataArray(int, AnalogTbl, 0x7E4AC4, 4);
 
 auto Casino_Init = GenerateUsercallWrapper<void (*)(taskwk* twp, taskwk* stwp, taskwk* mtwp)>(noret, 0x47C540, rESI, rEAX, rEDI);
 auto MRaceVoiceCtrl = GenerateUsercallWrapper<void (*)(task* tp, __int16 new_m_path, __int16 new_s_path)>(noret, 0x47D1D0, rEAX, rDX, rCX);
 auto MakeDirAngle = GenerateUsercallWrapper<int (*)(taskwk* stwp, sSonicCtrl* sonic_ctrl, taskwk* twp)>(rEAX, 0x47B9B0, rEBX, rESI, stack4);
+
+static bool ChkEndSonicFakeJump_m(taskwk* stwp)
+{
+	auto pnum = TASKWK_PLAYERID(stwp);
+	SetPositionP(pnum, stwp->pos.x + SonicPaboBuff.speed.x, stwp->pos.y + SonicPaboBuff.speed.y, stwp->pos.z + SonicPaboBuff.speed.z);
+
+	SonicPaboBuff.speed.y -= SonicPaboBuff.gravity;
+
+	if (SonicPaboBuff.speed.y < 0.0f)
+	{
+		CharColliOn(stwp);
+	}
+
+	auto stat = ChkParabolaEnd(&SonicPaboBuff);
+
+	if (stat)
+	{
+		SetInputP(pnum, 24);
+		if (stat == 2)
+			SetPositionP(pnum, SonicPaboBuff.pos_end.x, SonicPaboBuff.pos_end.y, SonicPaboBuff.pos_end.z);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 static void InitJumpSonicToPoint_m(taskwk* stwp, NJS_POINT3* pos, int time)
 {
@@ -78,6 +106,10 @@ static __int16 ChkSonicPathPos_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ct
 		VecTemp0.x = sonic_ctrl->tgt_path_pos.x - sonic_ctrl->now_path_pos.x;
 		VecTemp0.y = sonic_ctrl->tgt_path_pos.y - sonic_ctrl->now_path_pos.y;
 		VecTemp0.z = sonic_ctrl->tgt_path_pos.z - sonic_ctrl->now_path_pos.z;
+		if (njInnerProduct(&sonic_ctrl->vec_snc_tgt, &VecTemp0) <= 0.001f || sonic_ctrl->dist_snc_tgt < 25.0f)
+		{
+			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
+		}
 		break;
 	case 1:
 		VecTemp0.x = sonic_ctrl->tgt_path_pos.x - sonic_ctrl->now_path_pos.x;
@@ -138,13 +170,13 @@ static __int16 ChkSonicPathPos_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ct
 		}
 		break;
 	case 12:
-		if ((stwp->flag & 3) != 0)
+		if (stwp->flag & (Status_Ground | Status_OnColli))
 		{
 			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
 		}
 		break;
 	case 16:
-		if (twp->timer.w[0] > pathnum || FastSonicAI || ((sonic_ctrl->path_flag & 0xF00000) != 0 && twp->value.w[0] > 120 * ((sonic_ctrl->path_flag & 0xF00000) >> 20)))
+		if (twp->timer.w[0] > pathnum || MRaceLevel || ((sonic_ctrl->path_flag & 0xF00000) != 0 && twp->value.w[0] > 120 * ((sonic_ctrl->path_flag & 0xF00000) >> 20)))
 		{
 			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
 		}
@@ -219,18 +251,130 @@ static float MakeStroke_m(sSonicCtrl* sonic_ctrl)
 	}
 }
 
+static bool ChkSonicStack_m(taskwk* stwp)
+{
+	if (SonicCtrlBuff.path_flag & 0x1000000)
+	{
+		NJS_POINT3 v;
+		GetPlayerPosition(TASKWK_PLAYERID(stwp), 0x78u, &v, 0);
+		VecTemp0.x = stwp->pos.x - v.x;
+		VecTemp0.y = stwp->pos.y - v.y;
+		VecTemp0.z = stwp->pos.z - v.z;
+
+		if (njScalor2(&VecTemp0) < 25.0f)
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 {
 	__int16 pathnum = twp->timer.w[1];
 	auto pnum = TASKWK_PLAYERID(stwp);
+	auto spwp = playerpwp[pnum];
 
 	switch (LOBYTE(sonic_ctrl->path_flag))
 	{
 	case 0:
 	case 1:
+	{
 		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
 		input_dataG[pnum].stroke = MakeStroke_m(sonic_ctrl);
+
+		auto slope = -njInnerProduct(&Gravity, &spwp->floor_normal);
+		if (njCos(0x2000) < slope && slope < njCos(4551))
+		{
+			if (spwp->spd.x < sonic_ctrl->pl_last_spd && spwp->spd.x < 0.1f && njScalor(&spwp->spd) < 0.1f)
+			{
+				sonic_ctrl->path_flag_bak = sonic_ctrl->path_flag;
+				sonic_ctrl->path_flag = 13;
+				perG[pnum].press |= AttackButtons;
+				twp->value.w[1] = 0;
+			}
+		}
+
+		if (ChkSonicStack_m(stwp))
+		{
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+
 		break;
+	}
+	case 4:
+	case 11:
+		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+		input_dataG[pnum].stroke = 1.0f;
+
+		if (ChkSonicStack_m(stwp))
+		{
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+
+		break;
+	case 6:
+		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+		input_dataG[pnum].stroke = MakeStrokeWithDist_m(&sonic_ctrl->vec_snc_tgt, 40.0f, 0.6f);
+		break;
+	case 7:
+	case 8:
+		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+		input_dataG[pnum].stroke = MakeStrokeWithDist_m(&sonic_ctrl->vec_snc_tgt, 40.0f, 1.0f);
+		
+		if (ChkSonicStack_m(stwp) && stwp->flag & (Status_Ground | Status_OnColli))
+		{
+			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
+			sonic_ctrl->path_flag = 19;
+		}
+		break;
+	case 9:
+	{
+		auto idk = AnalogTbl[4 * ((sonic_ctrl->path_flag >> 30) & 3)];
+		perG[pnum].x1 = HIWORD(idk);
+		perG[pnum].y1 = LOWORD(idk);
+		break;
+	}
+	case 10:
+		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+		input_dataG[pnum].stroke = MakeStrokeWithDist_m(&sonic_ctrl->vec_snc_tgt, 40.0f, AnalogRatio_High);
+		if (((sonic_ctrl->vec_snc_tgt.x * sonic_ctrl->vec_snc_tgt.x) + (sonic_ctrl->vec_snc_tgt.z * sonic_ctrl->vec_snc_tgt.z)) < 25.0f && (stwp->flag & (Status_Ground | Status_OnColli)))
+		{
+			perG[pnum].press |= JumpButtons;
+		}
+		break;
+	case 13:
+		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+		input_dataG[pnum].stroke = 1.0f;
+		if (++twp->value.w[1] <= 60i16)
+			perG[pnum].on |= AttackButtons;
+		else
+			sonic_ctrl->path_flag = sonic_ctrl->path_flag_bak;
+		break;
+	case 14u:
+	{
+		if (stwp->flag & 0x2000)
+		{
+			auto idk = AnalogTbl[4 * ((sonic_ctrl->path_flag >> 30) & 3)];
+			perG[pnum].x1 = HIWORD(idk);
+			perG[pnum].y1 = LOWORD(idk);
+		}
+		else
+		{
+			input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+			input_dataG[pnum].stroke = MakeStroke_m(sonic_ctrl);
+		}
+		break;
+	}
+	case 15:
+		if (stwp->flag & (Status_Ground | Status_OnColli))
+		{
+			input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+			input_dataG[pnum].stroke = MakeStrokeWithDist_m(&sonic_ctrl->vec_snc_tgt, 40.0f, 0.6f);
+		}
 	case 16:
 		if (twp->smode)
 		{
@@ -256,6 +400,114 @@ static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 				SetInputP(pnum, 34);
 			}
 		}
+		break;
+	case 17:
+		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+		input_dataG[pnum].stroke = MakeStroke_m(sonic_ctrl);
+
+		if (MRaceLevel)
+		{
+			VecTemp0.x = sonic_ctrl->vec_snc_tgt.x;
+			VecTemp0.y = 0.0f;
+			VecTemp0.z = sonic_ctrl->vec_snc_tgt.z;
+			njUnitVector(&VecTemp0);
+			SetAccelerationP(pnum, (VecTemp0.x * 0.05f), -0.05f, VecTemp0.z * 0.05f);
+		}
+		else if (twp->timer.w[0] - twp->timer.w[1] > 0 && twp->timer.w[1] < 210)
+		{
+			VecTemp0.x = sonic_ctrl->vec_snc_tgt.x;
+			VecTemp0.y = 0.0f;
+			VecTemp0.z = sonic_ctrl->vec_snc_tgt.z;
+			njUnitVector(&VecTemp0);
+			float v24;
+			if (twp->timer.w[0] - twp->timer.w[1] <= 6)
+			{
+				if (twp->timer.w[0] - twp->timer.w[1] <= 3)
+					SetAccelerationP(pnum, VecTemp0.x * 0.05f, -0.05f, VecTemp0.z * 0.05f);
+				else
+					SetAccelerationP(pnum, VecTemp0.x * 0.1f, -0.1f, VecTemp0.z * 0.1f);
+			}
+			else
+			{
+				SetAccelerationP(pnum, VecTemp0.x * 0.2f, -0.2f, VecTemp0.z * 0.2f);
+			}
+		}
+		break;
+	case 18:
+		switch (twp->smode)
+		{
+		case 0i8:
+			if (MRaceResult)
+			{
+				twp->smode = 5i8;
+			}
+			else
+			{
+				twp->smode = 1i8;
+				perG[pnum].press |= JumpButtons;
+				sonic_ctrl->jump_cnt = 0;
+			}
+			break;
+		case 1i8:
+			input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
+			input_dataG[pnum].stroke = MakeStrokeWithDist_m(&sonic_ctrl->vec_snc_tgt, 40.0f, 0.6f);
+			perG[pnum].on |= JumpButtons;
+
+			if (stwp->flag & (Status_Ground | Status_OnColli))
+			{
+				// func here
+			}
+
+			twp->smode = 2i8;
+			twp->wtimer = 0i16;
+			break;
+		case 2i8:
+			if (MRaceResult)
+			{
+				if (playertwp[0])
+				{
+					VecTemp0.x = stwp->pos.x - playertwp[0]->pos.x;
+					VecTemp0.y = stwp->pos.y - playertwp[0]->pos.y;
+					VecTemp0.z = stwp->pos.z - playertwp[0]->pos.z;
+					if (njScalor2(&VecTemp0) < 25.0f)
+						SetAccelerationP(pnum, VecTemp0.x, VecTemp0.y, VecTemp0.z);
+				}
+
+				return;
+			}
+
+			if (++twp->wtimer > 32)
+			{
+				twp->smode = 1i8;
+				perG[pnum].press |= JumpButtons;
+				if (++sonic_ctrl->jump_cnt > 3)
+				{
+					twp->smode = 3i8;
+					VecTemp0.x = sonic_ctrl->tgt_path_pos.x;
+					VecTemp0.y = sonic_ctrl->tgt_path_pos.y + 45.0f;
+					VecTemp0.z = sonic_ctrl->tgt_path_pos.z;
+					InitJumpSonicToPoint_m(stwp, &VecTemp0, 60);
+				}
+			}
+			break;
+		case 3i8:
+			if (ChkEndSonicFakeJump_m(stwp))
+				twp->smode = 4i8;
+			break;
+		case 4i8:
+			if (stwp->flag & (Status_Ground | Status_OnColli))
+			{
+				// func here
+			}
+
+			twp->smode = 2i8;
+			twp->wtimer = 0i16;
+			break;
+		}
+		break;
+	case 19:
+		if (ChkEndSonicFakeJump_m(stwp))
+			sonic_ctrl->path_flag = sonic_ctrl->path_flag_bak;
 		break;
 	}
 }
