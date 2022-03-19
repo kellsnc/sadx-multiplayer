@@ -294,6 +294,11 @@ void __cdecl Rd_Mountain_r(task* tp)
 	TARGET_DYNAMIC(Rd_Mountain)(tp);
 }
 
+static void __cdecl Create_Mountain_Cloud()
+{
+	CreateElementalTask(2u, LEV_1, (TaskFuncPtr)0x601230); // load task into slot 1 instead of 0 (to not run before the camera)
+}
+
 void InitLevels()
 {
 	// Patch start positions
@@ -325,6 +330,10 @@ void InitLevels()
 	
 	// Speed Highway Act 2 skybox
 	WriteData((taskwk***)0x610765, &camera_twp);
+	
+	// Red Mountain cloud layer
+	WriteCall((void*)0x60147B, Create_Mountain_Cloud);
+	WriteCall((void*)0x601404, Create_Mountain_Cloud);
 	
 	// In battle mode, boss become fighting arenas
 	Rd_Chaos0_t   = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
