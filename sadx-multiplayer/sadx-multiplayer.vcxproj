@@ -142,7 +142,6 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
-    <ClCompile Include="ObjectRMAsiba.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
     <ClCompile Include="objects\ef_spark.cpp" />
     <ClCompile Include="objects\EnemyHotE105.cpp" />
@@ -168,8 +167,8 @@
     <ClCompile Include="objects\ObjectItemBox.cpp" />
     <ClCompile Include="objects\ObjectJumpPanel.cpp" />
     <ClCompile Include="objects\ObjectKaosEme.cpp" />
+    <ClCompile Include="objects\ObjectMountainAsiba.cpp" />
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
-    <ClCompile Include="objects\ObjectRMPathKassha.cpp" />
     <ClCompile Include="objects\ObjectSkyLever.cpp" />
     <ClCompile Include="objects\ObjectTogedai.cpp" />
     <ClCompile Include="objects\ObjectTPCatapult.cpp" />
@@ -180,6 +179,7 @@
     <ClCompile Include="objects\ObjShelterCrane.cpp" />
     <ClCompile Include="objects\ObjShelterElevator.cpp" />
     <ClCompile Include="objects\ObjShelterKaitendai.cpp" />
+    <ClCompile Include="objects\PathKassha.cpp" />
     <ClCompile Include="objects\RdHotShelter.cpp" />
     <ClCompile Include="objects\Rd_Highway.cpp" />
     <ClCompile Include="objects\Rd_Snow.cpp" />

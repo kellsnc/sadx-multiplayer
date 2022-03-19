@@ -97,9 +97,6 @@
     <ClCompile Include="objects\Rd_Highway.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectRMPathKassha.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectWindyTorout.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
@@ -199,7 +196,10 @@
     <ClCompile Include="milesrace.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectRMAsiba.cpp">
+    <ClCompile Include="objects\ObjectMountainAsiba.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\PathKassha.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
