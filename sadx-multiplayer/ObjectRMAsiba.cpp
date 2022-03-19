@@ -38,15 +38,8 @@ static _BOOL1 sub_60DE20(taskwk* a1, char pnum)
 }
 
 static void OMasiba_Exec_r(task* tp)
-{
-	taskwk* data;
+{	
 	int result;
-	int posPlay;
-	forcewk* fwp;
-	task* player;
-	char pnum;
-	taskwk* playerData;
-
 	int btimer;
 	signed int totalTime;
 	double posX;
@@ -58,19 +51,19 @@ static void OMasiba_Exec_r(task* tp)
 	__int64 resultPosPlayerYZ;
 	int calcAngZ;
 
-	data = tp->twp;
+	taskwk* data = tp->twp;
 	result = 0;
-	posPlay = 0;
-	fwp = tp->fwp;
+	int posPlay = 0;
+	forcewk* fwp = tp->fwp;
 
 	auto ptwp = CCL_IsHitPlayer(data);
 
 	if (!ptwp)
 		return;
 
-	pnum = TASKWK_PLAYERID(ptwp);
-	player = (task*)GetCharacterObject(pnum);
-	playerData = player->twp;
+	char pnum = TASKWK_PLAYERID(ptwp);
+	task* player = (task*)GetCharacterObject(pnum);
+	taskwk* playerData = player->twp;
 
 	if (!rd_mountain_twp || rd_mountain_twp->scl.y == 0.0 && rd_mountain_twp->counter.f == 0.0)
 		fwp->pos_spd.y = 0.0;
