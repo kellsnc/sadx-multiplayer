@@ -1,6 +1,14 @@
 #include "pch.h"
+#include "multiplayer.h"
 #include <UsercallFunctionHandler.h>
 
+static void __cdecl ObjectMountainExplosionRock1_r(task* tp);
+static void __cdecl ObjectMountainExplosionRock2_r(task* tp);
+static void __cdecl MiddleRock_r(task* tp);
+
+Trampoline ObjectMountainExplosionRock1_t(0x602130, 0x602135, ObjectMountainExplosionRock1_r);
+Trampoline ObjectMountainExplosionRock2_t(0x602320, 0x602325, ObjectMountainExplosionRock2_r);
+Trampoline MiddleRock_t(0x601EC0, 0x601EC7, MiddleRock_r);
 
 struct steamtbl
 {
@@ -9,102 +17,193 @@ struct steamtbl
     unsigned __int16 wtimer;
 };
 
-auto GenerateSteam = GenerateUsercallWrapper<void (*)(int num, steamtbl* tbl)>(noret, 0x601A10, rEAX, rECX);
-FunctionPointer(void, SetParabolicMotionP, (int playerNum, float a2, NJS_VECTOR* a3), 0x446D90);
-DataPointer(float, flt_24987AC, 0x24987AC);
-FunctionPointer(void, BlowPlayer3, (float x, float y, float z), 0x601DC0);
+DataArray(steamtbl, exrock1_steamtbl, 0x24985B0, 1);
+DataArray(steamtbl, exrock2_steamtbl, 0x24985F0, 5);
 
-FunctionPointer(void, BlowPlayer2, (float x, float y, float z), 0x601C80);
-DataPointer(float, flt_24987A8, 0x24987A8);
+auto GenerateSteam = GenerateUsercallWrapper<void (*)(steamtbl* tbl, int num)>(noret, 0x601A10, rECX, rEAX);
+auto CreateExplosion = GenerateUsercallWrapper<void (*)(steamtbl* tbl, int num)>(noret, 0x601AD0, rECX, rEAX);
 
-static void __cdecl BlowPlayer3_r(float x, float y, float z);
-Trampoline BlowPlayer3_t(0x601DC0, 0x601DC8, BlowPlayer3_r);
-void __cdecl BlowPlayer3_r(float x, float y, float z)
+#pragma region MiddleRock
+static void MiddleRock_m(task* tp)
 {
+    auto twp = tp->twp;
+    auto mwp = (motionwk*)tp->mwp;
 
-    if (!multiplayer::IsActive())
+    // enable/disable dyncol
+    if (IsPlayerInSphere(&mwp->acc, mwp->rad + 10.0f))
     {
-        return TARGET_STATIC(BlowPlayer3)(x, y, z);
+        twp->flag |= 0x100u;
+    }
+    else
+    {
+        twp->flag &= ~0x100u;
     }
 
-    double v3; 
-    float result; 
-    float v5;
-    float pPosX; 
-    float pPosZ; 
-    float PGrav;  
-    float pPosY; 
-    NJS_VECTOR v; 
-    NJS_VECTOR pos; 
-
-    for (uint8_t i = 0; i < PLAYER_MAX; i++) {
-
-        if (!EntityData1Ptrs[i])
-            continue;
-
-        pPosX = EntityData1Ptrs[i]->Position.x;
-        pPosY = EntityData1Ptrs[i]->Position.y;
-        pPosZ = EntityData1Ptrs[i]->Position.z;
-        PGrav = GetCharObj2(i)->PhysicsData.Gravity;
-        v5 = (pPosZ - z) * (pPosZ - z) + (pPosX - x) * (pPosX - x);
-        v3 = squareroot(v5) / flt_24987AC;
-        v.x = (x - pPosX) * (1.0 / v3);
-        v.z = (z - pPosZ) * (1.0 / v3);
-        v.y = (v3 * v3 * PGrav * 0.5 + y - pPosY) * (1.0 / v3);
-        pos = v;
-        njUnitVector(&pos);
-        result = njScalor(&v);
-        SetParabolicMotionP(i, result, &pos);
+    for (int i = 0; i < PLAYER_MAX; ++i)
+    {
+        if (CheckPlayerRideOnMobileLandObjectP(i, tp))
+        {
+            tp->ptp->twp->btimer = i;
+            tp->ptp->twp->flag |= 0x100;
+        }
     }
+    
+    tp->disp(tp);
 }
 
-static void __cdecl BlowPlayer2_r(float x, float y, float z);
-Trampoline BlowPlayer2_t(0x601C80, 0x601C88, BlowPlayer2_r);
-void __cdecl BlowPlayer2_r(float x, float y, float z)
+static void __cdecl MiddleRock_r(task* tp)
 {
-    if (!multiplayer::IsActive())
+    if (!multiplayer::IsActive() || tp->twp->mode == 0)
     {
-        return TARGET_STATIC(BlowPlayer2)(x, y, z);
+        TARGET_STATIC(MiddleRock)(tp);
     }
-
-    double v3;  
-    float v4; 
-    float v5; 
-    float pPosY; 
-    float pGrav; 
-    float pPosX; 
-    float pPosZ; 
-    float pSpdCap;
-    NJS_VECTOR v; 
-    NJS_VECTOR pos;
-
-    for (uint8_t i = 0; i < PLAYER_MAX; i++) {
-
-        if (!EntityData1Ptrs[i])
-            continue;
-
-        pPosX = EntityData1Ptrs[i]->Position.x;
-        pPosY = EntityData1Ptrs[i]->Position.y;
-        pPosZ = EntityData1Ptrs[i]->Position.z;
-        pGrav = GetCharObj2(i)->PhysicsData.Gravity;
-        pSpdCap = GetCharObj2(i)->PhysicsData.VSpeedCap;
-        v5 = (pPosZ - z) * (pPosZ - z) + (pPosX - x) * (pPosX - x);
-        v3 = squareroot(v5) / flt_24987A8;
-        v.x = (x - pPosX) * (1.0 / v3);
-        v.z = (z - pPosZ) * (1.0 / v3);
-        if (pPosY <= (double)y)
-        {
-            v.y = (v3 * v3 * pGrav * 0.5 + y - pPosY) * (1.0 / v3);
-        }
-        else
-        {
-            v.y = ((v3 - pSpdCap / pGrav) * pSpdCap + pPosY - pPosY + pSpdCap / pGrav * (pSpdCap / pGrav) * pGrav * 0.5)
-                / (pSpdCap
-                    / pGrav);
-        }
-        pos = v;
-        njUnitVector(&pos);
-        v4 = njScalor(&v);
-        SetParabolicMotionP(i, v4, &pos);
+    else
+    {
+        MiddleRock_m(tp);
     }
 }
+#pragma endregion
+
+#pragma region ObjectMountainExplosionRock2
+static void BlowPlayer3_m(int pnum, float x, float y, float z)
+{
+    auto ptwp = playertwp[pnum];
+    auto ppwp = playerpwp[pnum];
+    auto weight = ppwp->p.weight;
+
+    auto dist = (ptwp->pos.z - z) * (ptwp->pos.z - z) + (ptwp->pos.x - x) * (ptwp->pos.x - x);
+    dist = sqrtf(dist) / 5.0f;
+
+    NJS_POINT3 pos;
+    pos.x = (x - ptwp->pos.x) * (1.0f / dist);
+    pos.y = (dist * dist * weight * 0.5f + y - ptwp->pos.y) * (1.0f / dist);
+    pos.z = (z - ptwp->pos.z) * (1.0f / dist);
+
+    dist = njScalor(&pos);
+    njUnitVector(&pos);
+    SetParabolicMotionP(pnum, dist, &pos);
+}
+
+static void ObjectMountainExplosionRock2_m(task* tp)
+{
+    auto twp = tp->twp;
+
+    switch (twp->mode)
+    {
+    case 1i8:
+        GenerateSteam(&exrock2_steamtbl, 4);
+
+        if (twp->flag & 0x100)
+        {
+            twp->flag &= ~0x100;
+
+            if (++twp->wtimer >= 20)
+            {
+                dsPlay_oneshot_v(128, 0, 0, 0, twp->pos.x, twp->pos.y, twp->pos.z);
+                CreateExplosion(&exrock2_steamtbl, 4);
+                twp->mode = 2i8;
+                twp->flag |= 0x200;
+            }
+        }
+        break;
+    case 2i8:
+        BlowPlayer3_m(twp->btimer, -800.0f, 1120.0f, -125.0f);
+        twp->mode = 3i8;
+        break;
+    case 3i8:
+        twp->mode = 1i8;
+        break;
+    }
+
+    LoopTaskC(tp);
+}
+
+static void __cdecl ObjectMountainExplosionRock2_r(task* tp)
+{
+    if (!multiplayer::IsActive() || tp->twp->mode == 0)
+    {
+        TARGET_STATIC(ObjectMountainExplosionRock2)(tp);
+    }
+    else
+    {
+        ObjectMountainExplosionRock2_m(tp);
+    }
+}
+#pragma endregion
+
+#pragma region ObjectMountainExplosionRock1
+static void BlowPlayer2_m(int pnum, float x, float y, float z)
+{
+    auto ptwp = playertwp[pnum];
+    auto ppwp = playerpwp[pnum];
+
+    auto weight = ppwp->p.weight;
+    auto maxspd = ppwp->p.lim_v_spd;
+
+    auto dist = (ptwp->pos.z - z) * (ptwp->pos.z - z) + (ptwp->pos.x - x) * (ptwp->pos.x - x);
+    dist = sqrtf(dist) / 5.0f;
+
+    NJS_POINT3 pos;
+    pos.x = (x - ptwp->pos.x) * (1.0f / dist);
+    pos.z = (z - ptwp->pos.z) * (1.0f / dist);
+
+    if (ptwp->pos.y <= y)
+    {
+        pos.y = (dist * dist * weight * 0.5f + y - ptwp->pos.y) * (1.0f / dist);
+    }
+    else
+    {
+        pos.y = ((dist - maxspd / weight) * maxspd + ptwp->pos.y - ptwp->pos.y + maxspd / weight * (maxspd / weight) * weight * 0.5f) / (maxspd / weight);
+    }
+
+    dist = njScalor(&pos);
+    njUnitVector(&pos);
+    SetParabolicMotionP(pnum, dist, &pos);
+}
+
+static void ObjectMountainExplosionRock1_m(task* tp)
+{
+    auto twp = tp->twp;
+
+    switch (twp->mode)
+    {
+    case 1i8:
+        GenerateSteam(&exrock1_steamtbl, 4);
+
+        if (twp->flag & 0x100)
+        {
+            twp->flag &= ~0x100;
+
+            if (++twp->wtimer >= 20)
+            {
+                dsPlay_oneshot_v(128, 0, 0, 0, twp->pos.x, twp->pos.y, twp->pos.z);
+                CreateExplosion(&exrock1_steamtbl, 4);
+                twp->mode = 2i8;
+                twp->flag |= 0x200;
+            }
+        }
+        break;
+    case 2i8:
+        BlowPlayer2_m(twp->btimer, -931.0f, 856.0f, -933.0f);
+        twp->mode = 3i8;
+        break;
+    case 3i8:
+        twp->mode = 1i8;
+        break;
+    }
+
+    LoopTaskC(tp);
+}
+
+static void __cdecl ObjectMountainExplosionRock1_r(task* tp)
+{
+    if (!multiplayer::IsActive() || tp->twp->mode == 0)
+    {
+        TARGET_STATIC(ObjectMountainExplosionRock1)(tp);
+    }
+    else
+    {
+        ObjectMountainExplosionRock1_m(tp);
+    }
+}
+#pragma endregion

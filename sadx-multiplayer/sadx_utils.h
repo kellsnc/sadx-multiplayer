@@ -227,6 +227,7 @@ DataPointer(int, slJudge, 0x3B0EF44);
 DataArray(sMRacePath*, PPT_MRaceEachStage, 0x91C0B8, 10);
 DataArray(int*, MPT_MRaceEachStage, 0x91C0E0, 10);
 DataPointer(taskwk*, rd_mountain_twp, 0x03C80F84);
+FunctionPointer(void, SetParabolicMotionP, (int playerNum, float a2, NJS_VECTOR* a3), 0x446D90);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
