@@ -56,13 +56,12 @@ static void OMasiba_Exec_r(task* tp)
 	int posPlay = 0;
 	forcewk* fwp = tp->fwp;
 
-	auto ptwp = CCL_IsHitPlayer(data);
+	char pnum = GetTheNearestPlayerNumber(&data->pos);
+	task* player = (task*)GetCharacterObject(pnum);
 
-	if (!ptwp)
+	if (!player)
 		return;
 
-	char pnum = TASKWK_PLAYERID(ptwp);
-	task* player = (task*)GetCharacterObject(pnum);
 	taskwk* playerData = player->twp;
 
 	if (!rd_mountain_twp || rd_mountain_twp->scl.y == 0.0 && rd_mountain_twp->counter.f == 0.0)
