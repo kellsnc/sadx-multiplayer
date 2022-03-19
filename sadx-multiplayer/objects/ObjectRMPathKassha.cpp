@@ -13,10 +13,10 @@ enum : char
 
 DataPointer(CCL_INFO, palley_colli, 0x24C8C70);
 
-auto SetPath2Taskwk_0 = GenerateUsercallWrapper<void (*)(pathtag* a1, taskwk* a2, float a3)>(noret, 0x602A50, rEDX, rESI, stack4);
-auto DrawHuck = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x602B10, rEAX);
-auto DrawWireTarumi = GenerateUsercallWrapper<void (*)(task* a1, int a2, char a3)>(noret, 0x603330, rEAX, rECX, stack1);
-auto DrawWire = GenerateUsercallWrapper<void (*)(task* a1)>(noret, 0x602DF0, rEAX);
+auto SetPath2Taskwk_0 = GenerateUsercallWrapper<void (*)(pathtag* ptag, taskwk* twp2, float onpathpos)>(noret, 0x602A50, rEDX, rESI, stack4);
+auto DrawHuck = GenerateUsercallWrapper<TaskFuncPtr>(noret, 0x602B10, rEAX);
+auto DrawWireTarumi = GenerateUsercallWrapper<void (*)(task* tp, unsigned int number, unsigned __int8 flag)>(noret, 0x603330, rEAX, rECX, stack4);
+auto DrawWire = GenerateUsercallWrapper<TaskFuncPtr>(noret, 0x602DF0, rEAX);
 
 // The wire displayer also moves the player for some reason
 // Luckily they put a "mode == 2" check before even though the function is only called during mode 2
