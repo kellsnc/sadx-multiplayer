@@ -254,6 +254,8 @@ DataArray(int*, MPT_MRaceEachStage, 0x91C0E0, 10);
 DataPointer(taskwk*, rd_mountain_twp, 0x03C80F84);
 FunctionPointer(void, SetParabolicMotionP, (int playerNum, float a2, NJS_VECTOR* a3), 0x446D90);
 FunctionPointer(void, DrawSNumbers, (_SC_NUMBERS* pscn), 0x427BB0);
+TaskFunc(exitFishingLure, 0x46C8D0);
+TaskFunc(dispFishingLure, 0x470580);
 
 DataPointer(int, SakanaNum, 0x3C524E8);
 DataPointer(int, Big_Fish_Flag, 0x3C524EC);

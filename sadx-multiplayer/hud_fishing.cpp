@@ -21,7 +21,7 @@ static void dispReelMeter_m(float x, float y, float scale, float _reel_tension)
     NJS_COLOR color[4];
     NJS_POINT2COL p2col = { rect, color, nullptr, 4 };
 
-    int max_tension = (int)(reel_tension * 255.0f);
+    int max_tension = (int)(_reel_tension * 255.0f);
 
     rect[1].x = x - 1.0f * scale;
     rect[0].x = rect[1].x;
@@ -29,7 +29,7 @@ static void dispReelMeter_m(float x, float y, float scale, float _reel_tension)
     rect[0].y = rect[2].y;
     rect[3].x = x + 31.0f * scale;
     rect[2].x = rect[3].x;
-    rect[3].y = 40.0f * scale - (reel_tension * 135.0f) * scale + y;
+    rect[3].y = 40.0f * scale - (_reel_tension * 135.0f) * scale + y;
     rect[1].y = rect[3].y;
     color[3].color = 0xFFFF * (max_tension + 0xFF01);
     color[1] = color[3];
@@ -43,7 +43,7 @@ static void dispHandleTexture_m(float x, float y, float scale, Angle _reel_angle
     reel_sprite.p.x = x - 64.0f * scale + 16.0f * scale;
     reel_sprite.p.y = y + 66.0f * scale;
     reel_sprite.sx = reel_sprite.sy = scale;
-    reel_sprite.ang = reel_angle;
+    reel_sprite.ang = _reel_angle;
     njDrawSprite2D_Queue(&reel_sprite, 1, 22046.182f, NJD_SPRITE_ALPHA | NJD_SPRITE_ANGLE, QueuedModelFlagsB_SomeTextureThing);
 }
 
