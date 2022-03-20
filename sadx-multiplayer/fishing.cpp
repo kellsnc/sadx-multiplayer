@@ -90,32 +90,44 @@ static task* __cdecl SetFishingLureTask_r(task* tp)
 	return lure_tp;
 }
 
+#pragma region fishingCursorCtrl
+static auto MoveFishingCursor = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46F850, rEAX);
+
+static void fishingCursorCtrl_m(task* tp)
+{
+	auto twp = tp->twp;
+
+	if (twp->mode == 1)
+	{
+		auto pnum = TASKWK_PLAYERID(twp);
+		auto ptwp = playertwp[pnum];
+
+		if (!ptwp || (ptwp->mode < 32 || ptwp->mode > 37) && (ptwp->mode < 40 || ptwp->mode > 45))
+		{
+			FreeTask(tp);
+			return;
+		}
+
+		auto etc = GetBigEtc(pnum);
+		etc->water_level = tp->awp->work.f[1];
+
+		twp->ang.y += 0x200;
+
+		//setCameraFishingTgt_m(tp);
+		MoveFishingCursor(tp);
+
+		ptwp->ang.y = 0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - ptwp->pos.x, twp->pos.z - ptwp->pos.z));
+		playermwp[pnum]->ang_aim.y = ptwp->ang.y;
+	}
+
+	tp->disp(tp);
+}
+
 static void __cdecl fishingCursorCtrl_r(task* tp)
 {
-	if (multiplayer::IsEnabled())
+	if (multiplayer::IsEnabled() && tp->twp->mode != 0)
 	{
-		auto pnum = tp->twp->btimer;
-
-		if (pnum)
-		{
-			auto backup_pwp = playerpwp[0];
-			auto backup_twp = playertwp[0];
-			auto backup_per = per[0];
-			auto backup_ana = input_dataG[0];
-			playerpwp[0] = playerpwp[pnum];
-			playertwp[0] = playertwp[pnum];
-			per[0] = per[pnum];
-			input_dataG[0] = input_dataG[pnum];
-			TARGET_DYNAMIC(fishingCursorCtrl)(tp);
-			playerpwp[0] = backup_pwp;
-			playertwp[0] = backup_twp;
-			per[0] = backup_per;
-			input_dataG[0] = backup_ana;
-		}
-		else
-		{
-			TARGET_DYNAMIC(fishingCursorCtrl)(tp);
-		}
+		fishingCursorCtrl_m(tp);
 	}
 	else
 	{
@@ -126,9 +138,10 @@ static void __cdecl fishingCursorCtrl_r(task* tp)
 static task* __cdecl SetFishingCursorTask_r(task* tp)
 {
 	auto cursor_tp = TARGET_DYNAMIC(SetFishingCursorTask)(tp);
-	cursor_tp->twp->btimer = TASKWK_PLAYERID(tp->twp);
+	TASKWK_PLAYERID(cursor_tp->twp) = TASKWK_PLAYERID(tp->twp);
 	return cursor_tp;
 }
+#pragma endregion
 
 static void BigStateInit_r()
 {
