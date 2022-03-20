@@ -5,18 +5,11 @@
 
 DataArray(NJS_TEXANIM, reel_anim, 0x91BAB0, 9);
 
-NJS_SPRITE reel_sprite = { { 1.0f, 1.0f, 1.0f }, 1.0f, 1.0f, 0, &FISHING_TEXLIST, &reel_anim };
+static NJS_SPRITE reel_sprite = { { 1.0f, 1.0f, 1.0f }, 1.0f, 1.0f, 0, &FISHING_TEXLIST, &reel_anim };
 
-void dispReelMeter_m(const SplitScreen::ScreenRatio* ratio, float _reel_tension)
+static void dispReelMeter_m(float x, float y, float scale, float _reel_tension)
 {
-    float screenX = HorizontalResolution * ratio->x;
-    float screenY = VerticalResolution * ratio->y;
-    float scaleY = VerticalStretch * ratio->h;
-    float scaleX = HorizontalStretch * ratio->w;
-    float scale = min(scaleX, scaleY);
-
-    float x = screenX + scaleX * 640.0f - 64.0f * scale;
-    float y = screenY + scaleY * 328.0f;
+    x -= 64.0f * scale;
 
     reel_sprite.p.x = x;
     reel_sprite.p.y = y;
@@ -45,28 +38,17 @@ void dispReelMeter_m(const SplitScreen::ScreenRatio* ratio, float _reel_tension)
     Draw2DLinesMaybe_Queue(&p2col, 4, 22046.18f, NJD_FILL, QueuedModelFlagsB_SomeTextureThing); // todo: fix late_DrawPolygon2D in includes
 }
 
-void dispHandleTexture_m(const SplitScreen::ScreenRatio* ratio, Angle _reel_angle)
+static void dispHandleTexture_m(float x, float y, float scale, Angle _reel_angle)
 {
-    float screenX = HorizontalResolution * ratio->x;
-    float screenY = VerticalResolution * ratio->y;
-    float scaleY = VerticalStretch * ratio->h;
-    float scaleX = HorizontalStretch * ratio->w;
-    float scale = min(scaleX, scaleY);
-
-    reel_sprite.p.x = screenX + scaleX * 640.0f - 64.0f * scale + 16.0f * scale;
-    reel_sprite.p.y = screenY + scaleY * 328.0f + 66.0f * scale;
+    reel_sprite.p.x = x - 64.0f * scale + 16.0f * scale;
+    reel_sprite.p.y = y + 66.0f * scale;
     reel_sprite.sx = reel_sprite.sy = scale;
     reel_sprite.ang = reel_angle;
     njDrawSprite2D_Queue(&reel_sprite, 1, 22046.182f, NJD_SPRITE_ALPHA | NJD_SPRITE_ANGLE, QueuedModelFlagsB_SomeTextureThing);
 }
 
-void dispDistanceLure_m(const SplitScreen::ScreenRatio* ratio, float dist)
+static void dispDistanceLure_m(float x, float y, float scale, float dist)
 {
-    float screenX = HorizontalResolution * ratio->x;
-    float screenY = VerticalResolution * ratio->y;
-    float scaleY = VerticalStretch * ratio->h;
-    float scaleX = HorizontalStretch * ratio->w;
-    float scale = min(scaleX, scaleY);
     _SC_NUMBERS pscn;
 
     njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
@@ -79,22 +61,32 @@ void dispDistanceLure_m(const SplitScreen::ScreenRatio* ratio, float dist)
     pscn.max = 99;
     pscn.color = 0xFFFFFFFF;
     pscn.value = (dist * 0.1f);
-    pscn.pos.x = screenX + scaleX * 640.0f - 64.0f * scale - 21.0 * scale;
-    pscn.pos.y = screenY + scaleY * 328.0f + 90.0f * scale;
+    pscn.pos.x = x - 64.0f * scale - 21.0 * scale;
+    pscn.pos.y = y + 90.0f * scale;
     pscn.pos.z = 0.0f;
     DrawSNumbers(&pscn);
     ResetMaterial();
 }
 
-void DrawFishingMeter_(int pnum, float _reel_length_d, float _reel_tension, Angle _reel_angle)
+static void dispReelMeterAll(float x, float y, float scale, float _reel_length_d, float _reel_tension, Angle _reel_angle)
+{
+    dispReelMeter_m(x, y, scale, _reel_tension);
+    dispHandleTexture_m(x, y, scale, _reel_angle);
+    dispDistanceLure_m(x, y, scale, _reel_length_d);
+}
+
+static void DrawFishingMeter_Screen(int pnum, float _reel_length_d, float _reel_tension, Angle _reel_angle)
 {
     if (SplitScreen::GetCurrentScreenNum() == pnum)
     {
         auto ratio = SplitScreen::GetScreenRatio(pnum);
 
-        dispReelMeter_m(ratio, _reel_tension);
-        dispHandleTexture_m(ratio, _reel_angle);
-        dispDistanceLure_m(ratio, _reel_length_d);
+        float scaleX = HorizontalStretch * ratio->w;
+        float scaleY = VerticalStretch * ratio->h;
+
+        dispReelMeterAll(HorizontalResolution * ratio->x + scaleX * 640.0f,
+            VerticalResolution * ratio->y + scaleY * 328.0f,
+            min(scaleX, scaleY), _reel_length_d, _reel_tension, _reel_angle);
     }
 }
 
@@ -106,11 +98,11 @@ void DrawFishingMeter(int pnum, float _reel_length_d, float _reel_tension, Angle
     {
         SplitScreen::SaveViewPort();
         SplitScreen::ChangeViewPort(-1);
-        DrawFishingMeter_(pnum, _reel_length_d, _reel_tension, _reel_angle);
+        DrawFishingMeter_Screen(pnum, _reel_length_d, _reel_tension, _reel_angle);
         SplitScreen::RestoreViewPort();
     }
     else
     {
-        DrawFishingMeter_(pnum, _reel_length_d, _reel_tension, _reel_angle);
+        DrawFishingMeter_Screen(pnum, _reel_length_d, _reel_tension, _reel_angle);
     }
 }
