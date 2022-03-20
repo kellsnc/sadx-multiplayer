@@ -110,6 +110,31 @@ struct sParabola
 	NJS_POINT3 speed;
 };
 
+struct Mass
+{
+	NJS_POINT3 trans[12];
+	NJS_POINT3 velocity[12];
+	NJS_POINT3 acceleration[12];
+};
+
+struct String
+{
+	Mass mass;
+	unsigned int flag;
+};
+
+struct _SC_NUMBERS
+{
+	unsigned __int8 type;
+	unsigned __int8 attr;
+	__int16 rot;
+	unsigned int max;
+	unsigned int value;
+	NJS_POINT3 pos;
+	float scl;
+	unsigned int color;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -228,6 +253,35 @@ DataArray(sMRacePath*, PPT_MRaceEachStage, 0x91C0B8, 10);
 DataArray(int*, MPT_MRaceEachStage, 0x91C0E0, 10);
 DataPointer(taskwk*, rd_mountain_twp, 0x03C80F84);
 FunctionPointer(void, SetParabolicMotionP, (int playerNum, float a2, NJS_VECTOR* a3), 0x446D90);
+FunctionPointer(void, DrawSNumbers, (_SC_NUMBERS* pscn), 0x427BB0);
+
+DataPointer(int, SakanaNum, 0x3C524E8);
+DataPointer(int, Big_Fish_Flag, 0x3C524EC);
+DataPointer(int, Big_Sakana_Weight_Limit, 0x3C524F0);
+DataPointer(float, reel_tension_add, 0x3C524F4);
+DataPointer(task*, Big_Fish_Ptr, 0x3C524F8);
+DataPointer(int, Big_Fishing_Timer, 0x3C524FC);
+DataPointer(task*, Big_Lure_Ptr, 0x3C52500);
+DataPointer(NJS_POINT3, big_item_pos, 0x3C52504);
+DataPointer(int, Big_Sakana_Weight, 0x3C52510);
+DataPointer(int, Big_Sakana_Kind_High, 0x3C52514);
+DataPointer(int, Big_Stg12_Flag, 0x3C52518);
+DataPointer(__int16, Big_Sakana_Weight_High, 0x3C5251C);
+DataPointer(float, water_level, 0x3C52520);
+DataPointer(float, reel_length, 0x3C52524);
+DataPointer(float, reel_length_d, 0x3C52528);
+DataPointer(float, reel_tension, 0x3C5252C);
+DataPointer(float, reel_tension_aim, 0x3C52530);
+DataPointer(Angle, reel_angle, 0x3C52534);
+DataPointer(int, caution_timer, 0x3C52538);
+DataArray(NJS_OBJECT*, lure_kind, 0x3C5253C, 7);
+DataPointer(SaveFileData, sd, 0x3C52558);
+DataPointer(float, distance, 0x3C52AC8);
+DataPointer(float, distancep, 0x3C52ACC);
+FunctionPointer(float, BigChkHeavyWeight, (), 0x46F7D0);
+FunctionPointer(BOOL, GetMiClearStatus, (), 0x590650);
+FunctionPointer(int, getLureKind, (), 0x46C870);
+FunctionPointer(void, String_Dsp, (String* ___this), 0x4BFD40);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

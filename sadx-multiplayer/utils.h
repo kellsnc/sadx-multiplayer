@@ -1,5 +1,11 @@
 #pragma once
 
+#define MAKEVARMULTI(type, name, addr) \
+	static type name##P2{}; \
+	static type name##P3{}; \
+	static type name##P4{}; \
+	static type* const name##_m[PLAYER_MAX] = { (type*)addr, &##name##P2, &##name##P3, &##name##P4 };
+
 void DrawSADXText(const char* text, __int16 y);
 int MenuSelectButtonsPressedM(int pnum);
 int MenuBackButtonsPressedM(int pnum);

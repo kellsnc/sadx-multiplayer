@@ -202,6 +202,15 @@
     <ClCompile Include="objects\PathKassha.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\BigTheCat.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="fishing.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="hud_fishing.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -302,6 +311,12 @@
     </ClInclude>
     <ClInclude Include="milesrace.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="fishing.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_fishing.h">
+      <Filter>Header FIles\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,7 @@
 #include "sound.h"
 #include "result.h"
 #include "milesrace.h"
+#include "fishing.h"
 #include "testspawn.h"
 
 const HelperFunctions* gHelperFunctions;
@@ -41,6 +42,7 @@ extern "C"
 		TestSpawn();
 		InitEmeraldRadar();
 		InitMilesRace();
+		InitFishing();
 
 		delete config;
 	}
