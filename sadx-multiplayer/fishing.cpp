@@ -669,6 +669,21 @@ static void CalcLinePos_m(taskwk* twp, NJS_POINT3* ret)
 	njPopMatrixEx();
 }
 
+static void CalcLineLength(BIGETC* etc, taskwk* ptwp, NJS_POINT3* line_pos_p) // custom, originally in display function
+{
+	etc->reel_length = GetDistance(line_pos_p, &ptwp->pos);
+
+	if (etc->reel_length > etc->reel_length_d)
+	{
+		etc->reel_length_d = etc->reel_length;
+	}
+
+	if (etc->reel_length_d >= etc->reel_length + 5.0f)
+	{
+		etc->reel_length_d = etc->reel_length + 5.0f;
+	}
+}
+
 static void CalcRodPos_m(taskwk* ptwp, playerwk* ppwp, NJS_POINT3* rod_pos_p)
 {
 	NJS_VECTOR v = { 0.0f, ppwp->p.center_height, 0.0f };
@@ -921,6 +936,7 @@ static void fishingLureCtrl_m(task* tp)
 		{
 			CalcLinePos_m(twp, &line_pos);
 			String_Exe(lure->string, &rod_pos, &line_pos, 0);
+			CalcLineLength(etc, ptwp, &line_pos);
 		}
 
 		EntryColliList(twp);
@@ -942,6 +958,7 @@ static void fishingLureCtrl_m(task* tp)
 		{
 			CalcLinePos_m(twp, &line_pos);
 			String_Exe(lure->string, &rod_pos, &line_pos, 0);
+			CalcLineLength(etc, ptwp, &line_pos);
 		}
 
 		if (GetLevelType() == 1 && GameMode != MD_GAME_FADEOUT_CHANGE2 || IsLevelChaoGarden())
@@ -1000,7 +1017,8 @@ static void fishingLureCtrl_m(task* tp)
 		if (lure->string)
 		{
 			CalcLinePos_m(twp, &line_pos);
-			String_Exe(lure->string, &rod_pos, &line_pos, 0);
+			String_Exe(lure->string, &rod_pos, &line_pos, 1);
+			CalcLineLength(etc, ptwp, &line_pos);
 		}
 
 		if ((per[pnum]->on & Buttons_L) && (per[pnum]->on & Buttons_L) && !(etc->Big_Fish_Flag & LUREFLAG_1))
@@ -1102,7 +1120,8 @@ static void fishingLureCtrl_m(task* tp)
 			if (lure->string)
 			{
 				CalcLinePos_m(twp, &line_pos);
-				String_Exe(lure->string, &rod_pos, &line_pos, 0);
+				String_Exe(lure->string, &rod_pos, &line_pos, 1);
+				CalcLineLength(etc, ptwp, &line_pos);
 			}
 		}
 		break;
