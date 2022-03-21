@@ -135,6 +135,21 @@ struct _SC_NUMBERS
 	unsigned int color;
 };
 
+struct Big_ydata
+{
+	int attr;
+	int angx;
+	int angz;
+	float ypos;
+};
+
+struct Big_ypos
+{
+	Big_ydata top;
+	Big_ydata bottom;
+	Big_ydata water;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
