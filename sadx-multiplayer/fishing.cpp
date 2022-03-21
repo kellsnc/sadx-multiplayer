@@ -1092,6 +1092,34 @@ static void fishingLureCtrl_m(task* tp)
 
 		break;
 	case MODE_LURE_HIT:
+		//setLureCameraPos_m(tp);
+		MoveFishingLureSink_m(twp, mwp, etc, &rod_pos, pnum);
+		moveFishingRotX_m(twp, mwp, etc, pnum);
+		moveFishingRotY(tp);
+		moveFishingRotZ_m(twp, mwp, etc, &rod_pos);
+
+		if (lure->string)
+		{
+			CalcLinePos_m(twp, &line_pos);
+			String_Exe(lure->string, &rod_pos, &line_pos, 1);
+			CalcLineLength(etc, ptwp, &line_pos);
+		}
+
+		if (etc->Big_Lure_Ptr || etc->Big_Fish_Flag & LUREFLAG_1)
+		{
+			if (ChkFishingThrowNow_m(ptwp))
+			{
+				setLureSetup_m(tp, etc);
+			}
+		}
+		else
+		{
+			if (twp->mode == MODE_LURE_HIT)
+			{
+				twp->mode = MODE_LURE_FISHING;
+			}
+			BGM_Replay();
+		}
 		break;
 	case MODE_LURE_RETURN:
 	case MODE_LURE_RETURN_GET:
