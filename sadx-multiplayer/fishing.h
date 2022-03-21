@@ -1,9 +1,9 @@
 #pragma once
 
-struct BIGETC // struct doesn't actually exists, but all of the global variables are adjacent
+__declspec(align(4)) struct BIGETC // struct doesn't actually exists, but all of the global variables are adjacent
 {
 	int Sakanu_Num;
-	int Big_Fish_Flag;
+	__int16 Big_Fish_Flag;
 	int Big_Sakana_Weight_Limit;
 	float reel_tension_add;
 	task* Big_Fish_Ptr;

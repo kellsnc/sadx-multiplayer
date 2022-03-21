@@ -17,7 +17,7 @@ enum : __int32
 	MODE_LURE_END = 0x9,
 };
 
-enum : __int32
+enum : __int16
 {
 	LUREFLAG_1 = 0x1,
 	LUREFLAG_2 = 0x2,
@@ -498,7 +498,7 @@ static void fishingLureCtrl_m(task* tp)
 
 			if (twp->mode == MODE_LURE_FISHING)
 			{
-				etc->Big_Fish_Flag |= 0x40;
+				etc->Big_Fish_Flag |= LUREFLAG_40;
 				etc->big_item_pos = twp->pos;
 				etc->reel_length_d = etc->reel_length;
 				mwp->spd.x *= 0.25f;
@@ -602,6 +602,8 @@ static void fishingLureCtrl_m(task* tp)
 
 		if (ReturnFishingLure_m(twp, mwp, &rod_pos))
 		{
+			ppwp->free.sb[0] |= 4; // cancel fish mode
+
 			etc->Big_Fish_Flag &= ~LUREFLAG_40;
 			if (etc->Big_Fish_Ptr)
 			{

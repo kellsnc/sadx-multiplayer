@@ -273,7 +273,7 @@ TaskFunc(exitFishingLure, 0x46C8D0);
 TaskFunc(dispFishingLure, 0x470580);
 
 DataPointer(int, SakanaNum, 0x3C524E8);
-DataPointer(int, Big_Fish_Flag, 0x3C524EC);
+DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);
 DataPointer(int, Big_Sakana_Weight_Limit, 0x3C524F0);
 DataPointer(float, reel_tension_add, 0x3C524F4);
 DataPointer(task*, Big_Fish_Ptr, 0x3C524F8);
