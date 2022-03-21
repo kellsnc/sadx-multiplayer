@@ -299,6 +299,7 @@ FunctionPointer(float, BigChkHeavyWeight, (), 0x46F7D0);
 FunctionPointer(BOOL, GetMiClearStatus, (), 0x590650);
 FunctionPointer(int, getLureKind, (), 0x46C870);
 FunctionPointer(void, String_Dsp, (String* ___this), 0x4BFD40);
+FunctionPointer(int, BGM_Replay, (), 0x4256E0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
