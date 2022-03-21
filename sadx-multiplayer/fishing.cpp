@@ -135,6 +135,190 @@ static void __cdecl dispFishingLureSwitch_r(task* tp)
 #pragma endregion
 
 #pragma region fishingLureCtrl
+static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* vec_p, int pnum)
+{
+	auto fish_tp = etc->Big_Fish_Ptr;
+
+	if (fish_tp)
+	{
+		auto pper = per[pnum];
+		auto fish_mwp = fish_tp->mwp;
+		float weight = fish_mwp && fish_mwp->weight == 0.0f ? 0.1f : fish_mwp->weight * 0.0001f;
+		
+		if (etc->Big_Fish_Flag & LUREFLAG_1)
+		{
+			if (pper->on & (AttackButtons | JumpButtons))
+			{
+				etc->reel_tension_add += 0.0005f;
+			}
+			else
+			{
+				if (etc->reel_tension_add > 0.0f)
+				{
+					etc->reel_tension_add -= 0.001f;
+				}
+			}
+
+			if ((etc->Big_Fish_Flag & LUREFLAG_20) && etc->reel_tension_add > 0.0f)
+				etc->reel_tension_add -= 0.001f;
+
+			float idk = njCos(etc->Big_Fish_Ptr->twp->ang.y - mwp->ang_aim.y) * njScalor(&etc->Big_Fish_Ptr->mwp->spd);
+
+			if (etc->Big_Fish_Flag & LUREFLAG_8)
+			{
+				if (idk >= 0.0f)
+				{
+					idk = weight + weight;
+				}
+				else
+				{
+					etc->reel_tension_aim = weight * 1.1f - idk * 2.1f;
+					idk = rand() * 0.00003f * (0.24 - weight) * 1.2f + etc->reel_tension_aim;
+				}
+
+				if (idk < 0.5f)
+				{
+					if (pper->on & JumpButtons)
+					{
+						idk += 0.5f;
+					}
+					else if (pper->on & AttackButtons)
+					{
+						idk += 0.3f;
+					}
+				}
+
+				etc->reel_tension_aim = idk + etc->reel_tension_add;
+				if (etc->Big_Fishing_Timer > 1800 && etc->reel_tension_aim > 0.8f)
+				{
+					etc->reel_tension_aim = etc->reel_tension_aim - 0.1f;
+				}
+
+				njAddVector(vec_p, &mwp->spd);
+			}
+			else
+			{
+				if (idk >= 0.0f)
+				{
+					idk = weight;
+				}
+				else
+				{
+					idk = weight - (idk + idk);
+				}
+
+				if (idk < 0.5f)
+				{
+					if (pper->on & JumpButtons)
+					{
+						idk += 0.5f;
+					}
+					else if (pper->on & AttackButtons)
+					{
+						idk += 0.3f;
+					}
+				}
+
+				etc->reel_tension_aim = idk + etc->reel_tension_add;
+			}
+		}
+		else
+		{
+			if (etc->reel_tension_add > 0.0f)
+			{
+				etc->reel_tension_add -= 0.001f;
+			}
+
+			if (etc->Big_Fish_Flag & LUREFLAG_20)
+			{
+				etc->reel_tension_aim = 0.1f;
+			}
+			else
+			{
+				etc->reel_tension_aim = 0.2f;
+			}
+		}
+	}
+	else
+	{
+		etc->reel_tension_aim = 0.1f;
+	}
+
+	etc->reel_tension_aim += (float)((double)rand() * 0.000030517578 * 0.1);
+	
+	if (!loop_count)
+	{
+		if (etc->reel_tension_aim != etc->reel_tension)
+		{
+			float diff = etc->reel_tension_aim - etc->reel_tension;
+			if (diff <= 0.02f)
+			{
+				if (diff >= -0.02f)
+				{
+					if (diff <= 0.002f)
+					{
+						if (diff >= -0.002f)
+						{
+							etc->reel_tension = reel_tension_aim;
+						}
+						else
+						{
+							etc->reel_tension -= 0.0011764707;
+						}
+					}
+					else
+					{
+						etc->reel_tension += 0.0011764707;
+					}
+				}
+				else
+				{
+					etc->reel_tension -= 0.011764705;
+				}
+			}
+			else
+			{
+				etc->reel_tension += 0.01176470561939127;
+			}
+		}
+		if (etc->reel_tension >= 0.0f)
+		{
+			if (etc->reel_tension >= 1.0f)
+			{
+				etc->reel_tension = 1.0f;
+				dsStop_num(855);
+				etc->Big_Fish_Flag |= 0x800;
+				PlayJingle(46);
+
+				if (etc->Big_Fish_Ptr)
+				{
+					//CreateBigDisplayFishWeight(etc->Big_Fish_Ptr->mwp->weight, 999);
+				}
+			}
+		}
+		else
+		{
+			etc->reel_tension = 0.0f;
+		}
+	}
+
+	if (etc->caution_timer)
+	{
+		--etc->caution_timer;
+	}
+
+	if (etc->reel_tension < 0.8f)
+	{
+		dsStop_num(855);
+	}
+	else if (etc->caution_timer == 0)
+	{
+		dsStop_num(855);
+		dsPlay_oneshot(855, 0, 0, 0);
+		etc->caution_timer = 120;
+	}
+}
+
 static void setLureSpd_D_m(motionwk* mwp, BIGETC* etc)
 {
 	if (mwp->spd.x > 0.0f)
@@ -309,7 +493,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		}
 	}
 
-	if (((etc->Big_Fish_Flag & LUREFLAG_8) || !(etc->Big_Fish_Flag & 0x20)) && (etc->Big_Fish_Flag & LUREFLAG_1) && (AttackButtons & pper->off) && (JumpButtons & pper->off))
+	if (((etc->Big_Fish_Flag & LUREFLAG_8) || !(etc->Big_Fish_Flag & LUREFLAG_20)) && (etc->Big_Fish_Flag & LUREFLAG_1) && (AttackButtons & pper->off) && (JumpButtons & pper->off))
 	{
 		if (etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->mwp)
 		{
@@ -358,7 +542,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 			twp->pos.y += spd.y;
 			twp->pos.z += spd.z;
 
-			//calcTension(tp, &spd);
+			calcTension_m(twp, mwp, etc, &spd, pnum);
 
 			if (etc->reel_length > ppwp->equipment & Upgrades_PowerRod ? 400.0f : 300.0f)
 			{
@@ -461,7 +645,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		twp->pos.y += spd.y;
 		twp->pos.z += spd.z;
 
-		//calcTension(tp, &spd);
+		calcTension_m(twp, mwp, etc, &spd, pnum);
 
 		etc->reel_tension_aim += (float)((double)rand() * 0.000030517578 * 0.1);
 
