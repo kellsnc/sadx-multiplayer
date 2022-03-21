@@ -271,6 +271,8 @@ FunctionPointer(void, SetParabolicMotionP, (int playerNum, float a2, NJS_VECTOR*
 FunctionPointer(void, DrawSNumbers, (_SC_NUMBERS* pscn), 0x427BB0);
 TaskFunc(exitFishingLure, 0x46C8D0);
 TaskFunc(dispFishingLure, 0x470580);
+FunctionPointer(int, BGM_Replay, (), 0x4256E0);
+FunctionPointer(BOOL, BigSetPosition, (NJS_POINT3* p, NJS_POINT3* v, Angle3* a, float r), 0x46F130);
 
 DataPointer(int, SakanaNum, 0x3C524E8);
 DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);
@@ -298,8 +300,9 @@ DataPointer(float, distancep, 0x3C52ACC);
 FunctionPointer(float, BigChkHeavyWeight, (), 0x46F7D0);
 FunctionPointer(BOOL, GetMiClearStatus, (), 0x590650);
 FunctionPointer(int, getLureKind, (), 0x46C870);
+FunctionPointer(void, String_IniEasy, (String* ___this, const NJS_POINT3* v0, const NJS_POINT3* vN), 0x4BF860);
+FunctionPointer(void, String_Exe, (String* ___this, const NJS_POINT3* v0, const NJS_POINT3* vN, int mode), 0x4BFCA0);
 FunctionPointer(void, String_Dsp, (String* ___this), 0x4BFD40);
-FunctionPointer(int, BGM_Replay, (), 0x4256E0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
