@@ -25,23 +25,6 @@ enum : __int32
 	MODE_LURE_END = 0x9,
 };
 
-enum : __int16 // made up
-{
-	LUREFLAG_HIT = 0x1,       // Hit mode
-	LUREFLAG_RELEASE = 0x2,   // Fish released
-	LUREFLAG_RANGEOUT = 0x4,  // Hook outside of range
-	LUREFLAG_8 = 0x8,
-	LUREFLAG_10 = 0x10,
-	LUREFLAG_SWING = 0x20,    // Move line left/right
-	LUREFLAG_FISH = 0x40,     // Currently fishing
-	LUREFLAG_HOOK = 0x80,     // Hot shelter hook
-	LUREFLAG_GET = 0x800,     // Fish caught
-	LUREFLAG_1000 = 0x1000,
-	LUREFLAG_PTCL = 0x2000,   // Particule spawned
-	LUREFLAG_4000 = 0x4000,
-	LUREFLAG_LAUNCH = 0x8000, // Enable fishing
-};
-
 struct lurewk
 {
 	void* unk0;

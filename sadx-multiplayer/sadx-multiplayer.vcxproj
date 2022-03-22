@@ -188,6 +188,7 @@
     <ClCompile Include="objects\RdHotShelter.cpp" />
     <ClCompile Include="objects\Rd_Highway.cpp" />
     <ClCompile Include="objects\Rd_Snow.cpp" />
+    <ClCompile Include="objects\Sakana.cpp" />
     <ClCompile Include="objects\SnowBoard.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">

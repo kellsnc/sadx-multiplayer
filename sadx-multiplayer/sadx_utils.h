@@ -275,7 +275,7 @@ TaskFunc(dispFishingLure, 0x470580);
 FunctionPointer(int, BGM_Replay, (), 0x4256E0);
 FunctionPointer(BOOL, BigSetPosition, (NJS_POINT3* p, NJS_POINT3* v, Angle3* a, float r), 0x46F130);
 
-DataPointer(int, SakanaNum, 0x3C524E8);
+DataPointer(int, Sakana_Num, 0x3C524E8);
 DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);
 DataPointer(int, Big_Sakana_Weight_Limit, 0x3C524F0);
 DataPointer(float, reel_tension_add, 0x3C524F4);
