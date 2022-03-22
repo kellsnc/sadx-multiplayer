@@ -3,6 +3,14 @@
 #include "hud_fishing.h";
 #include "fishing.h"
 
+/*
+
+Fishing system patch
+The game uses several global variables and player 1 pointers throughout the entire system
+I packed all global variables into a struct and rewrote most of the system for multiplayer.
+
+*/
+
 enum : __int32
 {
 	MODE_LURE_INIT = 0x0,
@@ -17,21 +25,21 @@ enum : __int32
 	MODE_LURE_END = 0x9,
 };
 
-enum : __int16
+enum : __int16 // made up
 {
-	LUREFLAG_1 = 0x1,
-	LUREFLAG_2 = 0x2,
-	LUREFLAG_4 = 0x4,
+	LUREFLAG_HIT = 0x1,       // Hit mode
+	LUREFLAG_RELEASE = 0x2,   // Fish released
+	LUREFLAG_RANGEOUT = 0x4,  // Hook outside of range
 	LUREFLAG_8 = 0x8,
 	LUREFLAG_10 = 0x10,
-	LUREFLAG_20 = 0x20,
-	LUREFLAG_40 = 0x40,
-	LUREFLAG_80 = 0x80,
-	LUREFLAG_800 = 0x800,
+	LUREFLAG_SWING = 0x20,    // Move line left/right
+	LUREFLAG_FISH = 0x40,     // Currently fishing
+	LUREFLAG_HOOK = 0x80,     // Hot shelter hook
+	LUREFLAG_GET = 0x800,     // Fish caught
 	LUREFLAG_1000 = 0x1000,
-	LUREFLAG_2000 = 0x2000,
+	LUREFLAG_PTCL = 0x2000,   // Particule spawned
 	LUREFLAG_4000 = 0x4000,
-	LUREFLAG_8000 = 0x8000,
+	LUREFLAG_LAUNCH = 0x8000, // Enable fishing
 };
 
 struct lurewk
@@ -86,7 +94,7 @@ static void __cdecl dispFishingLure_m(task* tp)
 		njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
 		ResetMaterial();
 
-		if (!(etc->Big_Fish_Flag & LUREFLAG_800))
+		if (!(etc->Big_Fish_Flag & LUREFLAG_GET))
 		{
 			njPushMatrixEx();
 			njTranslateEx(&twp->pos);
@@ -149,6 +157,7 @@ static void __cdecl DustTextureCtrl_m(task* tp)
 		twp->mode = 1i8;
 		break;
 	case 1i8:
+	{
 		if (twp->counter.l != 7)
 		{
 			if (!--twp->wtimer)
@@ -165,9 +174,11 @@ static void __cdecl DustTextureCtrl_m(task* tp)
 		auto etc = GetBigEtc(twp->btimer);
 		if (etc)
 		{
-			etc->Big_Fish_Flag &= ~LUREFLAG_2000;
+			etc->Big_Fish_Flag &= ~LUREFLAG_PTCL;
 		}
+
 		break;
+	}
 	case 2i8:
 		if (twp->value.f <= 0.0f)
 		{
@@ -209,7 +220,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 		auto fish_mwp = fish_tp->mwp;
 		float weight = fish_mwp && fish_mwp->weight == 0.0f ? 0.1f : fish_mwp->weight * 0.0001f;
 		
-		if (etc->Big_Fish_Flag & LUREFLAG_1)
+		if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 		{
 			if (pper->on & (AttackButtons | JumpButtons))
 			{
@@ -223,7 +234,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 				}
 			}
 
-			if ((etc->Big_Fish_Flag & LUREFLAG_20) && etc->reel_tension_add > 0.0f)
+			if ((etc->Big_Fish_Flag & LUREFLAG_SWING) && etc->reel_tension_add > 0.0f)
 				etc->reel_tension_add -= 0.001f;
 
 			float idk = njCos(etc->Big_Fish_Ptr->twp->ang.y - mwp->ang_aim.y) * njScalor(&etc->Big_Fish_Ptr->mwp->spd);
@@ -293,7 +304,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 				etc->reel_tension_add -= 0.001f;
 			}
 
-			if (etc->Big_Fish_Flag & LUREFLAG_20)
+			if (etc->Big_Fish_Flag & LUREFLAG_SWING)
 			{
 				etc->reel_tension_aim = 0.1f;
 			}
@@ -351,7 +362,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 			{
 				etc->reel_tension = 1.0f;
 				dsStop_num(855);
-				etc->Big_Fish_Flag |= 0x800;
+				etc->Big_Fish_Flag |= LUREFLAG_GET;
 				PlayJingle(46);
 
 				if (etc->Big_Fish_Ptr)
@@ -408,14 +419,14 @@ static void setLureReturn_m(taskwk* twp, BIGETC* etc, int pnum)
 	if ((GetLevelType() != 1 || GameMode == MD_GAME_FADEOUT_CHANGE2) && !IsLevelChaoGarden())
 	{
 		dsStop_num(845);
-		etc->Big_Fish_Flag &= ~LUREFLAG_40;
+		etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 
 		//if (twp->mode > 4)
 		//	CameraReleaseCollisionCamera();
 		//else
 		//	CameraReleaseEventCamera();
 
-		if (etc->Big_Fish_Flag & LUREFLAG_1)
+		if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 		{
 			BGM_Replay();
 
@@ -478,7 +489,7 @@ static void setLureSpd_D_m(motionwk* mwp, BIGETC* etc)
 		mwp->spd.z = 0.0f;
 	}
 
-	if (etc->Big_Fish_Flag & LUREFLAG_1)
+	if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 	{
 		if (etc->Big_Fish_Flag & LUREFLAG_10)
 		{
@@ -521,7 +532,7 @@ static void setLureSpd_D_m(motionwk* mwp, BIGETC* etc)
 
 static void setLureSpd_S_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* rod_pos_p, int pnum)
 {
-	float wratio = etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->awp && (etc->Big_Fish_Flag & LUREFLAG_1) ? 5000.0f / (etc->Big_Fish_Ptr->mwp->weight + 5000.0f) : 1.0f;
+	float wratio = etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->awp && (etc->Big_Fish_Flag & LUREFLAG_HIT) ? 5000.0f / (etc->Big_Fish_Ptr->mwp->weight + 5000.0f) : 1.0f;
 
 	auto _reel_angle = etc->reel_angle;
 	etc->reel_angle += 0x71C;
@@ -566,7 +577,7 @@ static void setLureSpd_S_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* 
 
 static void setLureSpd_L_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* rod_pos_p, int pnum)
 {
-	float wratio = etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->awp && (etc->Big_Fish_Flag & LUREFLAG_1) ? 5000.0f / (etc->Big_Fish_Ptr->mwp->weight + 5000.0f) : 1.0f;
+	float wratio = etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->awp && (etc->Big_Fish_Flag & LUREFLAG_HIT) ? 5000.0f / (etc->Big_Fish_Ptr->mwp->weight + 5000.0f) : 1.0f;
 
 	auto _reel_angle = etc->reel_angle;
 	etc->reel_angle += 0x11C7;
@@ -734,7 +745,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 	auto ptwp = playertwp[pnum];
 	auto ppwp = playerpwp[pnum];
 	auto pper = per[pnum];
-	float lure_radius = etc->Big_Fish_Flag & LUREFLAG_1 ? 1.5f : 0.5f;
+	float lure_radius = etc->Big_Fish_Flag & LUREFLAG_HIT ? 1.5f : 0.5f;
 
 	Big_ypos big_ypos;
 	calcFishingLureY(twp, &big_ypos, 3);
@@ -759,7 +770,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		}
 	}
 
-	if (((etc->Big_Fish_Flag & LUREFLAG_8) || !(etc->Big_Fish_Flag & LUREFLAG_20)) && (etc->Big_Fish_Flag & LUREFLAG_1) && (AttackButtons & pper->off) && (JumpButtons & pper->off))
+	if (((etc->Big_Fish_Flag & LUREFLAG_8) || !(etc->Big_Fish_Flag & LUREFLAG_SWING)) && (etc->Big_Fish_Flag & LUREFLAG_HIT) && (AttackButtons & pper->off) && (JumpButtons & pper->off))
 	{
 		if (etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->mwp)
 		{
@@ -812,7 +823,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 
 			if (etc->reel_length > ppwp->equipment & Upgrades_PowerRod ? 400.0f : 300.0f)
 			{
-				etc->Big_Fish_Flag |= LUREFLAG_4;
+				etc->Big_Fish_Flag |= LUREFLAG_RANGEOUT;
 			}
 
 			if (!(pper->on & AttackButtons) && !(pper->on & JumpButtons))
@@ -823,7 +834,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 	}
 	else
 	{
-		if (etc->Big_Fish_Flag & LUREFLAG_20)
+		if (etc->Big_Fish_Flag & LUREFLAG_SWING)
 		{
 			setLureSpd_Swing_m(twp, mwp, etc, rod_pos, pnum);
 		}
@@ -875,7 +886,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 
 		if (spd.y + twp->pos.y > max_pos)
 		{
-			if ((test3 || test4) && GetStageNumber() != LevelAndActIDs_EmeraldCoast1 && !(etc->Big_Fish_Flag & LUREFLAG_20))
+			if ((test3 || test4) && GetStageNumber() != LevelAndActIDs_EmeraldCoast1 && !(etc->Big_Fish_Flag & LUREFLAG_SWING))
 			{
 				setLureReturn_m(twp, etc, pnum);
 				return;
@@ -894,11 +905,11 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 			auto dst = njScalor(&spd);
 			etc->Big_Fish_Flag |= LUREFLAG_10;
 
-			if (!(etc->Big_Fish_Flag & LUREFLAG_2000) && dst >= 0.15f)
+			if (!(etc->Big_Fish_Flag & LUREFLAG_PTCL) && dst >= 0.15f)
 			{
 				setDustTextureCtrl_m(&twp->pos, twp->ang.y, pnum);
 				dsPlay_oneshot(854, 0, 0, 0);
-				etc->Big_Fish_Flag |= LUREFLAG_2000;
+				etc->Big_Fish_Flag |= LUREFLAG_PTCL;
 			}
 
 			if (dst <= 0.03f)
@@ -929,7 +940,7 @@ static void moveFishingRotX_m(taskwk* twp, motionwk* mwp, BIGETC* etc, int pnum)
 
 	mwp->ang_aim.y = 0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - ptwp->pos.x, twp->pos.z - ptwp->pos.z));
 
-	if (etc->Big_Fish_Flag & LUREFLAG_1)
+	if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 	{
 		if (twp->ang.x <= 0x8000)
 		{
@@ -1263,9 +1274,9 @@ static void fishingLureCtrl_m(task* tp)
 	case MODE_LURE_SETUP:
 		setLurePosWait_m(tp, etc, ptwp, &rod_pos);
 
-		if (etc->Big_Fish_Flag & LUREFLAG_8000)
+		if (etc->Big_Fish_Flag & LUREFLAG_LAUNCH)
 		{
-			etc->Big_Fish_Flag &= ~LUREFLAG_8000;
+			etc->Big_Fish_Flag &= ~LUREFLAG_LAUNCH;
 			twp->mode = MODE_LURE_WAIT;
 			twp->timer.l = 10;
 
@@ -1277,6 +1288,8 @@ static void fishingLureCtrl_m(task* tp)
 				lure->pos->z = cursor_tp->twp->pos.z;
 				FreeTask(cursor_tp);
 			}
+
+			etc->Big_Fish_Flag = 0;
 		}
 		break;
 	case MODE_LURE_WAIT:
@@ -1325,7 +1338,7 @@ static void fishingLureCtrl_m(task* tp)
 			}
 			else
 			{
-				etc->Big_Fish_Flag &= ~LUREFLAG_40;
+				etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 				twp->mode = MODE_LURE_RETURN;
 				dsPlay_oneshot(844, 0, 0, 0);
 			}
@@ -1348,14 +1361,14 @@ static void fishingLureCtrl_m(task* tp)
 			}
 			else
 			{
-				etc->Big_Fish_Flag &= ~LUREFLAG_40;
+				etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 				twp->mode = MODE_LURE_RETURN;
 				dsPlay_oneshot(844, 0, 0, 0);
 			}
 		}
 		else if (etc->distance > 500.0f && etc->distancep < etc->distance)
 		{
-			etc->Big_Fish_Flag &= ~LUREFLAG_40;
+			etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 			twp->mode = MODE_LURE_RETURN;
 			dsPlay_oneshot(844, 0, 0, 0);
 		}
@@ -1403,7 +1416,7 @@ static void fishingLureCtrl_m(task* tp)
 				}
 			}
 
-			etc->Big_Fish_Flag &= ~LUREFLAG_40;
+			etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 			twp->mode = MODE_LURE_RETURN;
 			//CameraReleaseEventCamera();
 		}
@@ -1417,14 +1430,14 @@ static void fishingLureCtrl_m(task* tp)
 
 			if (chkLureDistance_m(etc, &rod_pos, &twp->pos))
 			{
-				etc->Big_Fish_Flag &= ~LUREFLAG_40;
+				etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 				twp->mode = MODE_LURE_RETURN;
 				break;
 			}
 
 			if (twp->mode == MODE_LURE_FISHING)
 			{
-				etc->Big_Fish_Flag |= LUREFLAG_40;
+				etc->Big_Fish_Flag |= LUREFLAG_FISH;
 				etc->big_item_pos = twp->pos;
 				etc->reel_length_d = etc->reel_length;
 				mwp->spd.x *= 0.25f;
@@ -1451,7 +1464,7 @@ static void fishingLureCtrl_m(task* tp)
 			CalcLineLength(etc, ptwp, &line_pos);
 		}
 
-		if ((per[pnum]->on & Buttons_L) && (per[pnum]->on & Buttons_L) && !(etc->Big_Fish_Flag & LUREFLAG_1))
+		if ((per[pnum]->on & Buttons_L) && (per[pnum]->on & Buttons_L) && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
 		{
 			etc->Big_Fish_Flag |= LUREFLAG_4000;
 
@@ -1475,10 +1488,10 @@ static void fishingLureCtrl_m(task* tp)
 			}
 			*/
 
-			if ((etc->Big_Fish_Flag & LUREFLAG_80) && GetStageNumber() == LevelAndActIDs_HotShelter1 && !(etc->Big_Fish_Flag & LUREFLAG_1))
+			if ((etc->Big_Fish_Flag & LUREFLAG_HOOK) && GetStageNumber() == LevelAndActIDs_HotShelter1 && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
 			{
 				etc->Big_Fish_Flag |= LUREFLAG_4000;
-				etc->Big_Fish_Flag &= ~LUREFLAG_80;
+				etc->Big_Fish_Flag &= ~LUREFLAG_HOOK;
 
 				/*
 				CameraReleaseCollisionCamera();
@@ -1491,7 +1504,7 @@ static void fishingLureCtrl_m(task* tp)
 			{
 				if (etc->Big_Fish_Ptr)
 				{
-					etc->Big_Fish_Flag &= ~LUREFLAG_40;
+					etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 					twp->mode = MODE_LURE_RETURN;
 					dsStop_num(845);
 				}
@@ -1504,7 +1517,7 @@ static void fishingLureCtrl_m(task* tp)
 					break;
 				}
 
-				if (etc->Big_Fish_Flag & LUREFLAG_1)
+				if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 				{
 					twp->mode = MODE_LURE_HIT;
 					if (etc->Big_Fish_Ptr)
@@ -1513,7 +1526,7 @@ static void fishingLureCtrl_m(task* tp)
 						{
 							auto fish_twp = etc->Big_Fish_Ptr->twp;
 							if (fish_twp && fish_twp->pos.x == 750.0f && fish_twp->pos.y == 75.5f && fish_twp->pos.z == -650.0f)
-								etc->Big_Fish_Flag |= LUREFLAG_80;
+								etc->Big_Fish_Flag |= LUREFLAG_HOOK;
 						}
 					}
 				}
@@ -1535,7 +1548,7 @@ static void fishingLureCtrl_m(task* tp)
 			CalcLineLength(etc, ptwp, &line_pos);
 		}
 
-		if (etc->Big_Lure_Ptr || etc->Big_Fish_Flag & LUREFLAG_1)
+		if (etc->Big_Lure_Ptr || etc->Big_Fish_Flag & LUREFLAG_HIT)
 		{
 			if (ChkFishingThrowNow_m(ptwp))
 			{
@@ -1559,14 +1572,14 @@ static void fishingLureCtrl_m(task* tp)
 		{
 			ppwp->free.sb[0] |= 4; // cancel fish mode
 
-			etc->Big_Fish_Flag &= ~LUREFLAG_40;
+			etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 			if (etc->Big_Fish_Ptr)
 			{
-				if (etc->Big_Fish_Flag & LUREFLAG_1)
+				if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 				{
 					//CameraReleaseEventCamera();
 					//CameraSetEventCameraFunc(CameraFishingCatch, 0, 2);
-					etc->Big_Fish_Flag |= LUREFLAG_2;
+					etc->Big_Fish_Flag |= LUREFLAG_RELEASE;
 					//setCatchCameraPos(tp)
 				}
 			}
@@ -1613,6 +1626,17 @@ static task* __cdecl SetFishingLureTask_r(task* tp)
 #pragma region fishingCursorCtrl
 static auto MoveFishingCursor = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46F850, rEAX);
 
+static void MoveFishingCursor_m(task* tp, int pnum) // todo: rewrite properly
+{
+	auto backup_twp = playertwp[0];
+	auto backup_mwp = playermwp[0];
+	playertwp[0] = playertwp[pnum];
+	playermwp[0] = playermwp[pnum];
+	MoveFishingCursor(tp);
+	playertwp[0] = backup_twp;
+	playermwp[0] = backup_mwp;
+}
+
 static void fishingCursorCtrl_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -1634,7 +1658,7 @@ static void fishingCursorCtrl_m(task* tp)
 		twp->ang.y += 0x200;
 
 		//setCameraFishingTgt_m(tp);
-		MoveFishingCursor(tp); // <- todo: rewrite
+		MoveFishingCursor_m(tp, pnum);
 
 		ptwp->ang.y = 0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - ptwp->pos.x, twp->pos.z - ptwp->pos.z));
 		playermwp[pnum]->ang_aim.y = ptwp->ang.y;
