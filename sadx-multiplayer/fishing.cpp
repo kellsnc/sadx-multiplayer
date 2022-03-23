@@ -222,7 +222,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 
 			float idk = njCos(etc->Big_Fish_Ptr->twp->ang.y - mwp->ang_aim.y) * njScalor(&etc->Big_Fish_Ptr->mwp->spd);
 
-			if (etc->Big_Fish_Flag & LUREFLAG_8)
+			if (etc->Big_Fish_Flag & LUREFLAG_ESCAPE)
 			{
 				if (idk >= 0.0f)
 				{
@@ -231,7 +231,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 				else
 				{
 					etc->reel_tension_aim = weight * 1.1f - idk * 2.1f;
-					idk = etc->reel_tension_aim + ((float)rand() * 0.00003f * (0.24f - weight) * 1.2f);
+					idk = etc->reel_tension_aim + (float)((double)rand() * 0.00003 * (0.24f - weight) * 1.2);
 				}
 
 				if (idk < 0.5f)
@@ -474,7 +474,7 @@ static void setLureSpd_D_m(motionwk* mwp, BIGETC* etc)
 
 	if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 	{
-		if (etc->Big_Fish_Flag & LUREFLAG_10)
+		if (etc->Big_Fish_Flag & LUREFLAG_COL)
 		{
 			mwp->spd.y = 0.1f;
 		}
@@ -507,7 +507,7 @@ static void setLureSpd_D_m(motionwk* mwp, BIGETC* etc)
 		}
 	}
 
-	if (etc->Big_Fish_Flag & LUREFLAG_10)
+	if (etc->Big_Fish_Flag & LUREFLAG_COL)
 		mwp->spd.y = 0.0f;
 
 	dsStop_num(845);
@@ -549,7 +549,7 @@ static void setLureSpd_S_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* 
 		twp->ang.z = mwp->ang_aim.z + 0x2000;
 		if (per[pnum]->on & AttackButtons)
 		{
-			etc->Big_Fish_Flag |= LUREFLAG_1000;
+			etc->Big_Fish_Flag |= LUREFLAG_REEL;
 		}
 	}
 	else
@@ -594,7 +594,7 @@ static void setLureSpd_L_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* 
 		twp->ang.z = mwp->ang_aim.z + 0x2000;
 		if (per[pnum]->on & AttackButtons)
 		{
-			etc->Big_Fish_Flag |= LUREFLAG_1000;
+			etc->Big_Fish_Flag |= LUREFLAG_REEL;
 		}
 	}
 	else
@@ -752,7 +752,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		}
 	}
 
-	if (((etc->Big_Fish_Flag & LUREFLAG_8) || !(etc->Big_Fish_Flag & LUREFLAG_SWING)) && (etc->Big_Fish_Flag & LUREFLAG_HIT) && !(AttackButtons & pper->on) && !(JumpButtons & pper->on))
+	if (((etc->Big_Fish_Flag & LUREFLAG_ESCAPE) || !(etc->Big_Fish_Flag & LUREFLAG_SWING)) && (etc->Big_Fish_Flag & LUREFLAG_HIT) && !(AttackButtons & pper->on) && !(JumpButtons & pper->on))
 	{
 		if (etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->mwp)
 		{
@@ -885,7 +885,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 			twp->pos.y = min_pos;
 
 			auto dst = njScalor(&spd);
-			etc->Big_Fish_Flag |= LUREFLAG_10;
+			etc->Big_Fish_Flag |= LUREFLAG_COL;
 
 			if (!(etc->Big_Fish_Flag & LUREFLAG_PTCL) && dst >= 0.15f)
 			{
@@ -941,7 +941,7 @@ static void moveFishingRotX_m(taskwk* twp, motionwk* mwp, BIGETC* etc, int pnum)
 			}
 		}
 	}
-	else if (etc->Big_Fish_Flag & LUREFLAG_10)
+	else if (etc->Big_Fish_Flag & LUREFLAG_COL)
 	{
 		if (twp->ang.x < 0)
 		{
@@ -1017,7 +1017,7 @@ static void moveFishingRotX_m(taskwk* twp, motionwk* mwp, BIGETC* etc, int pnum)
 
 static void moveFishingRotZ_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* rod_pos)
 {
-	if ((etc->Big_Fish_Flag & LUREFLAG_10) || GetStageNumber() != LevelAndActIDs_IceCap4)
+	if ((etc->Big_Fish_Flag & LUREFLAG_COL) || GetStageNumber() != LevelAndActIDs_IceCap4)
 	{
 		mwp->ang_aim.z = 0;
 	}
@@ -1448,7 +1448,7 @@ static void fishingLureCtrl_m(task* tp)
 
 		if ((per[pnum]->on & Buttons_L) && (per[pnum]->on & Buttons_L) && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
 		{
-			etc->Big_Fish_Flag |= LUREFLAG_4000;
+			etc->Big_Fish_Flag |= LUREFLAG_CANCEL;
 
 			/*
 			CameraReleaseCollisionCamera();
@@ -1469,47 +1469,47 @@ static void fishingLureCtrl_m(task* tp)
 				}
 			}
 			*/
+		}
 
-			if ((etc->Big_Fish_Flag & LUREFLAG_HOOK) && GetStageNumber() == LevelAndActIDs_HotShelter1 && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
+		if ((etc->Big_Fish_Flag & LUREFLAG_HOOK) && GetStageNumber() == LevelAndActIDs_HotShelter1 && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
+		{
+			etc->Big_Fish_Flag |= LUREFLAG_CANCEL;
+			etc->Big_Fish_Flag &= ~LUREFLAG_HOOK;
+
+			/*
+			CameraReleaseCollisionCamera();
+			SetCameraEvent(sub_46E4C0, 0, 2);
+			setCatchCameraPos(tp);
+			*/
+		}
+
+		if (etc->Big_Fish_Flag & LUREFLAG_CANCEL)
+		{
+			if (etc->Big_Fish_Ptr)
 			{
-				etc->Big_Fish_Flag |= LUREFLAG_4000;
-				etc->Big_Fish_Flag &= ~LUREFLAG_HOOK;
-
-				/*
-				CameraReleaseCollisionCamera();
-				SetCameraEvent(sub_46E4C0, 0, 2);
-				setCatchCameraPos(tp);
-				*/
+				etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
+				twp->mode = MODE_LURE_RETURN;
+				dsStop_num(845);
+			}
+		}
+		else
+		{
+			if (ChkFishingThrowNow_m(pnum))
+			{
+				setLureSetup_m(tp, etc);
+				break;
 			}
 
-			if (etc->Big_Fish_Flag & LUREFLAG_4000)
+			if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 			{
+				twp->mode = MODE_LURE_HIT;
 				if (etc->Big_Fish_Ptr)
 				{
-					etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
-					twp->mode = MODE_LURE_RETURN;
-					dsStop_num(845);
-				}
-			}
-			else
-			{
-				if (ChkFishingThrowNow_m(pnum))
-				{
-					setLureSetup_m(tp, etc);
-					break;
-				}
-
-				if (etc->Big_Fish_Flag & LUREFLAG_HIT)
-				{
-					twp->mode = MODE_LURE_HIT;
-					if (etc->Big_Fish_Ptr)
+					if (GetStageNumber() == LevelAndActIDs_HotShelter1)
 					{
-						if (GetStageNumber() == LevelAndActIDs_HotShelter1)
-						{
-							auto fish_twp = etc->Big_Fish_Ptr->twp;
-							if (fish_twp && fish_twp->pos.x == 750.0f && fish_twp->pos.y == 75.5f && fish_twp->pos.z == -650.0f)
-								etc->Big_Fish_Flag |= LUREFLAG_HOOK;
-						}
+						auto fish_twp = etc->Big_Fish_Ptr->twp;
+						if (fish_twp && fish_twp->pos.x == 750.0f && fish_twp->pos.y == 75.5f && fish_twp->pos.z == -650.0f)
+							etc->Big_Fish_Flag |= LUREFLAG_HOOK;
 					}
 				}
 			}
