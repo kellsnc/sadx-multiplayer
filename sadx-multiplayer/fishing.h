@@ -37,12 +37,13 @@ enum : __int16 // made up
 	LUREFLAG_SWING = 0x20,    // Move line left/right
 	LUREFLAG_FISH = 0x40,     // Currently fishing
 	LUREFLAG_HOOK = 0x80,     // Hot shelter hook
-	LUREFLAG_GET = 0x800,     // Fish caught
+	LUREFLAG_MISS = 0x800,     // Fish caught
 	LUREFLAG_1000 = 0x1000,
 	LUREFLAG_PTCL = 0x2000,   // Particule spawned
 	LUREFLAG_4000 = 0x4000,
 	LUREFLAG_LAUNCH = 0x8000, // Enable fishing
 };
 
+bool ChkFishingThrowNow_m(int pnum);
 BIGETC* GetBigEtc(int pnum);
 void InitFishing();

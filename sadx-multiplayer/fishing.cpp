@@ -77,7 +77,7 @@ static void __cdecl dispFishingLure_m(task* tp)
 		njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
 		ResetMaterial();
 
-		if (!(etc->Big_Fish_Flag & LUREFLAG_GET))
+		if (!(etc->Big_Fish_Flag & LUREFLAG_MISS))
 		{
 			njPushMatrixEx();
 			njTranslateEx(&twp->pos);
@@ -231,7 +231,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 				else
 				{
 					etc->reel_tension_aim = weight * 1.1f - idk * 2.1f;
-					idk = rand() * 0.00003f * (0.24 - weight) * 1.2f + etc->reel_tension_aim;
+					idk = etc->reel_tension_aim + ((float)rand() * 0.00003f * (0.24f - weight) * 1.2f);
 				}
 
 				if (idk < 0.5f)
@@ -345,7 +345,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 			{
 				etc->reel_tension = 1.0f;
 				dsStop_num(855);
-				etc->Big_Fish_Flag |= LUREFLAG_GET;
+				etc->Big_Fish_Flag |= LUREFLAG_MISS;
 				PlayJingle(46);
 
 				if (etc->Big_Fish_Ptr)
@@ -624,10 +624,10 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 		mwp->spd.z *= 0.5f;
 
 		auto reqaction = ppwp->mj.reqaction;
+		auto diffang = SubAngle(ptwp->ang.y, mwp->ang_aim.y);
 		if (reqaction == 57 || reqaction == 59 || reqaction == 71 || reqaction == 73)
 		{
-			if ((LOWORD(mwp->ang_aim.y) - LOWORD(ptwp->ang.y)) < 0x1555u
-				|| (LOWORD(mwp->ang_aim.y) - LOWORD(ptwp->ang.y)) > 0x8000u)
+			if (diffang < 0x1555u || diffang > 0x8000u)
 			{
 				NJS_POINT3 v = { 0.0f, 0.0f, 1.0f };
 				njPushMatrix(_nj_unit_matrix_);
@@ -656,8 +656,7 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 		}
 		else if (reqaction == 56 || reqaction == 58 || reqaction == 70 || reqaction == 72)
 		{
-			if ((LOWORD(mwp->ang_aim.y) - LOWORD(ptwp->ang.y)) > 0xEAAAu
-				|| (LOWORD(mwp->ang_aim.y) - LOWORD(ptwp->ang.y)) < 0x8000u)
+			if (diffang > 0xEAAAu || diffang < 0x8000u)
 			{
 				NJS_POINT3 v = { 0.0f, 0.0f, -1.0f };
 				njPushMatrix(_nj_unit_matrix_);
@@ -753,7 +752,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		}
 	}
 
-	if (((etc->Big_Fish_Flag & LUREFLAG_8) || !(etc->Big_Fish_Flag & LUREFLAG_SWING)) && (etc->Big_Fish_Flag & LUREFLAG_HIT) && (AttackButtons & pper->off) && (JumpButtons & pper->off))
+	if (((etc->Big_Fish_Flag & LUREFLAG_8) || !(etc->Big_Fish_Flag & LUREFLAG_SWING)) && (etc->Big_Fish_Flag & LUREFLAG_HIT) && !(AttackButtons & pper->on) && !(JumpButtons & pper->on))
 	{
 		if (etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->mwp)
 		{
@@ -806,7 +805,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 
 			if (etc->reel_length > ppwp->equipment & Upgrades_PowerRod ? 400.0f : 300.0f)
 			{
-				etc->Big_Fish_Flag |= LUREFLAG_RANGEOUT;
+				//etc->Big_Fish_Flag |= LUREFLAG_RANGEOUT;
 			}
 
 			if (!(pper->on & AttackButtons) && !(pper->on & JumpButtons))
@@ -1073,9 +1072,9 @@ static bool ReturnFishingLure_m(taskwk* twp, motionwk* mwp, NJS_POINT3* rod_pos)
 		&& twp->pos.z - 5.0f < rod_pos->z;
 }
 
-static bool ChkFishingThrowNow_m(taskwk* ptwp)
+bool ChkFishingThrowNow_m(int pnum)
 {
-	auto mode = ptwp->mode;
+	auto mode = playertwp[pnum]->mode;
 	return (mode < 32 || mode > 37) && (mode < 40 || mode > 45);
 }
 
@@ -1405,7 +1404,7 @@ static void fishingLureCtrl_m(task* tp)
 		}
 		else
 		{
-			if (ChkFishingThrowNow_m(ptwp))
+			if (ChkFishingThrowNow_m(pnum))
 			{
 				setLureSetup_m(tp, etc);
 				break;
@@ -1494,7 +1493,7 @@ static void fishingLureCtrl_m(task* tp)
 			}
 			else
 			{
-				if (ChkFishingThrowNow_m(ptwp))
+				if (ChkFishingThrowNow_m(pnum))
 				{
 					setLureSetup_m(tp, etc);
 					break;
@@ -1533,7 +1532,7 @@ static void fishingLureCtrl_m(task* tp)
 
 		if (etc->Big_Lure_Ptr || etc->Big_Fish_Flag & LUREFLAG_HIT)
 		{
-			if (ChkFishingThrowNow_m(ptwp))
+			if (ChkFishingThrowNow_m(pnum))
 			{
 				setLureSetup_m(tp, etc);
 			}
@@ -1629,7 +1628,7 @@ static void fishingCursorCtrl_m(task* tp)
 		auto pnum = TASKWK_PLAYERID(twp);
 		auto ptwp = playertwp[pnum];
 
-		if (!ptwp || ChkFishingThrowNow_m(ptwp))
+		if (!ptwp || ChkFishingThrowNow_m(pnum))
 		{
 			FreeTask(tp);
 			return;
