@@ -4,9 +4,78 @@
 #include "hud_fishing.h"
 
 DataArray(NJS_TEXANIM, reel_anim, 0x91BAB0, 9);
-
 static NJS_SPRITE reel_sprite = { { 1.0f, 1.0f, 1.0f }, 1.0f, 1.0f, 0, &FISHING_TEXLIST, &reel_anim };
 
+#pragma region BigDisplayHit
+static void dispHitTexturePause_m(task* tp)
+{
+    auto twp = tp->twp;
+
+    if (twp->mode == 0 || twp->mode == 4)
+        return;
+
+    auto pnum = TASKWK_PLAYERID(twp);
+
+    SplitScreen::SaveViewPort();
+    SplitScreen::ChangeViewPort(-1);
+
+    auto ratio = SplitScreen::GetScreenRatio(pnum);
+
+    float scaleX = HorizontalStretch * ratio->w;
+    float scaleY = VerticalStretch * ratio->h;
+    float x = HorizontalResolution * ratio->x + scaleX * 320.0f + scaleX * twp->pos.x;
+    float y = VerticalResolution * ratio->y + scaleY * 200.0f;
+
+    float alpha = 1.0f;
+    if (twp->pos.x > 0.0f)
+    {
+        alpha = (320.0f - twp->pos.x) / 420.0f;
+    }
+    else if (twp->pos.x < 0.0f)
+    {
+        alpha = (320.0f + twp->pos.x) / 420.0f;
+    }
+    SetMaterial(max(0.0f, alpha), 1.0f, 1.0f, 1.0f);
+
+    reel_sprite.p.x = x + 8.0f * scaleX;
+    reel_sprite.p.y = y + 8.0f * scaleY;
+    reel_sprite.sx = reel_sprite.sy = min(scaleX, scaleY);
+    reel_sprite.ang = 0;
+    late_DrawSprite2D(&reel_sprite, 7, 22046.18f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, 4);
+
+    reel_sprite.p.x = x;
+    reel_sprite.p.y = y;
+    late_DrawSprite2D(&reel_sprite, 6, 22046.18f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, 4);
+    ResetMaterial();
+    SplitScreen::RestoreViewPort();
+}
+
+static void __cdecl dispHitTexturePause_r(task* tp);
+Trampoline dispHitTexturePause_t(0x46C920, 0x46C926, dispHitTexturePause_r);
+static void __cdecl dispHitTexturePause_r(task* tp)
+{
+    if (multiplayer::IsActive())
+    {
+        if (SplitScreen::IsScreenEnabled(TASKWK_PLAYERID(tp->twp)))
+        {
+            dispHitTexturePause_m(tp);
+        }
+    }
+    else
+    {
+        TARGET_STATIC(dispHitTexturePause)(tp);
+    }
+}
+
+void SetBigDispHit_m(int pnum)
+{
+    auto tp = CreateElementalTask(2, 6, BigDisplayHit);
+    TASKWK_PLAYERID(tp->twp) = pnum;
+}
+
+#pragma endregion
+
+#pragma region Fishing Meter
 static void dispReelMeter_m(float x, float y, float scale, float _reel_tension)
 {
     x -= 64.0f * scale;
@@ -106,3 +175,4 @@ void DrawFishingMeter(int pnum, float _reel_length_d, float _reel_tension, Angle
         DrawFishingMeter_Screen(pnum, _reel_length_d, _reel_tension, _reel_angle);
     }
 }
+#pragma endregion

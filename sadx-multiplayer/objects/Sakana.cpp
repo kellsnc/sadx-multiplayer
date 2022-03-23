@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "multiplayer.h"
 #include "fishing.h"
+#include "hud_fishing.h"
 
 #define SAKANA_PNUM(twp) twp->smode
 
@@ -873,7 +874,11 @@ static void BigSakana_m(task* tp)
 
             dsPlay_oneshot(1414, 0, 0, 0);
             sub_593F40_m(twp, pnum);
-            //SetBigDispHit
+
+            PlayJingle(45);
+            etc->reel_tension_add = 0.0f;
+            SetBigDispHit_m(pnum);
+
             setActionPointer(tp, 2);
         }
 
