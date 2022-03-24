@@ -1,6 +1,5 @@
 #pragma once
 
-#define HIWORD(x)   (*((__int8*)&(x)+1))
 #define MAKEVARMULTI(type, name, addr) \
 	static type name##P2{}; \
 	static type name##P3{}; \

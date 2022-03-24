@@ -230,8 +230,8 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 				}
 				else
 				{
-					etc->reel_tension_aim = weight * 1.1f - idk * 2.1f;
-					idk = etc->reel_tension_aim + (float)((double)rand() * 0.00003 * (0.24f - weight) * 1.2);
+					//etc->reel_tension_aim = weight * 1.1f - idk * 2.1f;
+					//idk = etc->reel_tension_aim + (float)((double)rand() * 0.00003 * (0.24f - weight) * 1.2);
 				}
 
 				if (idk < 0.5f)
@@ -765,7 +765,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 			pos = twp->pos;
 			Angle3 ang2{};
 
-			auto test2 = test1 || BigSetPosition(&pos, &spd, &ang2, lure_radius);
+			auto test2 = test1 /*|| BigSetPosition(&pos, &spd, &ang2, lure_radius)*/;
 			auto test3 = chkKabeAngle2(&ang);
 			auto test4 = chkKabeAngle2(&ang2);
 
@@ -803,9 +803,9 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 
 			calcTension_m(twp, mwp, etc, &spd, pnum);
 
-			if (etc->reel_length > ppwp->equipment & Upgrades_PowerRod ? 400.0f : 300.0f)
+			if (etc->reel_length > (ppwp->equipment & Upgrades_PowerRod ? 400.0f : 300.0f))
 			{
-				//etc->Big_Fish_Flag |= LUREFLAG_RANGEOUT;
+				etc->Big_Fish_Flag |= LUREFLAG_RANGEOUT;
 			}
 
 			if (!(pper->on & AttackButtons) && !(pper->on & JumpButtons))
@@ -853,7 +853,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		pos = twp->pos;
 		Angle3 ang2{};
 
-		auto test2 = test1 || BigSetPosition(&pos, &spd, &ang2, lure_radius);
+		auto test2 = test1/* || BigSetPosition(&pos, &spd, &ang2, lure_radius)*/;
 		auto test3 = chkKabeAngle2(&ang);
 		auto test4 = chkKabeAngle2(&ang2);
 

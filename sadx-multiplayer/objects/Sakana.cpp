@@ -241,11 +241,9 @@ static void setDirKaeru3_m(task* tp)
 
     if (etc->Big_Lure_Ptr)
     {
-        auto ang = -0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - etc->Big_Lure_Ptr->twp->pos.x, twp->pos.z - etc->Big_Lure_Ptr->twp->pos.z));
+        mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - etc->Big_Lure_Ptr->twp->pos.x, twp->pos.z - etc->Big_Lure_Ptr->twp->pos.z));
 
-        mwp->ang_aim.y = ang;
-
-        if (SubAngle(ang, twp->ang.y) <= 0x8000u)
+        if ((twp->ang.y - mwp->ang_aim.y) <= 0x8000u)
         {
             twp->ang.y -= 0x80;
         }
@@ -254,7 +252,7 @@ static void setDirKaeru3_m(task* tp)
             twp->ang.y += 0x80;
         }
 
-        HIWORD(twp->ang.y) = 0;
+        twp->ang.y &= 0x0000FFFF;
     }
 }
 
@@ -431,7 +429,7 @@ static void setDirSakanaTurn_m(task* tp)
         setActionPointer(tp, 2);
     }
 
-    if (SubAngle(mwp->ang_aim.y, twp->ang.y) >= 0)
+    if ((twp->ang.y - mwp->ang_aim.y) >= 0)
     {
         twp->ang.y -= 0x200;
     }
@@ -440,7 +438,7 @@ static void setDirSakanaTurn_m(task* tp)
         twp->ang.y += 0x200;
     }
 
-    HIWORD(twp->ang.y) = 0;
+    twp->ang.y &= 0x0000FFFF;
 
     CalcHookPos_m(etc, &twp->pos);
 
@@ -567,12 +565,12 @@ static void moveFishingSakana_m(task* tp)
     }
 }
 
-static bool moveLureDirSakana_m(task* tp)
+static bool moveLureDirSakana_m(task* tp, task* otp)
 {
     auto etc = GetBigEtc(SAKANA_PNUM(tp->twp));
     auto backup_ptr = Big_Fish_Ptr;
     Big_Fish_Ptr = etc->Big_Fish_Ptr;
-    auto ret = moveLureDirSakana(tp, etc->Big_Lure_Ptr); //f u
+    auto ret = moveLureDirSakana(tp, otp); //f u
     Big_Fish_Ptr = backup_ptr;
     return ret;
 }
@@ -604,7 +602,7 @@ static bool chkRetStart_m(task* tp)
 
     mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - orig_tp->twp->pos.x, twp->pos.z - orig_tp->twp->pos.z));
 
-    if (SubAngle(mwp->ang_aim.y, twp->ang.y) <= 0x8000)
+    if ((twp->ang.y - mwp->ang_aim.y) <= 0x8000u)
     {
         twp->ang.y -= 0x80;
     }
@@ -613,13 +611,13 @@ static bool chkRetStart_m(task* tp)
         twp->ang.y += 0x80;
     }
     
-    HIWORD(twp->ang.y) = 0;
+    twp->ang.y &= 0x0000FFFF;
 
     mwp->spd.z = 0.0f;
     mwp->spd.y = 0.0f;
     mwp->spd.x = 0.0f;
 
-    moveLureDirSakana_m(tp);
+    moveLureDirSakana_m(tp, orig_tp);
 
     if (njScalor(&v) >= 3.0f)
     {
@@ -783,7 +781,7 @@ static void BigSakana_m(task* tp)
             twp->ang.y += 0x80;
         }
 
-        HIWORD(twp->ang.y) = 0;
+        twp->ang.y &= 0x0000FFFF;
 
         mwp->spd.x = 0.0f;
         mwp->spd.y = 0.0f;
@@ -835,7 +833,7 @@ static void BigSakana_m(task* tp)
         else
         {
             setDirKaeru3_m(tp);
-            if (!moveLureDirSakana_m(tp))
+            if (!moveLureDirSakana_m(tp, etc->Big_Lure_Ptr))
             {
                 setSakanaRetStart_m(tp);
                 break;
