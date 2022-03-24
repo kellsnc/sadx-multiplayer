@@ -55,7 +55,7 @@ Trampoline* SetFishingCursorTask_t  = nullptr;
 
 BIGETC* GetBigEtc(int pnum)
 {
-	return bigetc_m[pnum];
+	return pnum >= 0 && pnum <= 3 ? bigetc_m[pnum] : nullptr;
 }
 
 #pragma region dispFishingLure

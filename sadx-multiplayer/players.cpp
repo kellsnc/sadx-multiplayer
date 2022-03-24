@@ -31,6 +31,7 @@ Trampoline* SetPlayerInitialPosition_t = nullptr;
 Trampoline* DamegeRingScatter_t = nullptr;
 Trampoline* SetPlayer_t = nullptr;
 
+static bool isCharSel = false;
 static int rings[PLAYER_MAX];
 static int lives[PLAYER_MAX];
 static int score[PLAYER_MAX];
@@ -465,10 +466,14 @@ void SetPlayer_r()
             }
             break;
         case Characters_Knuckles:
-            if (!EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
+            if (isCharSel && !EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
             {
                 CreateElementalTask(2u, 6, Knuckles_KakeraGame);
             }
+            break;
+        case Characters_Big:
+            if (isCharSel)
+                CreateElementalTask(2u, 6, BigDisplayStatus);
             break;
         }
 
@@ -483,6 +488,8 @@ void SetPlayer_r()
 
 void InitPlayerPatches()
 {
+    isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
+
     SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
     
     DamegeRingScatter_t = new Trampoline(0x4506F0, 0x4506F7, DamegeRingScatter_r);
@@ -493,6 +500,4 @@ void InitPlayerPatches()
 
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteJump(ResetNumRing, ResetNumRingM);
-
-    WriteJump((void*)0x47A907, (void*)0x47A936); // prevent Knuckles from automatically loading Emerald radar (MainMemory)
 }

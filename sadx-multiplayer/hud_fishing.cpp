@@ -1,10 +1,98 @@
 #include "pch.h"
 #include "fishing.h"
 #include "splitscreen.h"
+#include "hud_multi.h"
 #include "hud_fishing.h"
 
 DataArray(NJS_TEXANIM, reel_anim, 0x91BAB0, 9);
 static NJS_SPRITE reel_sprite = { { 1.0f, 1.0f, 1.0f }, 1.0f, 1.0f, 0, &FISHING_TEXLIST, &reel_anim };
+
+#pragma region HUD
+static void DrawBigHUDMulti(int pnum)
+{
+    auto ratio = SplitScreen::GetScreenRatio(pnum);
+
+    float scaleY = VerticalStretch * ratio->h;
+    float scaleX = HorizontalStretch * ratio->w;
+    float scale = min(scaleX, scaleY);
+
+    MULTIHUD_SPRITE.sx = MULTIHUD_SPRITE.sy = scale;
+    MULTIHUDDIGIT_SPRITE.sx = MULTIHUDDIGIT_SPRITE.sy = scale;
+
+    float x = 16.0f * scaleX + HorizontalResolution * ratio->x;
+    float y = 16.0f * scaleY + VerticalResolution * ratio->y;
+
+    if (HideTimerAndRings >= 0)
+    {
+        reel_sprite.p.x = x + 48 * scale;
+        reel_sprite.p.y = y + 48 * scale;
+        reel_sprite.sx = reel_sprite.sy = scale * 1.5f;
+
+        njDrawSprite2D_ForcePriority(&reel_sprite, 4, -1.8200001, NJD_SPRITE_ALPHA);
+
+        reel_sprite.p.x = x + 226 * scale;
+        reel_sprite.p.y = y + 24 * scale;
+        njDrawSprite2D_ForcePriority(&reel_sprite, 5, -1.8200001, NJD_SPRITE_ALPHA);
+
+        auto etc = GetBigEtc(pnum);
+        _SC_NUMBERS pscn;
+        pscn.scl = scale * 1.5f;
+        pscn.type = 0x8;
+        pscn.attr = 0x97;
+        pscn.rot = 0;
+        pscn.max = 99999;
+        pscn.color = 0xFFFFFFFF;
+        pscn.value = etc ? etc->Big_Sakana_Weight : 0;
+        pscn.pos.x = x + 96.0f * scale;
+        pscn.pos.y = y + 2.0f * scale;
+        pscn.pos.z = 0.0f;
+        DrawSNumbers(&pscn);
+
+        MULTIHUD_SPRITE.p.x = x + 8 * scale;
+        MULTIHUD_SPRITE.p.y = y + 31 * scale;
+        MultiHudRings(pnum);
+    }
+
+    if (HideLives >= 0)
+    {
+        MULTIHUDDIGIT_SPRITE.p.x = x;
+        MULTIHUDDIGIT_SPRITE.p.y = VerticalResolution * ratio->h - 16.0f * scaleY + VerticalResolution * ratio->y;
+        MultiHudLives(pnum);
+    }
+}
+
+static void __cdecl dispZankiTexturePause_r(task* tp);
+Trampoline dispZankiTexturePause_t(0x46FB00, 0x46FB05, dispZankiTexturePause_r);
+static void __cdecl dispZankiTexturePause_r(task* tp)
+{
+    if (SplitScreen::IsActive())
+    {
+        if (!loop_count && ssStageNumber != STAGE_TWINKLEPARK && HideHud >= 0 && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
+        {
+            reel_sprite.ang = 0;
+
+            ghDefaultBlendingMode();
+            SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
+
+            SplitScreen::SaveViewPort();
+            SplitScreen::ChangeViewPort(-1);
+            for (int i = 0; i < PLAYER_MAX; ++i)
+            {
+                if (SplitScreen::IsScreenEnabled(i))
+                {
+                    DrawBigHUDMulti(i);
+                }
+            }
+            SplitScreen::RestoreViewPort();
+            ResetMaterial();
+        }
+    }
+    else
+    {
+        TARGET_STATIC(dispZankiTexturePause)(tp);
+    }
+}
+#pragma endregion
 
 #pragma region BigDisplayHit
 static void dispHitTexturePause_m(task* tp)

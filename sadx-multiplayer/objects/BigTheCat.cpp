@@ -11,7 +11,7 @@ static void __cdecl BigTheCat_r(task* tp)
 		auto pnum = TASKWK_PLAYERID(tp->twp);
 		auto etc = GetBigEtc(pnum);
 
-		if (pnum >= 1 && pnum <= 3 && etc)
+		if (pnum >= 1 && etc)
 		{
 			auto backup_ptr = Big_Lure_Ptr;
 			auto backup_flag = Big_Fish_Flag;

@@ -160,10 +160,10 @@ void DrawWaitScreen(int num)
     SplitScreen::RestoreViewPort();
 }
 
-void MultiHudScore(int num, float scale)
+void MultiHudScore(int num)
 {
-    MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x + 195.0f * scale;
-    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 2.0f * scale;
+    MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x + 195.0f * MULTIHUD_SPRITE.sx;
+    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 2.0f * MULTIHUD_SPRITE.sy;
 
     int score = GetEnemyScoreM(num);
 
@@ -180,36 +180,36 @@ void MultiHudScore(int num, float scale)
             score /= 10;
         }
 
-        MULTIHUDDIGIT_SPRITE.p.x -= 18.0f * scale;
+        MULTIHUDDIGIT_SPRITE.p.x -= 18.0f * MULTIHUDDIGIT_SPRITE.sx;
     }
 }
 
-void MultiHudTime(int num, float scale)
+void MultiHudTime(int num)
 {
-    MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x + 60.0f * scale;
-    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 2.0f * scale;
+    MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x + 60.0f * MULTIHUD_SPRITE.sx;
+    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 2.0f * MULTIHUD_SPRITE.sy;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeMinutes / 10, -1.501, NJD_SPRITE_ALPHA);
-    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeMinutes % 10, -1.501, NJD_SPRITE_ALPHA);
-    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 10, -1.501, NJD_SPRITE_ALPHA);
-    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeSeconds / 10, -1.501, NJD_SPRITE_ALPHA);
-    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeSeconds % 10, -1.501, NJD_SPRITE_ALPHA);
-    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 10, -1.501, NJD_SPRITE_ALPHA);
-    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
     int timerms = (TimeFrames * 1.6666666f);
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, timerms % 10, -1.501, NJD_SPRITE_ALPHA);
-    MULTIHUDDIGIT_SPRITE.p.x += 16 * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, timerms % 10, -1.501, NJD_SPRITE_ALPHA);
 }
 
-void MultiHudRings(int num, float scale)
+void MultiHudRings(int num)
 {
     MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x;
-    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 1.5 * scale;
+    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 1.5 * MULTIHUD_SPRITE.sx;
 
     int count = GetNumRingM(num);
     
@@ -228,15 +228,15 @@ void MultiHudRings(int num, float scale)
 
     SetMaterial(1.0f, 1.0f, color, color);
     
-    MULTIHUDDIGIT_SPRITE.p.x += 25.0f * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 25.0f * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 1000 / 100, 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-    MULTIHUDDIGIT_SPRITE.p.x += 18.0f * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 18.0f * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 100 / 10, 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
-    MULTIHUDDIGIT_SPRITE.p.x += 18.0f * scale;
+    MULTIHUDDIGIT_SPRITE.p.x += 18.0f * MULTIHUD_SPRITE.sx;
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 10, 0.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 }
 
-void MultiHudLives(int num, float scale)
+void MultiHudLives(int num)
 {
     njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TASKWK_CHARID(playertwp[num]) + 12, 0, NJD_SPRITE_ALPHA);
 
@@ -244,17 +244,17 @@ void MultiHudLives(int num, float scale)
     {
         int count = GetNumPlayerM(num);
 
-        MULTIHUDDIGIT_SPRITE.p.y -= 25.0f * scale;
-        MULTIHUDDIGIT_SPRITE.p.x += 35.0f * scale;
+        MULTIHUDDIGIT_SPRITE.p.y -= 25.0f * MULTIHUDDIGIT_SPRITE.sy;
+        MULTIHUDDIGIT_SPRITE.p.x += 35.0f * MULTIHUDDIGIT_SPRITE.sx;
         njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 100 / 10, 0.0f, NJD_SPRITE_ALPHA);
-        MULTIHUDDIGIT_SPRITE.p.x += 18.0f * scale;
+        MULTIHUDDIGIT_SPRITE.p.x += 18.0f * MULTIHUDDIGIT_SPRITE.sx;
         njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, count % 10, 0.0f, NJD_SPRITE_ALPHA);
     }
 }
 
 void DisplayMultiHud(int num)
 {
-    if (multiplayer::IsCoopMode() || MissedFrames || IsGamePaused() || CurrentLevel == LevelIDs_TwinkleCircuit)
+    if (multiplayer::IsCoopMode() || MissedFrames || IsGamePaused() || CurrentLevel == LevelIDs_TwinkleCircuit || CurrentCharacter == Characters_Big)
     {
         return;
     }
@@ -287,27 +287,27 @@ void DisplayMultiHud(int num)
     {
         MULTIHUD_SPRITE.p.y = 16.0f * scaleY + screenY;
         njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
-        MultiHudScore(num, scale);
+        MultiHudScore(num);
 
         if (SplitScreen::numScreen == 0)
         {
             MULTIHUD_SPRITE.p.x = x;
             MULTIHUD_SPRITE.p.y += 24 * scale;
             njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Time, 0, NJD_SPRITE_ALPHA);
-            MultiHudTime(num, scale);
+            MultiHudTime(num);
         }
 
         MULTIHUD_SPRITE.p.x = x;
         MULTIHUD_SPRITE.p.y += 24 * scale;
         njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Ring, 0, NJD_SPRITE_ALPHA);
-        MultiHudRings(num, scale);
+        MultiHudRings(num);
     }
     
     if (HideLives >= 0)
     {
         MULTIHUDDIGIT_SPRITE.p.x = x;
         MULTIHUDDIGIT_SPRITE.p.y = VerticalResolution * ratio->h - 16.0f * scaleY + screenY;
-        MultiHudLives(num, scale);
+        MultiHudLives(num);
     }
 
     ResetMaterial();
