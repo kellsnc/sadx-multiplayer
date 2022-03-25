@@ -274,8 +274,8 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 				}
 				else
 				{
-					//etc->reel_tension_aim = weight * 1.1f - idk * 2.1f;
-					//idk = etc->reel_tension_aim + (float)((double)rand() * 0.00003 * (0.24f - weight) * 1.2);
+					etc->reel_tension_aim = weight * 1.1f - idk * 2.1f;
+					idk = etc->reel_tension_aim + (float)(UNIT_RAND * (0.24 - (double)weight) * 1.2);
 				}
 
 				if (idk < 0.5f)
@@ -802,12 +802,11 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		{
 			NJS_POINT3 pos = twp->pos;
 			NJS_POINT3 spd = mwp->spd;
-			Angle3 ang{};
+			Angle3 ang, ang2 = { 0, 0, 0 };
 
 			auto test1 = MSetPosition(&pos, &spd, &ang, lure_radius);
 			
-			pos = twp->pos;
-			Angle3 ang2{};
+			//pos = twp->pos;
 
 			auto test2 = test1 /*|| BigSetPosition(&pos, &spd, &ang2, lure_radius)*/;
 			auto test3 = chkKabeAngle2(&ang);
@@ -884,7 +883,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 
 		NJS_POINT3 pos = twp->pos;
 		NJS_POINT3 spd = mwp->spd;
-		Angle3 ang{};
+		Angle3 ang, ang2 = { 0, 0, 0 };
 
 		auto test1 = MSetPosition(&pos, &spd, &ang, lure_radius);
 
@@ -894,8 +893,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 			test1 = FALSE;
 		}
 
-		pos = twp->pos;
-		Angle3 ang2{};
+		//pos = twp->pos;
 
 		auto test2 = test1/* || BigSetPosition(&pos, &spd, &ang2, lure_radius)*/;
 		auto test3 = chkKabeAngle2(&ang);

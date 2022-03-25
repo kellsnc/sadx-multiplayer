@@ -178,7 +178,7 @@ static void dispReelMeter_m(float x, float y, float scale, float _reel_tension)
     NJS_COLOR color[4];
     NJS_POINT2COL p2col = { rect, color, nullptr, 4 };
 
-    int max_tension = (int)(_reel_tension * 255.0f);
+    uint32_t max_tension = (uint32_t)(_reel_tension * 255.0f);
 
     rect[1].x = x - 1.0f * scale;
     rect[0].x = rect[1].x;
