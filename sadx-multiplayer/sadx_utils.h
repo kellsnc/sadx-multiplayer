@@ -279,6 +279,7 @@ FunctionPointer(BOOL, BigSetPosition, (NJS_POINT3* p, NJS_POINT3* v, Angle3* a, 
 TaskFunc(BigDisplayHit, 0x46EBC0);
 TaskFunc(BigDisplayStatus, 0x470090);
 TaskFunc(dispBigKaeru, 0x7A6BB0);
+TaskFunc(BigDisplayFishWeight, 0x4701A0);
 
 DataPointer(int, Sakana_Num, 0x3C524E8);
 DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);

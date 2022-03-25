@@ -94,6 +94,53 @@ static void __cdecl dispZankiTexturePause_r(task* tp)
 }
 #pragma endregion
 
+#pragma region dispFishWeightTexture
+void dispFishWeightTexture_m(taskwk* twp, int pnum)
+{
+    if (SplitScreen::IsScreenEnabled(pnum))
+    {
+        SplitScreen::SaveViewPort();
+        SplitScreen::ChangeViewPort(-1);
+
+        ghDefaultBlendingMode();
+        SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
+
+        auto ratio = SplitScreen::GetScreenRatio(pnum);
+        float scaleX = HorizontalStretch * ratio->w;
+        float scaleY = VerticalStretch * ratio->h;
+        auto scale = min(scaleX, scaleY);
+
+        float pos = min(twp->pos.x, (scaleX * 540.0f) - 240 * scaleX);
+
+        float x = HorizontalResolution * ratio->x + pos * scaleX + 16.0f * scaleX;
+        float y = VerticalResolution * ratio->y + 16.0f * scaleY;
+
+        reel_sprite.p.x = x + 130.0f * scale;
+        reel_sprite.p.y = y + 24.0f * scale;
+        reel_sprite.sx = reel_sprite.sy = scale * 1.5f;
+        reel_sprite.ang = 0;
+        late_DrawSprite2D(&reel_sprite, 5, 22046.182f, NJD_SPRITE_ALPHA, 4);
+
+        _SC_NUMBERS pscn;
+        
+        pscn.scl = scale * 1.5f;
+        pscn.type = 0x9;
+        pscn.attr = 0x94;
+        pscn.rot = 0;
+        pscn.max = 99999;
+        pscn.color = 0xFFFFFFFF;
+        pscn.value = twp->value.l;
+        pscn.pos.x = x;
+        pscn.pos.y = y + 2 * scale;
+        pscn.pos.z = 0.0f;
+        DrawSNumbers(&pscn);
+
+        ResetMaterial();
+        SplitScreen::RestoreViewPort();
+    }
+}
+#pragma endregion
+
 #pragma region BigDisplayHit
 static void dispHitTexturePause_m(task* tp)
 {
@@ -208,8 +255,7 @@ static void dispDistanceLure_m(float x, float y, float scale, float dist)
 {
     _SC_NUMBERS pscn;
 
-    njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
-    njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
+    ghDefaultBlendingMode();
     SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
     pscn.scl = scale;
     pscn.type = 0x48;

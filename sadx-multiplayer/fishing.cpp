@@ -46,6 +46,8 @@ static auto calcFishingLureY = GenerateUsercallWrapper<void (*)(taskwk* twp, Big
 static auto moveFishingRotY = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46E380, rEAX);
 static auto chkKabeAngle2 = GenerateUsercallWrapper<BOOL (*)(Angle3* angle3_p)>(noret, 0x46C6A0, rESI);
 
+Trampoline* dispFishWeightTexture_t = nullptr;
+Trampoline* exitFishWeightTexture_t = nullptr;
 Trampoline* dispFishingLure_t       = nullptr;
 Trampoline* dispFishingLureSwitch_t = nullptr;
 Trampoline* fishingLureCtrl_t       = nullptr;
@@ -99,6 +101,78 @@ bool ChkFishingThrowNow_m(int pnum)
 {
 	auto mode = playertwp[pnum]->mode;
 	return (mode < 32 || mode > 37) && (mode < 40 || mode > 45);
+}
+
+void AddSakanaWeight_m(int weight, int kind, int pnum)
+{
+	auto etc = GetBigEtc(pnum);
+
+	if (etc)
+	{
+		etc->Big_Sakana_Weight += weight;
+
+		if (etc->Big_Sakana_Weight > 99990)
+		{
+			etc->Big_Sakana_Weight = 99990;
+		}
+
+		if (etc->Big_Sakana_Weight_High < static_cast<__int16>(weight))
+		{
+			etc->Big_Sakana_Weight_High = static_cast<__int16>(weight);
+			etc->Big_Sakana_Kind_High = kind;
+		}
+	}
+}
+#pragma endregion
+
+#pragma region BigDisplayFishWeight
+static void __cdecl dispFishWeightTexture_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		dispFishWeightTexture_m(tp->twp, tp->twp->smode);
+	}
+	else
+	{
+		TARGET_DYNAMIC(dispFishWeightTexture)(tp);
+	}
+}
+
+static void __cdecl exitFishWeightTexture_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		auto twp = tp->twp;
+		if (twp->counter.l != 999)
+		{
+			AddSakanaWeight_m(twp->value.l, twp->counter.l, twp->smode);
+			/*if (!twp->counter.l)
+			{
+				BigChkHighScore();
+			}*/
+			dsPlay_oneshot(7, 0, 0, 0);
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(exitFishWeightTexture)(tp);
+	}
+}
+
+void CreateBigDisplayFishWeight_m(int weight, int kind, int pnum)
+{
+	auto tp = CreateElementalTask(2u, 6, BigDisplayFishWeight);
+	if (tp)
+	{
+		tp->twp->value.l = weight;
+		tp->twp->counter.l = kind;
+		tp->twp->smode = pnum;
+	}
+}
+
+void Big_CreateBigDisplayFishWeight_j(int weight, int kind)
+{
+	CreateBigDisplayFishWeight_m(weight, kind, TASKWK_PLAYERID(gpCharTwp));
 }
 #pragma endregion
 
@@ -394,7 +468,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 
 				if (etc->Big_Fish_Ptr)
 				{
-					//CreateBigDisplayFishWeight(etc->Big_Fish_Ptr->mwp->weight, 999);
+					CreateBigDisplayFishWeight_m(etc->Big_Fish_Ptr->mwp->weight, 999, pnum);
 				}
 			}
 		}
@@ -1721,6 +1795,8 @@ static void BigStateInit_r()
 
 void InitFishing()
 {
+	dispFishWeightTexture_t = new Trampoline(0x46F580, 0x46F585, dispFishWeightTexture_r);
+	exitFishWeightTexture_t = new Trampoline(0x470160, 0x470165, exitFishWeightTexture_r);
 	dispFishingLure_t       = new Trampoline(0x470580, 0x470588, dispFishingLure_r);
 	dispFishingLureSwitch_t = new Trampoline(0x4703F0, 0x4703F8, dispFishingLureSwitch_r);
 	fishingLureCtrl_t       = new Trampoline(0x471580, 0x471589, fishingLureCtrl_r);
@@ -1729,6 +1805,7 @@ void InitFishing()
 	SetFishingCursorTask_t  = new Trampoline(0x470330, 0x470336, SetFishingCursorTask_r);
 
 	WriteJump((void*)0x470120, BigStateInit_r);
+	WriteCall((void*)0x48CCE4, Big_CreateBigDisplayFishWeight_j);
 
 	WriteData<2>((void*)0x490C52, 0x90ui8); // force fishingLureCtrl to load for every player
 	WriteData<6>((void*)0x470425, 0x90ui8); // force things to display even if player 0 is not Big
