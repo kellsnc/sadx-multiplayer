@@ -15,13 +15,16 @@ static void __cdecl BigTheCat_r(task* tp)
 		{
 			auto backup_ptr = Big_Lure_Ptr;
 			auto backup_flag = Big_Fish_Flag;
+			auto backup_fish = Big_Fish_Ptr;
 			Big_Lure_Ptr = etc->Big_Lure_Ptr;
 			Big_Fish_Flag = etc->Big_Fish_Flag;
+			Big_Fish_Ptr = etc->Big_Fish_Ptr;
 			TARGET_STATIC(BigTheCat)(tp);
 			etc->Big_Lure_Ptr = Big_Lure_Ptr;
 			etc->Big_Fish_Flag = Big_Fish_Flag;
 			Big_Lure_Ptr = backup_ptr;
 			Big_Fish_Flag = backup_flag;
+			Big_Fish_Ptr = backup_fish;
 		}
 		else
 		{
