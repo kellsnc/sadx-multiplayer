@@ -307,7 +307,7 @@ static bool moveLureDirSakana_m(task* tp, task* otp) // todo: try again to rewri
     playertwp[0] = playertwp[pnum];
     auto ret = moveLureDirSakana(tp, otp);
     Big_Fish_Ptr = backup_ptr;
-    playertwp[pnum] = backup_ptwp;
+    playertwp[0] = backup_ptwp;
     return ret;
 }
 
