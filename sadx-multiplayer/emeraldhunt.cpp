@@ -101,7 +101,7 @@ static void Knuckles_KakeraGame_Timer(int pnum)
 
 		if (timer > interv)
 		{
-			BYTEn(scale, closest_id) = 76 - interv;
+			BYTEn(scale, closest_id) = 76ui8 - static_cast<uint8_t>(interv);
 			timer = 0;
 			dsPlay_oneshot(788, 0, 0, 0);
 		}

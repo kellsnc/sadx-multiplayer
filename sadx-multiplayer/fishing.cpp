@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "multiplayer.h"
-#include "hud_fishing.h";
+#include "hud_fishing.h"
 #include "fishing.h"
 
 /*
@@ -365,22 +365,22 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 						}
 						else
 						{
-							etc->reel_tension -= 0.0011764707;
+							etc->reel_tension -= 0.0011764707f;
 						}
 					}
 					else
 					{
-						etc->reel_tension += 0.0011764707;
+						etc->reel_tension += 0.0011764707f;
 					}
 				}
 				else
 				{
-					etc->reel_tension -= 0.011764705;
+					etc->reel_tension -= 0.011764705f;
 				}
 			}
 			else
 			{
-				etc->reel_tension += 0.01176470561939127;
+				etc->reel_tension += 0.011764705f;
 			}
 		}
 		if (etc->reel_tension >= 0.0f)
@@ -745,7 +745,7 @@ static bool iceWaterCheck_m(BIGETC* etc)
 		return false;
 	}
 
-	for (int i = 0; i < icecap_fpoint_tbl.size(); ++i)
+	for (size_t i = 0ui32; i < icecap_fpoint_tbl.size(); ++i)
 	{
 		if (GetDistance(&etc->big_item_pos, &icecap_fpoint_tbl[i]) < 70.0f)
 		{
@@ -1714,7 +1714,7 @@ static void BigStateInit_r()
 		i->Big_Sakana_Weight = 0;
 		i->Big_Sakana_Weight_High = 0i16;
 		i->Big_Sakana_Kind_High = 0;
-		i->Big_Sakana_Weight_Limit = BigChkHeavyWeight();
+		i->Big_Sakana_Weight_Limit = static_cast<int>(BigChkHeavyWeight());
 		i->big_item_pos.z = 0.0f;
 		i->big_item_pos.y = 0.0f;
 		i->big_item_pos.x = 0.0f;

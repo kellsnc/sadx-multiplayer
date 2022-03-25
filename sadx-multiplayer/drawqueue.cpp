@@ -217,7 +217,7 @@ void __cdecl late_exec_r()
             if (late_execMode == 2)
             {
                 njSetZCompare(7);
-                ds_DrawBoxFill2D(0.0f, 0.0f, HorizontalResolution, VerticalResolution, -1.0f, 0xFF000000);
+                ds_DrawBoxFill2D(0.0f, 0.0f, static_cast<float>(HorizontalResolution), static_cast<float>(VerticalResolution), -1.0f, 0xFF000000);
                 npSetZCompare();
             }
             

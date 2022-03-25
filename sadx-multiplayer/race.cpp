@@ -51,7 +51,7 @@ enum RACEMD // guessed
 
 bool cartGoalFlagM[PLAYER_MAX];
 
-static void DrawTimer(int time, int x, int y, float s)
+static void DrawTimer(int time, float x, float y, float s)
 {
 	auto t = CartStateCentiSecToDispTime(time);
 	OBJ_MINI_CART_SPRITE_Lap.tanim = cartsprite_score;
@@ -98,12 +98,12 @@ static void dispRaceSingle(RacerWk* rwp, int num)
 	OBJ_MINI_CART_SPRITE_LAPS_A.p.x = 640.0f * scaleX - 16.0f * scale - 96.0f * scale + screenX;
 	OBJ_MINI_CART_SPRITE_LAPS_A.p.y = 96.0f * scaleY + screenY;
 	OBJ_MINI_CART_SPRITE_LAPS_A.sx = OBJ_MINI_CART_SPRITE_LAPS_A.sy = scale;
-	njDrawSprite2D_Queue(&OBJ_MINI_CART_SPRITE_LAPS_A, 0, 22045.998, NJD_SPRITE_ALPHA, QueuedModelFlagsB_SomeTextureThing);
+	njDrawSprite2D_Queue(&OBJ_MINI_CART_SPRITE_LAPS_A, 0, 22045.998f, NJD_SPRITE_ALPHA, QueuedModelFlagsB_SomeTextureThing);
 
 	OBJ_MINI_CART_SPRITE_LAPS_B.p.x = 640.0f * scaleX - 16.0f * scale - 96.0f * scale + 39.0f * scale + HorizontalResolution * ratio->x;
 	OBJ_MINI_CART_SPRITE_LAPS_B.p.y = 99.0f * scaleY + VerticalResolution * ratio->y;
 	OBJ_MINI_CART_SPRITE_LAPS_B.sx = OBJ_MINI_CART_SPRITE_LAPS_B.sy = scale;
-	njDrawSprite2D_Queue(&OBJ_MINI_CART_SPRITE_LAPS_B, rwp->displayLap, 22046.0, NJD_SPRITE_ALPHA, QueuedModelFlagsB_SomeTextureThing);
+	njDrawSprite2D_Queue(&OBJ_MINI_CART_SPRITE_LAPS_B, rwp->displayLap, 22046.0f, NJD_SPRITE_ALPHA, QueuedModelFlagsB_SomeTextureThing);
 
 	// HISTORY:
 	OBJ_MINI_CART_SPRITE_TimeBest.p.x = 640.0f * scaleX - 240.5f * scale + 48.0f * scale + screenX;
@@ -288,7 +288,7 @@ static void __cdecl execRoundM(task* tp)
 
 static void LoadAdditionalCarts()
 {
-	for (int i = 1; i < multiplayer::GetPlayerCount(); ++i)
+	for (unsigned int i = 1ui32; i < multiplayer::GetPlayerCount(); ++i)
 	{
 		auto tp = CreateElementalTask(LoadObj_Data1 | LoadObj_UnknownA | LoadObj_UnknownB, LEV_3, EnemyCart);
 

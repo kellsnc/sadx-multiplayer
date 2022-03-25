@@ -24,9 +24,9 @@ static void __cdecl dispE102LaserDraw(task* tp)
         auto color_num = color_tbl_0[twp->counter.b[0]];
         auto itensity = (float)((60 - ewk->laser_tmr) & ((60 - ewk->laser_tmr <= 0) - 1)) * 0.016666668f;
 
-        e102laser_color[0].argb.r = (1.0 - itensity) * color_num;
+        e102laser_color[0].argb.r = static_cast<uint8_t>(1.0f - itensity) * color_num;
         e102laser_color[1].argb.r = e102laser_color[0].argb.r;
-        e102laser_color[0].argb.b = itensity * color_num;
+        e102laser_color[0].argb.b = static_cast<uint8_t>(itensity) * color_num;
         e102laser_color[1].argb.b = e102laser_color[0].argb.b;
 
         auto start = 0.0f;

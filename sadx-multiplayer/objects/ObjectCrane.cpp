@@ -7,14 +7,14 @@ Trampoline checkPlayerRideOnTheCage_t(0x61B060, 0x61B067, checkPlayerRideOnTheCa
 BOOL checkPlayerRideOnTheCage_o(task* tp)
 {
 	auto target = checkPlayerRideOnTheCage_t.Target();
-	BOOL ret;
+	BOOL r;
 	__asm
 	{
 		mov eax, [tp]
 		call target
-		mov ret, eax
+		mov r, eax
 	}
-	return ret;
+	return r;
 }
 
 BOOL __cdecl checkPlayerRideOnTheCage_r(task* tp)

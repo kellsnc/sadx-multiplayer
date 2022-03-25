@@ -33,7 +33,7 @@ PanelPrmType PanelPrmTitleMenuMulti[]
 	 { 4.0f, 30.0f, 13 },
 };
 
-const DialogPrmType MainMenuMultiDialog = { DLG_PNLSTYLE_SIKAKU2, nullptr, &ava_title_e_TEXLIST, PanelPrmTitleMenuMulti, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 316.0, 236.0, 20.0, 232.0, 160.0, 0.71899998, 0.5, 2, 2 };
+const DialogPrmType MainMenuMultiDialog = { DLG_PNLSTYLE_SIKAKU2, nullptr, &ava_title_e_TEXLIST, PanelPrmTitleMenuMulti, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 316.0f, 236.0f, 20.0f, 232.0f, 160.0f, 0.719f, 0.5, 2, 2 };
 
 Trampoline* title_menu_sub_exec_t = nullptr;
 Trampoline* char_sel_exec_t = nullptr;
@@ -103,8 +103,6 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 		TldFlg = TRUE;
 
 		int stat = GetDialogStat();
-		int v8 = 0;
-		char v13[4];
 
 		// adjust menu id if the mini game button is not there
 		if (stat >= 4 && !IsMiniGameMenuEnabled())

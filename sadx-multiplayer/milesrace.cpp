@@ -431,7 +431,6 @@ static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 			VecTemp0.y = 0.0f;
 			VecTemp0.z = sonic_ctrl->vec_snc_tgt.z;
 			njUnitVector(&VecTemp0);
-			float v24;
 			if (twp->timer.w[0] - twp->timer.w[1] <= 6)
 			{
 				if (twp->timer.w[0] - twp->timer.w[1] <= 3)

@@ -35,7 +35,7 @@ void ResetPerspectiveM(int pnum)
 
 NJS_POINT3* GetCameraPosition(int pnum)
 {
-    if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
+    if (SplitScreen::IsActive() && pnum < LengthOfArray<int>(MultiCams))
     {
         return &MultiCams[pnum].pos;
     }
@@ -51,7 +51,7 @@ NJS_POINT3* GetCameraPosition(int pnum)
 
 Angle3* GetCameraAngle(int pnum)
 {
-    if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
+    if (SplitScreen::IsActive() && pnum < LengthOfArray<int>(MultiCams))
     {
         return &MultiCams[pnum].ang;
     }
@@ -67,7 +67,7 @@ Angle3* GetCameraAngle(int pnum)
 
 void SetCameraPosition(int pnum, float x, float y, float z)
 {
-    if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
+    if (SplitScreen::IsActive() && pnum < LengthOfArray<int>(MultiCams))
     {
         MultiCams[pnum].pos = { x, y, z };
     }
@@ -79,7 +79,7 @@ void SetCameraPosition(int pnum, float x, float y, float z)
 
 void SetCameraAngle(int pnum, Angle x, Angle y, Angle z)
 {
-    if (SplitScreen::IsActive() && pnum < LengthOfArray(MultiCams))
+    if (SplitScreen::IsActive() && pnum < LengthOfArray<int>(MultiCams))
     {
         MultiCams[pnum].ang = { x, y, z };
     }
@@ -91,7 +91,7 @@ void SetCameraAngle(int pnum, Angle x, Angle y, Angle z)
 
 void ApplyMultiCamera(int pnum)
 {
-    if (!camera_twp || !playertwp[pnum] || pnum >= LengthOfArray(MultiCams))
+    if (!camera_twp || !playertwp[pnum] || pnum >= LengthOfArray<int>(MultiCams))
     {
         return;
     }
@@ -228,12 +228,12 @@ void RunMultiCamera(int num)
     {
         MultiCam_SetDistData(cam, pltwp);
         vec.x = cam->pos.x - pltwp->pos.x;
-        vec.y = cam->pos.y - pltwp->pos.y - 10.5;
+        vec.y = cam->pos.y - pltwp->pos.y - 10.5f;
         vec.z = cam->pos.z - pltwp->pos.z;
         float magnitude = fabsf(njScalor(&vec));
         njUnitVector(&vec);
-        cam->wk._ang.y = (atan2(vec.x, vec.z) * 65536.0 * 0.1591549762031479);
-        cam->wk._ang.x = (asin(vec.y) * 65536.0 * -0.1591549762031479);
+        cam->wk._ang.y = NJM_RAD_ANG(atan2f(vec.x, vec.z));
+        cam->wk._ang.x = NJM_RAD_ANG(-asinf(vec.y));
         cam->wk._ang.z = 0;
 
         if (magnitude < cam->wk.dist1 || magnitude > cam->wk.dist2)
@@ -520,7 +520,7 @@ void __cdecl Camera_r(task* tp)
         }
         else
         {
-            for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
+            for (unsigned int i = 0; i < multiplayer::GetPlayerCount(); ++i)
             {
                 if (playertp[i])
                 {

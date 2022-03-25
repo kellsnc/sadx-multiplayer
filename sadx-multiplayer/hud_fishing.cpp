@@ -28,11 +28,11 @@ static void DrawBigHUDMulti(int pnum)
         reel_sprite.p.y = y + 48 * scale;
         reel_sprite.sx = reel_sprite.sy = scale * 1.5f;
 
-        njDrawSprite2D_ForcePriority(&reel_sprite, 4, -1.8200001, NJD_SPRITE_ALPHA);
+        njDrawSprite2D_ForcePriority(&reel_sprite, 4, -1.82f, NJD_SPRITE_ALPHA);
 
         reel_sprite.p.x = x + 226 * scale;
         reel_sprite.p.y = y + 24 * scale;
-        njDrawSprite2D_ForcePriority(&reel_sprite, 5, -1.8200001, NJD_SPRITE_ALPHA);
+        njDrawSprite2D_ForcePriority(&reel_sprite, 5, -1.82f, NJD_SPRITE_ALPHA);
 
         auto etc = GetBigEtc(pnum);
         _SC_NUMBERS pscn;
@@ -217,8 +217,8 @@ static void dispDistanceLure_m(float x, float y, float scale, float dist)
     pscn.rot = 0;
     pscn.max = 99;
     pscn.color = 0xFFFFFFFF;
-    pscn.value = (dist * 0.1f);
-    pscn.pos.x = x - 64.0f * scale - 21.0 * scale;
+    pscn.value = static_cast<unsigned int>(dist * 0.1f);
+    pscn.pos.x = x - 64.0f * scale - 21.0f * scale;
     pscn.pos.y = y + 90.0f * scale;
     pscn.pos.z = 0.0f;
     DrawSNumbers(&pscn);

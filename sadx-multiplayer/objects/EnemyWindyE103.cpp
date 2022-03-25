@@ -130,16 +130,16 @@ static void __declspec(naked) e103_move_w()
 static BOOL e103_chkPlayerRadius_o(task* tp, float r)
 {
     auto target = e103_chkPlayerRadius_t->Target();
-    BOOL ret;
+    BOOL rt;
     __asm
     {
         push[r]
         mov eax, [tp]
         call target
-        mov ret, eax
+        mov rt, eax
         add esp, 4
     }
-    return ret;
+    return rt;
 }
 
 static BOOL __cdecl e103_chkPlayerRadius_r(task* tp, float r)

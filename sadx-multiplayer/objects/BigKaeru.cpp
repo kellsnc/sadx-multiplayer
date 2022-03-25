@@ -158,7 +158,7 @@ static void moveFishingKaeru_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
         }
         else
         {
-            v.x = -0.2;
+            v.x = -0.2f;
         }
 
         v.x *= 2;
@@ -214,7 +214,7 @@ static void moveCatchingKaeru_m(taskwk* twp, int pnum)
     NJS_POINT3 v;
     v.x = ppwp->righthand_pos.x;
     v.y = ppwp->righthand_pos.y + ppwp->p.center_height;
-    v.z = ppwp->righthand_pos.z + 2.0;
+    v.z = ppwp->righthand_pos.z + 2.0f;
     njCalcVector(0, &v, &v);
     njPopMatrixEx();
     twp->pos.x = v.x + ptwp->pos.x;

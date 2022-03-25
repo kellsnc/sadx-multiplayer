@@ -204,7 +204,7 @@ static void execSkyLever_m(task* tp)
     {
     case MODE_0:
         twp->mode = MODE_1;
-        twp->pos.y = tp->ptp->twp->pos.y + 6.0;
+        twp->pos.y = tp->ptp->twp->pos.y + 6.0f;
         twp->counter.ptr = &object_sky_s_levar_s_cnt1;
         CCL_Init(tp, cci_lever, 2, 4u);
         ObjectMovableInitialize(twp, mwp, 5u); //5: push lever

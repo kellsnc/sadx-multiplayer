@@ -27,7 +27,7 @@ __declspec(align(4)) struct BIGETC // struct doesn't actually exist, but all of 
 	float distancep;
 };
 
-enum : __int16 // made up
+enum : unsigned __int16 // made up
 {
 	LUREFLAG_HIT = 0x1,       // Hit mode
 	LUREFLAG_RELEASE = 0x2,   // Fish released

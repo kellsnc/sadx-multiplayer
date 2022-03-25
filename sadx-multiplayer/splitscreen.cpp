@@ -112,17 +112,17 @@ namespace SplitScreen
             return true;
         }
 
-        if (num < 0 || num > multiplayer::GetPlayerCount() || num > PLAYER_MAX)
+        if (num < 0 || num > (int)multiplayer::GetPlayerCount() || num > PLAYER_MAX)
         {
             return false;
         }
 
         auto ratio = GetScreenRatio(num);
 
-        Direct3D_ViewPort.X = ratio->x * HorizontalResolution;
-        Direct3D_ViewPort.Y = ratio->y * VerticalResolution;
-        Direct3D_ViewPort.Width = ratio->w * HorizontalResolution;
-        Direct3D_ViewPort.Height = ratio->h * VerticalResolution;
+        Direct3D_ViewPort.X = static_cast<DWORD>(ratio->x * static_cast<float>(HorizontalResolution));
+        Direct3D_ViewPort.Y = static_cast<DWORD>(ratio->y * static_cast<float>(VerticalResolution));
+        Direct3D_ViewPort.Width = static_cast<DWORD>(ratio->w * static_cast<float>(HorizontalResolution));
+        Direct3D_ViewPort.Height = static_cast<DWORD>(ratio->h * static_cast<float>(VerticalResolution));
         Direct3D_Device->SetViewport(&Direct3D_ViewPort);
 
         numViewPort = num;
@@ -134,7 +134,7 @@ void __cdecl SpLoopOnlyDisplay_r()
 {
     if (SplitScreen::IsActive())
     {
-        for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
+        for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); ++i)
         {
             if (SplitScreen::IsScreenEnabled(i))
             {
@@ -181,7 +181,7 @@ void __cdecl DisplayTask_r()
     {
         // If multiplayer is enabled, split screen:
 
-        for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
+        for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); ++i)
         {
             DrawScreen(i);
         }
@@ -208,7 +208,7 @@ void __cdecl LoopTask_r()
         TARGET_DYNAMIC(LoopTask)();
         DisplayMultiHud(0);
 
-        for (int i = 1; i < multiplayer::GetPlayerCount(); ++i)
+        for (unsigned int i = 1ui32; i < multiplayer::GetPlayerCount(); ++i)
         {
             DrawScreen(i);
         }

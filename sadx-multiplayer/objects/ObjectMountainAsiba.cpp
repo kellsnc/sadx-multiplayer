@@ -12,9 +12,9 @@ static _BOOL1 sub_60DE20(taskwk* a1, char pnum)
 {
 	task* player; 
 	taskwk* playerData;
-	double calcPosX;
-	double calcPosZ;
-	double calcSin;
+	float calcPosX;
+	float calcPosZ;
+	float calcSin;
 	float resultPos; 
 	float calcPosY; 
 
@@ -27,7 +27,7 @@ static _BOOL1 sub_60DE20(taskwk* a1, char pnum)
 		calcPosZ = playerData->pos.z - a1->pos.z;
 		resultPos = calcPosX * calcPosX + calcPosZ * calcPosZ;
 		calcPosY = playerData->pos.y - a1->pos.y;
-		calcSin = njSin(9102) * 50.0;
+		calcSin = njSin(9102) * 50.0f;
 		if (resultPos < 2500.0 && fabs(calcPosY) < calcSin)
 		{
 			return true;
@@ -74,7 +74,7 @@ static void OMasiba_Exec_r(task* tp)
 		btimer = data->btimer;
 
 		if (!data->btimer)
-			data->value.f = -0.035;
+			data->value.f = -0.035f;
 
 		totalTime = btimer + 1;
 

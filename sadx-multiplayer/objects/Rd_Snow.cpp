@@ -117,7 +117,7 @@ static void RdSnowBoardingRegular_m(task* tp)
 			deg = 1.0f;
 		}
 
-		njSetPerspectiveM(i, AdjustAngle(ds_GetPerspectiveM(i), 0x31C7 - (sqrtf(deg) * -5461.0f), 512));
+		njSetPerspectiveM(i, AdjustAngle(ds_GetPerspectiveM(i), 0x31C7 - static_cast<Angle>(sqrtf(deg) * -5461.0f), 512));
 	}
 
 	if (done == true)

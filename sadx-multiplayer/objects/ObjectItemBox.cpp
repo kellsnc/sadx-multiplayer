@@ -163,8 +163,8 @@ void __cdecl TBarrier_r(task* tp)
 
 				if (ctwp)
 				{
-					ctwp->ang.x = (rand() * 0.000030517578 * 65536.0);
-					ctwp->ang.y = (rand() * 0.000030517578 * 65536.0);
+					ctwp->ang.x = static_cast<Angle>((double)rand() * 0.000030517578 * 65536.0);
+					ctwp->ang.y = static_cast<Angle>((double)rand() * 0.000030517578 * 65536.0);
 					ctwp->value.f = 1.0f;
 					ctp->disp = TBarrierDisp;
 				}

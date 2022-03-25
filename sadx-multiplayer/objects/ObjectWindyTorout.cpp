@@ -43,7 +43,6 @@ static void VacumePlayer_m(task* tp)
 			offset_ypos_m[i] = 0.0f;
 			yang_m[i] += 4.0f;
 			
-			NJS_VECTOR v;
 			ptwp->pos.x = njCos(NJM_DEG_ANG(-yang_m[i])) * 130.0f + tor_pos->x;
 			ptwp->pos.z = njSin(NJM_DEG_ANG(-yang_m[i])) * 130.0f + tor_pos->z;
 			ptwp->pos.y += 0.9f;

@@ -165,11 +165,11 @@ static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 	{
 		if (twp->value.f <= 3.0f)
 		{
-			vel = 8.0f - t / twp->value.f * 0.63;
+			vel = 8.0f - t / twp->value.f * 0.63f;
 		}
 		else
 		{
-			vel = 8.0f - t / twp->value.f * 0.13;
+			vel = 8.0f - t / twp->value.f * 0.13f;
 		}
 
 		if (vel >= 0.0f)

@@ -51,7 +51,7 @@ int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, 
 
 int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z, float rad)
 {
-    if (SplitScreen::IsActive && IsCameraInSphere(x, y, z, rad))
+    if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, rad))
     {
         int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
         if (num < 0)
@@ -91,7 +91,7 @@ int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x,
 
 int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, float z)
 {
-    if (SplitScreen::IsActive && IsCameraInSphere(x, y, z, 40000.0f))
+    if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, 40000.0f))
     {
         int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
         if (num < 0)
@@ -130,7 +130,7 @@ int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, 
 
 void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float rad, taskwk* pTaskwk)
 {
-    if (SplitScreen::IsActive)
+    if (SplitScreen::IsActive())
     {
         if (pTaskwk && IsCameraInSphere(&pTaskwk->pos, rad))
         {
@@ -182,14 +182,14 @@ void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, f
 static int dsGetVolume_o(int ii)
 {
     auto tgt = dsGetVolume_t->Target();
-    int ret;
+    int r;
     __asm
     {
         mov eax, [ii]
         call tgt
-        mov ret, eax
+        mov r, eax
     }
-    return ret;
+    return r;
 }
 
 int __cdecl dsGetVolume_r(int ii)

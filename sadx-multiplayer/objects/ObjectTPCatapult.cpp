@@ -109,10 +109,10 @@ static void manipulateArm_m(taskwk* twp)
         sibling->pos[0] = -54.27f;
     }
 
-    v3 = v.x - obj->pos[0] + 9.0;
+    v3 = v.x - obj->pos[0] + 9.0f;
     if (fabs(v3) >= 0.5)
     {
-        v3 = v3 * 0.25 + obj->pos[0];
+        v3 = v3 * 0.25f + obj->pos[0];
     }
     else
     {
@@ -240,7 +240,7 @@ static void ObjectTPCatapult_m(task* tp)
             twp->btimer = twp->btimer & 0xFC | 1;
             twp->scl.y = 0.0;
             twp->timer.ptr = &action_bowling_bowlingdai;
-            twp->scl.z = action_bowling_bowlingdai.motion->nbFrame;
+            twp->scl.z = static_cast<Float>(action_bowling_bowlingdai.motion->nbFrame);
             tp->disp = dispCatapult;
             break;
         case MODE_NORMAL:

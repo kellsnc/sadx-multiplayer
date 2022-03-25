@@ -35,7 +35,7 @@ void __cdecl execTPCoaster_r(task* tp)
 			SetRotationP(id, twp->ang.x, twp->ang.y - 0x4000, twp->ang.z);
 			break;
 		case 4:
-			GetOutOfCartP(id, -1.2, 1.5, 0.0);
+			GetOutOfCartP(id, -1.2f, 1.5f, 0.0f);
 			RumbleA(id, 0);
 			break;
 		}

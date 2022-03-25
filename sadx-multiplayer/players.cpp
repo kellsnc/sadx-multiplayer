@@ -317,7 +317,7 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
         NJS_POINT3 pos; Angle3 ang;
         GetPlayerInitialPositionM(&pos, &ang);
 
-        static const int dists[]{ -5.0f, 5.0f, -10.0f, 10.0f };
+        static const float dists[]{ -5.0f, 5.0f, -10.0f, 10.0f };
         twp->ang = ang;
         twp->pos.x = pos.x + njCos(ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
         twp->pos.y = pos.y;
@@ -446,7 +446,7 @@ void SetPlayer_r()
     if (multiplayer::IsActive())
     {
         // Load all characters:
-        for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+        for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); i++)
         {
             int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
 

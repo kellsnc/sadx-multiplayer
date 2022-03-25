@@ -146,7 +146,7 @@ void DrawWaitScreen(int num)
 
     float y = MULTIHUD_SPRITE.p.y; // backup position
 
-    for (int i = 0; i < LengthOfArray(waittextseq); ++i)
+    for (size_t i = 0ui32; i < LengthOfArray(waittextseq); ++i)
     {
         MULTIHUD_SPRITE.p.x += 16 * scale; // move right
         MULTIHUD_SPRITE.p.y = y + njSin(GameTimer * 1000 + i * 1000) * 5; // slide up and down individually
@@ -176,7 +176,7 @@ void MultiHudScore(int num)
         }
         else
         {
-            njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, score % 10, -1.501, NJD_SPRITE_ALPHA);
+            njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, score % 10, -1.5f, NJD_SPRITE_ALPHA);
             score /= 10;
         }
 
@@ -188,28 +188,28 @@ void MultiHudTime(int num)
 {
     MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x + 60.0f * MULTIHUD_SPRITE.sx;
     MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 2.0f * MULTIHUD_SPRITE.sy;
-    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeMinutes / 10, -1.501, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeMinutes / 10, -1.5f, NJD_SPRITE_ALPHA);
     MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
-    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeMinutes % 10, -1.501, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeMinutes % 10, -1.5f, NJD_SPRITE_ALPHA);
     MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
-    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 10, -1.501, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 10, -1.5f, NJD_SPRITE_ALPHA);
     MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
-    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeSeconds / 10, -1.501, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeSeconds / 10, -1.5f, NJD_SPRITE_ALPHA);
     MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
-    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeSeconds % 10, -1.501, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TimeSeconds % 10, -1.5f, NJD_SPRITE_ALPHA);
     MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
-    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 10, -1.501, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, 10, -1.5f, NJD_SPRITE_ALPHA);
     MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
-    int timerms = (TimeFrames * 1.6666666f);
-    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, timerms % 10, -1.501, NJD_SPRITE_ALPHA);
+    int timerms = static_cast<int>(static_cast<float>(TimeFrames) * 1.6666666f);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, timerms % 10, -1.5f, NJD_SPRITE_ALPHA);
     MULTIHUDDIGIT_SPRITE.p.x += 16 * MULTIHUD_SPRITE.sx;
-    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, timerms % 10, -1.501, NJD_SPRITE_ALPHA);
+    njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, timerms % 10, -1.5f, NJD_SPRITE_ALPHA);
 }
 
 void MultiHudRings(int num)
 {
     MULTIHUDDIGIT_SPRITE.p.x = MULTIHUD_SPRITE.p.x;
-    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 1.5 * MULTIHUD_SPRITE.sx;
+    MULTIHUDDIGIT_SPRITE.p.y = MULTIHUD_SPRITE.p.y + 1.5f * MULTIHUD_SPRITE.sx;
 
     int count = GetNumRingM(num);
     

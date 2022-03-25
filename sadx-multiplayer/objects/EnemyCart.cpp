@@ -433,7 +433,7 @@ void setupCartStageM(task* tp, taskwk* twp, int pnum)
 		twp->pos = { 1513.0f, 9.0f, 74.0f };
 		twp->ang.y = 0xC000;
 
-		static const int dists[]
+		static const float dists[]
 		{
 			-15.0f,
 			15.0f,

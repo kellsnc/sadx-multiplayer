@@ -65,10 +65,10 @@ void __cdecl GetPlayersInputData_r()
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		auto controller = per[i];
-		float lx = (controller->x1 << 8); // left stick x
-		float ly = (controller->y1 << 8); // left stick y
+		float lx = static_cast<float>(controller->x1 << 8); // left stick x
+		float ly = static_cast<float>(controller->y1 << 8); // left stick y
 
-		int ang;
+		Angle ang;
 		float strk;
 
 		if (lx > 3072.0f || lx < -3072.0f || ly > 3072.0f || ly < -3072.0f)
@@ -76,21 +76,19 @@ void __cdecl GetPlayersInputData_r()
 			lx = lx <= 3072.0f ? (lx >= -3072.0f ? 0.0f : lx + 3072.0f) : lx - 3072.0f;
 			ly = ly <= 3072.0f ? (ly >= -3072.0f ? 0.0f : ly + 3072.0f) : ly - 3072.0f;
 
-			strk = atan2f(ly, lx) * 65536.0f;
-
 			auto cam_ang = GetCameraAngle(i);
 
 			if (cam_ang)
 			{
-				ang = -cam_ang->y - (strk * -0.1591549762031479);
+				ang = -cam_ang->y - NJM_RAD_ANG(-atan2f(ly, lx));
 			}
 			else
 			{
-				ang = (strk * 0.1591549762031479);
+				ang = NJM_RAD_ANG(-atan2f(ly, lx));
 			}
 
-			float magnitude = ly * ly + lx * lx;
-			strk = sqrtf(magnitude) * magnitude * 3.9187027e-14;
+			double magnitude = ly * ly + lx * lx;
+			strk = static_cast<float>(sqrt(magnitude) * magnitude * 3.9187027e-14);
 			if (strk > 1.0f)
 			{
 				strk = 1.0f;
@@ -128,7 +126,7 @@ void __cdecl Ring_r(task* tp)
 
 			if (player)
 			{
-				int pID = multiplayer::IsBattleMode ? TASKWK_PLAYERID(player) : 0;
+				int pID = multiplayer::IsBattleMode() ? TASKWK_PLAYERID(player) : 0;
 
 				if (!(playerpwp[pID]->item & 0x4000))
 				{
@@ -166,7 +164,7 @@ void __cdecl Tobitiri_r(task* tp)
 
 				ResetParticle((EntityData1*)twp, (NJS_SPRITE*)0x3B42FC0);
 
-				int pID = multiplayer::IsBattleMode ? TASKWK_PLAYERID(player) : 0;
+				int pID = multiplayer::IsBattleMode() ? TASKWK_PLAYERID(player) : 0;
 
 				if (!(playerpwp[pID]->item & 0x4000))
 				{
@@ -371,7 +369,7 @@ void __cdecl savepointCollision_r(task* tp, taskwk* twp)
 				twp->mode = 2;
 				int pID = TASKWK_PLAYERID(entity);
 				savepoint_data->write_timer = 300;
-				savepoint_data->ang_spd.y = ((savepointGetSpeedM(twp, pID) * 10.0f) * 65536.0f * 0.0028f);
+				savepoint_data->ang_spd.y = static_cast<Angle>((savepointGetSpeedM(twp, pID) * 10.0f) * 65536.0f * 0.0028f);
 				updateContinueData(&entity->pos, &entity->ang);
 				SetBroken(tp);
 				dsPlay_oneshot(10, 0, 0, 0);
@@ -596,7 +594,7 @@ static BOOL PlayerVacumedRing_r(taskwk* twp)
 		playerwk* plpwp = nullptr;
 		float dist = 10000000.0f;
 
-		for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
+		for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); ++i)
 		{
 			auto pltwp = playertwp[i];
 			plpwp = playerpwp[i];
@@ -687,9 +685,9 @@ void SpinnaDrawShield(taskwk* twp)
 {
 	for (int i = 0; i < 16; ++i)
 	{
-		Angle mod1 = ((0.5 - rand() * 0.000030517578) * 180.0 * 65536.0 * 0.002777777777777778);
-		Angle mod2 = (rand() * 0.000030517578 * 360.0 * 65536.0 * 0.002777777777777778);
-		float mod3 = (rand() * 0.000030517578 + 0.5) * 10.0;
+		Angle mod1 = NJM_DEG_ANG((0.5 - (double)rand() * 0.000030517578) * 180.0);
+		Angle mod2 = NJM_DEG_ANG((double)rand() * 0.000030517578 * 360.0);
+		float mod3 = static_cast<float>(((double)rand() * 0.000030517578 + 0.5) * 10.0);
 		
 		NJS_VECTOR posm;
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
@@ -706,9 +704,9 @@ void SpinnaDrawShield(taskwk* twp)
 		DrawLineV(&pos2, &pos1);
 
 		pos2 = pos1;
-		mod1 = ((0.5 - rand() * 0.000030517578) * 120.0 * 65536.0 * 0.002777777777777778) + mod1;
-		mod2 = ((0.5 - rand() * 0.000030517578) * 80.0 * 65536.0 * 0.002777777777777778) + mod2;
-		mod3 = (rand() * 0.000030517578 + 1.0) * 4.0;
+		mod1 += NJM_DEG_ANG((0.5 - (double)rand() * 0.000030517578) * 120.0);
+		mod2 += NJM_DEG_ANG((0.5 - (double)rand() * 0.000030517578) * 80.0);
+		mod3 = static_cast<float>((rand() * 0.000030517578 + 1.0) * 4.0);
 		
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
 		posm.y = njSin(mod1) * mod3;
@@ -718,10 +716,10 @@ void SpinnaDrawShield(taskwk* twp)
 		DrawLineV(&pos2, &pos1);
 
 		pos2 = pos1;
-		mod1 = ((0.5 - rand() * 0.000030517578) * 120.0 * 65536.0 * 0.002777777777777778) + mod1;
-		mod2 = ((0.5 - rand() * 0.000030517578) * 80.0 * 65536.0 * 0.002777777777777778) + mod2;
-		auto rnd = rand();
-		mod3 = rnd * 0.000030517578 + 1.0 + rnd * 0.000030517578 + 1.0;
+		mod1 += NJM_DEG_ANG((0.5 - rand() * 0.000030517578) * 120.0 * 65536.0 * 0.002777777777777778);
+		mod2 += NJM_DEG_ANG((0.5 - rand() * 0.000030517578) * 80.0 * 65536.0 * 0.002777777777777778);
+		double rnd = (double)rand();
+		mod3 = static_cast<float>(rnd * 0.000030517578 + 1.0 + rnd * 0.000030517578 + 1.0);
 		
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
 		posm.y = njSin(mod1) * mod3;
@@ -758,7 +756,7 @@ void PadReadOnP_r(int8_t pnum)
 {
 	if (pnum == -1)
 	{
-		for (int i = 0; i < ucInputStatusForEachPlayer.size(); ++i)
+		for (size_t i = 0ui32; i < ucInputStatusForEachPlayer.size(); ++i)
 		{
 			ucInputStatusForEachPlayer[i] = TRUE;
 		}
@@ -773,7 +771,7 @@ void PadReadOffP_r(int8_t pnum)
 {
 	if (pnum < 0)
 	{
-		for (int i = 0; i < ucInputStatusForEachPlayer.size(); ++i)
+		for (size_t i = 0ui32; i < ucInputStatusForEachPlayer.size(); ++i)
 		{
 			ucInputStatusForEachPlayer[i] = FALSE;
 		}
@@ -934,4 +932,6 @@ void InitPatches()
 	InitE104Patches();
 	InitE105Patches();
 	PatchEffectSpark();
+
+	WriteJump(Kiki_Load, Spring_Main);
 }
