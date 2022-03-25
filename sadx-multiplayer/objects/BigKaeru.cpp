@@ -58,7 +58,7 @@ static void setDirKaeru2_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
         twp->value.w[0] = 120;
         mwp->ang_aim.y ^= 0x8000u;
 
-        if ((double)rand() * 0.000030517578 < 0.15)
+        if (UNIT_RAND < 0.15)
         {
             dsPlay_oneshot_v(853, 0, 0, 0, twp->pos.x, twp->pos.y, twp->pos.z);
             twp->wtimer = 120i16;

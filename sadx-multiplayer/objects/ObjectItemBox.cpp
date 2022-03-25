@@ -73,7 +73,7 @@ void __cdecl ef_random_ring_r(taskwk* twp)
 	if (multiplayer::IsActive())
 	{
 		auto pnum = itembox_getpnum(twp);
-		RandomRingNum = RandomRingAmounts[(int)-(rand() * 0.000030517578 * -6.0) % 6];
+		RandomRingNum = RandomRingAmounts[rand() % 6];
 		AddNumRingM(pnum, RandomRingNum);
 		play_itembox_sound(pnum);
 	}
@@ -156,15 +156,15 @@ void __cdecl TBarrier_r(task* tp)
 		{
 			EffBarrierPosSet(twp, pltwp);
 			
-			if ((double)rand() * 0.000030517578 > 0.70)
+			if (UNIT_RAND > 0.70)
 			{
 				auto ctp = CreateChildTask(LoadObj_Data1, ThunderB, tp);
 				auto ctwp = ctp->twp;
 
 				if (ctwp)
 				{
-					ctwp->ang.x = static_cast<Angle>((double)rand() * 0.000030517578 * 65536.0);
-					ctwp->ang.y = static_cast<Angle>((double)rand() * 0.000030517578 * 65536.0);
+					ctwp->ang.x = rand() % 0x10000; // better version of (Angle)(UNIT_RAND * 65536.0)
+					ctwp->ang.y = rand() % 0x10000;
 					ctwp->value.f = 1.0f;
 					ctp->disp = TBarrierDisp;
 				}

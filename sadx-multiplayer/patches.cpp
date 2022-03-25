@@ -685,9 +685,9 @@ void SpinnaDrawShield(taskwk* twp)
 {
 	for (int i = 0; i < 16; ++i)
 	{
-		Angle mod1 = NJM_DEG_ANG((0.5 - (double)rand() * 0.000030517578) * 180.0);
-		Angle mod2 = NJM_DEG_ANG((double)rand() * 0.000030517578 * 360.0);
-		float mod3 = static_cast<float>(((double)rand() * 0.000030517578 + 0.5) * 10.0);
+		Angle mod1 = NJM_DEG_ANG(180.0 * (0.5 - UNIT_RAND));
+		Angle mod2 = NJM_DEG_ANG(360.0 * UNIT_RAND);
+		float mod3 = static_cast<float>((UNIT_RAND + 0.5) * 10.0);
 		
 		NJS_VECTOR posm;
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
@@ -704,9 +704,9 @@ void SpinnaDrawShield(taskwk* twp)
 		DrawLineV(&pos2, &pos1);
 
 		pos2 = pos1;
-		mod1 += NJM_DEG_ANG((0.5 - (double)rand() * 0.000030517578) * 120.0);
-		mod2 += NJM_DEG_ANG((0.5 - (double)rand() * 0.000030517578) * 80.0);
-		mod3 = static_cast<float>((rand() * 0.000030517578 + 1.0) * 4.0);
+		mod1 += NJM_DEG_ANG(120.0 * (0.5 - UNIT_RAND));
+		mod2 += NJM_DEG_ANG(80.0 * (0.5 - UNIT_RAND));
+		mod3 = static_cast<float>((UNIT_RAND + 1.0) * 4.0);
 		
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
 		posm.y = njSin(mod1) * mod3;
@@ -716,10 +716,9 @@ void SpinnaDrawShield(taskwk* twp)
 		DrawLineV(&pos2, &pos1);
 
 		pos2 = pos1;
-		mod1 += NJM_DEG_ANG((0.5 - rand() * 0.000030517578) * 120.0 * 65536.0 * 0.002777777777777778);
-		mod2 += NJM_DEG_ANG((0.5 - rand() * 0.000030517578) * 80.0 * 65536.0 * 0.002777777777777778);
-		double rnd = (double)rand();
-		mod3 = static_cast<float>(rnd * 0.000030517578 + 1.0 + rnd * 0.000030517578 + 1.0);
+		mod1 += NJM_DEG_ANG(120.0 * (0.5 - UNIT_RAND));
+		mod2 += NJM_DEG_ANG(80.0 * (0.5 - UNIT_RAND));
+		mod3 = static_cast<float>((UNIT_RAND + 1.0) * 2.0);
 		
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
 		posm.y = njSin(mod1) * mod3;

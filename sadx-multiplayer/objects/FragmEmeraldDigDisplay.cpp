@@ -72,9 +72,9 @@ static void FragmEmeraldDigDisplay_m(task* tp)
         if (twp->wtimer > 0x3Cu || (twp->wtimer & 2))
         {
             NJS_VECTOR velo;
-            velo.x = (float)((double)rand() * 0.000030517578 - 0.5);
-            velo.y = (float)((double)rand() * 0.000030517578 - 0.5);
-            velo.z = (float)((double)rand() * 0.000030517578 - 0.5);
+            velo.x = (float)(UNIT_RAND - 0.5);
+            velo.y = (float)(UNIT_RAND - 0.5);
+            velo.z = (float)(UNIT_RAND - 0.5);
             if (njUnitVector(&velo) == 0.0f)
             {
                 velo = { 0.0f, 0.0f, 0.0f };

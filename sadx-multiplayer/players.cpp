@@ -339,13 +339,11 @@ void __cdecl DamegeRingScatter_r(uint8_t pno)
         {
             ResetNumRingP(pno);
 
-            float v6 = (float)((double)rand() * 0.000030517578 * 360.0);
-
             for (int i = 0; i < min(20, rings); ++i)
             {
                 auto tp = CreateElementalTask(LoadObj_UnknownB | LoadObj_Data1, 2, (TaskFuncPtr)0x44FD10);
                 tp->twp->pos = playertwp[pno]->pos;
-                tp->twp->ang.y = (Angle)((((i * 350) / rings) + v6) * 65536.0 * 0.002777777777777778);
+                tp->twp->ang.y = NJM_DEG_ANG(((double)(i * 350.0) / (double)rings) + (UNIT_RAND * 360.0));
             }
 
             dsPlay_oneshot(0, 0, 0, 0);
