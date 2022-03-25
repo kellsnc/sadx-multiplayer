@@ -65,7 +65,7 @@ static void __cdecl dispZankiTexturePause_r(task* tp);
 Trampoline dispZankiTexturePause_t(0x46FB00, 0x46FB05, dispZankiTexturePause_r);
 static void __cdecl dispZankiTexturePause_r(task* tp)
 {
-    if (SplitScreen::IsActive())
+    if (multiplayer::IsBattleMode())
     {
         if (!loop_count && ssStageNumber != STAGE_TWINKLEPARK && HideHud >= 0 && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
         {
@@ -86,6 +86,13 @@ static void __cdecl dispZankiTexturePause_r(task* tp)
             SplitScreen::RestoreViewPort();
             ResetMaterial();
         }
+    }
+    else if (SplitScreen::IsActive())
+    {
+        SplitScreen::SaveViewPort();
+        SplitScreen::ChangeViewPort(-1);
+        TARGET_STATIC(dispZankiTexturePause)(tp);
+        SplitScreen::RestoreViewPort();
     }
     else
     {

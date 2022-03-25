@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "multiplayer.h"
+#include "splitscreen.h"
 #include "hud_fishing.h"
 #include "fishing.h"
 
@@ -128,9 +129,16 @@ void AddSakanaWeight_m(int weight, int kind, int pnum)
 #pragma region BigDisplayFishWeight
 static void __cdecl dispFishWeightTexture_r(task* tp)
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsBattleMode())
 	{
 		dispFishWeightTexture_m(tp->twp, tp->twp->smode);
+	}
+	else if (SplitScreen::IsActive())
+	{
+		SplitScreen::SaveViewPort();
+		SplitScreen::ChangeViewPort(-1);
+		TARGET_DYNAMIC(dispFishWeightTexture)(tp);
+		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
@@ -140,7 +148,7 @@ static void __cdecl dispFishWeightTexture_r(task* tp)
 
 static void __cdecl exitFishWeightTexture_r(task* tp)
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsBattleMode())
 	{
 		auto twp = tp->twp;
 		if (twp->counter.l != 999)
