@@ -25,7 +25,7 @@ enum : __int32
 	MODE_LURE_END = 0x9,
 };
 
-struct lurewk
+struct lurewk // custom; todo: find symbol struct
 {
 	void* unk0;
 	void* unk1;

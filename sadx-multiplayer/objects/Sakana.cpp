@@ -7,18 +7,18 @@
 #define SAKANA_PNUM(twp) twp->smode
 #define MAX_FISH 5 * GetPlayerCount()
 
-enum : __int8 // todo: find missing symbol names
+enum : __int8
 {
-    MODE_INIT,     // <- symbol name
-    MODE_FREE,     // <- symbol name
-    MODE_RETPOS,   // return to start position -> MODE_RETANG
-    MODE_RETANG,   // return to start angle -> MODE_FREE
-    MODE_LURE,     // move fish toward the lure -> MODE_HIT
-    MODE_HIT,      // check if it's a hit -> fishing mode
-    MODE_FISHING,  // fishing mode (normal) <- symbol name
-    MODE_TURN,     // fishing mode (turning)
-    MODE_ESCAPE,   // fishing mode (resistance)
-    MODE_CATCHING  // fish is caught -> FREE TASK <- symbol name
+    MODE_INIT,
+    MODE_FREE,
+    MODE_RETPOS,        // return to start position -> MODE_RETANG          <- symbol name?
+    MODE_RETANG,        // return to start angle -> MODE_FREE               <- symbol name?
+    MODE_TRACE,         // move fish toward the lure -> MODE_FISHING_ATARI
+    MODE_FISHING_ATARI, // check if it's a hit -> fishing mode
+    MODE_FISHING,       // fishing mode (normal)
+    MODE_TURN,          // fishing mode (turning)                           <- symbol name?
+    MODE_ESCAPE,        // fishing mode (resistance)                        <- symbol name?
+    MODE_CATCHING       // fish is caught -> FREE TASK
 };
 
 static auto setSakana = GenerateUsercallWrapper<task* (*)(task* tp)>(rEAX, 0x597590, rEDI);
@@ -70,40 +70,6 @@ static void sub_593F90_m(BIGETC* etc)
     {
         ++etc->Big_Fishing_Timer;
     }
-}
-
-static bool chkAngLimit_m(task* tp, NJS_POINT3* next_pos)
-{
-    auto mwp = tp->mwp;
-    auto pnum = SAKANA_PNUM(tp->twp);
-    auto ptwp = playertwp[pnum];
-
-    if (ptwp)
-    {
-        __int16 ang = 0x4000 - NJM_RAD_ANG(atan2f(next_pos->x - ptwp->pos.x, next_pos->z - ptwp->pos.x));
-        auto diffang = SubAngle(ptwp->ang.y, ang);
-
-        if (diffang <= 0x1555u || diffang >= 0x8000u)
-        {
-            if (diffang >= 0xEAAAu || diffang <= 0x8000u)
-            {
-                if (GetDistance(next_pos, &ptwp->pos))
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                mwp->ang_aim.y = ptwp->ang.y + 0x8000;
-                return false;
-            }
-        }
-
-        mwp->ang_aim.y = ptwp->ang.y + 0x8000;
-        return false;
-    }
-
-    return false;
 }
 
 static void setActionPointer(task* tp, int motion_type) // inlined in sadxpc
@@ -222,7 +188,7 @@ static void setDirSakana2_m(task* tp)
     {
         if (etc->Big_Fish_Flag & LUREFLAG_ESCAPE)
         {
-            chkAngLimit_m(tp, &twp->pos);
+            chkAngLimit_m(twp, mwp, &twp->pos);
         }
 
         if (twp->ang.y - mwp->ang_aim.y >= 0)
@@ -310,10 +276,12 @@ static void moveFishingSakana_m(task* tp)
             mwp->spd.y = 0.0f;
             mwp->spd.z = 0.0f;
         }
-
-        mwp->spd.x *= 0.5f;
-        mwp->spd.y *= 0.5f;
-        mwp->spd.z *= 0.5f;
+        else
+        {
+            mwp->spd.x *= 0.5f;
+            mwp->spd.y *= 0.5f;
+            mwp->spd.z *= 0.5f;
+        }
 
         CalcHookPos_m(etc, &twp->pos);
 
@@ -329,13 +297,17 @@ static void moveFishingSakana_m(task* tp)
     }
 }
 
-static bool moveLureDirSakana_m(task* tp, task* otp)
+static bool moveLureDirSakana_m(task* tp, task* otp) // todo: try again to rewrite this one
 {
-    auto etc = GetBigEtc(SAKANA_PNUM(tp->twp));
+    auto pnum = SAKANA_PNUM(tp->twp);
+    auto etc = GetBigEtc(pnum);
     auto backup_ptr = Big_Fish_Ptr;
+    auto backup_ptwp = playertwp[0];
     Big_Fish_Ptr = etc->Big_Fish_Ptr;
-    auto ret = moveLureDirSakana(tp, otp); //f u
+    playertwp[0] = playertwp[pnum];
+    auto ret = moveLureDirSakana(tp, otp);
     Big_Fish_Ptr = backup_ptr;
+    playertwp[pnum] = backup_ptwp;
     return ret;
 }
 
@@ -477,7 +449,7 @@ static bool SakanaRangeOut(task* tp) // custom, probably inlined
     auto twp = tp->twp;
 
     // if currently being fished, don't delete
-    if (twp->mode >= MODE_HIT)
+    if (twp->mode >= MODE_FISHING_ATARI)
     {
         auto etc = GetBigEtc(SAKANA_PNUM(twp));
 
@@ -518,7 +490,7 @@ static void BigSakana_m(task* tp)
     case MODE_FREE:
         if (FishingEnabled() && chkFishPtr_m(tp) && chkLureKaeru_m(twp, mwp, etc))
         {
-            twp->mode = MODE_LURE;
+            twp->mode = MODE_TRACE;
             mwp->work.f = GetWaterLevel_m(etc);
         }
 
@@ -571,7 +543,7 @@ static void BigSakana_m(task* tp)
 
         break;
     }
-    case MODE_LURE:
+    case MODE_TRACE:
         if (!chkFishPtr_m(tp))
         {
             setSakanaRetStart_m(tp);
@@ -581,7 +553,7 @@ static void BigSakana_m(task* tp)
         if (chkDistanceLure_m(twp, mwp, etc))
         {
             etc->Big_Fish_Flag |= LUREFLAG_HIT;
-            twp->mode = MODE_HIT;
+            twp->mode = MODE_FISHING_ATARI;
             mwp->ang_aim.y = etc->Big_Lure_Ptr->mwp->ang_aim.y + 0x8000;
             
             sub_593F40_m(twp, pnum);
@@ -603,7 +575,7 @@ static void BigSakana_m(task* tp)
             }
         }
         break;
-    case MODE_HIT:
+    case MODE_FISHING_ATARI:
         if (etc->Big_Fish_Flag & LUREFLAG_RELEASE)
         {
             twp->mode = MODE_CATCHING;
@@ -770,7 +742,7 @@ static void SakanaGenerater_m(task* tp)
             break;
         }
 
-        if (fish_tp->twp->mode >= MODE_LURE)
+        if (fish_tp->twp->mode >= MODE_TRACE)
         {
             auto pnum = SAKANA_PNUM(fish_tp->twp);
             auto etc = GetBigEtc(pnum);

@@ -37,6 +37,7 @@ enum : __int16 // made up
 	LUREFLAG_SWING = 0x20,    // Move line left/right
 	LUREFLAG_FISH = 0x40,     // Currently fishing
 	LUREFLAG_HOOK = 0x80,     // Hot shelter hook
+	LUREFLAG_KAERU = 0x400,   // Froggy caught
 	LUREFLAG_MISS = 0x800,    // Fish caught
 	LUREFLAG_REEL = 0x1000,   // Currently reeling
 	LUREFLAG_PTCL = 0x2000,   // Particule spawned
