@@ -58,6 +58,50 @@ BIGETC* GetBigEtc(int pnum)
 	return pnum >= 0 && pnum <= 3 ? bigetc_m[pnum] : nullptr;
 }
 
+#pragma region utilities
+float GetWaterLevel_m(BIGETC* etc)
+{
+	return etc->water_level;
+}
+
+float GetReelLength_m(BIGETC* etc)
+{
+	return etc->reel_length;
+}
+
+void CalcHookPos_m(BIGETC* etc, NJS_POINT3* ret)
+{
+	if (etc->Big_Lure_Ptr)
+	{
+		auto twp = etc->Big_Lure_Ptr->twp;
+		NJS_POINT3 v = { 0.6f, -0.45f, 0.0f };
+
+		njPushMatrix(_nj_unit_matrix_);
+		njRotateZ_(twp->ang.z);
+		njRotateX_(twp->ang.x);
+		njRotateY_(-HIWORD(twp->ang.y));
+		njCalcVector(0, &v, ret);
+		njPopMatrixEx();
+
+		ret->x += twp->pos.x;
+		ret->y += twp->pos.y;
+		ret->z += twp->pos.z;
+	}
+	else
+	{
+		ret->z = 0.0f;
+		ret->y = 0.0f;
+		ret->x = 0.0f;
+	}
+}
+
+bool ChkFishingThrowNow_m(int pnum)
+{
+	auto mode = playertwp[pnum]->mode;
+	return (mode < 32 || mode > 37) && (mode < 40 || mode > 45);
+}
+#pragma endregion
+
 #pragma region dispFishingLure
 static void __cdecl dispFishingLure_m(task* tp)
 {
@@ -1070,12 +1114,6 @@ static bool ReturnFishingLure_m(taskwk* twp, motionwk* mwp, NJS_POINT3* rod_pos)
 		&& twp->pos.y - 5.0f < rod_pos->y
 		&& twp->pos.z + 5.0f > rod_pos->z
 		&& twp->pos.z - 5.0f < rod_pos->z;
-}
-
-bool ChkFishingThrowNow_m(int pnum)
-{
-	auto mode = playertwp[pnum]->mode;
-	return (mode < 32 || mode > 37) && (mode < 40 || mode > 45);
 }
 
 static void CalcLinePos_m(taskwk* twp, NJS_POINT3* ret)

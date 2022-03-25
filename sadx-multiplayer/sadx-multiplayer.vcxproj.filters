@@ -214,6 +214,9 @@
     <ClCompile Include="objects\Sakana.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\BigKaeru.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -320,6 +323,9 @@
     </ClInclude>
     <ClInclude Include="hud_fishing.h">
       <Filter>Header FIles\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\BigKaeru.h">
+      <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

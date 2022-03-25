@@ -2,8 +2,10 @@
 #include "multiplayer.h"
 #include "fishing.h"
 #include "hud_fishing.h"
+#include "BigKaeru.h"
 
 #define SAKANA_PNUM(twp) twp->smode
+#define MAX_FISH 5 * GetPlayerCount()
 
 enum : __int8 // todo: find missing symbol names
 {
@@ -33,8 +35,6 @@ DataArray(NJS_POINT3, sakana_catch_midium_tbl, 0x173B870, 16);
 DataArray(NJS_POINT3, sakana_catch_large_tbl, 0x173B930, 16);
 DataPointer(int, sakana_stgAct, 0x3C72A20);
 DataPointer(CCL_INFO, seabass_colli_tbl, 0x173BAF0);
-TaskFunc(setDirKaeru, 0x7A6CE0);
-TaskFunc(moveKaeru, 0x7A7100);
 
 static void __cdecl SakanaGenerater_r(task* tp);
 static void __cdecl BigSakana_r(task* tp);
@@ -45,215 +45,6 @@ Trampoline BigSakana_t(0x597010, 0x597015, BigSakana_r);
 static bool FishingEnabled()
 {
     return Big_Lure_Ptr != nullptr;
-}
-
-static bool ChkFishing(BIGETC* etc)
-{
-    return etc->Big_Fish_Flag & (LUREFLAG_HIT | LUREFLAG_FISH);
-}
-
-static bool ChkLureFree(BIGETC* etc)
-{
-    return !(etc->Big_Fish_Flag & (LUREFLAG_RANGEOUT | LUREFLAG_RELEASE | LUREFLAG_HIT));
-}
-
-static float GetReelLength(BIGETC* etc)
-{
-    return etc->reel_length;
-}
-
-static bool chkFishPtr_m(task* tp)
-{
-    auto twp = tp->twp;
-
-    if (twp->mode == MODE_FREE)
-    {
-        for (int i = 0; i < PLAYER_MAX; ++i)
-        {
-            auto etc = GetBigEtc(i);
-
-            if (!etc->Big_Lure_Ptr)
-            {
-                continue;
-            }
-
-            if (!ChkFishing(etc))
-            {
-                etc->Big_Fish_Ptr = nullptr;
-                continue;
-            }
-
-            auto dist = GetDistance(&etc->Big_Lure_Ptr->twp->pos, &twp->pos);
-
-            if (etc->Big_Fish_Ptr)
-            {
-                if (etc->Big_Fish_Ptr == tp)
-                {
-                    if (!ChkLureFree(etc) && dist < 100.0f)
-                    {
-                        SAKANA_PNUM(twp) = i;
-                        return true;
-                    }
-                    else
-                    {
-                        etc->Big_Fish_Ptr = nullptr;
-                        continue;
-                    }
-                }
-                else if (ChkLureFree(etc))
-                {
-                    auto dist2 = GetDistance(&etc->Big_Lure_Ptr->twp->pos, &etc->Big_Fish_Ptr->twp->pos);
-
-                    if (dist2 > dist)
-                    {
-                        etc->Big_Fish_Ptr = tp;
-                        SAKANA_PNUM(twp) = i;
-                        return true;
-                    }
-                }
-            }
-            else if (dist < 100.0f)
-            {
-                SAKANA_PNUM(twp) = i;
-                etc->Big_Fish_Ptr = tp;
-                return 1;
-            }
-        }
-    }
-    else
-    {
-        auto etc = GetBigEtc(SAKANA_PNUM(twp));
-        auto dist = GetDistance(&etc->Big_Lure_Ptr->twp->pos, &twp->pos);
-
-        if (!etc->Big_Lure_Ptr)
-        {
-            return false;
-        }
-
-        if (!ChkFishing(etc))
-        {
-            etc->Big_Fish_Ptr = nullptr;
-            return false;
-        }
-
-        if (etc->Big_Fish_Ptr == tp)
-        {
-            if (dist < 100.0f)
-            {
-                return true;
-            }
-            else
-            {
-                etc->Big_Fish_Ptr = nullptr;
-                return false;
-            }
-        }
-    }
-
-    return false;
-}
-
-static bool chkLureKaeru_m(task* tp)
-{
-    auto twp = tp->twp;
-    auto etc = GetBigEtc(SAKANA_PNUM(twp));
-
-    if (!etc->Big_Lure_Ptr)
-    {
-        return false;
-    }
-
-    if (!(etc->Big_Fish_Flag & LUREFLAG_FISH))
-    {
-        return false;
-    }
-
-    NJS_POINT3 v1;
-    v1.x = etc->Big_Lure_Ptr->twp->pos.x - twp->pos.x;
-    v1.y = etc->Big_Lure_Ptr->twp->pos.y - twp->pos.y;
-    v1.z = etc->Big_Lure_Ptr->twp->pos.z - twp->pos.z;
-
-    NJS_POINT3 v2 = { -1.0f, 0.0f, 0.0f };
-
-    njPushMatrix(_nj_unit_matrix_);
-    njRotateY_(twp->ang.y);
-    njCalcVector(0, &v2, &v2);
-    njPopMatrixEx();
-
-    auto inp = njInnerProduct(&v1, &v2);
-    auto scl = njScalor(&v1);
-
-    if (scl != 0.0f)
-    {
-        inp = inp / scl;
-    }
-
-    float test = twp->scl.y == 0.0f ? 100.0f : (twp->scl.y == 1.0f ? 60.0f : 30.0f);
-
-    if (scl >= test)
-    {
-        return false;
-    }
-
-    if (inp > 1.0f || inp <= 0.0f)
-    {
-        if (etc->Big_Fish_Flag & LUREFLAG_REEL)
-        {
-            tp->mwp->height += 1.0f;
-        }
-    }
-    else
-    {
-        if (etc->Big_Fish_Flag & LUREFLAG_REEL)
-        {
-            tp->mwp->height += 2.0f;
-        }
-    }
-
-    return tp->mwp->height >= 3.0f;
-}
-
-static bool chkDistanceLure_m(task* tp)
-{
-    auto twp = tp->twp;
-    auto mwp = tp->mwp;
-    auto etc = GetBigEtc(SAKANA_PNUM(twp));
-
-    if (!etc->Big_Lure_Ptr)
-    {
-        return false;
-    }
-
-    if (GetDistance(&etc->Big_Lure_Ptr->twp->pos, &twp->pos) >= 1.0f)
-    {
-        return false;
-    }
-    
-    mwp->work.f = etc->water_level;
-    return true;
-}
-
-static void setDirKaeru3_m(task* tp)
-{
-    auto twp = tp->twp;
-    auto mwp = tp->mwp;
-    auto etc = GetBigEtc(SAKANA_PNUM(twp));
-
-    if (etc->Big_Lure_Ptr)
-    {
-        mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - etc->Big_Lure_Ptr->twp->pos.x, twp->pos.z - etc->Big_Lure_Ptr->twp->pos.z));
-
-        if ((twp->ang.y - mwp->ang_aim.y) <= 0x8000u)
-        {
-            twp->ang.y -= 0x80;
-        }
-        else
-        {
-            twp->ang.y += 0x80;
-        }
-
-        twp->ang.y &= 0x0000FFFF;
-    }
 }
 
 static void sub_593F40_m(taskwk* twp, int pnum)
@@ -278,32 +69,6 @@ static void sub_593F90_m(BIGETC* etc)
     if (etc->Big_Fish_Flag & LUREFLAG_SWING)
     {
         ++etc->Big_Fishing_Timer;
-    }
-}
-
-static void CalcHookPos_m(BIGETC* etc, NJS_POINT3* ret)
-{
-    if (etc->Big_Lure_Ptr)
-    {
-        auto twp = etc->Big_Lure_Ptr->twp;
-        NJS_POINT3 v = { 0.6f, -0.45f, 0.0f };
-        
-        njPushMatrix(_nj_unit_matrix_);
-        njRotateZ_(twp->ang.z);
-        njRotateX_(twp->ang.x);
-        njRotateY_(-HIWORD(twp->ang.y));
-        njCalcVector(0, &v, ret);
-        njPopMatrixEx();
-
-        ret->x += twp->pos.x;
-        ret->y += twp->pos.y;
-        ret->z += twp->pos.z;
-    }
-    else
-    {
-        ret->z = 0.0f;
-        ret->y = 0.0f;
-        ret->x = 0.0f;
     }
 }
 
@@ -341,7 +106,6 @@ static bool chkAngLimit_m(task* tp, NJS_POINT3* next_pos)
     return false;
 }
 
-#pragma region BigSakana
 static void setActionPointer(task* tp, int motion_type) // inlined in sadxpc
 {
     auto twp = tp->twp;
@@ -383,7 +147,7 @@ static bool moveEscapeSakana_m(task* tp)
     auto ret = MSetPosition(&twp->pos, &mwp->spd, 0, 5.5f);
     CalcHookPos_m(etc, &twp->pos);
 
-    if (GetReelLength(etc) <= twp->scl.y * 30.0f + 130.0f)
+    if (GetReelLength_m(etc) <= twp->scl.y * 30.0f + 130.0f)
     {
         return ret != FALSE;
     }
@@ -706,7 +470,6 @@ static void moveCatchingSakana_m(task* tp)
             twp->ang.x = 0x4000 - ptwp->ang.y;
         }
     }
-
 }
 
 static bool SakanaRangeOut(task* tp) // custom, probably inlined
@@ -753,10 +516,10 @@ static void BigSakana_m(task* tp)
         twp->mode = MODE_FREE;
         break;
     case MODE_FREE:
-        if (FishingEnabled() && chkFishPtr_m(tp) && chkLureKaeru_m(tp))
+        if (FishingEnabled() && chkFishPtr_m(tp) && chkLureKaeru_m(twp, mwp, etc))
         {
             twp->mode = MODE_LURE;
-            mwp->work.f = etc->water_level;
+            mwp->work.f = GetWaterLevel_m(etc);
         }
 
         setDirKaeru(tp);
@@ -815,7 +578,7 @@ static void BigSakana_m(task* tp)
             break;
         }
 
-        if (chkDistanceLure_m(tp))
+        if (chkDistanceLure_m(twp, mwp, etc))
         {
             etc->Big_Fish_Flag |= LUREFLAG_HIT;
             twp->mode = MODE_HIT;
@@ -832,7 +595,7 @@ static void BigSakana_m(task* tp)
         }
         else
         {
-            setDirKaeru3_m(tp);
+            setDirKaeru3_m(twp, mwp, etc);
             if (!moveLureDirSakana_m(tp, etc->Big_Lure_Ptr))
             {
                 setSakanaRetStart_m(tp);
@@ -860,7 +623,7 @@ static void BigSakana_m(task* tp)
         {
             etc->Big_Fishing_Timer = 0;
 
-            if (GetReelLength(etc) > 100.0f || GetStageNumber() == LevelAndActIDs_IceCap1)
+            if (GetReelLength_m(etc) > 100.0f || GetStageNumber() == LevelAndActIDs_IceCap1)
             {
                 twp->mode = MODE_FISHING;
             }
@@ -971,9 +734,7 @@ static void __cdecl BigSakana_r(task* tp)
         TARGET_STATIC(BigSakana)(tp);
     }
 }
-#pragma endregion
 
-#pragma region SakanaGenerater
 static void SakanaGenerater_m(task* tp)
 {
     auto twp = tp->twp;
@@ -985,7 +746,7 @@ static void SakanaGenerater_m(task* tp)
         sakana_stgAct = CurrentAct | (CurrentLevel << 8);
         break;
     case 1i8:
-        if (sakana_stgAct == (CurrentAct | (CurrentLevel << 8)) && Sakana_Num < 5)
+        if (sakana_stgAct == (CurrentAct | (CurrentLevel << 8)) && Sakana_Num < MAX_FISH)
         {
             if (IsPlayerInSphere(&twp->pos, 400.0f) && (float)((double)rand() * 0.000030517578) <= 0.3f
                 && (GetStageNumber() != LevelAndActIDs_HotShelter1 || twp->scl.y == 0.0f || Big_Stg12_Flag))
@@ -1043,4 +804,3 @@ static void __cdecl SakanaGenerater_r(task* tp)
         TARGET_STATIC(SakanaGenerater)(tp);
     }
 }
-#pragma endregion
