@@ -888,7 +888,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		if (etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->mwp)
 		{
 			NJS_POINT3 pos = twp->pos;
-			NJS_POINT3 spd = mwp->spd;
+			NJS_POINT3 spd = etc->Big_Fish_Ptr->mwp->spd;
 			Angle3 ang, ang2 = { 0, 0, 0 };
 
 			auto test1 = MSetPosition(&pos, &spd, &ang, lure_radius);

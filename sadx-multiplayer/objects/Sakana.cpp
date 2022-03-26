@@ -110,7 +110,8 @@ static bool moveEscapeSakana_m(task* tp)
     njCalcVector(0, &v, &mwp->spd);
     njPopMatrixEx();
 
-    auto ret = MSetPosition(&twp->pos, &mwp->spd, 0, 5.5f);
+    NJS_POINT3 pos = twp->pos;
+    auto ret = MSetPosition(&pos, &mwp->spd, 0, 5.5f);
     CalcHookPos_m(etc, &twp->pos);
 
     if (GetReelLength_m(etc) <= twp->scl.y * 30.0f + 130.0f)
@@ -263,7 +264,8 @@ static void moveFishingSakana_m(task* tp)
         njCalcVector(0, &v, &mwp->spd);
         njPopMatrixEx();
 
-        if (MSetPosition(&twp->pos, &mwp->spd, 0, 5.5f) && mwp->spd.y > 0.0f)
+        NJS_POINT3 pos = twp->pos;
+        if (MSetPosition(&pos, &mwp->spd, 0, 5.5f) && mwp->spd.y > 0.0f)
         {
             twp->value.w[0] = 64;
             mwp->ang_aim.y = (mwp->ang_aim.y + 0x8000);

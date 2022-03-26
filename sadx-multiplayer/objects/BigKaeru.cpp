@@ -161,14 +161,15 @@ static void moveFishingKaeru_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
             v.x = -0.2f;
         }
 
-        v.x *= 2;
+        v.x *= 2.0f;
 
         njPushMatrix(_nj_unit_matrix_);
         njRotateY_(twp->ang.y);
         njCalcVector(0, &v, &mwp->spd);
         njPopMatrixEx();
 
-        if (MSetPosition(&twp->pos, &mwp->spd, 0, gf32BigDepth))
+        NJS_POINT3 pos = twp->pos;
+        if (MSetPosition(&pos, &mwp->spd, 0, gf32BigDepth))
         {
             mwp->spd.x = 0.0f;
             mwp->spd.y = 0.0f;
