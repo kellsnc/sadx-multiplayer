@@ -2,6 +2,7 @@
 #include "multiplayer.h"
 #include "splitscreen.h"
 #include "hud_fishing.h"
+#include "result.h"
 #include "fishing.h"
 
 /*
@@ -175,6 +176,10 @@ void CreateBigDisplayFishWeight_m(int weight, int kind, int pnum)
 		tp->twp->value.l = weight;
 		tp->twp->counter.l = kind;
 		tp->twp->smode = pnum;
+	}
+	else
+	{
+		AddSakanaWeight_m(weight, kind, pnum);
 	}
 }
 
@@ -1360,6 +1365,21 @@ static void fishingLureCtrl_m(task* tp)
 	auto ppwp = playerpwp[pnum];
 	auto etc = GetBigEtc(pnum);
 
+	if (!etc)
+	{
+		FreeTask(tp);
+		return;
+	}
+
+	// Custom win method for battle mode
+	if (multiplayer::IsBattleMode() && etc->Big_Sakana_Weight >= 4000)
+	{
+		SetWinnerMulti(pnum);
+		SetFinishAction();
+		FreeTask(tp);
+		return;
+	}
+
 	NJS_POINT3 rod_pos;
 	NJS_POINT3 line_pos;
 	CalcRodPos_m(ptwp, ppwp, &rod_pos);
@@ -1717,8 +1737,14 @@ static task* __cdecl SetFishingLureTask_r(task* tp)
 {
 	auto lure_tp = TARGET_DYNAMIC(SetFishingLureTask)(tp);
 	auto pnum = lure_tp->twp->btimer = TASKWK_PLAYERID(tp->twp);
-	bigetc_m[pnum]->Big_Lure_Ptr = lure_tp;
-	bigetc_m[pnum]->Big_Fish_Flag = 0;
+
+	auto etc = GetBigEtc(pnum);
+	if (etc)
+	{
+		etc->Big_Lure_Ptr = lure_tp;
+		etc->Big_Fish_Flag = 0;
+	}
+
 	return lure_tp;
 }
 #pragma endregion

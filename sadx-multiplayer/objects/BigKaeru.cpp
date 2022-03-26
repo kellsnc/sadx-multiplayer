@@ -438,6 +438,13 @@ static void BigKaeru_m(task* tp)
     switch (twp->mode)
     {
     case MODE_INIT:
+        // We don't want Froggy in Battle mode
+        if (multiplayer::IsBattleMode())
+        {
+            FreeTask(tp);
+            return;
+        }
+
         twp->mode = MODE_FREE;
         tp->disp = dispBigKaeru;
         setActionPointer(twp, 0);
