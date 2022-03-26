@@ -67,7 +67,7 @@ static void __cdecl dispZankiTexturePause_r(task* tp)
 {
     if (multiplayer::IsBattleMode())
     {
-        if (!loop_count && ssStageNumber != STAGE_TWINKLEPARK && HideHud >= 0 && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
+        if (!IsGamePaused() && !loop_count && ssStageNumber != STAGE_TWINKLEPARK && HideHud >= 0 && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
         {
             reel_sprite.ang = 0;
 
@@ -117,7 +117,7 @@ void dispFishWeightTexture_m(taskwk* twp, int pnum)
         float scaleY = VerticalStretch * ratio->h;
         auto scale = min(scaleX, scaleY);
 
-        float pos = min(twp->pos.x, (scaleX * 540.0f) - 240 * scaleX);
+        float pos = min(twp->pos.x, (scaleX * 540.0f) - 240.0f * scaleX);
 
         float x = HorizontalResolution * ratio->x + pos * scaleX + 16.0f * scaleX;
         float y = VerticalResolution * ratio->y + 16.0f * scaleY;
