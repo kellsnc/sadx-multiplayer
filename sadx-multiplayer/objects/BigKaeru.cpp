@@ -76,7 +76,7 @@ bool chkAngLimit_m(taskwk* twp, motionwk* mwp, NJS_POINT3* next_pos)
 
     if (ptwp)
     {
-        __int16 ang = 0x4000 - NJM_RAD_ANG(atan2f(next_pos->x - ptwp->pos.x, next_pos->z - ptwp->pos.x));
+        __int16 ang = 0x4000 - NJM_RAD_ANG(atan2(next_pos->x - ptwp->pos.x, next_pos->z - ptwp->pos.x));
         auto diffang = SubAngle(ptwp->ang.y, ang);
 
         if (diffang <= 0x1555u || diffang >= 0x8000u)
@@ -106,7 +106,7 @@ void setDirKaeru3_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
 {
     if (etc->Big_Lure_Ptr)
     {
-        mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - etc->Big_Lure_Ptr->twp->pos.x, twp->pos.z - etc->Big_Lure_Ptr->twp->pos.z));
+        mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(-atan2(twp->pos.x - etc->Big_Lure_Ptr->twp->pos.x, twp->pos.z - etc->Big_Lure_Ptr->twp->pos.z));
 
         if ((twp->ang.y - mwp->ang_aim.y) <= 0x8000u)
         {

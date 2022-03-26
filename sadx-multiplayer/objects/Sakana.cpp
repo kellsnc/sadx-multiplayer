@@ -202,9 +202,9 @@ static void setDirSakana2_m(task* tp)
     }
     else
     {
-        if (twp->mode == 7)
+        if (twp->mode == MODE_TURN)
         {
-            twp->mode = 6;
+            twp->mode = MODE_FISHING;
         }
 
         twp->value.w[0] = (short)((UNIT_RAND + 1.0) * 60.0);
@@ -336,7 +336,7 @@ static bool chkRetStart_m(task* tp)
         orig_tp = tp;
     }
 
-    mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - orig_tp->twp->pos.x, twp->pos.z - orig_tp->twp->pos.z));
+    mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(-atan2(twp->pos.x - orig_tp->twp->pos.x, twp->pos.z - orig_tp->twp->pos.z));
 
     if ((twp->ang.y - mwp->ang_aim.y) <= 0x8000u)
     {
@@ -526,7 +526,7 @@ static void BigSakana_m(task* tp)
         {
             twp->ang.y = mwp->ang_aim.y;
 
-            twp->mode = 1;
+            twp->mode = MODE_FREE;
             if (etc->Big_Fish_Ptr == tp)
             {
                 etc->Big_Fish_Flag &= ~(LUREFLAG_ESCAPE | LUREFLAG_RANGEOUT | LUREFLAG_HIT);
