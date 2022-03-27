@@ -280,6 +280,8 @@ TaskFunc(BigDisplayHit, 0x46EBC0);
 TaskFunc(BigDisplayStatus, 0x470090);
 TaskFunc(dispBigKaeru, 0x7A6BB0);
 TaskFunc(BigDisplayFishWeight, 0x4701A0);
+DataPointer(uint32_t, MaskBlock, 0x3B36D48);
+DataPointer(task*, pRd_Master, 0x3B0EFD8);
 
 DataPointer(int, Sakana_Num, 0x3C524E8);
 DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);

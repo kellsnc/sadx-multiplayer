@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "splitscreen.h"
 #include "levels.h"
 
 /*
@@ -19,6 +20,15 @@ Trampoline* Rd_E101_R_t   = nullptr;
 Trampoline* Rd_Beach_t = nullptr;
 Trampoline* Rd_Windy_t = nullptr;
 Trampoline* Rd_Mountain_t = nullptr;
+
+Trampoline* dispBgSnow_t = nullptr;
+Trampoline* dispBgHighway_t = nullptr;
+Trampoline* dispBgTwinkle_t = nullptr;
+
+VoidFunc(HighwayMaskBlock, 0x60FEE0); // real name: "checkCamera"
+FunctionPointer(void, TwinkleMaskBlock, (taskwk* twp), 0x60FEE0); // real name: "checkCamera"
+DataPointer(NJS_OBJECT, object_s1_nbg1_nbg1, 0x26A0EC0);
+DataPointer(NJS_OBJECT, object_s2_yakei_yakei, 0x26A48E0);
 
 void MultiArena(task* tp)
 {
@@ -294,6 +304,100 @@ void __cdecl Rd_Mountain_r(task* tp)
 	TARGET_DYNAMIC(Rd_Mountain)(tp);
 }
 
+static void __cdecl dispBgSnow_r(task* tp)
+{
+	TARGET_DYNAMIC(dispBgSnow)(tp);
+
+	if (camera_twp && tp->twp->mode == 10 && SplitScreen::IsActive())
+	{
+		NJS_POINT3* pos = &camera_twp->pos;
+
+		if (pos->y <= 200.0f)
+		{
+			if (pos->y < 0.0f)
+			{
+				if (pos->x >= 1612.0f)
+				{
+					MaskBlock = 0x1C;
+				}
+				else
+				{
+					MaskBlock = 0x6;
+				}
+			}
+			else
+			{
+				if (pos->x >= 1666.0f)
+				{
+					MaskBlock = 0x18;
+				}
+				else
+				{
+					MaskBlock = 0x6;
+				}
+			}
+		}
+		else if (pos->x >= 1666.0f)
+		{
+			MaskBlock = 0x78;
+		}
+		else
+		{
+			MaskBlock = 0x62;
+		}
+	}
+}
+
+static void __cdecl dispBgHighway_r(task* tp)
+{
+	if (tp->twp->mode == 4 && SplitScreen::IsActive())
+	{
+		auto cam_twp = camera_twp;
+
+		if (camera_twp)
+		{
+			LoopTaskC(tp);
+
+			njControl3D_Backup();
+			njControl3D_Add(NJD_CONTROL_3D_NO_CLIP_CHECK);
+			njControl3D_Remove(NJD_CONTROL_3D_DEPTH_QUEUE);
+			___njFogDisable();
+			___njClipZ(gClipSky.f32Near, gClipSky.f32Far);
+			if (cam_twp->pos.y > -10400.0f)
+			{
+				njPushMatrixEx();
+				njTranslateEx(&cam_twp->pos);
+				njScaleEx(&gSkyScale);
+				njSetTexture(&bg_highway_TEXLIST);
+				dsDrawModel(object_s1_nbg1_nbg1.basicdxmodel);
+				njTranslate(0, 0.0f, -10000.0f - cam_twp->pos.y * 0.2f, 0.0f);
+				njSetTexture(&bg_highway02_TEXLIST);
+				dsDrawModel(object_s2_yakei_yakei.basicdxmodel);
+				njPopMatrixEx();
+			}
+			___njClipZ(gClipMap.f32Near, gClipMap.f32Far);
+			___njFogEnable();
+			njControl3D_Restore();
+
+			HighwayMaskBlock();
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(dispBgHighway)(tp);
+	}
+}
+
+static void __cdecl dispBgTwinkle_r(task* tp)
+{
+	TARGET_DYNAMIC(dispBgTwinkle)(tp);
+
+	if (camera_twp && pRd_Master && SplitScreen::IsActive())
+	{
+		TwinkleMaskBlock(pRd_Master->twp);
+	}
+}
+
 static void __cdecl Create_Mountain_Cloud()
 {
 	CreateElementalTask(2u, LEV_1, (TaskFuncPtr)0x601230); // load task into slot 1 instead of 0 (to not run before the camera)
@@ -334,6 +438,9 @@ void InitLevels()
 	// Red Mountain cloud layer
 	WriteCall((void*)0x60147B, Create_Mountain_Cloud);
 	WriteCall((void*)0x601404, Create_Mountain_Cloud);
+
+	// Remove landtable collision chunk optimisation
+	WriteData((uint8_t*)0x4E91C0, 0xC3ui8); // Ice Cap
 	
 	// In battle mode, boss become fighting arenas
 	Rd_Chaos0_t   = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
@@ -345,7 +452,13 @@ void InitLevels()
 	Rd_E101_t     = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
 	Rd_E101_R_t   = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
 
+	// Act swap fixes
 	Rd_Beach_t = new Trampoline(0x4F6D60, 0x4F6D67, Rd_Beach_r);
 	Rd_Windy_t = new Trampoline(0x4DDB30, 0x4DDB37, Rd_Windy_r);
 	Rd_Mountain_t = new Trampoline(0x601550, 0x601558, Rd_Mountain_r);
+
+	// Move landtable mask flag to display for multiplayer compatibility
+	dispBgSnow_t = new Trampoline(0x4E9950, 0x4E9955, dispBgSnow_r);
+	dispBgHighway_t = new Trampoline(0x610570, 0x610575, dispBgHighway_r);
+	dispBgTwinkle_t = new Trampoline(0x61D1F0, 0x61D1F5, dispBgTwinkle_r);
 }
