@@ -931,6 +931,4 @@ void InitPatches()
 	InitE104Patches();
 	InitE105Patches();
 	PatchEffectSpark();
-
-	WriteJump(Kiki_Load, Spring_Main);
 }
