@@ -171,6 +171,7 @@
     <ClCompile Include="objects\ObjectCrane.cpp" />
     <ClCompile Include="objects\ObjectHeli.cpp" />
     <ClCompile Include="objects\ObjectHighwayTurnasi.cpp" />
+    <ClCompile Include="objects\ObjectIcecapFuta.cpp" />
     <ClCompile Include="objects\ObjectItemBox.cpp" />
     <ClCompile Include="objects\ObjectJumpPanel.cpp" />
     <ClCompile Include="objects\ObjectKaosEme.cpp" />
