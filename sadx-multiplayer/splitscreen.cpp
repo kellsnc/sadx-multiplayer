@@ -82,7 +82,7 @@ namespace SplitScreen
 
     bool IsActive()
     {
-        return configSplitScreenEnabled == true && multiplayer::IsActive();
+        return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel();
     }
 
     unsigned int GetCurrentScreenNum()
