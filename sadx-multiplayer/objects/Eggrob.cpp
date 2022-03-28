@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "multiplayer.h"
 
+static void __cdecl ERSC_CommonExec_r(task* tp);
 static void __cdecl AmyERobApperChecker_r(task* tp);
-static bool __cdecl ERobStart_r(erctrlstr* cmd);
+static BOOL __cdecl ERobStart_r(erctrlstr* cmd);
 static void __cdecl EggRob_r(task* tp);
 
+Trampoline ERSC_CommonExec_t(0x7B0640, 0x7B064A, ERSC_CommonExec_r);
 Trampoline AmyERobApperChecker_t(0x486980, 0x486985, AmyERobApperChecker_r);
 Trampoline ERobStart_t(0x4B3EB0, 0x4B3EB5, ERobStart_r);
 Trampoline EggRob_t(0x4D2960, 0x4D296A, EggRob_r);
@@ -101,17 +103,17 @@ static bool ERobStart_m(erctrlstr* cmd)
 	if (er_tp)
 	{
 		FreeTask(er_tp);
-		er_tp = 0;
+		er_tp = nullptr;
 	}
 	er_tp = Eggrob_GenerateEggrob_m(cmd);
-	return er_tp != 0;
+	return er_tp != nullptr;
 }
 
-static bool __cdecl ERobStart_r(erctrlstr* cmd)
+static BOOL __cdecl ERobStart_r(erctrlstr* cmd)
 {
 	if (multiplayer::IsActive())
 	{
-		return ERobStart_m(cmd);
+		return ERobStart_m(cmd) ? TRUE : FALSE;
 	}
 	else
 	{
@@ -143,5 +145,20 @@ static void __cdecl AmyERobApperChecker_r(task* tp)
 	else
 	{
 		TARGET_STATIC(AmyERobApperChecker)(tp);
+	}
+}
+
+static void __cdecl ERSC_CommonExec_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		auto backup_ptr = playertwp[0];
+		playertwp[0] = playertwp[GetTheNearestPlayerNumber(&tp->twp->pos)];
+		TARGET_STATIC(ERSC_CommonExec)(tp);
+		playertwp[0] = backup_ptr;
+	}
+	else
+	{
+		TARGET_STATIC(ERSC_CommonExec)(tp);
 	}
 }

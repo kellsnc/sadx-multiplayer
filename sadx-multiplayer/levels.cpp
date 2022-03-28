@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "UsercallFunctionHandler.h"
 #include "splitscreen.h"
 #include "levels.h"
 
@@ -20,6 +21,7 @@ Trampoline* Rd_E101_R_t   = nullptr;
 Trampoline* Rd_Beach_t = nullptr;
 Trampoline* Rd_Windy_t = nullptr;
 Trampoline* Rd_Mountain_t = nullptr;
+Trampoline* Rd_Twinkle_t = nullptr;
 
 Trampoline* dispBgSnow_t = nullptr;
 Trampoline* dispBgHighway_t = nullptr;
@@ -29,6 +31,9 @@ VoidFunc(HighwayMaskBlock, 0x60FEE0); // real name: "checkCamera"
 FunctionPointer(void, TwinkleMaskBlock, (taskwk* twp), 0x60FEE0); // real name: "checkCamera"
 DataPointer(NJS_OBJECT, object_s1_nbg1_nbg1, 0x26A0EC0);
 DataPointer(NJS_OBJECT, object_s2_yakei_yakei, 0x26A48E0);
+
+static auto setTPFog = GenerateUsercallWrapper<void (*)(unsigned __int8 mode)>(noret, 0x61CAC0, rAL);
+
 
 void MultiArena(task* tp)
 {
@@ -304,6 +309,81 @@ void __cdecl Rd_Mountain_r(task* tp)
 	TARGET_DYNAMIC(Rd_Mountain)(tp);
 }
 
+void __cdecl Rd_Twinkle_r(task* tp)
+{
+	if (multiplayer::IsEnabled() && tp->twp->mode != 0)
+	{
+		auto twp = tp->twp;
+
+		switch (twp->mode)
+		{
+		case 1i8:
+			SetCameraControlEnabled(0);
+
+			if (IsPlayerInSphere(-6550.0f, -6720.0f, 23320.0f, 50.0f))
+			{
+				ChangeActM(1);
+				rdInitTwinkle(tp);
+				return;
+			}
+			break;
+		case 2i8:
+			SetCameraControlEnabled(0);
+
+			if (IsPlayerInSphere(-55.0f, 153.0f, -1000.0f, 50.0f))
+			{
+				tp->twp->mode == 3;
+				EV_NpcMilesStandByOff();
+				rdInitTwinkle(tp);
+				setTPFog(tp->twp->mode);
+				return;
+			}
+			break;
+		case 3i8:
+		{
+			SetFreeCameraMode(1);
+
+			auto pnum = IsPlayerInSphere(80.0f, 0.0f, -300.0f, 50.0f) - 1;
+
+			if (pnum >= 0)
+			{
+				NJS_VECTOR pos = playertwp[pnum]->pos;
+				Angle ang = playertwp[pnum]->ang.y;
+				ChangeActM(1);
+				rdInitTwinkle(tp);
+				SetAllPlayersPosition(pos.x, pos.y, pos.z, ang);
+			}
+
+			break;
+		}
+		case 4i8:
+		{
+			SetFreeCameraMode(0);
+
+			auto pnum = IsPlayerInSphere(350.0f, 100.0f, 550.0f, 36.0f) - 1;
+
+			if (pnum >= 0)
+			{
+				NJS_VECTOR pos = playertwp[pnum]->pos;
+				Angle ang = playertwp[pnum]->ang.y;
+				ChangeActM(-1);
+				rdInitTwinkle(tp);
+				SetAllPlayersPosition(pos.x, pos.y, pos.z, ang);
+			}
+
+			break;
+		}
+		case 5i8:
+			ResetMleriRangeRad();
+			break;
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_Twinkle)(tp);
+	}
+}
+
 static void __cdecl dispBgSnow_r(task* tp)
 {
 	TARGET_DYNAMIC(dispBgSnow)(tp);
@@ -456,6 +536,7 @@ void InitLevels()
 	Rd_Beach_t = new Trampoline(0x4F6D60, 0x4F6D67, Rd_Beach_r);
 	Rd_Windy_t = new Trampoline(0x4DDB30, 0x4DDB37, Rd_Windy_r);
 	Rd_Mountain_t = new Trampoline(0x601550, 0x601558, Rd_Mountain_r);
+	Rd_Twinkle_t = new Trampoline(0x61D150, 0x61D155, Rd_Twinkle_r);
 
 	// Move landtable mask flag to display for multiplayer compatibility
 	dispBgSnow_t = new Trampoline(0x4E9950, 0x4E9955, dispBgSnow_r);

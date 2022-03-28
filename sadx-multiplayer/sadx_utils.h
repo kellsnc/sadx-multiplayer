@@ -291,6 +291,8 @@ DataPointer(uint32_t, MaskBlock, 0x3B36D48);
 DataPointer(task*, pRd_Master, 0x3B0EFD8);
 FunctionPointer(void, ERobStart, (erctrlstr* cmd), 0x4B3EB0);
 TaskFunc(Eggrob_Init, 0x4D3ED0);
+VoidFunc(EV_NpcMilesStandByOff, 0x42CE20);
+FunctionPointer(void, SetFreeCameraMode, (int sw), 0x4348A0);
 
 DataPointer(int, Sakana_Num, 0x3C524E8);
 DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);
@@ -434,3 +436,12 @@ static inline void ChgSubModeToStay_0(ModeSelPrmType* a1, task* a2)
 	}
 }
 
+static const void* const rdInitTwinklePtr = (void*)0x61CB10;
+static inline void rdInitTwinkle(task* tp)
+{
+	__asm
+	{
+		mov edi, [tp]
+		call rdInitTwinklePtr
+	}
+}

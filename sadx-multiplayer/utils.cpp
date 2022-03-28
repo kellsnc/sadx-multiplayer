@@ -50,6 +50,22 @@ void SetAllPlayersInitialPosition()
 	}
 }
 
+void SetAllPlayersPosition(float x, float y, float z, Angle angy)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto ptwp = playertwp[i];
+
+		if (ptwp)
+		{
+			PClearSpeed(playermwp[i], playerpwp[i]);
+			SetInputP(i, 24);
+			ptwp->pos = { x, y, z };
+			ptwp->ang = { 0, angy, 0 };
+		}
+	}
+}
+
 float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2)
 {
 	return sqrtf((v2->x - v1->x) * (v2->x - v1->x) +
