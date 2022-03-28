@@ -19,7 +19,7 @@ static void __cdecl EggRob_r(task* tp) // no way in hell I'm rewriting that
 	if (multiplayer::IsActive())
 	{
 		auto backup_ptr = playertwp[0];
-		playertwp[0] = playertwp[GetTheNearestPlayerNumber(&tp->twp->pos)];
+		playertwp[0] = playertwp[GetClosestPlayerNum(&tp->twp->pos)];
 		TARGET_STATIC(EggRob)(tp);
 		playertwp[0] = backup_ptr;
 	}
