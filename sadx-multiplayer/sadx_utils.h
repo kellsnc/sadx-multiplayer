@@ -152,6 +152,13 @@ struct Big_ypos
 	Big_ydata water;
 };
 
+struct erctrlstr
+{
+	int command;
+	NJS_POINT3 pos0;
+	NJS_POINT3 pos1;
+};
+
 FunctionPointer(void, njDrawTriangle3D, (NJS_POINT3COL* p, int n, unsigned int atr), 0x77EBA0);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -282,6 +289,8 @@ TaskFunc(dispBigKaeru, 0x7A6BB0);
 TaskFunc(BigDisplayFishWeight, 0x4701A0);
 DataPointer(uint32_t, MaskBlock, 0x3B36D48);
 DataPointer(task*, pRd_Master, 0x3B0EFD8);
+FunctionPointer(void, ERobStart, (erctrlstr* cmd), 0x4B3EB0);
+TaskFunc(Eggrob_Init, 0x4D3ED0);
 
 DataPointer(int, Sakana_Num, 0x3C524E8);
 DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);
