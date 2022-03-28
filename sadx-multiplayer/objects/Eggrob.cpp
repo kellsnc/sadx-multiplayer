@@ -2,6 +2,14 @@
 #include "multiplayer.h"
 #include "splitscreen.h"
 
+/*
+
+Zero in levels
+Patched most objects because they lacked display functions
+Hack to get zero to aim the closest player
+
+*/
+
 #define EGGROB_PNUM(twp) twp->smode
 
 static void __cdecl ERSC_CommonExec_r(task* tp);
@@ -23,11 +31,15 @@ Trampoline Eggrob_BeamZanzo_t(0x4CFEE0, 0x4CFEE8, Eggrob_BeamZanzo_r);
 Trampoline Eggrob_BeamKonseki_t(0x4D00E0, 0x4D00E6, Eggrob_BeamKonseki_r);
 
 DataPointer(task*, er_tp, 0x3C5815C);
+DataPointer(mtnjvwk, er_mwk, 0x3C5C658);
 DataPointer(int, er_syorikaru, 0x3C5C838);
 DataArray(NJS_POINT3, konseki_p, 0x3C5C810, 2);
 DataArray(NJS_COLOR, konseki_c, 0x9BE5A0, 2);
 DataArray(NJS_POINT3, zanzo_p, 0x3C5C6AC, 4);
 DataArray(NJS_COLOR, zanzo_c, 0x9BE580, 4);
+DataArray(NJS_POINT3, chain_pos, 0x3C5C700, 16);
+
+static auto Eggrob_DrawChain = GenerateUsercallWrapper<void (*)(NJS_POINT3* p, NJS_POINT3* v)>(noret, 0x4D04C0, rEAX, rESI); // custom name
 
 static void __cdecl Eggrob_BeamKonseki_disp(task* tp)
 {
@@ -112,7 +124,7 @@ static void __cdecl Eggrob_LockOnCursor_r(task* tp)
 	if (multiplayer::IsActive())
 	{
 		if (!tp->disp)
-			tp->disp = Eggrob_LockOnCursor_disp; // <- please stop not putting a display
+			tp->disp = Eggrob_LockOnCursor_disp;
 
 		if (er_tp)
 		{
@@ -126,16 +138,59 @@ static void __cdecl Eggrob_LockOnCursor_r(task* tp)
 	TARGET_STATIC(Eggrob_LockOnCursor)(tp);
 }
 
-static void __cdecl Eggrob_Display_r(task* tp)
+static void DrawWeapon(taskwk* twp)
 {
-	TARGET_STATIC(Eggrob_Display)(tp);
+	if (twp->mode == 19 || twp->mode == 20)
+	{
+		//Eggrob_DrawChain:
+		for (int i = 0; i < 15; ++i)
+		{
+			Eggrob_DrawChain(&chain_pos[i + 1], &chain_pos[i]);
+		}
 
-	if (tp->twp->mode == 17 && !MissedFrames && SplitScreen::IsActive() && SplitScreen::GetCurrentScreenNum() != 0)
+		Eggrob_DrawChain((NJS_POINT3*)0x3C5C684, &chain_pos[15]);
+
+		// Eggrob_DrawRPunchUnit:
+		(*(NJS_OBJECT*)0x98B6EC).evalflags &= ~8u;
+		(*(NJS_OBJECT*)0x98BC6C).evalflags &= ~8u;
+		(*(NJS_OBJECT*)0x98B98C).evalflags &= ~8u;
+		(*(NJS_OBJECT*)0x98B3C4).evalflags &= ~8u;
+		njPushMatrixEx();
+		___dsSetPalette(6);
+		njTranslateEx((NJS_POINT3*)0x3C5C648);
+		njRotateY_(*(Angle*)0x3C5C834);
+		njRotateX(0, 0x8000);
+		njRotateZ_(*(Angle*)0x3C5C654);
+		njSetTexture(&EGGROB_TEXLIST);
+		dsDrawObject((NJS_OBJECT*)0x98B98C);
+		___dsSetPalette(0);
+		njPopMatrixEx();
+		(*(NJS_OBJECT*)0x98B6EC).evalflags |= 8u;
+		(*(NJS_OBJECT*)0x98BC6C).evalflags |= 8u;
+		(*(NJS_OBJECT*)0x98B98C).evalflags |= 8u;
+		(*(NJS_OBJECT*)0x98B3C4).evalflags |= 8u;
+	}
+}
+
+static void DrawMainLaser(taskwk* twp)
+{
+	if (twp->mode == 17 && er_mwk.reqaction == 12 && er_mwk.nframe >= 19.0f)
 	{
 		njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
 		njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
 		DrawLine3D_Queue((NJS_POINT3COL*)0x9BE570, 1, NJD_TRANSPARENT, QueuedModelFlagsB_EnableZWrite);
 		ghDefaultBlendingMode();
+	}
+}
+
+static void __cdecl Eggrob_Display_r(task* tp)
+{
+	TARGET_STATIC(Eggrob_Display)(tp);
+
+	if (!MissedFrames && SplitScreen::IsActive() && SplitScreen::GetCurrentScreenNum() != 0)
+	{
+		DrawMainLaser(tp->twp);
+		DrawWeapon(tp->twp);
 	}
 }
 
