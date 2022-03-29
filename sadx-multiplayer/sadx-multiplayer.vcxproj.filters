@@ -232,6 +232,9 @@
     <ClCompile Include="objects\ObjectBaloon.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\ObjectFinalEggElevator.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

@@ -29,15 +29,7 @@ static void MiddleRock_m(task* tp)
     auto twp = tp->twp;
     auto mwp = (motionwk*)tp->mwp;
 
-    // enable/disable dyncol
-    if (IsPlayerInSphere(&mwp->acc, mwp->rad + 10.0f))
-    {
-        twp->flag |= 0x100u;
-    }
-    else
-    {
-        twp->flag &= ~0x100u;
-    }
+    CheckDyncolRange(twp, &mwp->acc, mwp->rad + 10.0f);
 
     for (int i = 0; i < PLAYER_MAX; ++i)
     {

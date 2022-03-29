@@ -147,6 +147,19 @@ bool IsCameraInSphere(float x, float y, float z, float r)
 	return IsCameraInSphere(&p, r);
 }
 
+int IsPlayerOnDyncol(task* tp)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (CheckPlayerRideOnMobileLandObjectP(i, tp))
+		{
+			return i + 1;
+		}
+	}
+
+	return 0;
+}
+
 void njRotateX_(Angle ang)
 {
 	if (ang)
@@ -179,4 +192,16 @@ void ChangeActM(int amount)
 	AddCameraStage(amount);
 	AdvanceAct(amount);
 	SetAllPlayersInitialPosition();
+}
+
+void CheckDyncolRange(taskwk* twp, NJS_POINT3* p, float r)
+{
+	if (IsPlayerInSphere(p, r))
+	{
+		twp->flag |= 0x100u;
+	}
+	else
+	{
+		twp->flag &= ~0x100u;
+	}
 }

@@ -19,7 +19,9 @@ int IsPlayerInSphere(NJS_POINT3* p, float r);
 int IsPlayerInSphere(float x, float y, float z, float r);
 bool IsCameraInSphere(NJS_POINT3* p, float r);
 bool IsCameraInSphere(float x, float y, float z, float r);
+int IsPlayerOnDyncol(task* tp);
 void njRotateX_(Angle ang);
 void njRotateY_(Angle ang);
 void njRotateZ_(Angle ang);
 void ChangeActM(int amount);
+void CheckDyncolRange(taskwk* twp, NJS_POINT3* p, float r); // Enable/disable dyncol

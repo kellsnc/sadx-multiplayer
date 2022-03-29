@@ -293,6 +293,7 @@ FunctionPointer(void, ERobStart, (erctrlstr* cmd), 0x4B3EB0);
 TaskFunc(Eggrob_Init, 0x4D3ED0);
 VoidFunc(EV_NpcMilesStandByOff, 0x42CE20);
 FunctionPointer(void, SetFreeCameraMode, (int sw), 0x4348A0);
+FunctionPointer(void, CancelAutoPilotP, (unsigned __int8 pno), 0x440FA0);
 
 DataPointer(int, Sakana_Num, 0x3C524E8);
 DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);

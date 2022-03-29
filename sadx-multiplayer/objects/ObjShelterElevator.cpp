@@ -8,14 +8,14 @@ static auto OpenDoor = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5A1D
 
 DataArray(NJS_POINT3, ElevatorPos, 0x1873100, 3 * 2); // [3][2]
 
-enum MD_ELEVATOR // custom
+enum : __int8
 {
-	MDELEV_INIT,
-	MDELEV_STOP,
-	MDELEV_WAIT,
-	MDELEV_DOWN,
-	MDELEV_DOOR,
-	MDELEV_IDK
+	MODE_INIT,
+	MODE_NORMAL,
+	MODE_WAIT,
+	MODE_DOWN,
+	MODE_OPEN,
+	MODE_NONE // custom
 };
 
 static void chkPlayer(task* tp) // custom
@@ -27,7 +27,7 @@ static void chkPlayer(task* tp) // custom
 		if (CheckPlayerRideOnMobileLandObjectP(i, tp))
 		{
 			PadReadOffP(-1);
-			tp->twp->mode = MDELEV_DOWN;
+			tp->twp->mode = MODE_DOWN;
 			return;
 		}
 	}
@@ -68,7 +68,7 @@ static void InitATask_m(task* tp)
 		auto twp = tp->twp;
 
 		twp->pos = ElevatorPos[twp->counter.b[0] * 2 + 1];
-		twp->mode = MDELEV_DOOR;
+		twp->mode = MODE_OPEN;
 	}
 }
 
@@ -83,31 +83,31 @@ static void ObjShelterElevator_m(task* tp)
 
 	switch (twp->mode)
 	{
-	case MDELEV_INIT:
+	case MODE_INIT:
 		InitATask_m(tp);
 		break;
-	case MDELEV_STOP:
+	case MODE_NORMAL:
 		multiRespawn(tp);
 		break;
-	case MDELEV_WAIT:
+	case MODE_WAIT:
 		ExecATask(tp);
 		chkPlayer(tp);
 		break;
-	case MDELEV_DOWN:
+	case MODE_DOWN:
 		DownMove(tp);
 		movePlayer(tp);
 		ExecATask(tp);
 		break;
-	case MDELEV_DOOR:
+	case MODE_OPEN:
 		OpenDoor(tp);
 		ExecATask(tp);
 
-		if (twp->mode == MDELEV_STOP)
+		if (twp->mode == MODE_NORMAL)
 		{
 			PadReadOnP(-1);
 		}
 		break;
-	case MDELEV_IDK:
+	case MODE_NONE:
 		ExecATask(tp);
 		break;
 	}
