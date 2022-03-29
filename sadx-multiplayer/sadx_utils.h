@@ -159,6 +159,24 @@ struct erctrlstr
 	NJS_POINT3 pos1;
 };
 
+struct KeyInfo
+{
+	int LastKey;
+	int Buff[4];
+	int Point;
+	int RightCount;
+	int LeftCount;
+};
+
+struct amyhndlstr
+{
+	int hndlmode;
+	int touchflag;
+	int turnang;
+	int hndlangy;
+	NJS_POINT3 hndlpos;
+};
+
 FunctionPointer(void, njDrawTriangle3D, (NJS_POINT3COL* p, int n, unsigned int atr), 0x77EBA0);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -294,6 +312,7 @@ TaskFunc(Eggrob_Init, 0x4D3ED0);
 VoidFunc(EV_NpcMilesStandByOff, 0x42CE20);
 FunctionPointer(void, SetFreeCameraMode, (int sw), 0x4348A0);
 FunctionPointer(void, CancelAutoPilotP, (unsigned __int8 pno), 0x440FA0);
+DataArray(KeyInfo, KeyBuff, 0x3C72C38, 8);
 
 DataPointer(int, Sakana_Num, 0x3C524E8);
 DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);

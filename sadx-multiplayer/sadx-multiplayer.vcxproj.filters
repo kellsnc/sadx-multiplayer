@@ -241,6 +241,9 @@
     <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\ObjShelterKaitenKey.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -349,6 +352,9 @@
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
     <ClInclude Include="objects\BigKaeru.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\ObjShelterKaitenKey.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>

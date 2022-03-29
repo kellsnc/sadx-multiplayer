@@ -116,6 +116,7 @@
     <ClInclude Include="objects\EnemyWindyE103.h" />
     <ClInclude Include="objects\EnemyMountainE104.h" />
     <ClInclude Include="objects\ObjectItemBox.h" />
+    <ClInclude Include="objects\ObjShelterKaitenKey.h" />
     <ClInclude Include="objects\SnowBoard.h" />
     <ClInclude Include="patches.h" />
     <ClInclude Include="pch.h" />
@@ -192,6 +193,7 @@
     <ClCompile Include="objects\ObjShelterCrane.cpp" />
     <ClCompile Include="objects\ObjShelterElevator.cpp" />
     <ClCompile Include="objects\ObjShelterKaitendai.cpp" />
+    <ClCompile Include="objects\ObjShelterKaitenKey.cpp" />
     <ClCompile Include="objects\ObjShelterSen.cpp" />
     <ClCompile Include="objects\o_twinkle_door.cpp" />
     <ClCompile Include="objects\PathKassha.cpp" />

@@ -9,6 +9,7 @@
 #include "objects/EnemyMountainE104.h"
 #include "objects/EnemyHotE105.h"
 #include "objects/ef_spark.h"
+#include "objects/ObjShelterKaitenKey.h"
 
 /*
 
@@ -928,4 +929,5 @@ void InitPatches()
 	InitE104Patches();
 	InitE105Patches();
 	PatchEffectSpark();
+	PatchAmyHandles();
 }
