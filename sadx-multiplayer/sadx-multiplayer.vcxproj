@@ -149,6 +149,7 @@
     <ClCompile Include="multiplayer.cpp" />
     <ClCompile Include="objects\BigKaeru.cpp" />
     <ClCompile Include="objects\BigTheCat.cpp" />
+    <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
     <ClCompile Include="objects\ef_spark.cpp" />
     <ClCompile Include="objects\Eggrob.cpp" />
@@ -163,6 +164,7 @@
     <ClCompile Include="objects\ObjectBaloon.cpp" />
     <ClCompile Include="objects\ObjectEmeraldPRegular.cpp" />
     <ClCompile Include="objects\ObjectExplosionRock.cpp" />
+    <ClCompile Include="objects\ObjectFinalEggRainbowDoor.cpp" />
     <ClCompile Include="objects\ObjectFinalEggElevator.cpp" />
     <ClCompile Include="objects\ObjectFinalEggTarget.cpp" />
     <ClCompile Include="objects\ObjectFinalEggUptarget.cpp" />
