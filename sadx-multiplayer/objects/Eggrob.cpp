@@ -134,8 +134,10 @@ static void __cdecl Eggrob_LockOnCursor_r(task* tp)
 			playertwp[0] = backup_ptr;
 		}
 	}
-
-	TARGET_STATIC(Eggrob_LockOnCursor)(tp);
+	else
+	{
+		TARGET_STATIC(Eggrob_LockOnCursor)(tp);
+	}
 }
 
 static void DrawWeapon(taskwk* twp)
@@ -232,7 +234,7 @@ static task* Eggrob_GenerateEggrob_m(erctrlstr* cmd)
 		float x = cmd->pos1.x - cmd->pos0.x;
 		float z = cmd->pos1.z - cmd->pos0.z;
 		twp->ang.y = NJM_RAD_ANG(atan2(z, -x));
-		twp->timer.f = sqrtf(x * x + z * z) * 0.33333334f;
+		twp->timer.l = static_cast<int>(sqrtf(x * x + z * z) * 0.33333334f);
 
 		twp->scl.y = 0.0f;
 		twp->scl.z = 0.0f;
