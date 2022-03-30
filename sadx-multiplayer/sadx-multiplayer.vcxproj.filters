@@ -253,6 +253,9 @@
     <ClCompile Include="objects\o_shelter_gate1.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_shelter_kaitenashiba.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
