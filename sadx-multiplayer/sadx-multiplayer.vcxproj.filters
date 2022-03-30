@@ -244,6 +244,9 @@
     <ClCompile Include="objects\ObjShelterKaitenKey.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\mirror.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -355,6 +358,9 @@
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="objects\ObjShelterKaitenKey.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\mirror.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>

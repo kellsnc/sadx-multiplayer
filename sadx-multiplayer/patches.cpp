@@ -10,6 +10,7 @@
 #include "objects/EnemyHotE105.h"
 #include "objects/ef_spark.h"
 #include "objects/ObjShelterKaitenKey.h"
+#include "objects/mirror.h"
 
 /*
 
@@ -930,4 +931,5 @@ void InitPatches()
 	InitE105Patches();
 	PatchEffectSpark();
 	PatchAmyHandles();
+	PatchTwinkleMirrors();
 }
