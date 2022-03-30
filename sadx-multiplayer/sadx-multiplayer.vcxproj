@@ -198,6 +198,7 @@
     <ClCompile Include="objects\ObjShelterKaitenKey.cpp" />
     <ClCompile Include="objects\ObjShelterSen.cpp" />
     <ClCompile Include="objects\ObjShelterUkijima.cpp" />
+    <ClCompile Include="objects\o_shelter_gate1.cpp" />
     <ClCompile Include="objects\o_twinkle_door.cpp" />
     <ClCompile Include="objects\PathKassha.cpp" />
     <ClCompile Include="objects\RdHotShelter.cpp" />
