@@ -23,11 +23,13 @@ static void __cdecl execShelterGate1_r(task* tp)
 		if (pnum >= 0)
 		{
 			NJS_POINT3 v;
-			GetPlayerPosition(pnum, 0, &v, 0);
-			if ((v.z - twp->pos.z) * twp->value.f + (v.x - twp->pos.x) * twp->timer.f > 0.0f)
+			if (GetPlayerPosition(pnum, 0, &v, 0))
 			{
-				twp->mode = MODE_OPEN;
-				twp->counter.l = 0;
+				if ((v.z - twp->pos.z) * twp->value.f + (v.x - twp->pos.x) * twp->timer.f > 0.0f)
+				{
+					twp->mode = MODE_OPEN;
+					twp->counter.l = 0;
+				}
 			}
 		}
 	}
