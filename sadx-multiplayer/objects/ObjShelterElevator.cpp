@@ -63,7 +63,7 @@ static void InitATask_m(task* tp)
 {
 	InitATask(tp);
 
-	if (GameState != 4)
+	if (GameState != 4 && GetStageNumber() != LevelAndActIDs_HotShelter2)
 	{
 		auto twp = tp->twp;
 
