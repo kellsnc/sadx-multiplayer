@@ -738,7 +738,7 @@ static void SakanaGenerater_m(task* tp)
     {
         auto fish_tp = (task*)twp->value.ptr;
 
-        if (fish_tp == nullptr)
+        if (fish_tp == nullptr || fish_tp->twp == nullptr)
         {
             twp->mode = 1i8;
             break;

@@ -6,7 +6,7 @@ static void __cdecl BigTheCat_r(task* tp);
 Trampoline BigTheCat_t(0x490A00, 0x490A05, BigTheCat_r);
 static void __cdecl BigTheCat_r(task* tp)
 {
-	if (multiplayer::IsEnabled())
+	if (multiplayer::IsActive())
 	{
 		auto pnum = TASKWK_PLAYERID(tp->twp);
 		auto etc = GetBigEtc(pnum);

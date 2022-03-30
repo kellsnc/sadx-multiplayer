@@ -21,9 +21,9 @@ enum : __int8
 FunctionPointer(BOOL, moveLureDirKaeru, (task* tp), 0x7A7290);
 TaskFunc(moveKaeru_Only, 0x7A6F60);
 DataPointer(float, gf32BigDepth, 0x3C55018);
-DataPointer(NJS_ACTION, action_f_f0021_frog, 0x9228A4);
-DataPointer(NJS_ACTION, action_f_f0022_frog, 0x9228A4); // unused
-DataPointer(NJS_ACTION, action_f_f0023_frog, 0x927594);
+DataPointer(NJS_ACTION, action_f_f0021_frog, 0x9228A4); // swimming animation
+DataPointer(NJS_ACTION, action_f_f0022_frog, 0x92400C); // unused idle animation
+DataPointer(NJS_ACTION, action_f_f0023_frog, 0x927594); // escape animation
 
 static auto motionBigKaeru = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x7A6C90, rEAX);
 

@@ -824,15 +824,7 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 {
 	if (multiplayer::IsActive())
 	{
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			if (CheckPlayerRideOnMobileLandObjectP(i, ttp))
-			{
-				return true;
-			}
-		}
-
-		return false;
+		return IsPlayerOnDyncol(ttp);
 	}
 	else
 	{

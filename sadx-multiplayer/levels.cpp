@@ -488,7 +488,7 @@ void InitLevels()
 	// Patch start positions
 	WriteCall((void*)0x4150FA, SetAllPlayersInitialPosition); // General
 	WriteCall((void*)0x4151B1, SetAllPlayersInitialPosition); // General
-	WriteCall((void*)0x7B0B00, SetAllPlayersInitialPosition); // General
+	WriteJump((void*)0x7B0B00, SetAllPlayersInitialPosition); // General
 	WriteCall((void*)0x4DD52D, SetAllPlayersInitialPosition); // Windy Valley
 	WriteCall((void*)0x5E15CA, SetAllPlayersInitialPosition); // Lost World
 	WriteCall((void*)0x5EDC66, SetAllPlayersInitialPosition); // Sky Deck
