@@ -519,6 +519,9 @@ void InitLevels()
 	WriteCall((void*)0x60147B, Create_Mountain_Cloud);
 	WriteCall((void*)0x601404, Create_Mountain_Cloud);
 
+	// Red Mountain Lava
+	WriteData<2>((void*)0x6087D6, 0x90ui8);
+
 	// Remove landtable collision chunk optimisation
 	WriteData((uint8_t*)0x4E91C0, 0xC3ui8); // Ice Cap
 	
