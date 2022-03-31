@@ -149,8 +149,6 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
-    <ClCompile Include="ObjectRuinMirror.cpp" />
-    <ClCompile Include="ObjectSwDoorX.cpp" />
     <ClCompile Include="objects\BigKaeru.cpp" />
     <ClCompile Include="objects\BigTheCat.cpp" />
     <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp" />
@@ -187,7 +185,9 @@
     <ClCompile Include="objects\ObjectKaosEme.cpp" />
     <ClCompile Include="objects\ObjectMountainAsiba.cpp" />
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
+    <ClCompile Include="objects\ObjectRuinMirror.cpp" />
     <ClCompile Include="objects\ObjectSkyLever.cpp" />
+    <ClCompile Include="objects\ObjectSwDoorX.cpp" />
     <ClCompile Include="objects\ObjectTogedai.cpp" />
     <ClCompile Include="objects\ObjectTPCatapult.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
