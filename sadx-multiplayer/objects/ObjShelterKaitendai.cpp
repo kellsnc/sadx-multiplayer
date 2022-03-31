@@ -19,6 +19,7 @@ static void ExecATask_o(task* tp)
 static void ExecATask_m(task* tp)
 {
 	auto twp = tp->twp;
+	auto fwp = tp->fwp;
 	auto col = (NJS_OBJECT*)twp->value.ptr;
 	auto ang_spd = static_cast<Angle>(twp->scl.x);
 
@@ -43,9 +44,9 @@ static void ExecATask_m(task* tp)
 			njCalcVector(0, &dir, &pos);
 			njPopMatrixEx();
 			njSubVector(&pos, &dir);
-			njAddVector(&ptwp->pos, &pos);
 
-			ptwp->ang.y -= ang_spd;
+			fwp[i].pos_spd = pos;
+			fwp[i].ang_spd.y = -ang_spd;
 		}
 	}
 }

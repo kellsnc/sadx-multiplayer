@@ -22,11 +22,6 @@ static void ObjShelterBridgeExec_m(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (twp->mode == 1 || twp->mode == 5)
-	{
-		return;
-	}
-
 	auto sub_twp = reinterpret_cast<taskwk*>(twp->value.ptr);
 	auto ang_spd = static_cast<Angle>(twp->scl.x);
 
@@ -39,6 +34,8 @@ static void ObjShelterBridgeExec_m(task* tp)
 	njRotateY_(twp->ang.y);
 	njCalcPoint(0, &dir, (NJS_VECTOR*)&sub_twp->counter);
 	njPopMatrixEx();
+
+	auto fwp = tp->fwp;
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
@@ -54,9 +51,9 @@ static void ObjShelterBridgeExec_m(task* tp)
 			njCalcVector(0, &dir, &pos);
 			njPopMatrixEx();
 			njSubVector(&pos, &dir);
-			njAddVector(&ptwp->pos, &pos);
 
-			ptwp->ang.y -= ang_spd;
+			fwp[i].pos_spd = pos;
+			fwp[i].ang_spd.y = -ang_spd;
 		}
 	}
 }
@@ -112,16 +109,20 @@ static void ObjShelterBridgeShrink_m(task* tp)
 
 	dir.z = twp->scl.y;
 	
+	auto fwp = tp->fwp;
+
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		if (CheckPlayerRideOnMobileLandObjectP(i, tp))
 		{
 			auto ptwp = playertwp[i];
+			
 			njPushMatrix(_nj_unit_matrix_);
-			njTranslateEx(&ptwp->pos);
 			njRotateY_(twp->ang.y);
-			njCalcPoint(0, &dir, &ptwp->pos);
+			njCalcVector(0, &dir, &fwp[i].pos_spd);
 			njPopMatrixEx();
+
+			fwp[i].ang_spd.y = 0;
 		}
 	}
 }

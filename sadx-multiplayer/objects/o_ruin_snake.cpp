@@ -4,8 +4,9 @@
 static void MoveSnake_w();
 Trampoline MoveSnake_t(0x5E4360, 0x5E4367, MoveSnake_w);
 
+MAKEVARMULTI(int, semafo, 0x3C7ED74);
+
 DataPointer(char, flag_1, 0x3C7ED84);
-DataPointer(int, semafo, 0x3C7ED74);
 DataPointer(float, suimen_ypos, 0x20397A0);
 DataPointer(float, up_up_speed, 0x3C7ED70);
 
@@ -36,6 +37,9 @@ static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 
 	auto next_pt = &ptag[(int)onpathpos + 1];
 
+	Angle add_ang_x = SubAngle(twp->ang.x, next_pt->slangx);
+	Angle add_ang_z = SubAngle(twp->ang.z, next_pt->slangz);
+
 	twp->ang.z = next_pt->slangz;
 	twp->ang.x = next_pt->slangx;
 	twp->scl.z += 1.0f;
@@ -59,7 +63,7 @@ static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 	}
 
 	Angle dest_ang = NJM_RAD_ANG(atan2(x, z));
-	Angle add_ang = SubAngle(twp->ang.y, dest_ang);
+	Angle add_ang_y = SubAngle(twp->ang.y, dest_ang);
 	twp->ang.y = dest_ang;
 
 	twp->pos.x = pos.x + twp->pos.x;
@@ -82,16 +86,24 @@ static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
+			if (*semafo_m[i])
+			{
+				continue;
+			}
+
 			if (CheckPlayerRideOnMobileLandObjectP(i, head))
 			{
 				auto ptwp = playertwp[i];
 
 				NJS_POINT3 p = twp->pos;
 				njAddVector(&p, &twp->cwp->info->center);
-				if (IsPlayerInSphere(&p, twp->cwp->info->a - 7.5f))
+				if (GetDistance(&p, &ptwp->pos) < twp->cwp->info->a)
 				{
-					njAddVector(&ptwp->pos, &pos);
-					ptwp->ang.y += add_ang;
+					head->fwp[i].pos_spd = pos;
+					head->fwp[i].ang_spd.x = add_ang_x;
+					head->fwp[i].ang_spd.y = add_ang_y;
+					head->fwp[i].ang_spd.z = add_ang_z;
+					*semafo_m[i] = 1;
 				}
 			}
 		}
@@ -157,7 +169,11 @@ static void __cdecl ObjectRuinSnake_r(task* tp)
 		if (IsPlayerInSphere(5207.0f, -2557.0f, 1197.0f, 800.0f))
 		{
 			LoopTaskC(tp);
-			semafo = 0;
+
+			for (auto& i : semafo_m)
+			{
+				*i = 0;
+			}
 		}
 
 		flag_1 = 0;

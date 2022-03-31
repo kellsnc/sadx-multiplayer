@@ -16,6 +16,7 @@
 #include "milesrace.h"
 #include "fishing.h"
 #include "testspawn.h"
+#include "forcewk.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -43,6 +44,7 @@ extern "C"
 		InitEmeraldRadar();
 		InitMilesRace();
 		InitFishing();
+		InitForceWorkPatches();
 
 		delete config;
 	}

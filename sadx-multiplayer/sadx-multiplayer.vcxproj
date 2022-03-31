@@ -99,6 +99,7 @@
     <ClInclude Include="drawqueue.h" />
     <ClInclude Include="emeraldhunt.h" />
     <ClInclude Include="fishing.h" />
+    <ClInclude Include="forcewk.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="hud_emerald.h" />
     <ClInclude Include="hud_fishing.h" />
@@ -138,6 +139,7 @@
     <ClCompile Include="drawqueue.cpp" />
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="fishing.cpp" />
+    <ClCompile Include="forcewk.cpp" />
     <ClCompile Include="hud_emerald.cpp" />
     <ClCompile Include="hud_fishing.cpp" />
     <ClCompile Include="hud_result.cpp" />

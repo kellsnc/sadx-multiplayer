@@ -271,6 +271,9 @@
     <ClCompile Include="objects\ObjectSwDoorX.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="forcewk.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -386,6 +389,9 @@
     </ClInclude>
     <ClInclude Include="objects\mirror.h">
       <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="forcewk.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
