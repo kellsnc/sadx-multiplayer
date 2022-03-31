@@ -149,6 +149,8 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
+    <ClCompile Include="ObjectRuinMirror.cpp" />
+    <ClCompile Include="ObjectSwDoorX.cpp" />
     <ClCompile Include="objects\BigKaeru.cpp" />
     <ClCompile Include="objects\BigTheCat.cpp" />
     <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp" />
