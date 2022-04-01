@@ -117,11 +117,8 @@ void __cdecl ef_explosion_r(taskwk* twp)
 	{
 		play_itembox_sound(itembox_getpnum(twp));
 
-		//ItemBox_Explosion:
 		explosion_pos = twp->pos;
 		explosion_r = 10.0f;
-
-		// Todo: add hurt other players
 	}
 	else
 	{
@@ -149,8 +146,9 @@ void __cdecl TBarrier_r(task* tp)
 	if (multiplayer::IsActive())
 	{
 		auto twp = tp->twp;
-		auto pltwp = playertwp[twp->counter.b[0]];
-		auto plpwp = playerpwp[twp->counter.b[0]];
+		auto pnum = TASKWK_PLAYERID(twp);
+		auto pltwp = playertwp[pnum];
+		auto plpwp = playerpwp[pnum];
 
 		if (pltwp && plpwp && (plpwp->item & Powerups_MagneticBarrier) != 0)
 		{
@@ -163,8 +161,8 @@ void __cdecl TBarrier_r(task* tp)
 
 				if (ctwp)
 				{
-					ctwp->ang.x = rand() % 0x10000; // better version of (Angle)(UNIT_RAND * 65536.0)
-					ctwp->ang.y = rand() % 0x10000;
+					ctwp->ang.x = rand() % 0x10001; // better version of (Angle)(UNIT_RAND * 65536.0)
+					ctwp->ang.y = rand() % 0x10001;
 					ctwp->value.f = 1.0f;
 					ctp->disp = TBarrierDisp;
 				}
