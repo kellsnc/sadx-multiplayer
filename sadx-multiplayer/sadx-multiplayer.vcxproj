@@ -204,6 +204,9 @@
     <ClCompile Include="objects\ObjShelterUkijima.cpp" />
     <ClCompile Include="objects\o_hebigate.cpp" />
     <ClCompile Include="objects\o_ruin_snake.cpp" />
+    <ClCompile Include="objects\o_shelter_cargo.cpp" />
+    <ClCompile Include="objects\o_shelter_cargotop.cpp" />
+    <ClCompile Include="objects\o_shelter_cargocontainer.cpp" />
     <ClCompile Include="objects\o_shelter_gate1.cpp" />
     <ClCompile Include="objects\o_shelter_haguruma.cpp" />
     <ClCompile Include="objects\o_shelter_kaitenashiba.cpp" />

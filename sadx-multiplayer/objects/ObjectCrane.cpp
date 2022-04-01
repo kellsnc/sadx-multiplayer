@@ -1,8 +1,13 @@
 #include "pch.h"
 #include "multiplayer.h"
 
+// Crane platform in Speed Highway
+
 static void checkPlayerRideOnTheCage_w();
+static void __cdecl execCage_r(task* tp);
+
 Trampoline checkPlayerRideOnTheCage_t(0x61B060, 0x61B067, checkPlayerRideOnTheCage_w);
+Trampoline execCage_t(0x61B190, 0x61B198, execCage_r);
 
 BOOL checkPlayerRideOnTheCage_o(task* tp)
 {
@@ -65,5 +70,18 @@ static void __declspec(naked) checkPlayerRideOnTheCage_w()
 		call checkPlayerRideOnTheCage_r
 		add esp, 4
 		retn
+	}
+}
+
+static void __cdecl execCage_r(task* tp)
+{
+	TARGET_STATIC(execCage)(tp);
+
+	for (int i = 2; i < PLAYER_MAX; ++i)
+	{
+		if (CheckPlayerRideOnMobileLandObjectP(i, tp))
+		{
+			tp->fwp[i] = tp->fwp[0];
+		}
 	}
 }

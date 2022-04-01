@@ -6,7 +6,7 @@
 
 static constexpr size_t memsize = 0x1C * PLAYER_MAX;
 
-void __cdecl PSSGCollisionForceWorkEffect_r(playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp)
+static void __cdecl PSSGCollisionForceWorkEffect_r(playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp)
 {
     auto pnum = TASKWK_PLAYERID(twp);
 

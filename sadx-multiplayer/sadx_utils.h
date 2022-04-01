@@ -343,6 +343,7 @@ FunctionPointer(int, getLureKind, (), 0x46C870);
 FunctionPointer(void, String_IniEasy, (String* ___this, const NJS_POINT3* v0, const NJS_POINT3* vN), 0x4BF860);
 FunctionPointer(void, String_Exe, (String* ___this, const NJS_POINT3* v0, const NJS_POINT3* vN, int mode), 0x4BFCA0);
 FunctionPointer(void, String_Dsp, (String* ___this), 0x4BFD40);
+DataPointer(float, No2CargoSpd, 0x3C72E5C);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
