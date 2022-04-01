@@ -314,14 +314,21 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 {
     if (multiplayer::IsActive())
     {
+        auto pnum = TASKWK_PLAYERID(twp);
+
         NJS_POINT3 pos; Angle3 ang;
         GetPlayerInitialPositionM(&pos, &ang);
 
+        if (pnum == 0 && multiplayer::IsCoopMode() && continue_data.continue_flag)
+        {
+            SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
+        }
+
         static const float dists[]{ -5.0f, 5.0f, -10.0f, 10.0f };
         twp->ang = ang;
-        twp->pos.x = pos.x + njCos(ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
+        twp->pos.x = pos.x + njCos(ang.y + 0x4000) * dists[pnum];
         twp->pos.y = pos.y;
-        twp->pos.z = pos.z + njSin(ang.y + 0x4000) * dists[TASKWK_PLAYERID(twp)];
+        twp->pos.z = pos.z + njSin(ang.y + 0x4000) * dists[pnum];
     }
     else
     {

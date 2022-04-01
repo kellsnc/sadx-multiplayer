@@ -81,11 +81,28 @@ static void __cdecl E102Beam_r(task* tp)
     TARGET_STATIC(E102Beam)(tp);
 }
 
+static void __cdecl E102AddSecTotalNewDisplay_r(task* tp);
+Trampoline E102AddSecTotalNewDisplay_t(0x49FDA0, 0x49FDA5, E102AddSecTotalNewDisplay_r);
+static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
+{
+    if (multiplayer::IsCoopMode() && SplitScreen::IsActive())
+    {
+        SplitScreen::SaveViewPort();
+        SplitScreen::ChangeViewPort(-1);
+        TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+        SplitScreen::RestoreViewPort();
+    }
+    else if (!multiplayer::IsActive())
+    {
+        TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+    }
+}
+
 static void __cdecl E102AddSecTotalNew_r(task* tp);
 Trampoline E102AddSecTotalNew_t(0x49FF10, 0x49FF16, E102AddSecTotalNew_r);
 static void __cdecl E102AddSecTotalNew_r(task* tp)
 {
-    if (!SplitScreen::IsActive())
+    if (!multiplayer::IsBattleMode())
     {
         TARGET_STATIC(E102AddSecTotalNew)(tp);
     }

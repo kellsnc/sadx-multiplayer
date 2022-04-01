@@ -802,7 +802,7 @@ static void __cdecl InitTimer_r()
 	TimeMinutes = 0;
 	GameTimer = 0;
 
-	if (GetPlayerNumber() == Characters_Gamma && !multiplayer::IsEnabled())
+	if (GetPlayerNumber() == Characters_Gamma && !multiplayer::IsBattleMode())
 	{
 		TimeMinutes = 3;
 		TimeSeconds = 0;
@@ -817,7 +817,7 @@ static void __cdecl InitTime_r()
 
 static int __cdecl GammaTickTimePatch()
 {
-	return multiplayer::IsActive() ? 0 : CurrentCharacter;
+	return multiplayer::IsBattleMode() ? 0 : CurrentCharacter;
 }
 
 bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
