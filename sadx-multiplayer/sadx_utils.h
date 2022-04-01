@@ -177,6 +177,22 @@ struct amyhndlstr
 	NJS_POINT3 hndlpos;
 };
 
+struct ITEM_MANAGER_DATA
+{
+	int item_list;
+	float item_pos;
+	float scale;
+	int random_ring;
+};
+
+struct ITEM_MANAGER
+{
+	int mode;
+	int current_list;
+	unsigned int counter;
+	ITEM_MANAGER_DATA itemdata[20];
+};
+
 FunctionPointer(void, njDrawTriangle3D, (NJS_POINT3COL* p, int n, unsigned int atr), 0x77EBA0);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);

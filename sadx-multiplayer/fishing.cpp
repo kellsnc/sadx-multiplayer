@@ -3,6 +3,7 @@
 #include "splitscreen.h"
 #include "hud_fishing.h"
 #include "result.h"
+#include "objects//ObjectItemBox.h"
 #include "fishing.h"
 
 /*
@@ -1531,7 +1532,7 @@ static void fishingLureCtrl_m(task* tp)
 				int item = sub_46EE90();
 				if (item > 0)
 				{
-					DoThingWithItemBoxPowerupIndex(item);
+					EntryItemBoxPanel_m(item, pnum);
 					etc->big_item_pos = ptwp->pos;
 				}
 			}
