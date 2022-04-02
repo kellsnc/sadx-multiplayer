@@ -103,6 +103,7 @@
     <ClInclude Include="framework.h" />
     <ClInclude Include="hud_emerald.h" />
     <ClInclude Include="hud_fishing.h" />
+    <ClInclude Include="hud_indicator.h" />
     <ClInclude Include="hud_result.h" />
     <ClInclude Include="levels.h" />
     <ClInclude Include="menu.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="forcewk.cpp" />
     <ClCompile Include="hud_emerald.cpp" />
     <ClCompile Include="hud_fishing.cpp" />
+    <ClCompile Include="hud_indicator.cpp" />
     <ClCompile Include="hud_result.cpp" />
     <ClCompile Include="milesrace.cpp" />
     <ClCompile Include="multiapi.cpp" />

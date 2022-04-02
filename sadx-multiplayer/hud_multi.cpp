@@ -7,18 +7,8 @@ Trampoline* DisplayTimer_t = nullptr;
 Trampoline* LoadTextureForEachGameMode_t = nullptr;
 Trampoline* ReleaseTextureForEachGameMode_t = nullptr;
 
-NJS_TEXNAME CON_MULTI_TEXNAME[6]{};
+NJS_TEXNAME CON_MULTI_TEXNAME[18]{};
 NJS_TEXLIST CON_MULTI_TEXLIST = { arrayptrandlength(CON_MULTI_TEXNAME) };
-
-enum MHudTex
-{
-    MHudTex_Cream,
-    MHudTex_Cheese,
-    MHudTex_Alphabet,
-    MHudTex_Score,
-    MHudTex_Time,
-    MHudTex_Ring
-};
 
 enum MHudSprt
 {

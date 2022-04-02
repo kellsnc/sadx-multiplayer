@@ -283,6 +283,9 @@
     <ClCompile Include="objects\o_shelter_cargocontainer.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="hud_indicator.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -401,6 +404,9 @@
     </ClInclude>
     <ClInclude Include="forcewk.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_indicator.h">
+      <Filter>Header FIles\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

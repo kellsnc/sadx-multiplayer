@@ -1,8 +1,9 @@
 #include "pch.h"
-#include "players.h"
 #include "multiplayer.h"
 #include "result.h"
 #include "milesrace.h"
+#include "hud_indicator.h"
+#include "players.h"
 
 /*
 
@@ -482,6 +483,7 @@ void SetPlayer_r()
             break;
         }
 
+        CreateIndicatorP();
         SetWinnerMulti(-1);
         SetAllPlayersInitialPosition();
     }
