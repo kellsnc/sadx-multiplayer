@@ -4,6 +4,9 @@
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 
+MAKEVARMULTI(char, e102_hover_flag, 0x3C53C40);
+MAKEVARMULTI(char, e102_hover_flag_p, 0x3C53C41);
+
 static void __cdecl E102Display_r(task* tp);
 Trampoline E102Display_t(0x47FD50, 0x47FD57, E102Display_r);
 static void __cdecl E102Display_r(task* tp)
@@ -51,7 +54,34 @@ static void __cdecl E102Display_r(task* tp)
         }
     }
     
-	TARGET_STATIC(E102Display)(tp);
+    TARGET_STATIC(E102Display)(tp);
+}
+
+static void __cdecl E102_r(task* tp);
+Trampoline E102_t(0x483430, 0x483437, E102_r);
+static void __cdecl E102_r(task* tp)
+{
+    if (multiplayer::IsActive())
+    {
+        auto pnum = TASKWK_PLAYERID(tp->twp);
+
+        // Patch global variables:
+        if (pnum > 0)
+        {
+            auto backup = e102_hover_flag;
+            auto backup_p = e102_hover_flag_p;
+            e102_hover_flag = *e102_hover_flag_m[pnum];
+            e102_hover_flag_p = *e102_hover_flag_p_m[pnum];
+            TARGET_STATIC(E102)(tp);
+            *e102_hover_flag_m[pnum] = e102_hover_flag;
+            *e102_hover_flag_p_m[pnum] = e102_hover_flag_p;
+            e102_hover_flag = backup;
+            e102_hover_flag_p = backup_p;
+            return;
+        }
+    }
+
+    TARGET_STATIC(E102)(tp);
 }
 
 static void __cdecl E102LockOnCursor_r(task* tp);
