@@ -126,7 +126,7 @@ static void dispIndicatorNum(int pnum, float screenX, float screenY, float scree
 
 static void __cdecl dispIndicatorP(task* tp)
 {
-    if (!MissedFrames)
+    if (!MissedFrames && !IsGamePaused())
     {
         ghDefaultBlendingMode();
 
