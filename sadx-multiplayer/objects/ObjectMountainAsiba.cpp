@@ -55,7 +55,7 @@ static void Normal_m(task* tp)
 	{
 		if (twp->btimer == 0)
 		{
-			twp->value.f = -0.035;
+			twp->value.f = -0.035f;
 		}
 
 		uint16_t idk = 200 / (max(0, twp->btimer) + 1);

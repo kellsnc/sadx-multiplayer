@@ -482,7 +482,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 
 				if (etc->Big_Fish_Ptr)
 				{
-					CreateBigDisplayFishWeight_m(etc->Big_Fish_Ptr->mwp->weight, 999, pnum);
+					CreateBigDisplayFishWeight_m((int)etc->Big_Fish_Ptr->mwp->weight, 999, pnum);
 				}
 			}
 		}

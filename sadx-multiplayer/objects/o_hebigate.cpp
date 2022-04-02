@@ -32,7 +32,7 @@ static void Normal_m(task* tp)
                 twp->timer.f -= 1.0f;
                 if (twp->timer.f < 1.0f)
                 {
-                    twp->timer.l = 1.0f;
+                    twp->timer.f = 1.0f;
                     twp->value.l = 2;
                 }
             }

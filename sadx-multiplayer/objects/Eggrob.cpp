@@ -81,7 +81,7 @@ static void __cdecl Eggrob_BeamZanzo_disp(task* tp)
 		zanzo_p[3].z = (float)twp->ang.z * 0.000015258789f + twp->pos.z;
 
 		float v4 = (float)(9 - twp->wtimer) / 9.0f;
-		zanzo_c[0].argb.a = v4 * 192.0f;
+		zanzo_c[0].argb.a = (uint8_t)(v4 * 192.0f);
 		zanzo_c[1].argb.a = (uint8_t)((1.0f - GetDistance(&twp->pos, &twp->scl) * 0.0066666668f) * (float)zanzo_c[0].argb.a);
 		zanzo_c[3].argb.a = (uint8_t)((v4 - (1.0f / 9.0f)) * 192.0f);
 		zanzo_c[2].argb.a = (uint8_t)((1.0f - GetDistance(&twp->pos, &zanzo_p[2]) * 0.0066666668f) * (float)zanzo_c[3].argb.a);

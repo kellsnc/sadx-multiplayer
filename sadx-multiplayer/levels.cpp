@@ -332,7 +332,7 @@ void __cdecl Rd_Twinkle_r(task* tp)
 
 			if (IsPlayerInSphere(-55.0f, 153.0f, -1000.0f, 50.0f))
 			{
-				tp->twp->mode == 3;
+				tp->twp->mode = 3;
 				EV_NpcMilesStandByOff();
 				rdInitTwinkle(tp);
 				setTPFog(tp->twp->mode);

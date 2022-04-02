@@ -70,7 +70,7 @@ BOOL __cdecl CheckBreakFuta_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
-		CheckBreakFuta_m(tp);
+		return CheckBreakFuta_m(tp);
 	}
 	else
 	{
