@@ -68,41 +68,6 @@ struct CUSTOM_OBJ
 	void(__cdecl* exad)(NJS_OBJECT*);
 };
 
-struct KnFragmNmbStr
-{
-	char nmb[4];
-	unsigned __int16 stgnmb;
-};
-
-struct KnFragmSetStr
-{
-	int id;
-	int boutflag;
-	int psflag;
-	int cpflag;
-	NJS_POINT3 pos;
-	NJS_POINT3 contpos;
-};
-
-struct sMRacePath
-{
-	int flag;
-	NJS_POINT3 pos;
-};
-
-struct sSonicCtrl
-{
-	NJS_POINT3 now_path_pos;
-	NJS_POINT3 tgt_path_pos;
-	NJS_POINT3 vec_snc_tgt;
-	float dist_snc_tgt;
-	int path_flag;
-	int path_flag_bak;
-	int last_ang;
-	float pl_last_spd;
-	int jump_cnt;
-};
-
 struct sParabola
 {
 	NJS_POINT3 pos_start;
@@ -123,18 +88,6 @@ struct String
 {
 	Mass mass;
 	unsigned int flag;
-};
-
-struct _SC_NUMBERS
-{
-	unsigned __int8 type;
-	unsigned __int8 attr;
-	__int16 rot;
-	unsigned int max;
-	unsigned int value;
-	NJS_POINT3 pos;
-	float scl;
-	unsigned int color;
 };
 
 struct Big_ydata
@@ -224,7 +177,6 @@ DataPointer(int, ri_landentry_nmb, 0x3B36D3C);
 VoidFunc(dsEditLightInit, 0x40AEE0);
 FunctionPointer(void, DrawLineV, (NJS_VECTOR*, NJS_VECTOR*), 0x412990);
 FunctionPointer(void, Set3DPositionPCM, (int, float, float, float), 0x4102C0);
-DataPointer(taskwk*, gpCharTwp, 0x3ABDF60);
 TaskFunc(relbox_switch_draw, 0x46A8D0);
 DataPointer(int, MRaceResult, 0x3C53A94);
 DataPointer(NJS_SPRITE, Spr_MRaceDisp, 0x3C53A98);
@@ -237,7 +189,6 @@ FunctionPointer(BOOL, NearTornade, (NJS_POINT3* pos, Float* dist), 0x4BA860);
 DataPointer(NJS_OBJECT, object_goaleme_blue_blue, 0xC3FDA0);
 DataPointer(NJS_OBJECT, object_goaleme_white_white, 0xC3F050);
 DataPointer(NJS_OBJECT, object_goaleme_green_green, 0xC3E300);
-FunctionPointer(int, GetPlayerNumber, (), 0x4144E0);
 FunctionPointer(task*, ADXTaskInit, (), 0x4258B0);
 FunctionPointer(void, BGM_Play, (int no), 0x425690);
 FunctionPointer(int, CheckWhichJumpPanelKicked, (), 0x4B84D0);
@@ -276,17 +227,13 @@ VoidFunc(CreateTunnelcol, 0x5AC2C0);
 TaskFunc(EffectSpark, 0x4CE830);
 TaskFunc(PathKassha, 0x603640);
 TaskFunc(KasshaDisplayer, 0x603590);
-FunctionPointer(void, SetVelocityAndRotationAndNoconTimeWithSpinDashP, (unsigned __int8 pno, NJS_POINT3* v, Angle3* ang, __int16 tm), 0x441540);
 DataPointer(int, ke_ongame_flg, 0x3C52AD8);
 DataPointer(int, found_feme_nmb, 0x3C52C04);
 FunctionPointer(BOOL, isMissionClearDisp, (), 0x414FE0);
-DataArray(KnFragmSetStr, fragmset_tbl, 0x3C52B20, 3);
-DataArray(KnFragmNmbStr, fragmnmb_tbl, 0x7E0CD8, 6);
 TaskFunc(KnucklesLaterSE, 0x474F50);
 TaskFunc(FragmEmeraldDigDisplay, 0x4A31D0);
 FunctionPointer(int, Knuckles_Status, (int plnmb), 0x475600);
 FunctionPointer(void, CreateKiranR, (NJS_POINT3* pos, NJS_POINT3* velo, float scl, Angle ang), 0x4BAD80);
-FunctionPointer(BOOL, EV_CheckCansel, (), 0x42FB00);
 TaskFunc(Knuckles_KakeraGame, 0x476440);
 DataPointer(int, ulGlobalMode, 0x3ABDC7C);
 TaskFunc(SonicTheHedgehog, 0x49A9B0);
@@ -296,23 +243,14 @@ DataPointer(int, MRaceStageNumber, 0x3C539EC);
 TaskFunc(InitMoble2PControl, 0x47D8C0);
 TaskFunc(InitSonic2PControl, 0x47D820);
 TaskFunc(late_DispMilesMeter2P, 0x47C260);
-DataPointer(sSonicCtrl, SonicCtrlBuff, 0x3C539F8);
-DataPointer(sMRacePath*, PathTbl_Sonic, 0x03C539F4);
-DataPointer(sMRacePath*, PathTbl_Miles, 0x3C53A64);
 DataPointer(sParabola, SonicPaboBuff, 0x3C53A68);
 DataPointer(NJS_POINT3, VecTemp0, 0x3B0F140);
 DataPointer(NJS_POINT3, VecTemp1, 0x3B0F12C);
 FunctionPointer(void, MakeParabolaInitSpeed, (sParabola* para), 0x4BD2D0);
 FunctionPointer(int, ChkParabolaEnd, (sParabola* para), 0x4BD380);
-FunctionPointer(void, CharColliOn, (taskwk* twp), 0x4BD180);
-FunctionPointer(void, CharColliOff, (taskwk* twp), 0x4BD1B0);
-FunctionPointer(void, SetAccelerationP, (unsigned __int8 pno, float x, float y, float z), 0x441750);
 DataPointer(int, slJudge, 0x3B0EF44);
-DataArray(sMRacePath*, PPT_MRaceEachStage, 0x91C0B8, 10);
 DataArray(int*, MPT_MRaceEachStage, 0x91C0E0, 10);
 DataPointer(taskwk*, rd_mountain_twp, 0x03C80F84);
-FunctionPointer(void, SetParabolicMotionP, (int playerNum, float a2, NJS_VECTOR* a3), 0x446D90);
-FunctionPointer(void, DrawSNumbers, (_SC_NUMBERS* pscn), 0x427BB0);
 TaskFunc(exitFishingLure, 0x46C8D0);
 TaskFunc(dispFishingLure, 0x470580);
 FunctionPointer(int, BGM_Replay, (), 0x4256E0);
@@ -321,40 +259,16 @@ TaskFunc(BigDisplayHit, 0x46EBC0);
 TaskFunc(BigDisplayStatus, 0x470090);
 TaskFunc(dispBigKaeru, 0x7A6BB0);
 TaskFunc(BigDisplayFishWeight, 0x4701A0);
-DataPointer(uint32_t, MaskBlock, 0x3B36D48);
 DataPointer(task*, pRd_Master, 0x3B0EFD8);
 FunctionPointer(void, ERobStart, (erctrlstr* cmd), 0x4B3EB0);
 TaskFunc(Eggrob_Init, 0x4D3ED0);
 VoidFunc(EV_NpcMilesStandByOff, 0x42CE20);
 FunctionPointer(void, SetFreeCameraMode, (int sw), 0x4348A0);
-FunctionPointer(void, CancelAutoPilotP, (unsigned __int8 pno), 0x440FA0);
 DataArray(KeyInfo, KeyBuff, 0x3C72C38, 8);
-
-DataPointer(int, Sakana_Num, 0x3C524E8);
-DataPointer(__int16, Big_Fish_Flag, 0x3C524EC);
-DataPointer(int, Big_Sakana_Weight_Limit, 0x3C524F0);
-DataPointer(float, reel_tension_add, 0x3C524F4);
-DataPointer(task*, Big_Fish_Ptr, 0x3C524F8);
-DataPointer(int, Big_Fishing_Timer, 0x3C524FC);
-DataPointer(task*, Big_Lure_Ptr, 0x3C52500);
-DataPointer(NJS_POINT3, big_item_pos, 0x3C52504);
-DataPointer(int, Big_Sakana_Weight, 0x3C52510);
-DataPointer(int, Big_Sakana_Kind_High, 0x3C52514);
-DataPointer(int, Big_Stg12_Flag, 0x3C52518);
-DataPointer(__int16, Big_Sakana_Weight_High, 0x3C5251C);
-DataPointer(float, water_level, 0x3C52520);
-DataPointer(float, reel_length, 0x3C52524);
-DataPointer(float, reel_length_d, 0x3C52528);
-DataPointer(float, reel_tension, 0x3C5252C);
-DataPointer(float, reel_tension_aim, 0x3C52530);
-DataPointer(Angle, reel_angle, 0x3C52534);
-DataPointer(int, caution_timer, 0x3C52538);
-DataArray(NJS_OBJECT*, lure_kind, 0x3C5253C, 7);
 DataPointer(SaveFileData, sd, 0x3C52558);
 DataPointer(float, distance, 0x3C52AC8);
 DataPointer(float, distancep, 0x3C52ACC);
 FunctionPointer(float, BigChkHeavyWeight, (), 0x46F7D0);
-FunctionPointer(BOOL, GetMiClearStatus, (), 0x590650);
 FunctionPointer(int, getLureKind, (), 0x46C870);
 FunctionPointer(void, String_IniEasy, (String* ___this, const NJS_POINT3* v0, const NJS_POINT3* vN), 0x4BF860);
 FunctionPointer(void, String_Exe, (String* ___this, const NJS_POINT3* v0, const NJS_POINT3* vN, int mode), 0x4BFCA0);
