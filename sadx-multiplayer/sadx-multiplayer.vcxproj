@@ -196,7 +196,6 @@
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
     <ClCompile Include="objects\ObjectRuinMirror.cpp" />
     <ClCompile Include="objects\ObjectSkyLever.cpp" />
-    <ClCompile Include="objects\ObjectSwDoorX.cpp" />
     <ClCompile Include="objects\ObjectTogedai.cpp" />
     <ClCompile Include="objects\ObjectTPCatapult.cpp" />
     <ClCompile Include="objects\ObjectTPCoaster.cpp" />
@@ -211,6 +210,7 @@
     <ClCompile Include="objects\ObjShelterUkijima.cpp" />
     <ClCompile Include="objects\o_hebigate.cpp" />
     <ClCompile Include="objects\o_ruin_snake.cpp" />
+    <ClCompile Include="objects\o_ruin_swdoor_x.cpp" />
     <ClCompile Include="objects\o_shelter_cargo.cpp" />
     <ClCompile Include="objects\o_shelter_cargotop.cpp" />
     <ClCompile Include="objects\o_shelter_cargocontainer.cpp" />
