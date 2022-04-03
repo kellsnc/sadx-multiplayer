@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <IniFile.hpp>
+#include "config.h"
 #include "camera.h"
 #include "splitscreen.h"
 #include "menu.h"
@@ -24,15 +24,15 @@ extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
-		const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
 		gHelperFunctions = &helperFunctions;
+		config::read(path);
 
-		InitSplitScreen(config);
+		InitSplitScreen();
 		InitCamera();
 		InitPatches();
 		InitDeathPatches();
 		InitPlayerPatches();
-		InitMenu(helperFunctions);
+		InitMenu();
 		MultiHudInit();
 		InitSET();
 		InitLevels();
@@ -45,8 +45,6 @@ extern "C"
 		InitMilesRace();
 		InitFishing();
 		InitForceWorkPatches();
-
-		delete config;
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()

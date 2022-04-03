@@ -94,6 +94,7 @@
   <ItemGroup>
     <ClInclude Include="..\include\multiapi.h" />
     <ClInclude Include="camera.h" />
+    <ClInclude Include="config.h" />
     <ClInclude Include="d3d8vars.h" />
     <ClInclude Include="death.h" />
     <ClInclude Include="drawqueue.h" />
@@ -135,6 +136,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="config.cpp" />
     <ClCompile Include="death.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />

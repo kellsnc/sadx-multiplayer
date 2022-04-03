@@ -190,7 +190,7 @@ void __cdecl char_sel_exec_r(task* tp)
 	TARGET_DYNAMIC(char_sel_exec)(tp);
 }
 
-void __cdecl InitMenu(const HelperFunctions& helperFunctions)
+void __cdecl InitMenu()
 {
 	title_menu_sub_exec_t = new Trampoline(0x50B630, 0x50B638, title_menu_sub_exec_r);
 	char_sel_exec_t = new Trampoline(0x5122D0, 0x5122DA, char_sel_exec_r);

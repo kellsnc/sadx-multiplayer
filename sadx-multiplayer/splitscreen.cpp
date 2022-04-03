@@ -3,11 +3,12 @@
 #include <d3d8.h>
 #include <SADXModLoader.h>
 #include <Trampoline.h>
-#include "splitscreen.h"
+#include "config.h"
 #include "hud_multi.h"
 #include "d3d8vars.h"
 #include "drawqueue.h"
 #include "camera.h"
+#include "splitscreen.h"
 
 /*
 
@@ -245,11 +246,9 @@ void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
     }
 }
 
-void InitSplitScreen(const IniFile* config)
+void InitSplitScreen()
 {
-    configSplitScreenEnabled = config->getBool("", "SplitScreen", true);
-
-    if (configSplitScreenEnabled)
+    if (config::splitScreenEnabled == true)
     {
         LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
         WriteCall((void*)((int)(LoopTask_t->Target()) + 3), RunObjectIndex); // Repair LoopTask_t

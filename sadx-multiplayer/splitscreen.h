@@ -20,4 +20,4 @@ namespace SplitScreen
 	bool ChangeViewPort(int num);
 }
 
-void InitSplitScreen(const IniFile* config);
+void InitSplitScreen();

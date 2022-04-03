@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "config.h"
 #include "multiplayer.h"
 #include "splitscreen.h"
 #include "hud_multi.h"
@@ -173,7 +174,7 @@ static void __cdecl IndicatorP(task* tp)
 
 void CreateIndicatorP()
 {
-	if (indicator_tp == nullptr)
+	if (config::indicatorEnabled == true && indicator_tp == nullptr)
 	{
 		auto tp = indicator_tp = CreateElementalTask(0u, LEV_6, IndicatorP);
 		tp->disp = dispIndicatorP;
