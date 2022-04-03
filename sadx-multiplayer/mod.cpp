@@ -11,6 +11,7 @@
 #include "race.h"
 #include "emeraldhunt.h"
 #include "hud_emerald.h"
+#include "hud_itembox.h"
 #include "sound.h"
 #include "result.h"
 #include "milesrace.h"
@@ -38,6 +39,7 @@ extern "C"
 		InitLevels();
 		InitRace();
 		InitEmeraldHunt();
+		InitItemBoxHUD();
 		InitSoundPatches();
 		InitResult();
 		TestSpawn();

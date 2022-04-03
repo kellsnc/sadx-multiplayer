@@ -2,8 +2,8 @@
 #include "multiplayer.h"
 #include "splitscreen.h"
 #include "hud_fishing.h"
+#include "hud_itembox.h"
 #include "result.h"
-#include "objects//ObjectItemBox.h"
 #include "fishing.h"
 
 /*
