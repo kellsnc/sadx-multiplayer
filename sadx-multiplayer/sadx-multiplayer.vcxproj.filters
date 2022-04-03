@@ -265,9 +265,6 @@
     <ClCompile Include="objects\o_ruin_snake.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectRuinMirror.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="forcewk.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -293,6 +290,9 @@
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\o_ruin_swdoor_x.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_ruin_mirror.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
