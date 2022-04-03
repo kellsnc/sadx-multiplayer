@@ -146,6 +146,16 @@ struct ITEM_MANAGER
 	ITEM_MANAGER_DATA itemdata[20];
 };
 
+struct OBJECT_ITEMBOX_AIR_DATA
+{
+	int flag;
+	int item;
+	NJS_POINT3 position;
+	int panel_ang;
+	float scale;
+	float timer;
+};
+
 FunctionPointer(void, njDrawTriangle3D, (NJS_POINT3COL* p, int n, unsigned int atr), 0x77EBA0);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -274,6 +284,9 @@ FunctionPointer(void, String_IniEasy, (String* ___this, const NJS_POINT3* v0, co
 FunctionPointer(void, String_Exe, (String* ___this, const NJS_POINT3* v0, const NJS_POINT3* vN, int mode), 0x4BFCA0);
 FunctionPointer(void, String_Dsp, (String* ___this), 0x4BFD40);
 DataPointer(float, No2CargoSpd, 0x3C72E5C);
+DataPointer(int, item_kind, 0x3C5C888);
+DataPointer(OBJECT_ITEMBOX_AIR_DATA*, itembox_air_data, 0x3C5A9D4);
+FunctionPointer(void, CreateSnow, (NJS_POINT3* pos, NJS_POINT3* velo, float scl), 0x4B9B10);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
