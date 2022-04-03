@@ -5,6 +5,9 @@
       <Property name="SplitScreen" type="bool" defaultvalue="True" display="Enable SplitScreen">
         <HelpText>Toggle splitscreen in multiplayer.</HelpText>
       </Property>
+      <Property name="Indicator" type="bool" defaultvalue="False" display="Enable Indicators">
+        <HelpText>Toggle player position indicators.</HelpText>
+      </Property>
     </Group>
   </Groups>
 </ConfigSchema>
