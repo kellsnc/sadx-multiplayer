@@ -161,6 +161,7 @@
     <ClCompile Include="objects\BigTheCat.cpp" />
     <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
+    <ClCompile Include="objects\ef_barrier.cpp" />
     <ClCompile Include="objects\ef_spark.cpp" />
     <ClCompile Include="objects\Eggrob.cpp" />
     <ClCompile Include="objects\EnemyHotE105.cpp" />

@@ -4,50 +4,8 @@
 #include "hud_itembox.h"
 #include "ObjectItemBox.h"
 
-Trampoline* TBarrier_t = nullptr;
-
 Trampoline* ObjectItemboxNormal_t = nullptr;
 Trampoline* itembox_airCollisitonBefore_t = nullptr;
-
-// Magnetic barrier has support for all player... except for one condition that checks player 1 ;_;
-static void __cdecl TBarrier_r(task* tp)
-{
-	if (multiplayer::IsActive())
-	{
-		auto twp = tp->twp;
-		auto pnum = TASKWK_PLAYERID(twp);
-		auto pltwp = playertwp[pnum];
-		auto plpwp = playerpwp[pnum];
-
-		if (pltwp && plpwp && (plpwp->item & Powerups_MagneticBarrier) != 0)
-		{
-			EffBarrierPosSet(twp, pltwp);
-
-			if (UNIT_RAND > 0.70)
-			{
-				auto ctp = CreateChildTask(LoadObj_Data1, ThunderB, tp);
-				auto ctwp = ctp->twp;
-
-				if (ctwp)
-				{
-					ctwp->ang.x = rand() % 0x10001; // better version of (Angle)(UNIT_RAND * 65536.0)
-					ctwp->ang.y = rand() % 0x10001;
-					ctwp->value.f = 1.0f;
-					ctp->disp = TBarrierDisp;
-				}
-			}
-			LoopTaskC(tp);
-		}
-		else
-		{
-			FreeTask(tp);
-		}
-	}
-	else
-	{
-		TARGET_DYNAMIC(TBarrier)(tp);
-	}
-}
 
 static int itembox_getpnum(taskwk* twp)
 {
@@ -335,8 +293,6 @@ static void __declspec(naked) itembox_airCollisitonBefore_w()
 
 void InitItemBoxPatches()
 {
-	TBarrier_t = new Trampoline(0x4BA2A0, 0x4BA2A5, TBarrier_r);
-
 	ObjectItemboxNormal_t = new Trampoline(0x4D6670, 0x4D6677, ObjectItemboxNormal_w);
 	itembox_airCollisitonBefore_t = new Trampoline(0x4C0610, 0x4C0616, itembox_airCollisitonBefore_w);
 
