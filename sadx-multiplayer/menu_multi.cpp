@@ -1090,7 +1090,7 @@ void menu_multi_disp_charsel(MultiMenuWK* wk)
 	{
 		AVA_MULTI_SPRITE.p.x = 320.0f + IconPosMenuMultiCharSel[i].x;
 		AVA_MULTI_SPRITE.p.y = 260.0f + IconPosMenuMultiCharSel[i].y;
-		AVA_MULTI_SPRITE.p.z = wk->BaseZ - 8;
+		AVA_MULTI_SPRITE.p.z = wk->BaseZ - 8.0f;
 
 		if (enabled_characters[i] == true)
 		{
@@ -1149,14 +1149,14 @@ void menu_multi_disp_localcon(MultiMenuWK* wk)
 
 	SetMaterial(wk->alphaConnect, 1.0f, 1.0f, 1.0f);
 
-	DrawSADXText(press_start_texts[TextLanguage], 210);
+	DrawSADXText(press_start_texts[TextLanguage], 210i16);
 
-	AVA_MULTI_SPRITE.p.x = 220;
-	AVA_MULTI_SPRITE.p.y = 270;
+	AVA_MULTI_SPRITE.p.x = 220.0f;
+	AVA_MULTI_SPRITE.p.y = 270.0f;
 
 	for (int p = 0; p < PLAYER_MAX; ++p)
 	{
-		AVA_MULTI_SPRITE.p.x += 40;
+		AVA_MULTI_SPRITE.p.x += 40.0f;
 
 		if (player_ready[p])
 		{
@@ -1176,20 +1176,20 @@ void menu_multi_disp_localcon(MultiMenuWK* wk)
 			SetMaterial(min(0.75f, wk->alphaConnect), 0.75f, 0.75f, 0.75f);
 		}
 
-		njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_ICON, wk->BaseZ + 100, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+		njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_ICON, wk->BaseZ + 100.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 		SetMaterial(wk->alphaConnect, 1.0f, 1.0f, 1.0f);
 	}
 
 	if (player_ready[0] == true && (player_ready[1] == true || player_ready[2] == true || player_ready[3] == true))
 	{
-		DrawBG_ava_square_b(0xFF12B4FF, 320.0f, 320.0f, wk->BaseZ + 100.0f, 0.715f, 0.551f);
-		DrawBG_ava_square_a(0xFF12B4FF, 320.0f, 320.0f, wk->BaseZ + 200.0f, 0.715f, 0.551f);
-		ghSetPvrTexMaterial(0xFFFFFFFF);
+		DrawSquareC(0xFF12B4FFu, 320.0f, 320.0f, wk->BaseZ + 100.0f, 0.715f, 0.551f);
+		DrawDlgCsrSqr(0xFFu, 320.0f, 320.0f, wk->BaseZ + 200.0f, 0.715f, 0.551f);
+		ghSetPvrTexMaterial(0xFFFFFFFFu);
 	}
 	else
 	{
-		DrawBG_ava_square_b(0x9012B4FF, 320.0f, 320.0f, wk->BaseZ + 100, 0.695f, 0.531f);
-		ghSetPvrTexMaterial(0x90FFFFFF);
+		DrawSquareC(0x9012B4FFu, 320.0f, 320.0f, wk->BaseZ + 100.0f, 0.695f, 0.531f);
+		ghSetPvrTexMaterial(0x90FFFFFFu);
 	}
 
 	njSetTexture(&AVA_MULTI_TEXLIST);
@@ -1209,10 +1209,10 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		DrawSkyBg(wk->BaseZ - 2.0f);
 
 		// Draw header
-		ghSetPvrTexMaterial(0xFFFFFFFF);
-		DrawTitleBack(0.0f, 40.0f, wk->BaseZ - 8, 565.0, 42.0);
+		ghSetPvrTexMaterial(0xFFFFFFFFu);
+		DrawTitleBack(0.0f, 40.0f, wk->BaseZ - 8.0f, 565.0f, 42.0f);
 		njSetTexture(&AVA_MULTI_TEXLIST);
-		ghDrawPvrTexture(AVAMULTITEX_TITLE, 40.0f, 47.0f, wk->BaseZ - 18);
+		ghDrawPvrTexture(AVAMULTITEX_TITLE, 40.0f, 47.0f, wk->BaseZ - 18.0f);
 
 		// Draw local player connection
 		menu_multi_disp_localcon(wk);
@@ -1301,7 +1301,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		{
 			wk->Stat = ADVA_STAT_REQWAIT;
 
-			SeqTp->awp[1].work.ub[15] = 1;
+			SeqTp->awp[1].work.ub[15] = 1i8;
 
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
 

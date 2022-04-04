@@ -287,6 +287,8 @@ DataPointer(float, No2CargoSpd, 0x3C72E5C);
 DataPointer(int, item_kind, 0x3C5C888);
 DataPointer(OBJECT_ITEMBOX_AIR_DATA*, itembox_air_data, 0x3C5A9D4);
 FunctionPointer(void, CreateSnow, (NJS_POINT3* pos, NJS_POINT3* velo, float scl), 0x4B9B10);
+FunctionPointer(void, DrawSquareC, (unsigned int col, float x, float y, float z, float magx, float magy), 0x431CB0);
+FunctionPointer(void, DrawDlgCsrSqr, (unsigned __int8 col_alpha, float x, float y, float z, float magx, float magy), 0x431BB0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
