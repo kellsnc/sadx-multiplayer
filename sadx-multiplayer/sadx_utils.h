@@ -402,12 +402,12 @@ static inline void ChgSubModeToStay_0(ModeSelPrmType* a1, task* a2)
 	}
 }
 
-static const void* const rdInitTwinklePtr = (void*)0x61CB10;
-static inline void rdInitTwinkle(task* tp)
+static const void* const rdTwinkleInitPtr = (void*)0x61CB10;
+static inline void rdTwinkleInit(task* tp)
 {
 	__asm
 	{
 		mov edi, [tp]
-		call rdInitTwinklePtr
+		call rdTwinkleInitPtr
 	}
 }

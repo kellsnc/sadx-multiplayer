@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "UsercallFunctionHandler.h"
 #include "splitscreen.h"
+#include "result.h"
 #include "levels.h"
 
 /*
@@ -22,6 +23,7 @@ Trampoline* Rd_Beach_t = nullptr;
 Trampoline* Rd_Windy_t = nullptr;
 Trampoline* Rd_Mountain_t = nullptr;
 Trampoline* Rd_Twinkle_t = nullptr;
+Trampoline* Rd_Ruin_t = nullptr;
 
 Trampoline* dispBgSnow_t = nullptr;
 Trampoline* dispBgHighway_t = nullptr;
@@ -31,9 +33,12 @@ VoidFunc(HighwayMaskBlock, 0x60FEE0); // real name: "checkCamera"
 FunctionPointer(void, TwinkleMaskBlock, (taskwk* twp), 0x60FEE0); // real name: "checkCamera"
 DataPointer(NJS_OBJECT, object_s1_nbg1_nbg1, 0x26A0EC0);
 DataPointer(NJS_OBJECT, object_s2_yakei_yakei, 0x26A48E0);
+DataPointer(uint8_t, byte_3C75126, 0x3C75126);
+DataPointer(uint16_t, word_3C75124, 0x3C75124);
+DataPointer(int, ring_kiran, 0x38D8D64);
 
 static auto setTPFog = GenerateUsercallWrapper<void (*)(unsigned __int8 mode)>(noret, 0x61CAC0, rAL);
-
+static auto RdRuinInit = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5E1670, rEDI);
 
 void MultiArena(task* tp)
 {
@@ -252,7 +257,7 @@ void __cdecl Rd_E101_R_r(task* tp)
 
 void __cdecl Rd_Beach_r(task* tp)
 {
-	if (ssActNumber == 0 && multiplayer::IsEnabled())
+	if (ssActNumber == 0 && multiplayer::IsActive())
 	{
 		if (IsPlayerInSphere(5746.0f, 406.0f, 655.0f, 22.0f))
 		{
@@ -276,7 +281,7 @@ void __cdecl Rd_Beach_r(task* tp)
 
 void __cdecl Rd_Windy_r(task* tp)
 {
-	if (ssActNumber == 1 && multiplayer::IsEnabled())
+	if (ssActNumber == 1 && multiplayer::IsActive())
 	{
 		for (int i = 1; i < PLAYER_MAX; ++i)
 		{
@@ -294,7 +299,7 @@ void __cdecl Rd_Windy_r(task* tp)
 
 void __cdecl Rd_Mountain_r(task* tp)
 {
-	if (ssActNumber == 0 && multiplayer::IsEnabled())
+	if (ssActNumber == 0 && multiplayer::IsActive())
 	{
 		if (IsPlayerInSphere(-3667.0f, -400.0f, -2319.0f, 400.0f))
 		{
@@ -311,30 +316,35 @@ void __cdecl Rd_Mountain_r(task* tp)
 
 void __cdecl Rd_Twinkle_r(task* tp)
 {
-	if (multiplayer::IsEnabled() && tp->twp->mode != 0)
+	if (multiplayer::IsActive())
 	{
 		auto twp = tp->twp;
 
 		switch (twp->mode)
 		{
+		case 0i8:
+			SetFreeCameraMode(1);
+			rdTwinkleInit(tp);
+			tp->dest = (TaskFuncPtr)0x61CA80;
+			break;
 		case 1i8:
-			SetCameraControlEnabled(0);
+			SetFreeCameraMode(0);
 
 			if (IsPlayerInSphere(-6550.0f, -6720.0f, 23320.0f, 50.0f))
 			{
 				ChangeActM(1);
-				rdInitTwinkle(tp);
+				rdTwinkleInit(tp);
 				return;
 			}
 			break;
 		case 2i8:
-			SetCameraControlEnabled(0);
+			SetFreeCameraMode(0);
 
 			if (IsPlayerInSphere(-55.0f, 153.0f, -1000.0f, 50.0f))
 			{
 				tp->twp->mode = 3;
 				EV_NpcMilesStandByOff();
-				rdInitTwinkle(tp);
+				rdTwinkleInit(tp);
 				setTPFog(tp->twp->mode);
 				return;
 			}
@@ -350,7 +360,7 @@ void __cdecl Rd_Twinkle_r(task* tp)
 				NJS_VECTOR pos = playertwp[pnum]->pos;
 				Angle ang = playertwp[pnum]->ang.y;
 				ChangeActM(1);
-				rdInitTwinkle(tp);
+				rdTwinkleInit(tp);
 				SetAllPlayersPosition(pos.x, pos.y, pos.z, ang);
 			}
 
@@ -367,7 +377,7 @@ void __cdecl Rd_Twinkle_r(task* tp)
 				NJS_VECTOR pos = playertwp[pnum]->pos;
 				Angle ang = playertwp[pnum]->ang.y;
 				ChangeActM(-1);
-				rdInitTwinkle(tp);
+				rdTwinkleInit(tp);
 				SetAllPlayersPosition(pos.x, pos.y, pos.z, ang);
 			}
 
@@ -381,6 +391,83 @@ void __cdecl Rd_Twinkle_r(task* tp)
 	else
 	{
 		TARGET_DYNAMIC(Rd_Twinkle)(tp);
+	}
+}
+void __cdecl Rd_Ruin_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		auto twp = tp->twp;
+
+		switch (twp->mode)
+		{
+		case 0i8:
+			RdRuinInit(tp);
+			break;
+		case 1i8:
+			if (IsPlayerInSphere(6111.0f, -2445.0f, 1333.0f, 40.0f))
+			{
+				ChangeActM(1);
+				twp->mode = 0i8;
+			}
+			break;
+		case 2i8:
+
+		{
+			auto pnum = IsPlayerInSphere(6441.0f, -2421.0f, 1162.0f, 50.0f) - 1;
+
+			if (pnum >= 0)
+			{
+				SetWinnerMulti(pnum); // Set winner there because act 3 consists of nothing
+				ChangeActM(1);
+				twp->mode = 0i8;
+			}
+		}
+
+			if (byte_3C75126)
+			{
+				if (byte_3C75126 == 1)
+				{
+					if (playertwp[GetClosestPlayerNum(&twp->pos)]->pos.x >= 7600.0f)
+					{
+						if (++word_3C75124 > 600)
+						{
+							word_3C75124 = 0;
+							ring_kiran = 1;
+							SetSwitchOnOff(3u, 0);
+							byte_3C75126 = 0;
+						}
+					}
+					else
+					{
+						SetSwitchOnOff(3u, 1);
+						ring_kiran = 0;
+						byte_3C75126 = 2;
+					}
+				}
+				else if (byte_3C75126 == 2)
+				{
+					if (++word_3C75124 > 600)
+					{
+						word_3C75124 = 0;
+						ring_kiran = 1;
+						byte_3C75126 = 0;
+					}
+					SetSwitchOnOff(3u, 0);
+				}
+			}
+			else if (GetSwitchOnOff(2u))
+			{
+				byte_3C75126 = 1;
+				word_3C75124 = 0;
+			}
+
+			break;
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(Rd_Ruin)(tp);
 	}
 }
 
@@ -540,6 +627,7 @@ void InitLevels()
 	Rd_Windy_t = new Trampoline(0x4DDB30, 0x4DDB37, Rd_Windy_r);
 	Rd_Mountain_t = new Trampoline(0x601550, 0x601558, Rd_Mountain_r);
 	Rd_Twinkle_t = new Trampoline(0x61D150, 0x61D155, Rd_Twinkle_r);
+	Rd_Ruin_t = new Trampoline(0x5E18B0, 0x5E18B5, Rd_Ruin_r);
 
 	// Move landtable mask flag to display for multiplayer compatibility
 	dispBgSnow_t = new Trampoline(0x4E9950, 0x4E9955, dispBgSnow_r);
