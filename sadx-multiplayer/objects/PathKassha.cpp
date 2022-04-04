@@ -130,7 +130,7 @@ static void PathKassha_r(task* tp)
             if (ptwp)
             {
                 pnum = twp->smode = TASKWK_PLAYERID(ptwp);
-                SetInputP(pnum, 16);
+                SetInputP(pnum, PL_OP_PLACEWITHHUNG);
                 twp->mode = ACTIVE;
             }
         }
@@ -150,7 +150,7 @@ static void PathKassha_r(task* tp)
         {
             twp->wtimer = 0;
             twp->mode = STOP;
-            SetInputP(pnum, 24);
+            SetInputP(pnum, PL_OP_LETITGO);
             SetVelocityP(pnum, njCos(-playertwp[pnum]->ang.y) * 2.2f, 1.0f, njSin(-playertwp[pnum]->ang.y) * -2.2f);
             break;
         }

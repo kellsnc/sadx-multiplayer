@@ -47,7 +47,7 @@ static void VacumePlayer_m(task* tp)
 			ptwp->pos.z = njSin(NJM_DEG_ANG(-yang_m[i])) * 130.0f + tor_pos->z;
 			ptwp->pos.y += 0.9f;
 
-			SetInputP(i, 12);
+			SetInputP(i, PL_OP_PLACEON);
 			SetAscendPowerP(i, 0, 0.092f, 0);
 
 			if (++twp->value.w[0] > 300i16)
@@ -62,7 +62,7 @@ static void VacumePlayer_m(task* tp)
 			offset_ypos_m[i] += 3.8f;
 			NJS_VECTOR v = { tor_pos->x + 110.0f, tor_pos->y + offset_ypos_m[i] + 190.0f, tor_pos->z + 110.0f };
 
-			SetInputP(i, 12);
+			SetInputP(i, PL_OP_PLACEON);
 			CalcAdvanceAsPossible(&ptwp->pos, &v, 5.5, &ptwp->pos);
 			SetVelocityP(i, 0.0f, 0.0f, 0.0f);
 			SetAscendPowerP(i, 0.0f, 0.0f, 0.0f);

@@ -43,7 +43,7 @@ void SetAllPlayersInitialPosition()
 		if (ptwp)
 		{
 			PClearSpeed(playermwp[i], playerpwp[i]);
-			SetInputP(i, 24);
+			SetInputP(i, PL_OP_LETITGO);
 			ptwp->pos = pos;
 			ptwp->ang = ang;
 		}
@@ -59,7 +59,7 @@ void SetAllPlayersPosition(float x, float y, float z, Angle angy)
 		if (ptwp)
 		{
 			PClearSpeed(playermwp[i], playerpwp[i]);
-			SetInputP(i, 24);
+			SetInputP(i, PL_OP_LETITGO);
 			ptwp->pos = { x, y, z };
 			ptwp->ang = { 0, angy, 0 };
 		}

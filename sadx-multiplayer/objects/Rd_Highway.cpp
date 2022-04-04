@@ -24,7 +24,7 @@ static void RdHighwayAct2Multi(taskwk* twp)
 			{
 				if (ptwp->smode != 24)
 				{
-					SetInputP(i, 24);
+					SetInputP(i, PL_OP_LETITGO);
 					SetVelocityP(i, 1.4f, -2.0f, playermwp[i]->spd.z);
 
 					if (!i) twp->mode = 5;
@@ -58,7 +58,7 @@ static void RdHighwayAct2Multi(taskwk* twp)
 						tp->twp->wtimer = 5;
 					}
 
-					SetInputP(i, 43);
+					SetInputP(i, PL_OP_BUILDING);
 					PadReadOnP(i);
 
 					if (!i) twp->mode = 4;

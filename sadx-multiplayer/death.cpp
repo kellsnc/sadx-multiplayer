@@ -42,7 +42,7 @@ void __cdecl GamePlayerMissed_r(task* tp)
 				// Don't reset mode in levels where the player is riding something
 				if (ssStageNumber != LevelIDs_TwinkleCircuit && ssStageNumber != LevelIDs_SandHill && !(ssStageNumber == LevelIDs_IceCap && ssActNumber == 2))
 				{
-					SetInputP(pNum, 24);
+					SetInputP(pNum, PL_OP_LETITGO);
 					twp->mode = 1;
 				}
 
@@ -62,7 +62,7 @@ void __cdecl KillHimP_r(unsigned __int8 pNum)
 		{
 			playertwp[pNum]->flag |= 0x1000;
 			playerpwp[pNum]->item |= Powerups_Dead;
-			SetInputP(pNum, 50);
+			SetInputP(pNum, PL_OP_KILLED);
 
 			auto tp = CreateElementalTask(LoadObj_UnknownB, 0, GamePlayerMissed_r);
 			tp->awp->work.ul[1] = pNum;
@@ -101,7 +101,7 @@ void ExecFallingDownP_r(int pNum)
 			if (ptwp)
 			{
 				ptwp->flag |= 0x10u;
-				SetInputP(pNum, 24);
+				SetInputP(pNum, PL_OP_LETITGO);
 			}
 			break;
 		case Characters_Knuckles:
@@ -110,7 +110,7 @@ void ExecFallingDownP_r(int pNum)
 			if (ptwp)
 			{
 				ptwp->flag |= 0x10u;
-				SetInputP(pNum, 24);
+				SetInputP(pNum, PL_OP_LETITGO);
 			}
 			break;
 		case Characters_Amy:

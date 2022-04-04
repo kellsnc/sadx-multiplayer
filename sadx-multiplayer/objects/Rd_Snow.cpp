@@ -91,7 +91,7 @@ static void RdSnowBoardingRegular_m(task* tp)
 		if (GetDistance(&pos_7E964C, &ptwp->pos) < 200.0f)
 		{
 			ResetPerspectiveM(i);
-			SetInputP(i, 24);
+			SetInputP(i, PL_OP_LETITGO);
 			CameraReleaseEventCamera();
 			continue;
 		}

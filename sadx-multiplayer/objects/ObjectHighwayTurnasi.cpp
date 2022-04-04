@@ -263,7 +263,7 @@ static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 		}
 	}
 
-	SetInputP(pnum, 24);
+	SetInputP(pnum, PL_OP_LETITGO);
 	twp->value.l = 0;
 	twp->wtimer = 0;
 	twp->scl.y = 5.0f;
@@ -326,11 +326,11 @@ static void __cdecl ObjectHighwayTurnasiNormal_r(task* tp)
 
 				if (twp->value.f >= 4.0f)
 				{
-					SetInputP(pnum, 13);
+					SetInputP(pnum, PL_OP_PLACEWITHSPIN);
 				}
 				else
 				{
-					SetInputP(pnum, 15);
+					SetInputP(pnum, PL_OP_PLACEWITHPUSH);
 				}
 			}
 			else

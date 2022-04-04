@@ -26,7 +26,7 @@ static void Normal_m(taskwk* twp)
     {
         BALOON_PNUM(twp) = pnum;
         twp->mode = MODE_DOWN;
-        SetInputP(pnum, 12);
+        SetInputP(pnum, PL_OP_PLACEON);
         twp->counter.f = -1.5f;
         SleepTimer();
         SetWinnerMulti(pnum);

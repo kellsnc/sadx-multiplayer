@@ -38,7 +38,7 @@ static bool ChkEndSonicFakeJump_m(taskwk* stwp)
 
 	if (stat)
 	{
-		SetInputP(pnum, 24);
+		SetInputP(pnum, PL_OP_LETITGO);
 		if (stat == 2)
 			SetPositionP(pnum, SonicPaboBuff.pos_end.x, SonicPaboBuff.pos_end.y, SonicPaboBuff.pos_end.z);
 		return true;
@@ -53,7 +53,7 @@ static void InitJumpSonicToPoint_m(taskwk* stwp, NJS_POINT3* pos, int time)
 {
 	auto pnum = TASKWK_PLAYERID(stwp);
 	SonicCtrlBuff.path_flag_bak = SonicCtrlBuff.path_flag;
-	SetInputP(pnum, 13);
+	SetInputP(pnum, PL_OP_PLACEWITHSPIN);
 	SonicPaboBuff.pos_start.x = stwp->pos.x;
 	SonicPaboBuff.pos_start.y = stwp->pos.y;
 	SonicPaboBuff.pos_start.z = stwp->pos.z;
@@ -201,8 +201,8 @@ static __int16 ChkSonicPathPos_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ct
 			pathnum = SetSonicNextPath_m(twp, stwp, sonic_ctrl, pathnum);
 			if ((sonic_ctrl->path_flag & 0x8000000) != 0)
 			{
-				SetInputP(pnum, 24);
-				PadReadOffP(1u);
+				SetInputP(pnum, PL_OP_LETITGO);
+				PadReadOffP(pnum);
 			}
 		}
 		break;
@@ -234,7 +234,7 @@ static __int16 ChkSonicPathPos_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ct
 		SetPositionP(pnum, sonic_ctrl->now_path_pos.x, sonic_ctrl->now_path_pos.y + 5.0f, sonic_ctrl->now_path_pos.z);
 		if (sonic_ctrl->path_flag != 17)
 		{
-			SetInputP(pnum, 24);
+			SetInputP(pnum, PL_OP_LETITGO);
 		}
 	}
 
@@ -409,7 +409,7 @@ static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 			if (njInnerProduct(&sonic_ctrl->vec_snc_tgt, &VecTemp0) <= 0.0f || sonic_ctrl->dist_snc_tgt < 25.0f)
 			{
 				twp->smode = 1i8;
-				SetInputP(pnum, 34);
+				SetInputP(twp->id, PL_OP_LOOKAROUND);
 			}
 		}
 		break;
@@ -628,7 +628,7 @@ static void Icecap_Init_m(taskwk* twp, taskwk* stwp, taskwk* mtwp)
 	auto pnum = TASKWK_PLAYERID(stwp);
 	twp->mode = 1;
 
-	SetInputP(pnum, 44);
+	SetInputP(twp->id, PL_OP_SNOWBOARDING);
 	stwp->ang = mtwp->ang;
 
 	VecTemp0.x = 0.0f;

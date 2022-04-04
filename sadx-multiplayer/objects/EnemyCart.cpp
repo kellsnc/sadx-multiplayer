@@ -455,7 +455,7 @@ void setupCartStageM(task* tp, taskwk* twp, int pnum)
 		if (++cart_data->start_wait >= 10)
 		{
 			twp->mode = CARTMD_WARP;
-			SetInputP(pnum, 18);
+			SetInputP(pnum, PL_OP_PLACEWITHCART);
 		}
 	}													 
 }
@@ -478,7 +478,7 @@ void cartRideButtonCheckM(taskwk* twp, CART_PLAYER_PARAMETER* cartparam, int pnu
 				twp->btimer = pnum;
 				cart_data->motion_timer = 0;
 				cart_data->vitality = cartparam->max_vitality; // custom
-				SetInputP(pnum, 18);
+				SetInputP(pnum, PL_OP_PLACEWITHCART);
 			}
 		}
 	}

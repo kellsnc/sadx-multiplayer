@@ -75,7 +75,7 @@ static void ObjectRuinMirror_m(task* tp)
                         pnum = TASKWK_PLAYERID(hit_tp->twp);
                         twp->mode = MD_2;
 
-                        SetInputP(pnum, 12);
+                        SetInputP(pnum, PL_OP_PLACEON);
 
                         //CamAnyParam.camAnyParamPos.x = twp->pos.x;
                         //CamAnyParam.camAnyParamPos.y = twp->pos.y + 10.0;
@@ -121,7 +121,7 @@ static void ObjectRuinMirror_m(task* tp)
 
                 //CameraReleaseEventCamera();
                 dsStop_num(197);
-                SetInputP(pnum, 24);
+                SetInputP(pnum, PL_OP_LETITGO);
             }
             break;
         case MD_3:

@@ -63,7 +63,7 @@ static void ObjShelterCrane_m(task* tp)
 			if (pnum >= 0)
 			{
 				twp->btimer = pnum;
-				SetInputP(pnum, 12);
+				SetInputP(pnum, PL_OP_PLACEON);
 				mwp->spd.y = playertwp[pnum]->pos.y - (twp->pos.y + twp->counter.f);
 				twp->cwp->info[1].attr |= 0x10u;
 				twp->cwp->info[2].attr |= 0x10u;
@@ -124,7 +124,7 @@ static void ObjShelterCrane_m(task* tp)
 		break;
 	case MDCRANE_END:
 		twp->smode = 0;
-		SetInputP(twp->btimer, 24);
+		SetInputP(twp->btimer, PL_OP_LETITGO);
 		twp->mode = MDCRANE_RELEASE;
 		sub_5A4F10(twp);
 		break;

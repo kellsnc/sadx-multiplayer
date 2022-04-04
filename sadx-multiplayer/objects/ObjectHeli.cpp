@@ -212,7 +212,7 @@ static void ObjectHeli_Move(taskwk* twp)
 	{
 		twp->flag &= ~0xF00u;
 		ptwp->pos.y = twp->pos.y - 30.0f;
-		SetInputP(pnum, 24);
+		SetInputP(pnum, PL_OP_LETITGO);
 		twp->mode = MD_HELI_STOP;
 		twp->scl.y = 1.0f;
 		return;
@@ -289,7 +289,7 @@ static void ObjectHeli_Hover(task* tp, taskwk* twp)
 			}
 
 			twp->btimer = TASKWK_PLAYERID(ptwp);
-			SetInputP(twp->btimer, 16);
+			SetInputP(twp->id, PL_OP_PLACEWITHHUNG);
 			twp->mode = MD_HELI_MOVE;
 			twp->flag &= ~0x2000;
 		}

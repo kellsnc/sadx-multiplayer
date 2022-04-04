@@ -27,7 +27,7 @@ void __cdecl execTPCoaster_r(task* tp)
 			}
 			else
 			{
-				SetInputP(id, 18);
+				SetInputP(id, PL_OP_PLACEWITHCART);
 			}
 			break;
 		case 3:

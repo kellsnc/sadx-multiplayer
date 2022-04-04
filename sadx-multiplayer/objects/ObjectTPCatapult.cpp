@@ -170,7 +170,7 @@ static void Aim(taskwk* twp)
         {
             auto pnum = twp->id;
             twp->mode = MODE_3;
-            SetInputP(pnum, 13);
+            SetInputP(pnum, PL_OP_PLACEWITHSPIN);
             SetRotationP(pnum, 0, ((NJS_ACTION*)twp->timer.ptr)->object->child->child->ang[1] + twp->ang.y + 0x8000, 0);
         }
     }
@@ -254,7 +254,7 @@ static void ObjectTPCatapult_m(task* tp)
             if (!checkOnBoard_m(twp))
             {
                 twp->mode = 2;
-                SetInputP(twp->id, 24);
+                SetInputP(twp->id, PL_OP_LETITGO);
             }
             break;
         case MODE_4:
@@ -269,7 +269,7 @@ static void ObjectTPCatapult_m(task* tp)
             else
             {
                 twp->mode = MODE_AIM;
-                SetInputP(twp->id, 24);
+                SetInputP(twp->id, PL_OP_LETITGO);
             }
             rotateArms(twp);
             manipulateArm_m(twp);
