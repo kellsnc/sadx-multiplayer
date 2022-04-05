@@ -208,6 +208,7 @@
     <ClCompile Include="objects\ObjShelterSen.cpp" />
     <ClCompile Include="objects\ObjShelterUkijima.cpp" />
     <ClCompile Include="objects\o_hebigate.cpp" />
+    <ClCompile Include="objects\o_rockroll.cpp" />
     <ClCompile Include="objects\o_ruin_mirror.cpp" />
     <ClCompile Include="objects\o_ruin_snake.cpp" />
     <ClCompile Include="objects\o_ruin_swdoor_x.cpp" />
