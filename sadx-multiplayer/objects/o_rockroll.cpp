@@ -117,7 +117,7 @@ static void Normal_m(task* tp)
 		ctp->twp->btimer = 0i8;
 		ctp->twp->scl.y = 0.0f;
 		ctp->twp->scl.z = 0.0f;
-		ctp->twp->timer.f = UNIT_RAND * 50.0f - 25.0f;
+		ctp->twp->timer.f = (float)(UNIT_RAND * 50.0 - 25.0);
 	}
 
 	EntryColliList(twp);
