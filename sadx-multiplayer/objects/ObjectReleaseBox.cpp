@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "multiplayer.h"
+#include "result.h"
 
 bool relbox_switch_test_riding_m(taskwk* twp, taskwk* parent_twp)
 {
@@ -12,7 +14,9 @@ bool relbox_switch_test_riding_m(taskwk* twp, taskwk* parent_twp)
 			if (((pos->z - ppos->z) * (pos->z - ppos->z) + (pos->x - ppos->x) * (pos->x - ppos->x) < 144.0f) &&
 				pos->y + 27.0f < ppos->y && pos->y + 29.6f > ppos->y)
 			{
-				MRaceResult = i;
+				if (GetStageNumber() != LevelAndActIDs_LostWorld3)
+					SetWinnerMulti(i);
+
 				parent_twp->btimer = i;
 				return true;
 			}
