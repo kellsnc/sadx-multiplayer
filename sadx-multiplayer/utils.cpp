@@ -93,6 +93,12 @@ int GetClosestPlayerNum(NJS_POINT3* pos)
 	return num;
 }
 
+int GetClosestPlayerNum(float x, float y, float z)
+{
+	NJS_POINT3 pos = { x, y, z };
+	return GetClosestPlayerNum(&pos);
+}
+
 int IsPlayerInSphere(NJS_POINT3* p, float r)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)

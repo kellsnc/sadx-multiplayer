@@ -413,22 +413,22 @@ void __cdecl Rd_Ruin_r(task* tp)
 			break;
 		case 2i8:
 
-		{
-			auto pnum = IsPlayerInSphere(6441.0f, -2421.0f, 1162.0f, 50.0f) - 1;
-
-			if (pnum >= 0)
 			{
-				SetWinnerMulti(pnum); // Set winner there because act 3 consists of nothing
-				ChangeActM(1);
-				twp->mode = 0i8;
+				auto pnum = IsPlayerInSphere(6441.0f, -2421.0f, 1162.0f, 50.0f) - 1;
+
+				if (pnum >= 0)
+				{
+					SetWinnerMulti(pnum); // Set winner there because act 3 consists of nothing
+					ChangeActM(1);
+					twp->mode = 0i8;
+				}
 			}
-		}
 
 			if (byte_3C75126)
 			{
 				if (byte_3C75126 == 1)
 				{
-					if (playertwp[GetClosestPlayerNum(&twp->pos)]->pos.x >= 7600.0f)
+					if (playertwp[GetClosestPlayerNum(7740.0f, -2431.0f, 948.0f)]->pos.x >= 7600.0f)
 					{
 						if (++word_3C75124 > 600)
 						{
