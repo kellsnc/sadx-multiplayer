@@ -102,6 +102,7 @@
     <ClInclude Include="fishing.h" />
     <ClInclude Include="forcewk.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="gravity.h" />
     <ClInclude Include="hud_emerald.h" />
     <ClInclude Include="hud_fishing.h" />
     <ClInclude Include="hud_indicator.h" />
@@ -144,6 +145,7 @@
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="fishing.cpp" />
     <ClCompile Include="forcewk.cpp" />
+    <ClCompile Include="gravity.cpp" />
     <ClCompile Include="hud_emerald.cpp" />
     <ClCompile Include="hud_fishing.cpp" />
     <ClCompile Include="hud_indicator.cpp" />
@@ -213,6 +215,7 @@
     <ClCompile Include="objects\o_ruin_reverse.cpp" />
     <ClCompile Include="objects\o_ruin_snake.cpp" />
     <ClCompile Include="objects\o_ruin_swdoor_x.cpp" />
+    <ClCompile Include="objects\o_ruin_tatearuki.cpp" />
     <ClCompile Include="objects\o_shelter_cargo.cpp" />
     <ClCompile Include="objects\o_shelter_cargotop.cpp" />
     <ClCompile Include="objects\o_shelter_cargocontainer.cpp" />
@@ -228,6 +231,7 @@
     <ClCompile Include="objects\Rd_Snow.cpp" />
     <ClCompile Include="objects\Sakana.cpp" />
     <ClCompile Include="objects\SnowBoard.cpp" />
+    <ClCompile Include="objects\sonic.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

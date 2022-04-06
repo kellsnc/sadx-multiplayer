@@ -112,9 +112,6 @@
     <ClCompile Include="objects\SnowBoard.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\E102.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectFrog.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
@@ -200,9 +197,6 @@
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\PathKassha.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\BigTheCat.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="fishing.cpp">
@@ -305,6 +299,21 @@
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\o_ruin_reverse.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="gravity.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\BigTheCat.cpp">
+      <Filter>Source Files\objects\figure</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\sonic.cpp">
+      <Filter>Source Files\objects\figure</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\E102.cpp">
+      <Filter>Source Files\objects\figure</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_ruin_tatearuki.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -435,6 +444,9 @@
     <ClInclude Include="hud_itembox.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
+    <ClInclude Include="gravity.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -457,6 +469,9 @@
     </Filter>
     <Filter Include="Header FIles\include">
       <UniqueIdentifier>{fead6788-8f1c-4b08-98a7-c22b00686774}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\figure">
+      <UniqueIdentifier>{e38cc25c-b522-4b83-8bbb-f8b0ab72ed79}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

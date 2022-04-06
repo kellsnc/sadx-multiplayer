@@ -18,6 +18,7 @@
 #include "fishing.h"
 #include "testspawn.h"
 #include "forcewk.h"
+#include "gravity.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -47,6 +48,7 @@ extern "C"
 		InitMilesRace();
 		InitFishing();
 		InitForceWorkPatches();
+		InitGravityPatches();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()
