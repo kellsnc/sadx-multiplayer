@@ -100,6 +100,7 @@
     <ClInclude Include="drawqueue.h" />
     <ClInclude Include="emeraldhunt.h" />
     <ClInclude Include="fishing.h" />
+    <ClInclude Include="fog.h" />
     <ClInclude Include="forcewk.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="gravity.h" />
@@ -144,6 +145,7 @@
     <ClCompile Include="drawqueue.cpp" />
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="fishing.cpp" />
+    <ClCompile Include="fog.cpp" />
     <ClCompile Include="forcewk.cpp" />
     <ClCompile Include="gravity.cpp" />
     <ClCompile Include="hud_emerald.cpp" />

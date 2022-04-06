@@ -127,6 +127,8 @@ namespace SplitScreen
         Direct3D_Device->SetViewport(&Direct3D_ViewPort);
 
         numViewPort = num;
+        ___njFogEnable();
+
         return true;
     }
 }

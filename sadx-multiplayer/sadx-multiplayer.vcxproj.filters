@@ -316,6 +316,9 @@
     <ClCompile Include="objects\o_ruin_tatearuki.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="fog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -445,6 +448,9 @@
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
     <ClInclude Include="gravity.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="fog.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>

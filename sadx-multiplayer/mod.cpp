@@ -19,6 +19,7 @@
 #include "testspawn.h"
 #include "forcewk.h"
 #include "gravity.h"
+#include "fog.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -49,6 +50,7 @@ extern "C"
 		InitFishing();
 		InitForceWorkPatches();
 		InitGravityPatches();
+		InitFogPatches();
 	}
 
 	//__declspec(dllexport) void __cdecl OnInitEnd()
