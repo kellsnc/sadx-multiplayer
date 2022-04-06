@@ -10,7 +10,16 @@ ___stcFog* GetScreenFog(int num)
 {
 	if (num >= 0 || num < PLAYER_MAX)
 	{
-		return gFog_m[num];
+		auto fog = gFog_m[num];
+
+		if (num != 0 && fog->u8Enable == 0i8)
+		{
+			fog->f32StartZ = gFog.f32StartZ;
+			fog->f32EndZ = gFog.f32EndZ;
+			fog->Col = gFog.Col;
+		}
+
+		return fog;
 	}
 	else
 	{
@@ -58,14 +67,8 @@ static void ___njFogEnable_m()
 			num = 0;
 		}
 
-		auto fog = gFog_m[num];
-
-		// Use first screen fog if no fog is set for the current screen + reset on act swap
-		if (num != 0 && (fog->u8Enable == 0i8 || *(__int16*)(&fog->u8Enable + 2) != GetStageNumber()))
-		{
-			*fog = *gFog_m[0];
-			*(__int16*)(&fog->u8Enable + 2) = GetStageNumber(); // store the stage number in the struct padding because I don't care anymore
-		}
+		// Use first screen fog if no fog is set for the current screen
+		auto fog = gFog_m[num]->u8Enable ? gFog_m[num] : gFog_m[0];
 
 		if (fog->u8Enable)
 		{
