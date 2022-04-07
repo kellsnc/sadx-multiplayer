@@ -52,9 +52,6 @@
     <ClCompile Include="multiplayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="objects\EnemyCart.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectItemBox.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
@@ -320,6 +317,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="objects\o_cart_stopper.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_cart.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
