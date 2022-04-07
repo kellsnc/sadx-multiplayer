@@ -156,6 +156,14 @@ struct OBJECT_ITEMBOX_AIR_DATA
 	float timer;
 };
 
+struct VolumeInfo
+{
+	__int16 nearVolOfs;
+	__int16 farVolOfs;
+	float nearDist;
+	float farDist;
+};
+
 FunctionPointer(void, njDrawTriangle3D, (NJS_POINT3COL* p, int n, unsigned int atr), 0x77EBA0);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -290,6 +298,8 @@ FunctionPointer(void, CreateSnow, (NJS_POINT3* pos, NJS_POINT3* velo, float scl)
 FunctionPointer(void, DrawSquareC, (unsigned int col, float x, float y, float z, float magx, float magy), 0x431CB0);
 FunctionPointer(void, DrawDlgCsrSqr, (unsigned __int8 col_alpha, float x, float y, float z, float magx, float magy), 0x431BB0);
 FunctionPointer(void, CreateWater, (NJS_POINT3* pos, NJS_POINT3* velo, float scl), 0x4B9540);
+FunctionPointer(void, MirenSoundPlayOneShotSE, (int se, const NJS_POINT3* pos_p, const VolumeInfo* info_p), 0x79E400);
+TaskFunc(CartGetOffPlayer, 0x798C60);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

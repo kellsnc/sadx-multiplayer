@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "camera.h"
 #include "../race.h"
+#include "e_cart.h"
+
+#define CART_PNUM(twp) twp->btimer
 
 enum CARTMD
 {
@@ -45,6 +48,14 @@ DataArray(int, cart_se_num, 0x38A6D70, 6 * 2);
 DataPointer(float, hamariDist, 0x3D08E10);
 
 task* taskOfPlayerOn_m[PLAYER_MAX];
+
+task* CartChangeForceMode(int num)
+{
+	auto tp = taskOfPlayerOn_m[num];
+	if (tp)
+		tp->twp->mode = CARTMD_8;
+	return tp;
+}
 
 Characters GetPlayerNumberM(int pnum)
 {
@@ -631,7 +642,7 @@ void EnemyCartM(task* tp)
 
 	auto twp = tp->twp;
 	cart_data = (ENEMY_CART_DATA*)tp->awp;
-	auto pnum = twp->mode < 3 ? GetClosestPlayerNum(&twp->pos) : twp->btimer;
+	auto pnum = twp->mode < 3 ? GetClosestPlayerNum(&twp->pos) : CART_PNUM(twp);
 	player_no = GetPlayerNumberM(pnum);
 	auto cartparam = &CartParameter[GetPlayerNumberM(pnum)];
 
@@ -819,7 +830,7 @@ void __cdecl CartGetOffPlayer_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
-		int pnum = tp->twp->btimer;
+		auto pnum = CART_PNUM(tp->twp);
 		cart_data = (ENEMY_CART_DATA*)tp->awp;
 
 		tp->twp->mode = CARTMD_9;
@@ -830,6 +841,27 @@ void __cdecl CartGetOffPlayer_r(task* tp)
 		playertwp[pnum]->cwp->info->a = cart_data->player_colli_r;
 
 		// Camera release
+	}
+	else
+	{
+		TARGET_STATIC(CartGetOffPlayer)(tp);
+	}
+}
+
+void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang);
+Trampoline SetCartPos_t(0x796C50, 0x796C57, SetCartPos_r);
+void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
+{
+	if (multiplayer::IsActive())
+	{
+		auto twp = tp->twp;
+		auto pnum = CART_PNUM(tp->twp);
+		
+		if (twp->mode == CARTMD_8 || twp->mode == CARTMD_9)
+		{
+			twp->pos = *pos;
+			taskOfPlayerOn_m[pnum]->twp->ang = *ang;
+		}
 	}
 	else
 	{

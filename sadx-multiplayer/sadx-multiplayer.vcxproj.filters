@@ -319,6 +319,9 @@
     <ClCompile Include="fog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_cart_stopper.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -452,6 +455,9 @@
     </ClInclude>
     <ClInclude Include="fog.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\e_cart.h">
+      <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
