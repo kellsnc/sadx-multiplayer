@@ -1,9 +1,103 @@
 #include "pch.h"
 #include "multiplayer.h"
+#include "splitscreen.h"
 #include "camera.h"
+#include "fog.h"
 
 #define MIRROR_PNUM(twp) twp->btimer
 
+static void __cdecl ObjectRuinFogSwitch_r(task* tp);
+static void __cdecl ObjectRuinMirror_r(task* tp);
+static void __cdecl BigMirrorDraw_r(task* tp);
+static void __cdecl FogEnd_r(task* tp);
+static void __cdecl ObjectRuinBigMirror_r(task* tp);
+static void __cdecl ObjectRuinFogChange_r(task* tp);
+static void __cdecl ObjectRuinFogLight_r(task* tp);
+static void __cdecl DrawFogHasira_r(task* tp);
+
+Trampoline ObjectRuinFogSwitch_t(0x5E25A0, 0x5E25A5, ObjectRuinFogSwitch_r);
+Trampoline ObjectRuinMirror_t(0x5E2850, 0x5E2855, ObjectRuinMirror_r);
+Trampoline BigMirrorDraw_t(0x5E2EA0, 0x5E2EA7, BigMirrorDraw_r);
+Trampoline FogEnd_t(0x5E2530, 0x5E2537, FogEnd_r);
+Trampoline ObjectRuinBigMirror_t(0x5E3310, 0x5E3315, ObjectRuinBigMirror_r);
+Trampoline ObjectRuinFogChange_t(0x5E3020, 0x5E3026, ObjectRuinFogChange_r);
+Trampoline ObjectRuinFogLight_t(0x5E3240, 0x5E3246, ObjectRuinFogLight_r);
+Trampoline DrawFogHasira_t(0x5E27A0, 0x5E27A5, DrawFogHasira_r);
+
+DataPointer(CCL_INFO, c_colli_mirror, 0x2038C38);
+DataPointer(NJS_POINT3, delete_point_a, 0x2038D04);
+
+struct ruinfogwk
+{
+    float now_dist;
+    float max_dist;
+    int nocontimer;
+    int name_flag;
+    int other_flag;
+    int discovery;
+    int fog_switch;
+    int ruin_m_flag;
+    NJS_POINT3 aim_position;
+};
+
+static ruinfogwk ruinfogwp[PLAYER_MAX];
+
+MAKEVARMULTI(uint8_t, fog_switch, 0x2038C34);
+
+#pragma region ObjectRuinFogSwitch
+static void ObjectRuinFogSwitch_m(task* tp)
+{
+    if (!CheckRangeOut(tp))
+    {
+        auto twp = tp->twp;
+
+        if (twp->mode)
+        {
+            if (twp->mode == 1i8)
+            {
+                if ((twp->cwp->flag & 1) != 0)
+                {
+                    twp->cwp->flag &= ~1;
+
+                    auto pnum = TASKWK_PLAYERID(twp->cwp->hit_cwp->mytask->twp);
+                    if (pnum < PLAYER_MAX)
+                    {
+                        ruinfogwp[pnum].fog_switch = ruinfogwp[pnum].fog_switch != 1;
+                    }
+                }
+
+                EntryColliList(twp);
+            }
+            else if (twp->mode == 4i8)
+            {
+                FreeTask(tp);
+            }
+        }
+        else
+        {
+            twp->btimer = 0;
+            twp->wtimer = 0;
+            CCL_Init(tp, (CCL_INFO*)0x2038CA4, 1, 4u);
+            twp->cwp->info->a = (twp->scl.y + 1.0f) * 14.0f;
+            twp->mode = 1i8;
+        }
+    }
+}
+
+static void __cdecl ObjectRuinFogSwitch_r(task* tp)
+{
+    if (multiplayer::IsActive())
+    {
+        ObjectRuinFogSwitch_m(tp);
+    }
+    else
+    {
+        TARGET_STATIC(ObjectRuinFogSwitch)(tp);
+    }
+}
+#pragma endregion
+
+#pragma region ObjectRuinMirror
 enum : __int8
 {
     MD_INIT,
@@ -12,21 +106,13 @@ enum : __int8
     MD_3
 };
 
-DataPointer(CCL_INFO, c_colli_mirror, 0x2038C38);
-DataPointer(NJS_POINT3, aim_position, 0x2038C28);
-DataPointer(unsigned __int8, name_flag, 0x3C7512A);
-DataPointer(unsigned __int8, ruin_m_flag, 0x3C75128);
-DataPointer(unsigned __int8, other_flag, 0x3C7512B);
-DataPointer(unsigned __int8, discovery, 0x3C75129);
-DataPointer(int, nocontimer, 0x3C7512C);
-DataPointer(float, max_dist, 0x2038CA0);
-
 static void ObjectRuinMirror_m(task* tp)
 {
     if (!CheckRangeOutWithR(tp, 25000000.0f))
     {
         auto twp = tp->twp;
         auto pnum = MIRROR_PNUM(twp);
+        auto wk = &ruinfogwp[pnum];
 
         switch (twp->mode)
         {
@@ -43,19 +129,19 @@ static void ObjectRuinMirror_m(task* tp)
                 twp->timer.w[1] = 1i16;
             }
 
-            if (ruin_m_flag == 1ui8)
+            if (wk->ruin_m_flag == 1)
             {
                 auto aim_id = static_cast<unsigned __int8>(twp->scl.y);
 
-                if (other_flag == aim_id)
+                if (wk->other_flag == aim_id)
                 {
-                    twp->btimer = 2;
-                    aim_position.x = twp->pos.x;
-                    aim_position.y = twp->pos.y;
-                    aim_position.z = twp->pos.z;
+                    twp->btimer = 2i8;
+                    wk->aim_position.x = twp->pos.x;
+                    wk->aim_position.y = twp->pos.y;
+                    wk->aim_position.z = twp->pos.z;
                 }
 
-                if (name_flag == aim_id && twp->timer.w[1] == 1i16)
+                if (wk->name_flag == aim_id && twp->timer.w[1] == 1i16)
                 {
                     NJS_POINT3 velo = { 0.0f, 0.0f, 0.0f };
                     CreateSmoke(&twp->pos, &velo, 2.0f);
@@ -84,7 +170,7 @@ static void ObjectRuinMirror_m(task* tp)
                         //CamAnyParam.camAnyParamAng.y = twp->ang.y;
                         //CamAnyParam.camAnyParamAng.z = 0;
                         //SetFreeCameraMode(0);
-                        // CameraSetEventCamera(65, 0);
+                        //CameraSetEventCamera(65, 0);
 
                         PClearSpeed(playermwp[pnum], playerpwp[pnum]);
                         MIRROR_PNUM(twp) = pnum;
@@ -97,8 +183,8 @@ static void ObjectRuinMirror_m(task* tp)
             }
             break;
         case MD_2:
-            ruin_m_flag = 1ui8;
-            name_flag = static_cast<unsigned __int8>(twp->scl.x);
+            wk->ruin_m_flag = 1;
+            wk->name_flag = static_cast<int>(twp->scl.x);
             SetPositionP(pnum, twp->pos.x + njCos(twp->ang.y) * 10.0f, twp->pos.y, twp->pos.z - njSin(twp->ang.y) * 10.0f);
 
             {
@@ -106,17 +192,17 @@ static void ObjectRuinMirror_m(task* tp)
                 twp->ang.y = cam_rot ? cam_rot->y + 0x8000 : 0;
             }
 
-            if (discovery == 1ui8)
+            if (wk->discovery == 1ui8)
             {
                 twp->smode = 1i8;
                 twp->mode = MD_1;
-                nocontimer = 120;
-                ruin_m_flag = 0ui8;
-                discovery = 0ui8;
+                wk->nocontimer = 120;
+                wk->ruin_m_flag = 0;
+                wk->discovery = 0;
 
                 if (twp->scl.x == 5.0f)
                 {
-                    max_dist = -175.0f;
+                    wk->max_dist = -175.0f;
                 }
 
                 //CameraReleaseEventCamera();
@@ -138,8 +224,6 @@ static void ObjectRuinMirror_m(task* tp)
     }
 }
 
-static void __cdecl ObjectRuinMirror_r(task* tp);
-Trampoline ObjectRuinMirror_t(0x5E2850, 0x5E2855, ObjectRuinMirror_r);
 static void __cdecl ObjectRuinMirror_r(task* tp)
 {
     if (multiplayer::IsActive())
@@ -151,3 +235,291 @@ static void __cdecl ObjectRuinMirror_r(task* tp)
         TARGET_STATIC(ObjectRuinMirror)(tp);
     }
 }
+#pragma endregion
+
+#pragma region ObjectRuinBigMirror
+static void HitMirror_m(taskwk* twp, ruinfogwk* wk)
+{
+    const NJS_POINT3 pos = { twp->pos.x, twp->pos.y + 12.0f, twp->pos.z };
+    NJS_POINT2 p2;
+
+    njProjectScreen(0, &pos, &p2);
+    float dist = sqrtf((HorizontalStretch * 340.0f - p2.x) * (HorizontalStretch * 340.0f - p2.x)
+        + (VerticalStretch * 240.0f - p2.y) * (VerticalStretch * 240.0f - p2.y));
+
+    if (dist < 40.0f)
+    {
+        wk->other_flag = static_cast<int>(twp->scl.y);
+        wk->fog_switch = 0;
+        twp->smode = 1i8;
+        wk->discovery = 1;
+    }
+}
+
+static void __cdecl BigMirrorDraw_r(task* tp)
+{
+    // Exec moved to display because we need projection:
+    if (multiplayer::IsActive())
+    {
+        auto twp = tp->twp;
+
+        for (int i = 0; i < PLAYER_MAX; ++i)
+        {
+            auto ptwp = playertwp[i];
+            auto wk = &ruinfogwp[i];
+
+            if (wk->ruin_m_flag == 1 && wk->name_flag == (int)twp->scl.y)
+            {
+                HitMirror_m(twp, wk);
+            }
+        }
+    }
+
+    TARGET_STATIC(BigMirrorDraw)(tp);
+}
+
+static void ObjectRuinBigMirror_m(task* tp)
+{
+    if (!CheckRangeOutWithR(tp, 1000000.0f))
+    {
+        auto twp = tp->twp;
+
+        if (twp->mode == 0i8)
+        {
+            tp->disp = (TaskFuncPtr)0x5E2EA0;
+            twp->mode = 1i8;
+        }
+        else
+        {
+            // Exec moved to display because we need projection
+            
+            tp->disp(tp);
+        }
+    }
+}
+
+static void __cdecl ObjectRuinBigMirror_r(task* tp)
+{
+    if (multiplayer::IsActive())
+    {
+        ObjectRuinBigMirror_m(tp);
+    }
+    else
+    {
+        TARGET_STATIC(ObjectRuinBigMirror)(tp);
+    }
+}
+#pragma endregion
+
+#pragma region ObjectRuinFogChange
+static void __cdecl FogEnd_r(task* tp)
+{
+    for (int i = 0; i < PLAYER_MAX; ++i)
+    {
+        auto wk = &ruinfogwp[i];
+        wk->max_dist = -110.0f;
+        wk->now_dist = -110.0f;
+        wk->aim_position = { 62.0f, 127.0f, -56.0f };
+        wk->discovery = 0;
+        wk->nocontimer = 0;
+        wk->name_flag = 0;
+        wk->other_flag = 0;
+        wk->fog_switch = 1;
+        wk->ruin_m_flag = 0;
+        GetScreenFog(i)->u8Enable = 0i8;
+    }
+
+    *GetScreenFog(0) = *(___stcFog*)FogData_LostWorld[1];
+
+    TARGET_STATIC(FogEnd)(tp);
+}
+
+static void ChangeFogDensity_m(float dist, float density_speed, int num)
+{
+    auto wk = &ruinfogwp[num];
+
+    if (dist <= wk->now_dist)
+        wk->now_dist -= density_speed;
+    else
+        wk->now_dist += density_speed;
+
+    if (wk->now_dist > wk->max_dist)
+    {
+        wk->now_dist = wk->max_dist;
+    }
+
+    auto fog = GetScreenFog(num);
+    fog->f32StartZ = 8.0f;
+    fog->Col = 0xFF000000;
+    fog->f32EndZ = 410.0f - wk->now_dist * 2.5f;
+}
+
+static void ObjectRuinFogChange_m(task* tp)
+{
+    auto twp = tp->twp;
+
+    if (twp->mode == 0i8)
+    {
+        // Set default values
+        for (auto& i : ruinfogwp)
+        {
+            i.max_dist = -110.0f;
+            i.now_dist = -110.0f;
+            i.aim_position = { 62.0f, 127.0f, -56.0f };
+            i.discovery = 0;
+            i.nocontimer = 0;
+            i.name_flag = 0;
+            i.other_flag = 0;
+            i.fog_switch = 1;
+            i.ruin_m_flag = 0;
+        }
+
+        tp->dest = (TaskFuncPtr)0x5E2530;
+
+        twp->timer.b[0] = 0;
+        twp->timer.b[1] = 1;
+        twp->wtimer = 1;
+        twp->counter.w[1] = GetStageNumber();
+        twp->mode = 1i8;
+    }
+    else
+    {
+        for (int i = 0; i < PLAYER_MAX; ++i)
+        {
+            auto ptwp = playertwp[i];
+            auto wk = &ruinfogwp[i];
+
+            if (ptwp)
+            {
+                if (wk->nocontimer > 0 && !--wk->nocontimer)
+                {
+                    //SetFreeCameraMode(1);
+                }
+
+                if (twp->counter.w[1] != GetStageNumber())
+                {
+                    FreeTask(tp);
+                    return;
+                }
+
+                auto dist = GetDistance(&ptwp->pos, &delete_point_a) - 8.0f;
+
+                if ((twp->timer.b[1] && dist <= 800.0f) || (!twp->timer.b[1] && dist <= 850.0f))
+                {
+                    twp->timer.b[1] = 0;
+
+                    if (wk->fog_switch || wk->ruin_m_flag)
+                    {
+                        ChangeFogDensity_m(-70.0f, 10.0f, i);
+                    }
+                    else
+                    {
+                        auto aim_dist = GetDistance(&ptwp->pos, &wk->aim_position);
+                        ChangeFogDensity_m(-aim_dist, 10.0f, i);
+                    }
+                }
+                else
+                {
+                    twp->timer.b[1] = 1;
+                    *GetScreenFog(i) = *(___stcFog*)FogData_LostWorld[1];
+                }
+            }
+        }
+    }
+}
+
+static void __cdecl ObjectRuinFogChange_r(task* tp)
+{
+    if (multiplayer::IsActive())
+    {
+        ObjectRuinFogChange_m(tp);
+    }
+    else
+    {
+        TARGET_STATIC(ObjectRuinFogChange)(tp);
+    }
+}
+#pragma endregion
+
+#pragma region ObjectRuinFogLight
+static void __cdecl DrawFogLitht(task* tp)
+{
+    if (!loop_count)
+    {
+        auto twp = tp->twp;
+        auto wk = ruinfogwp[SplitScreen::GetCurrentScreenNum()];
+
+        if (wk.name_flag == static_cast<int>(twp->scl.y))
+        {
+            SetObjectTexture();
+            ___njFogDisable();
+            njPushMatrixEx();
+            njTranslateEx(&twp->pos);
+            njRotateZ_(twp->ang.z);
+            njRotateX_(twp->ang.x);
+            njRotateY_(twp->ang.y);
+            late_DrawModelClip((NJS_MODEL_SADX*)0x20275AC, 0, 1.0f);
+            njPopMatrixEx();
+            ___njFogEnable();
+        }
+    }
+}
+
+static void __cdecl ObjectRuinFogLight_r(task* tp)
+{
+    if (multiplayer::IsActive())
+    {
+        auto twp = tp->twp;
+
+        if (CheckRangeOut(tp))
+        {
+            if (!tp->disp)
+                tp->disp = DrawFogLitht;
+            else
+                tp->disp(tp);
+        }
+    }
+    else
+    {
+        TARGET_STATIC(ObjectRuinFogLight)(tp);
+    }
+}
+#pragma endregion
+
+#pragma region ObjectRuinFogLight
+static void DrawFogHasira_m(task* tp)
+{
+    if (!loop_count)
+    {
+        auto twp = tp->twp;
+        auto wk = ruinfogwp[SplitScreen::GetCurrentScreenNum()];
+
+        if (wk.other_flag == static_cast<int>(twp->scl.y))
+            ___njFogDisable();
+
+        SetObjectTexture();
+        njPushMatrixEx();
+        njTranslateEx(&twp->pos);
+        njRotateZ_(twp->ang.z);
+        njRotateX_(twp->ang.x);
+        njRotateY_(twp->ang.y);
+        ds_DrawModelClip((NJS_MODEL_SADX*)0x20062E0, 1.0f);
+        njPopMatrixEx();
+
+        if (!gu8FogEnbale)
+            ___njFogEnable();
+    }
+}
+
+static void __cdecl DrawFogHasira_r(task* tp)
+{
+    if (multiplayer::IsActive())
+    {
+        DrawFogHasira_m(tp);
+    }
+    else
+    {
+        TARGET_STATIC(DrawFogHasira)(tp);
+    }
+}
+#pragma endregion
