@@ -15,7 +15,7 @@ enum CARTMD
 	CARTMD_PASS, // Looping
 	CARTMD_GOAL, // IA after course
 	CARTMD_EXPL,
-	CARTMD_8,
+	CARTMD_8, // Object controlled
 	CARTMD_9,
 	CARTMD_10,
 	CARTMD_DEST
@@ -94,12 +94,13 @@ void cartDisplayM(task* tp)
 
 		njSetTexture(&OBJ_SHAREOBJ_TEXLIST);
 		njPushMatrixEx();
+		// Use the previous position to prevent player offset (SADX calls the display before physics, but we can't do that in splitscreen)
 		njTranslate(0, cart_data->last_pos.x, cart_data->last_pos.y + cartOffset[cart_data->cart_type], cart_data->last_pos.z);
-		if (twp->ang.z) njRotateZ(0, twp->ang.z);
-		if (twp->ang.x) njRotateX(0, twp->ang.x);
-		if (twp->ang.y) njRotateY(0, twp->ang.y + 0x4000);
-		if (cart_data->unstable.z) njRotateZ(0, cart_data->unstable.z);
-		if (cart_data->unstable.x) njRotateX(0, cart_data->unstable.x);
+		njRotateZ_(twp->ang.z);
+		njRotateX_(twp->ang.x);
+		njRotateY_(twp->ang.y + 0x4000);
+		njRotateZ_(cart_data->unstable.z);
+		njRotateX_(cart_data->unstable.x);
 
 		switch (cart_data->cart_type)
 		{
@@ -241,7 +242,7 @@ void cartInitM(task* tp, taskwk* twp, CART_PLAYER_PARAMETER* cartparam, int pnum
 
 void cartSetVectorM(taskwk* twp, int pnum)
 {
-	if (twp->mode == 4)
+	if (twp->mode == CARTMD_CTRL)
 	{
 		taskwk* pltwp = playertwp[pnum];
 
@@ -694,6 +695,7 @@ void EnemyCartM(task* tp)
 		cartSELoopM(tp, 0);
 		break;
 	case CARTMD_PASS:
+		cartSetVectorM(twp, pnum); // custom
 		cartRunPassM(twp, pnum);
 		cartTakeSonicM(twp, pnum);
 		cartSELoopM(tp, 0);
@@ -710,11 +712,13 @@ void EnemyCartM(task* tp)
 		break;
 	case CARTMD_EXPL:
 		cart_data->flag &= ~1u;
+		cartSetVectorM(twp, pnum); // custom
 		tp->disp = cartDisplayExplosionM;
 		cartExplosion(twp);
 		break;
 	case CARTMD_8:
 		cart_data->flag &= ~1u;
+		cartSetVectorM(twp, pnum); // custom
 		cartShadowPos(twp);
 		cartCharactorCollisionM(twp, pnum);
 		cartTakeSonicM(twp, pnum);
@@ -722,11 +726,13 @@ void EnemyCartM(task* tp)
 		break;
 	case CARTMD_9:
 		cart_data->flag &= ~1u;
+		cartSetVectorM(twp, pnum); // custom
 		cartShadowPos(twp);
 		cartCharactorCollisionM(twp, pnum);
 		break;
 	case CARTMD_10:
 		cart_data->flag &= ~1u;
+		cartSetVectorM(twp, pnum); // custom
 		cartShadowPos(twp);
 		cartSpdForceOfNature(twp);
 		cartThinkM(tp, twp, pnum);
