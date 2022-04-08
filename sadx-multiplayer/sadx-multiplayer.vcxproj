@@ -228,6 +228,7 @@
     <ClCompile Include="objects\o_shelter_kaitenashiba.cpp" />
     <ClCompile Include="objects\o_suimen.cpp" />
     <ClCompile Include="objects\o_twinkle_door.cpp" />
+    <ClCompile Include="objects\o_twinkle_shutter.cpp" />
     <ClCompile Include="objects\o_water.cpp" />
     <ClCompile Include="objects\PathKassha.cpp" />
     <ClCompile Include="objects\RdHotShelter.cpp" />
