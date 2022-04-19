@@ -18,27 +18,28 @@ General patches to allow compatibility for 4+ players
 
 */
 
-Trampoline* PGetRotation_t         = nullptr;
-Trampoline* GetPlayersInputData_t  = nullptr;
-Trampoline* PInitialize_t          = nullptr;
-Trampoline* NpcMilesSet_t          = nullptr;
-Trampoline* Ring_t                 = nullptr;
-Trampoline* Tobitiri_t             = nullptr;
-Trampoline* PlayerVacumedRing_t    = nullptr;
-Trampoline* EnemyCheckDamage_t     = nullptr;
-Trampoline* EnemyDist2FromPlayer_t = nullptr;
-Trampoline* EnemyCalcPlayerAngle_t = nullptr;
-Trampoline* EnemyTurnToPlayer_t    = nullptr;
-Trampoline* savepointCollision_t   = nullptr;
-Trampoline* TikalDisplay_t         = nullptr;
-Trampoline* ObjectSpringB_t        = nullptr;
-Trampoline* SpinnaDisplayer_t      = nullptr;
+Trampoline* PGetRotation_t                 = nullptr;
+Trampoline* PGetAcceleration_t             = nullptr;
+Trampoline* PGetAccelerationSnowBoard_t    = nullptr;
+Trampoline* GetPlayersInputData_t          = nullptr;
+Trampoline* PInitialize_t                  = nullptr;
+Trampoline* NpcMilesSet_t                  = nullptr;
+Trampoline* Ring_t                         = nullptr;
+Trampoline* Tobitiri_t                     = nullptr;
+Trampoline* PlayerVacumedRing_t            = nullptr;
+Trampoline* EnemyCheckDamage_t             = nullptr;
+Trampoline* EnemyDist2FromPlayer_t         = nullptr;
+Trampoline* EnemyCalcPlayerAngle_t         = nullptr;
+Trampoline* EnemyTurnToPlayer_t            = nullptr;
+Trampoline* savepointCollision_t           = nullptr;
+Trampoline* TikalDisplay_t                 = nullptr;
+Trampoline* ObjectSpringB_t                = nullptr;
+Trampoline* SpinnaDisplayer_t              = nullptr;
 Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 
-// Patch forward calculation to use multiplayer cameras
-void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
-	if (SplitScreen::IsActive())
+	if (SplitScreen::IsActive() && pwp->attr & 0x20000)
 	{
 		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
 
@@ -53,6 +54,44 @@ void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	}
 
 	TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
+}
+
+void __cdecl PGetAcceleration_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (SplitScreen::IsActive() && pwp->attr & 0x20000)
+	{
+		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
+
+		if (cam_ang)
+		{
+			auto backup = camera_twp->ang;
+			camera_twp->ang = *cam_ang;
+			TARGET_DYNAMIC(PGetAcceleration)(twp, mwp, pwp);
+			camera_twp->ang = backup;
+			return;
+		}
+	}
+
+	TARGET_DYNAMIC(PGetAcceleration)(twp, mwp, pwp);
+}
+
+void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* pwp, float Max_Speed)
+{
+	if (SplitScreen::IsActive())
+	{
+		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
+
+		if (cam_ang)
+		{
+			auto backup = camera_twp->ang;
+			camera_twp->ang = *cam_ang;
+			TARGET_DYNAMIC(PGetAccelerationSnowBoard)(twp, mwp, pwp, Max_Speed);
+			camera_twp->ang = backup;
+			return;
+		}
+	}
+
+	TARGET_DYNAMIC(PGetAccelerationSnowBoard)(twp, mwp, pwp, Max_Speed);
 }
 
 // Patch analog forward calculation to use multiplayer cameras
@@ -834,12 +873,14 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 
 void InitPatches()
 {
-	PGetRotation_t          = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
-	GetPlayersInputData_t   = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
-	Ring_t                  = new Trampoline(0x450370, 0x450375, Ring_r);
-	Tobitiri_t              = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);
-	PlayerVacumedRing_t     = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
-	savepointCollision_t    = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
+	PGetRotation_t                 = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
+	PGetAcceleration_t             = new Trampoline(0x44C270, 0x44C278, PGetAcceleration_r);
+	PGetAccelerationSnowBoard_t    = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
+	GetPlayersInputData_t          = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
+	Ring_t                         = new Trampoline(0x450370, 0x450375, Ring_r);
+	Tobitiri_t                     = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);
+	PlayerVacumedRing_t            = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
+	savepointCollision_t           = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
 
 	// Score patches
