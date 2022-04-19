@@ -318,7 +318,7 @@ std::pair<int, int> spd_level_link_btl[] = {
 int spd_level_link[]{
 	LevelAndActIDs_EmeraldCoast1,
 	LevelAndActIDs_WindyValley1,
-	LevelAndActIDs_Casinopolis1,
+	LevelAndActIDs_Casinopolis2,
 	LevelAndActIDs_IceCap1,
 	LevelAndActIDs_TwinklePark1,
 	LevelAndActIDs_SpeedHighway1,
