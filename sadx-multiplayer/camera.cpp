@@ -6,6 +6,16 @@ Trampoline* CameraPause_t = nullptr;
 Trampoline* CameraDisplay_t = nullptr;
 Trampoline* Camera_t = nullptr;
 
+enum : unsigned int // custom
+{
+    MODE_ENABLED = 0x1,        // If free camera is enabled
+    MODE_ACTIVE = 0x2,         // If free camera logic has run
+    MODE_AUTHORIZED = 0x4,     // If free camera can be enabled
+    MODE_TIMER = 0x8,          // If free camera is temporarily disabled
+    MODE_FIX = 0x40000000,     // Reposition the camera
+    MODE_UPDATE = 0x80000000   // Reposition the camera
+};
+
 struct MultiCam
 {
     FCWRK wk;
@@ -199,7 +209,7 @@ void RunMultiCamera(int num)
         // Force camera behind the player
         if (ControllerEnabled[num] == FALSE)
         {
-            NJS_VECTOR dir = { -100, 0, 0 };
+            NJS_POINT3 dir = { -100.0f, 0.0f, 0.0f };
             PConvertVector_P2G(pltwp, &dir);
             cam->pos = pltwp->pos;
             njAddVector(&cam->pos, &dir);
@@ -211,9 +221,9 @@ void RunMultiCamera(int num)
         return;
     }
 
-    NJS_VECTOR vec;
-    NJS_VECTOR dyncolpos;
-    NJS_VECTOR freecampos;
+    NJS_POINT3 vec;
+    NJS_POINT3 freecamvec;
+    NJS_POINT3 freecampos;
 
     if (cam->wk.timer)
     {
@@ -221,10 +231,10 @@ void RunMultiCamera(int num)
     }
     else
     {
-        cam->mode &= ~8u;
+        cam->mode &= ~MODE_AUTHORIZED;
     }
 
-    if ((cam->mode & 0x80000000))
+    if (cam->mode & MODE_UPDATE)
     {
         MultiCam_SetDistData(cam, pltwp);
         vec.x = cam->pos.x - pltwp->pos.x;
@@ -253,12 +263,12 @@ void RunMultiCamera(int num)
         cam->wk.pang.x = 0;
         cam->wk.pang.y = 0;
         cam->wk.pang.z = 0;
-        cam->mode |= 0x40000000u;
+        cam->mode |= MODE_FIX;
     }
 
-    if ((cam->mode & 0x40000000) != 0)
+    if (cam->mode & MODE_FIX)
     {
-        if ((cam->mode & 0x80000000) == 0)
+        if (!(cam->mode & MODE_UPDATE))
         {
             MultiCam_SetDistData(cam, pltwp);
             cam->wk.counter = 0;
@@ -284,12 +294,12 @@ void RunMultiCamera(int num)
             cam->wk.camspd = { 0.0f, 0.0f, 0.0f };
 
             freecampos = cam->wk.campos;
-            dyncolpos = { 0.0f, 0.0f, 0.0f };
-            MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, nullptr, 0x400002 | ColFlags_Water, 10.0f);
+            freecamvec = cam->wk.camspd;
+            MSetPositionWIgnoreAttribute(&freecampos, &freecamvec, nullptr, 0x400002 | ColFlags_Water, 10.0f);
 
-            cam->wk.campos.x = dyncolpos.x + freecampos.x;
-            cam->wk.campos.y = dyncolpos.y + freecampos.y;
-            cam->wk.campos.z = dyncolpos.z + freecampos.z;
+            cam->wk.campos.x = freecamvec.x + freecampos.x;
+            cam->wk.campos.y = freecamvec.y + freecampos.y;
+            cam->wk.campos.z = freecamvec.z + freecampos.z;
 
             --passes;
 
@@ -300,7 +310,7 @@ void RunMultiCamera(int num)
 
         }
 
-        cam->mode &= ~0xC0000000;
+        cam->mode &= ~(MODE_UPDATE | MODE_FIX);
     }
 
     if (cam->wk.pang.y > 0)
@@ -384,24 +394,24 @@ void RunMultiCamera(int num)
     cam->wk.camspd.z = cam->wk.pos.z - cam->wk.campos.z;
 
     freecampos = cam->wk.campos;
-    dyncolpos = cam->wk.camspd;
+    freecamvec = cam->wk.camspd;
     int water_cdt = 0;
 
-    if (MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, nullptr, 0x400002 | ColFlags_Water, 10.0f))
+    if (MSetPositionWIgnoreAttribute(&freecampos, &freecamvec, nullptr, 0x400002 | ColFlags_Water, 10.0f))
     {
         freecampos = cam->wk.campos;
-        dyncolpos = cam->wk.camspd;
+        freecamvec = cam->wk.camspd;
         water_cdt = 1;
 
-        if (MSetPositionWIgnoreAttribute(&freecampos, &dyncolpos, nullptr, 0x400002 | ColFlags_Water, 8.0f))
+        if (MSetPositionWIgnoreAttribute(&freecampos, &freecamvec, nullptr, 0x400002 | ColFlags_Water, 8.0f))
         {
             water_cdt = 2;
         }
     }
 
-    cam->wk.pos.x = dyncolpos.x + freecampos.x;
-    cam->wk.pos.y = dyncolpos.y + freecampos.y;
-    cam->wk.pos.z = dyncolpos.z + freecampos.z;
+    cam->wk.pos.x = freecamvec.x + freecampos.x;
+    cam->wk.pos.y = freecamvec.y + freecampos.y;
+    cam->wk.pos.z = freecamvec.z + freecampos.z;
     cam->wk.campos = cam->wk.pos;
     vec.x = plmwp->spd.x;
     vec.y = plmwp->spd.y;
@@ -455,13 +465,13 @@ void RunMultiCamera(int num)
     vec.z = cam->wk.campos.z - pltwp->pos.z;
     cam->wk.dist = fabsf(njScalor(&vec));
 
-    if (cam->wk.dist <= cam->wk.dist2)
+    if (cam->wk.dist <= cam->wk.dist2 + 1.0f) // added a 1.0 because it keeps being very slightly above dist2
     {
         cam->wk.counter = 0;
     }
     else if (++cam->wk.counter > 20)
     {
-        cam->mode |= 0x40000000u;
+        cam->mode |= MODE_FIX;
     }
 
     if (water_cdt)
@@ -544,12 +554,13 @@ void __cdecl InitFreeCamera_r()
     {
         for (auto& cam : MultiCams)
         {
-            cam.mode |= 0x8000000C;
+            cam.timer = 60;
+            cam.mode |= MODE_UPDATE | MODE_TIMER | MODE_AUTHORIZED;
         }
     }
 
     fcwrk.timer = 60;
-    free_camera_mode |= 0x8000000C;
+    free_camera_mode |= MODE_UPDATE | MODE_TIMER | MODE_AUTHORIZED;
 }
 
 void __cdecl ResetFreeCamera_r()
@@ -558,12 +569,13 @@ void __cdecl ResetFreeCamera_r()
     {
         for (auto& cam : MultiCams)
         {
-            cam.mode |= 0x80000008;
+            cam.timer = 60;
+            cam.mode |= MODE_UPDATE | MODE_TIMER;
         }
     }
 
     fcwrk.timer = 60;
-    free_camera_mode |= 0x80000008;
+    free_camera_mode |= MODE_UPDATE | MODE_TIMER;
 }
 
 void InitCamera()
