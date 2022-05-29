@@ -42,7 +42,7 @@ static void __cdecl dispE102LaserDraw(task* tp)
             }
 
             e102laser_pos[1].x = start;
-            late_DrawLine3D(&e102laser_p3c, 1, 0x40u, 4);
+            late_DrawLine3D(&e102laser_p3c, 1, 0x40u, LATE_LIG);
         }
         while (start < twp->timer.f);
 

@@ -26,12 +26,12 @@ DataArray(int, fanstat, 0x3C75058, 5);
 FunctionPointer(void, ExecKazu, (float yacc, taskwk* twp), 0x5CB6B0);
 
 static const void* const IsRangeInPtr = (void*)0x5CB9B0;
-static inline BOOL IsRangeIn(taskwk* twp, NJS_POINT3* pos, float mul)
+static inline BOOL IsRangeIn(taskwk* twp, NJS_POINT3* pos, float mul_)
 {
 	BOOL result;
 	__asm
 	{
-		push[mul]
+		push[mul_]
 		mov ecx, [pos]
 		mov eax, [twp]
 		call IsRangeInPtr

@@ -33,14 +33,14 @@ static void __cdecl ObjectKaosEmeDisp(task* tp)
 	switch (id)
 	{
 	case 0:
-		late_DrawObjectMesh(&object_goaleme_blue_blue, 1);
+		late_DrawObjectMesh(&object_goaleme_blue_blue, LATE_WZ);
 		break;
 	case 1:
 	default:
-		late_DrawObjectMesh(&object_goaleme_white_white, 1);
+		late_DrawObjectMesh(&object_goaleme_white_white, LATE_WZ);
 		break;
 	case 2:
-		late_DrawObjectMesh(&object_goaleme_green_green, 1);
+		late_DrawObjectMesh(&object_goaleme_green_green, LATE_WZ);
 		break;
 	}
 	njPopMatrixEx();

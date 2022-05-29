@@ -159,7 +159,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
         break;
     case QueuedModelType_ActionPtr:
         njSetMatrix(0, data->act.mtx);
-        DrawAction(data->act.act, data->act.frm, 0, 0.0f, DrawModelThing);
+        DrawAction(data->act.act, data->act.frm, LATE_MAT, 0.0f, DrawModelThing);
         break;
     case QueuedModelType_Rect:
         njSetScreenDist_(0x31C7);
@@ -199,7 +199,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
         break;
     case QueuedModelType_MotionThing:
         njSetMatrix(0, data->shpmot.mtx);
-        DrawShapeMotion(data->shpmot.obj, data->shpmot.mot, data->shpmot.shp, data->shpmot.frm, data->shpmot.flgs, data->shpmot.clpScl, data->shpmot.drwMdl);
+        DrawShapeMotion(data->shpmot.obj, data->shpmot.mot, data->shpmot.shp, data->shpmot.frm, (LATE)data->shpmot.flgs, data->shpmot.clpScl, data->shpmot.drwMdl);
         break;
     }
 }

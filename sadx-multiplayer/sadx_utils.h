@@ -62,12 +62,6 @@ enum TGT_MODE : __int32
 	MODE_MAX = 0x8,
 };
 
-struct CUSTOM_OBJ
-{
-	NJS_OBJECT* obj;
-	void(__cdecl* exad)(NJS_OBJECT*);
-};
-
 struct sParabola
 {
 	NJS_POINT3 pos_start;
@@ -164,7 +158,6 @@ struct VolumeInfo
 	float farDist;
 };
 
-FunctionPointer(void, njDrawTriangle3D, (NJS_POINT3COL* p, int n, unsigned int atr), 0x77EBA0);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -185,7 +178,6 @@ DataPointer(NJS_POINT3, explosion_pos, 0x3C5AB24);
 DataPointer(Float, explosion_r, 0x3C5A9D0);
 FunctionPointer(float, DrawShadow_, (Angle3* ang, NJS_POINT3* pos, float scl), 0x49EF30);
 FunctionPointer(int, GetGlobalTime, (), 0x4261B0);
-FunctionPointer(void, DrawCustomObject, (NJS_OBJECT* top_object, CUSTOM_OBJ* custom), 0x4BA5D0);
 VoidFunc(setRainEffect, 0x546320);
 VoidFunc(C4SuimenYurashiSet, 0x5535D0);
 VoidFunc(C4LeafSetOld, 0x554480);
@@ -237,7 +229,6 @@ DataPointer(void*, jimakubuf, 0x3ABDF84);
 FunctionPointer(int, GetSwitchOnOff, (unsigned int ID), 0x4CB4F0);
 TaskFunc(ObjShelterFade, 0x5ABD00);
 DataPointer(NJS_SPRITE, sprite_fade, 0x19C7C24);
-FunctionPointer(void, late_DrawSprite2D, (NJS_SPRITE* sp, Int n, Float pri, NJD_SPRITE atr, int flgs), 0x404660);
 TaskFunc(ObjShelterTunnelscroll, 0x5AC4A0);
 TaskFunc(ObjShelterNo2cargo, 0x5ABED0);
 FunctionPointer(void, SetSwitchOnOff, (unsigned int ID, int OnOff), 0x4CB4C0);

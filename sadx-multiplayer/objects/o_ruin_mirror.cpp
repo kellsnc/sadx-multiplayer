@@ -134,7 +134,7 @@ static void DrawMirror_m(task* tp)
                 njRotateX_(-cam_ang->x);
             }
         }
-        late_DrawModelClip((NJS_MODEL_SADX*)0x2028C98, 0, 1.0f);
+        late_DrawModelClip((NJS_MODEL_SADX*)0x2028C98, LATE_MAT, 1.0f);
         njPopMatrixEx();
     }
 }
@@ -528,7 +528,7 @@ static void __cdecl DrawFogLitht(task* tp)
             njRotateZ_(twp->ang.z);
             njRotateX_(twp->ang.x);
             njRotateY_(twp->ang.y);
-            late_DrawModelClip((NJS_MODEL_SADX*)0x20275AC, 0, 1.0f);
+            late_DrawModelClip((NJS_MODEL_SADX*)0x20275AC, LATE_MAT, 1.0f);
             njPopMatrixEx();
             ___njFogEnable();
         }

@@ -392,7 +392,7 @@ int vs_level_link[]{
 	LevelAndActIDs_Chaos0,
 	LevelAndActIDs_Chaos2,
 	LevelAndActIDs_Chaos4,
-	LevelAndActIDs_Chaos6,
+	LevelAndActIDs_Chaos6Knuckles,
 	LevelAndActIDs_EggHornet,
 	LevelAndActIDs_EggWalker,
 	LevelAndActIDs_E101,

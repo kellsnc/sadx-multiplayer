@@ -44,7 +44,7 @@ static void ObjShelterFadeDisp_m(task* tp)
 		sprite_fade.sx = (ratio->w * HorizontalStretch * 640.0f) * 0.015625f;
 		sprite_fade.sy = (ratio->h * VerticalStretch * 480.0f) * 0.015625f;
 
-		late_DrawSprite2D(&sprite_fade, 0, 22047.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, 4u);
+		late_DrawSprite2D(&sprite_fade, 0, 22047.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 
 		ResetMaterial();
 		SplitScreen::RestoreViewPort();

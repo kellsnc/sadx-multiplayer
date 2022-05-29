@@ -48,7 +48,7 @@ static const NJS_ARGB colors[] = {
 
 static void drawSprite(int tex, NJD_SPRITE attr)
 {
-	late_DrawSprite2D(&INDICATOR_SPRITE, tex, 22048.0f, attr, 0);
+	late_DrawSprite2D(&INDICATOR_SPRITE, tex, 22048.0f, attr, LATE_MAT);
 }
 
 static void dispIndicatorNum(int pnum, float screenX, float screenY, float screenWidth, float screenHeight, float scale)

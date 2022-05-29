@@ -126,7 +126,7 @@ void dispFishWeightTexture_m(taskwk* twp, int pnum)
         reel_sprite.p.y = y + 24.0f * scale;
         reel_sprite.sx = reel_sprite.sy = scale * 1.5f;
         reel_sprite.ang = 0;
-        late_DrawSprite2D(&reel_sprite, 5, 22046.182f, NJD_SPRITE_ALPHA, 4);
+        late_DrawSprite2D(&reel_sprite, 5, 22046.182f, NJD_SPRITE_ALPHA, LATE_LIG);
 
         _SC_NUMBERS pscn;
         
@@ -183,11 +183,11 @@ static void dispHitTexturePause_m(task* tp)
     reel_sprite.p.y = y + 8.0f * scaleY;
     reel_sprite.sx = reel_sprite.sy = min(scaleX, scaleY);
     reel_sprite.ang = 0;
-    late_DrawSprite2D(&reel_sprite, 7, 22046.18f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, 4);
+    late_DrawSprite2D(&reel_sprite, 7, 22046.18f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 
     reel_sprite.p.x = x;
     reel_sprite.p.y = y;
-    late_DrawSprite2D(&reel_sprite, 6, 22046.18f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, 4);
+    late_DrawSprite2D(&reel_sprite, 6, 22046.18f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
     ResetMaterial();
     SplitScreen::RestoreViewPort();
 }
@@ -226,7 +226,7 @@ static void dispReelMeter_m(float x, float y, float scale, float _reel_tension)
     reel_sprite.p.y = y;
     reel_sprite.sx = reel_sprite.sy = scale;
     reel_sprite.ang = 0;
-    late_DrawSprite2D(&reel_sprite, 0, 22046.18f, NJD_SPRITE_ALPHA, 4);
+    late_DrawSprite2D(&reel_sprite, 0, 22046.18f, NJD_SPRITE_ALPHA, LATE_LIG);
 
     NJS_POINT2 rect[4];
     NJS_COLOR color[4];
