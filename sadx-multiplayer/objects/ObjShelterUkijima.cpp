@@ -103,7 +103,7 @@ static void ObjShelterUkijimaExec_m(task* tp)
 		dyncol->ang[2] = 0;
 	}
 
-	CheckDyncolRange(twp, &twp->pos, 25.0f);
+	MirenObjCheckCollisionP(twp, 25.0f);
 	tp->disp(tp);
 }
 

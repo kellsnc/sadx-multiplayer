@@ -38,7 +38,7 @@ static void execObject_m(task* tp)
 
 	wk->prev_frame = wk->frame;
 	*(NJS_POINT3*)wk->dyncol->pos = wk->pos;
-	CheckDyncolRange(twp, &twp->pos, wk->dyncol_range);
+	MirenObjCheckCollisionP(twp, wk->dyncol_range);
 
 	switch (wk->mode)
 	{

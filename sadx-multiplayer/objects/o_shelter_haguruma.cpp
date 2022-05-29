@@ -24,7 +24,7 @@ static void ExecATask_m(task* tp, NJS_OBJECT* object)
 {
 	auto twp = tp->twp;
 
-	CheckDyncolRange(twp, &twp->pos, 148.0f);
+	MirenObjCheckCollisionP(twp, 148.0f);
 
 	Angle add_ang = (Angle)twp->scl.x;
 

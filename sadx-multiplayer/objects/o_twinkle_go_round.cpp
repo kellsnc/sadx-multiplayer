@@ -11,7 +11,7 @@ static void execTPFloor_m(task* tp)
 
 	twp->ang.y += add_ang;
 
-	CheckDyncolRange(twp, &tp->twp->pos, 200.0f);
+	MirenObjCheckCollisionP(twp, 200.0f);
 
 	if (twp->flag & 0x100)
 	{

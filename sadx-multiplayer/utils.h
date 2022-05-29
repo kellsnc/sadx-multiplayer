@@ -25,4 +25,3 @@ void njRotateX_(Angle ang);
 void njRotateY_(Angle ang);
 void njRotateZ_(Angle ang);
 void ChangeActM(int amount);
-void CheckDyncolRange(taskwk* twp, NJS_POINT3* p, float r); // Enable/disable dyncol

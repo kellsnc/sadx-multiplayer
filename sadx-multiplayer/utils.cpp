@@ -199,15 +199,3 @@ void ChangeActM(int amount)
 	AdvanceAct(amount);
 	SetAllPlayersInitialPosition();
 }
-
-void CheckDyncolRange(taskwk* twp, NJS_POINT3* p, float r)
-{
-	if (IsPlayerInSphere(p, r))
-	{
-		twp->flag |= 0x100u;
-	}
-	else
-	{
-		twp->flag &= ~0x100u;
-	}
-}

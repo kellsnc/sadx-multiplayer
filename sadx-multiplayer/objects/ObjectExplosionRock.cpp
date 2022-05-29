@@ -29,7 +29,14 @@ static void MiddleRock_m(task* tp)
     auto twp = tp->twp;
     auto mwp = (motionwk*)tp->mwp;
 
-    CheckDyncolRange(twp, &mwp->acc, mwp->rad + 10.0f);
+    if (IsPlayerInSphere(&mwp->acc, mwp->rad + 10.0f))
+    {
+        twp->flag |= 0x100u;
+    }
+    else
+    {
+        twp->flag &= ~0x100u;
+    }
 
     for (int i = 0; i < PLAYER_MAX; ++i)
     {

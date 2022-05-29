@@ -7,7 +7,7 @@ static void ExecC_m(task* tp)
 	auto twp = tp->twp;
 	auto fwp = tp->fwp;
 
-	CheckDyncolRange(twp, &twp->pos, 100.0f);
+	MirenObjCheckCollisionP(twp, 100.0f);
 
 	float spd = No2CargoSpd;
 

@@ -18,7 +18,7 @@ DataPointer(NJS_OBJECT, object_elevator_hontai_bmerge1, 0x1A37A38);
 
 static void ExecATask_m(taskwk* twp) // inline symbols
 {
-	CheckDyncolRange(twp, &twp->pos, 60.0f);
+	MirenObjCheckCollisionP(twp, 60.0f);
 	
 	auto dyncol = (NJS_OBJECT*)twp->value.ptr;
 	dyncol->ang[0] = 0;

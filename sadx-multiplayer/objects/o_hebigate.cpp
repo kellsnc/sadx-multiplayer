@@ -8,7 +8,7 @@ static void Normal_m(task* tp)
 		auto twp = tp->twp;
 		auto dyncol = (NJS_OBJECT*)twp->counter.ptr;
 
-		CheckDyncolRange(twp, &twp->pos, dyncol->basicdxmodel->r + 20.0f);
+		MirenObjCheckCollisionP(twp, dyncol->basicdxmodel->r + 20.0f);
 		LoopTaskC(tp);
 
         if (twp->value.l == 0)

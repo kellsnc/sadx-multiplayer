@@ -102,7 +102,7 @@ static void Normal_m(task* tp)
 	dyncol->ang[0] = twp->ang.x;
 	dyncol->ang[2] = twp->ang.z;
 
-	CheckDyncolRange(twp, &twp->pos, 90.0f);
+	MirenObjCheckCollisionP(twp, 90.0f);
 }
 
 static void ObjectMountainAsiba_m(task* tp)
