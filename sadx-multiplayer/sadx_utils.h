@@ -158,6 +158,16 @@ struct VolumeInfo
 	float farDist;
 };
 
+struct OCMDATA
+{
+	taskwk* twp;
+	int(__cdecl* breakfunc)(NJS_POINT3*, NJS_POINT3*, taskwk*);
+	char num;
+	char flag;
+	char type;
+	char sflag;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
