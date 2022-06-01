@@ -580,7 +580,7 @@ void InitLevels()
 	WriteCall((void*)0x5E15CA, SetAllPlayersInitialPosition); // Lost World
 	WriteCall((void*)0x5EDC66, SetAllPlayersInitialPosition); // Sky Deck
 	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPosition); // Sky Deck
-	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPosition); // Sky Deck
+	WriteCall((void*)0x5EDD27, SetAllPlayersInitialPosition); // Sky Deck
 	WriteCall((void*)0x5602F1, SetAllPlayersInitialPosition); // Perfect Chaos
 	
 	// Patch Skyboxes (display function managing mode)
