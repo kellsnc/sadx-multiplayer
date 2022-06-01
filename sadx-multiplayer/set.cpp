@@ -2,10 +2,11 @@
 #include "set.h"
 #include "camera.h"
 
-Trampoline* ProcessStatusTable_t = nullptr;
-Trampoline* CheckRangeWithR_t    = nullptr;
-Trampoline* CheckRangeOutWithR_t = nullptr;
-Trampoline* LoadSetFile_t        = nullptr;
+Trampoline* ProcessStatusTable_t   = nullptr;
+Trampoline* CheckRangeWithR_t      = nullptr;
+Trampoline* CheckRangeOutWithR_t   = nullptr;
+Trampoline* SDCheckRangeOutWithR_t = nullptr;
+Trampoline* LoadSetFile_t          = nullptr;
 
 void CreateSetTask(OBJ_CONDITION* item, _OBJ_EDITENTRY* objentry, _OBJ_ITEMENTRY* objinfo, float distance)
 {
@@ -191,6 +192,25 @@ BOOL __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
 	}
 }
 
+// Check object deletion for every player, but in Sky Deck
+BOOL __cdecl SDCheckRangeOutWithR_r(task* tp, float fRange)
+{
+	if (multiplayer::IsActive())
+	{
+		if (CheckRangeWithR_m(tp, fRange))
+		{
+			tp->exec = FreeTask;
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+	else
+	{
+		return TARGET_DYNAMIC(SDCheckRangeOutWithR)(tp, fRange);
+	}
+}
+
 // Load Multiplayer version of setfiles:
 
 void __cdecl LoadSetFile_o(unsigned int u32SetType, const char* pcFileName)
@@ -239,8 +259,9 @@ static void __declspec(naked) LoadSetFile_j()
 
 void InitSET()
 {
-	ProcessStatusTable_t = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
-	CheckRangeWithR_t    = new Trampoline(0x46BFA0, 0x46BFA7, CheckRangeWithR_r);
-	CheckRangeOutWithR_t = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
-	LoadSetFile_t        = new Trampoline(0x422930, 0x422938, LoadSetFile_j);
+	ProcessStatusTable_t   = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
+	CheckRangeWithR_t      = new Trampoline(0x46BFA0, 0x46BFA7, CheckRangeWithR_r);
+	CheckRangeOutWithR_t   = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
+	SDCheckRangeOutWithR_t = new Trampoline(0x5EDB10, 0x5EDB18, SDCheckRangeOutWithR_r);
+	LoadSetFile_t          = new Trampoline(0x422930, 0x422938, LoadSetFile_j);
 }
