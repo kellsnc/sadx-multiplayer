@@ -228,6 +228,7 @@
     <ClCompile Include="objects\o_shelter_gate1.cpp" />
     <ClCompile Include="objects\o_shelter_haguruma.cpp" />
     <ClCompile Include="objects\o_shelter_kaitenashiba.cpp" />
+    <ClCompile Include="objects\o_sky_sinkrane.cpp" />
     <ClCompile Include="objects\rd_skydeck.cpp" />
     <ClCompile Include="objects\o_sky_cannon_h2.cpp" />
     <ClCompile Include="objects\o_sky_connect.cpp" />

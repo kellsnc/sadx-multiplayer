@@ -16,6 +16,8 @@ void SetAllPlayersPosition(float x, float y, float z, Angle angy);
 float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2);
 int GetClosestPlayerNum(NJS_POINT3* pos);
 int GetClosestPlayerNum(float x, float y, float z);
+int GetClosestPlayerNumRange(NJS_POINT3* pos, float range);
+int GetClosestPlayerNumRange(float x, float y, float z, float range);
 int IsPlayerInSphere(NJS_POINT3* p, float r);
 int IsPlayerInSphere(float x, float y, float z, float r);
 bool IsCameraInSphere(NJS_POINT3* p, float r);

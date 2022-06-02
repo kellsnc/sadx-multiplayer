@@ -423,3 +423,13 @@ static inline void rdTwinkleInit(task* tp)
 		call rdTwinkleInitPtr
 	}
 }
+
+static const void* const checkSkySinkRaneColliPtr = (void*)0x5F5DF0;
+static inline void checkSkySinkRaneColli(taskwk* twp)
+{
+	__asm
+	{
+		mov esi, [twp]
+		call checkSkySinkRaneColliPtr
+	}
+}

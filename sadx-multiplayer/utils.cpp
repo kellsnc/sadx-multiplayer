@@ -99,6 +99,32 @@ int GetClosestPlayerNum(float x, float y, float z)
 	return GetClosestPlayerNum(&pos);
 }
 
+int GetClosestPlayerNumRange(NJS_POINT3* pos, float range)
+{
+	float max = range;
+	int num = -1;
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto ptwp = playertwp[i];
+		if (ptwp)
+		{
+			auto dist = GetDistance(pos, &ptwp->pos);
+			if (dist < max)
+			{
+				max = dist;
+				num = i;
+			}
+		}
+	}
+	return num;
+}
+
+int GetClosestPlayerNumRange(float x, float y, float z, float range)
+{
+	NJS_POINT3 pos = { x, y, z };
+	return GetClosestPlayerNumRange(&pos, range);
+}
+
 int IsPlayerInSphere(NJS_POINT3* p, float r)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
