@@ -167,6 +167,7 @@
     <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
     <ClCompile Include="objects\ef_barrier.cpp" />
+    <ClCompile Include="objects\ef_sky_scope.cpp" />
     <ClCompile Include="objects\ef_spark.cpp" />
     <ClCompile Include="objects\Eggrob.cpp" />
     <ClCompile Include="objects\EnemyHotE105.cpp" />
@@ -176,6 +177,7 @@
     <ClCompile Include="objects\EnemyWindyE103.cpp" />
     <ClCompile Include="objects\EnemyMountainE104.cpp" />
     <ClCompile Include="objects\EnemyWindyTgtMissile.cpp" />
+    <ClCompile Include="objects\e_aircraft.cpp" />
     <ClCompile Include="objects\e_cart.cpp" />
     <ClCompile Include="objects\FragmEmeraldDigDisplay.cpp" />
     <ClCompile Include="objects\mirror.cpp" />

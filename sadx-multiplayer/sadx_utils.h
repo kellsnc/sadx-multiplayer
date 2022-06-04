@@ -301,6 +301,10 @@ FunctionPointer(void, DrawDlgCsrSqr, (unsigned __int8 col_alpha, float x, float 
 FunctionPointer(void, CreateWater, (NJS_POINT3* pos, NJS_POINT3* velo, float scl), 0x4B9540);
 FunctionPointer(void, MirenSoundPlayOneShotSE, (int se, const NJS_POINT3* pos_p, const VolumeInfo* info_p), 0x79E400);
 TaskFunc(CartGetOffPlayer, 0x798C60);
+TaskFunc(EnemyAir, 0x4AA340);
+TaskFunc(EffectSkyScope, 0x5F1AA0);
+TaskFunc(dispSkyScope, 0x5F19F0);
+DataPointer(NJS_OBJECT, object_sky_scope_a_scope_a, 0x214E4B8);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -431,5 +435,28 @@ static inline void checkSkySinkRaneColli(taskwk* twp)
 	{
 		mov esi, [twp]
 		call checkSkySinkRaneColliPtr
+	}
+}
+
+static const void* const AirDrawPtr = (void*)0x4A9180;
+static inline void AirDraw(taskwk* twp, enemywk* ewp)
+{
+	__asm
+	{
+		mov edi, [ewp]
+		mov esi, [twp]
+		call AirDrawPtr
+	}
+}
+
+static const void* const MissleDrawPtr = (void*)0x4A8800;
+static inline void MissleDraw(taskwk* twp, enemywk* ewp)
+{
+	__asm
+	{
+		push ewp
+		mov esi, [twp]
+		call AirDrawPtr
+		add esp, 4
 	}
 }
