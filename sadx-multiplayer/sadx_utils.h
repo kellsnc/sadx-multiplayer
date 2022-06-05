@@ -460,3 +460,13 @@ static inline void MissleDraw(taskwk* twp, enemywk* ewp)
 		add esp, 4
 	}
 }
+
+static const void* const checkSkyEVColliPtr = (void*)0x5F5900;
+static inline void checkSkyEVColli(taskwk* twp)
+{
+	__asm
+	{
+		mov esi, [twp]
+		call checkSkyEVColliPtr
+	}
+}
