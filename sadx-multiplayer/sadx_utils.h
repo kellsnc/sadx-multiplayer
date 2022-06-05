@@ -456,7 +456,7 @@ static inline void MissleDraw(taskwk* twp, enemywk* ewp)
 	{
 		push ewp
 		mov esi, [twp]
-		call AirDrawPtr
+		call MissleDrawPtr
 		add esp, 4
 	}
 }
