@@ -4,6 +4,179 @@
 
 MAKEVARMULTI(int, inwind_timer, 0x3C80620);
 MAKEVARMULTI(BOOL, windshadow, 0x3C80618);
+MAKEVARMULTI(uint32_t, EC_mode, 0x3C80608);
+
+static void __cdecl ObjectSkydeck_Wall_r(task* tp);
+static void __cdecl RdSkydeckWind_r(__int16 act);
+static void __cdecl Skydeck_EggcarrierCtrl_r(__int16 act);
+
+Trampoline ObjectSkydeck_Wall_t(0x5EF2B0, 0x5EF2B5, ObjectSkydeck_Wall_r);
+Trampoline RdSkydeckWind_t(0x5EF300, 0x5EF309, RdSkydeckWind_r);
+Trampoline Skydeck_EggcarrierCtrl_t(0x5ECA80, 0x5ECA87, Skydeck_EggcarrierCtrl_r);
+
+static void Skydeck_EggcarrierCtrl_m(__int16 act)
+{
+	//SetFreeCameraMode(0);
+
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto ptwp = playertwp[i];
+
+		if (!ptwp)
+			continue;
+
+		auto ppwp = playerpwp[i];
+		auto posx = ptwp->pos.x;
+
+		if (posx < -1600.0f && !(ppwp->item & Powerups_Dead))
+		{
+			KillHimByFallingDownP(i);
+		}
+
+		if (CurrentCharacter != Characters_Sonic)
+		{
+			continue;
+		}
+
+		// Skip mode checks if the button is pressed
+		if (GetSwitchOnOff(0))
+		{
+			continue;
+		}
+
+		auto& EC_mode = *EC_mode_m[i];
+
+		// Manage mode for current player
+		switch (EC_mode)
+		{
+		case 0:
+			if (posx > -500.0f)
+			{
+				EC_mode = 1;
+			}
+			break;
+		case 1:
+			if (posx < -500.0f)
+			{
+				EC_mode = 0;
+			}
+			if (posx > -200.0f)
+			{
+				EC_mode = 3;
+			}
+			if (SkyDeck_SkyRotationX >= 3640 && SkyDeck_SkyRotationX < 0x8000)
+			{
+				EC_mode = 2;
+			}
+			break;
+		case 2:
+			if (posx < -500.0f)
+			{
+				EC_mode = 0;
+			}
+			if (posx > -200.0f)
+			{
+				EC_mode = 3;
+			}
+			if (SkyDeck_SkyRotationX > 0x8000 && SkyDeck_SkyRotationX <= 0xF1C7)
+			{
+				EC_mode = 1;
+			}
+			break;
+		case 3:
+			if (posx < -200.0f)
+			{
+				EC_mode = 1;
+			}
+			if (posx > 225.0f)
+			{
+				EC_mode = 4;
+			}
+			break;
+		case 4:
+			if (posx < -500.0f)
+			{
+				EC_mode = 3;
+			}
+			break;
+		default:
+			EC_mode = 0;
+			break;
+		}
+	}
+
+	if (GetSwitchOnOff(0))
+	{
+		// Force gravity when button is pressed
+		cloud_pitch = AdjustAngle(cloud_pitch, 0, 64);
+		cloud_roll = AdjustAngle(cloud_roll, 0, 64);
+		
+		// Turn off the button if all players pass the check
+		bool turnoff = true;
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			auto ptwp = playertwp[i];
+			if (ptwp && ptwp->pos.x < 225.0f && ptwp->pos.y > -25.0f)
+			{
+				turnoff = false;
+			}
+		}
+
+		if (turnoff)
+		{
+			SetSwitchOnOff(0, 0);
+		}
+	}
+	else
+	{
+		// Get highest mode
+		int target_mode = 0;
+		for (auto& i : EC_mode_m)
+		{
+			if (*i > target_mode)
+				target_mode = *i;
+		}
+
+		// Turn ship:
+		switch (target_mode)
+		{
+		case 0:
+			cloud_roll = AdjustAngle(cloud_roll, 61895, 16);
+			cloud_pitch = AdjustAngle(cloud_pitch, 0, 16);
+			break;
+		case 1:
+			cloud_roll = AdjustAngle(cloud_roll, 3640, 16);
+			cloud_pitch = AdjustAngle(cloud_pitch, 0, 16);
+			break;
+		case 2:
+			cloud_roll = AdjustAngle(cloud_roll, 61895, 16);
+			cloud_pitch = AdjustAngle(cloud_pitch, 0, 16);
+			break;
+		case 3:
+			cloud_roll = AdjustAngle(cloud_roll, 0, 16);
+			cloud_pitch = AdjustAngle(cloud_pitch, 0, 16);
+			break;
+		case 4:
+			cloud_roll = AdjustAngle(cloud_roll, 0, 16);
+			cloud_pitch = AdjustAngle(cloud_pitch, 49334, 64);
+			break;
+		}
+	}
+
+	SetUserGravityXZ(cloud_roll, cloud_pitch);
+}
+
+static void __cdecl Skydeck_EggcarrierCtrl_r(__int16 act)
+{
+	if (multiplayer::IsActive() && act == 2)
+	{
+		Skydeck_EggcarrierCtrl_m(act);
+	}
+	else
+	{
+		TARGET_STATIC(RdSkydeckWind)(act);
+	}
+}
 
 static void RdSkydeckWind_m(__int16 act)
 {
@@ -92,8 +265,6 @@ static void RdSkydeckWind_m(__int16 act)
 	}
 }
 
-static void __cdecl RdSkydeckWind_r(__int16 act);
-Trampoline RdSkydeckWind_t(0x5EF300, 0x5EF309, RdSkydeckWind_r);
 static void __cdecl RdSkydeckWind_r(__int16 act)
 {
 	if (multiplayer::IsActive())
@@ -106,8 +277,6 @@ static void __cdecl RdSkydeckWind_r(__int16 act)
 	}
 }
 
-static void __cdecl ObjectSkydeck_Wall_r(task* tp);
-Trampoline ObjectSkydeck_Wall_t(0x5EF2B0, 0x5EF2B5, ObjectSkydeck_Wall_r);
 static void __cdecl ObjectSkydeck_Wall_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == 1)
