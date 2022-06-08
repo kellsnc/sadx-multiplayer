@@ -218,6 +218,9 @@
     <ClCompile Include="objects\o_casino_fanfan.cpp" />
     <ClCompile Include="objects\o_casino_hasigo.cpp" />
     <ClCompile Include="objects\o_finalegg_conveyorbelt.cpp" />
+    <ClCompile Include="objects\o_finalegg_spintube_big.cpp" />
+    <ClCompile Include="objects\o_finalegg_spintube_medium.cpp" />
+    <ClCompile Include="objects\o_finalegg_spintube_small.cpp" />
     <ClCompile Include="objects\o_hebigate.cpp" />
     <ClCompile Include="objects\o_rockroll.cpp" />
     <ClCompile Include="objects\o_ruin_mirror.cpp" />
