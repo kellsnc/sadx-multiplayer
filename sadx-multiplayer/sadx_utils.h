@@ -309,6 +309,7 @@ TaskFunc(ObjectSkydeck_crane_hang_Draw, 0x5F2F50);
 DataPointer(Angle, cloud_roll, 0x3C7F05C);
 DataPointer(Angle, cloud_pitch, 0x3C7F028);
 FunctionPointer(void, SetUserGravityXZ, (int ang, int angz), 0x43B4C0);
+DataPointer(NJS_OBJECT, object_cl_uki_cl_uki, 0x1A29EEC);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
