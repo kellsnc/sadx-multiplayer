@@ -145,6 +145,7 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
     <ClCompile Include="emeraldhunt.cpp" />
+    <ClCompile Include="e_robo.cpp" />
     <ClCompile Include="fishing.cpp" />
     <ClCompile Include="fog.cpp" />
     <ClCompile Include="forcewk.cpp" />

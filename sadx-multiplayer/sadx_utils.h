@@ -312,6 +312,7 @@ FunctionPointer(void, SetUserGravityXZ, (int ang, int angz), 0x43B4C0);
 DataPointer(NJS_OBJECT, object_cl_uki_cl_uki, 0x1A29EEC);
 DataPointer(NJS_OBJECT, object_mdlelv1_cl_elvtr_cl_elvtr, 0x1A3D74C);
 DataPointer(NJS_ACTION, action_fun_funflot, 0x1A3037C);
+FunctionPointer(int, PCheckJump, (taskwk* twp), 0x43BF40);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -475,5 +476,49 @@ static inline void checkSkyEVColli(taskwk* twp)
 	{
 		mov esi, [twp]
 		call checkSkyEVColliPtr
+	}
+}
+
+static const void* const RoboDrawPtr = (void*)0x4A4B30;
+static inline void RoboDraw(taskwk* twp, enemywk* ewp)
+{
+	__asm
+	{
+		mov esi, [ewp]
+		mov edi, [twp]
+		call RoboDrawPtr
+	}
+}
+
+static const void* const RoboHeadDrawPtr = (void*)0x4A4110;
+static inline void RoboHeadDraw(taskwk* twp, enemywk* ewp)
+{
+	__asm
+	{
+		push ewp
+		mov eax, [twp]
+		call RoboHeadDrawPtr
+		add esp, 4
+	}
+}
+
+static const void* const RoboHeadUpPtr = (void*)0x4A4490;
+static inline void RoboHeadUp(taskwk* twp, enemywk* ewp)
+{
+	__asm
+	{
+		mov edi, [ewp]
+		mov esi, [twp]
+		call RoboHeadUpPtr
+	}
+}
+
+static const void* const RoboHeadCaptureBeamPtr = (void*)0x4A43A0;
+static inline BOOL RoboHeadCaptureBeam(task* tp)
+{
+	__asm
+	{
+		mov eax, [tp]
+		call RoboHeadCaptureBeamPtr
 	}
 }
