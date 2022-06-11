@@ -311,6 +311,7 @@ DataPointer(Angle, cloud_pitch, 0x3C7F028);
 FunctionPointer(void, SetUserGravityXZ, (int ang, int angz), 0x43B4C0);
 DataPointer(NJS_OBJECT, object_cl_uki_cl_uki, 0x1A29EEC);
 DataPointer(NJS_OBJECT, object_mdlelv1_cl_elvtr_cl_elvtr, 0x1A3D74C);
+DataPointer(NJS_ACTION, action_fun_funflot, 0x1A3037C);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
