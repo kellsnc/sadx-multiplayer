@@ -36,6 +36,7 @@ static void Open_m(taskwk* twp) // inlined symbols
 	{
 		twp->mode = twp->smode != MODE_END ? MODE_WAIT : MODE_END;
 		twp->scl.x = 0.06f;
+		PadReadOn();
 	}
 }
 
