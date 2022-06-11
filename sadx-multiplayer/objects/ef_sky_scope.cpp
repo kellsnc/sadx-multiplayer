@@ -20,8 +20,8 @@ static void  EffectSkyScope_m(task* tp)
                 
                 if (ptwp && ppwp)
                 {
-                    twp->pos.x = (playertwp[pnum]->pos.x - twp->pos.x) * 0.25 + twp->pos.x;
-                    twp->pos.z = (playertwp[pnum]->pos.z - twp->pos.z) * 0.25 + twp->pos.z;
+                    twp->pos.x = (playertwp[pnum]->pos.x - twp->pos.x) * 0.25f + twp->pos.x;
+                    twp->pos.z = (playertwp[pnum]->pos.z - twp->pos.z) * 0.25f + twp->pos.z;
 
                     auto ppwp = playerpwp[pnum];
                     auto shadowpos = ppwp->shadow.y_bottom;;

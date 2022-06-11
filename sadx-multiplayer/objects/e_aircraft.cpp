@@ -105,7 +105,7 @@ static void __declspec(naked) MissleLockOn_w()
 static void __cdecl AirMissleDisp(task* tp)
 {
     auto twp = tp->twp;
-    if (twp->mode == 2 && !MissedFrames);
+    if (twp->mode == 2 && !MissedFrames)
         MissleDraw(twp, (enemywk*)tp->mwp);
 }
 

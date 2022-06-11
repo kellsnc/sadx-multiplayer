@@ -4,7 +4,7 @@
 
 MAKEVARMULTI(int, inwind_timer, 0x3C80620);
 MAKEVARMULTI(BOOL, windshadow, 0x3C80618);
-MAKEVARMULTI(uint32_t, EC_mode, 0x3C80608);
+MAKEVARMULTI(int, EC_mode, 0x3C80608);
 
 static void __cdecl ObjectSkydeck_Wall_r(task* tp);
 static void __cdecl RdSkydeckWind_r(__int16 act);
@@ -217,7 +217,7 @@ static void RdSkydeckWind_m(__int16 act)
 			}
 
 			pow_y = 0.0015f - 0.001f * v1;
-			pow_x = 0.005 - v1 * 0.005f;
+			pow_x = 0.005f - v1 * 0.005f;
 		}
 
 		if (ptwp->pos.z > -3100.0f)
