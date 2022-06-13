@@ -391,6 +391,9 @@
     <ClCompile Include="e_robo.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="network.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -527,6 +530,9 @@
     </ClInclude>
     <ClInclude Include="objects\e_cart.h">
       <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="network.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

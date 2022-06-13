@@ -20,6 +20,7 @@
 #include "forcewk.h"
 #include "gravity.h"
 #include "fog.h"
+#include "network.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -60,6 +61,7 @@ extern "C"
 
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
+		network.Poll();
 		UpdatePlayersInfo();
 	}
 

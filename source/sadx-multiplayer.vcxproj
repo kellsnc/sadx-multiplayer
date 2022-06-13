@@ -61,13 +61,14 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\sadx-mod-loader\SADXModLoader\include;$(SolutionDir)external\sadx-mod-loader\libmodutils;$(SolutionDir)external\sadx-mod-loader\mod-loader-common\ModLoaderCommon;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\sadx-mod-loader\SADXModLoader\include;$(SolutionDir)external\sadx-mod-loader\libmodutils;$(SolutionDir)external\sadx-mod-loader\mod-loader-common\ModLoaderCommon;$(SolutionDir)external\enet\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(ProgramFiles)\DirectX 8.1 SDK\lib\d3dx8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;winmm.lib;ws2_32.lib;enet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;$(SolutionDir)external\enet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -80,7 +81,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\sadx-mod-loader\SADXModLoader\include;$(SolutionDir)external\sadx-mod-loader\libmodutils;$(SolutionDir)external\sadx-mod-loader\mod-loader-common\ModLoaderCommon;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\sadx-mod-loader\SADXModLoader\include;$(SolutionDir)external\sadx-mod-loader\libmodutils;$(SolutionDir)external\sadx-mod-loader\mod-loader-common\ModLoaderCommon;$(SolutionDir)external\enet\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -88,7 +89,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(OutDir)libmodutils.lib;$(OutDir)ModLoaderCommon.lib;$(ProgramFiles)\DirectX 8.1 SDK\lib\d3dx8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;winmm.lib;ws2_32.lib;enet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -116,6 +119,7 @@
     <ClInclude Include="menu_multi.h" />
     <ClInclude Include="hud_multi.h" />
     <ClInclude Include="multiplayer.h" />
+    <ClInclude Include="network.h" />
     <ClInclude Include="objects\BigKaeru.h" />
     <ClInclude Include="objects\ef_spark.h" />
     <ClInclude Include="objects\EnemyHotE105.h" />
@@ -163,6 +167,7 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
+    <ClCompile Include="network.cpp" />
     <ClCompile Include="objects\BigKaeru.cpp" />
     <ClCompile Include="objects\BigTheCat.cpp" />
     <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp" />
