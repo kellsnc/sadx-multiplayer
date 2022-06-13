@@ -1,7 +1,10 @@
 #include "pch.h"
+#include <cstdlib>
+#include <cwchar>
 #include <ShellAPI.h>
 #include "multiplayer.h"
 #include "players.h"
+#include "network.h"
 
 static const std::unordered_map<std::wstring, multiplayer::mode> multi_mode_map = {
 	{ L"coop", multiplayer::mode::coop },
@@ -72,6 +75,20 @@ void TestSpawn()
 		if (!wcscmp(argv[i], L"-p4"))
 		{
 			SetCurrentCharacter(3, parse_character_id(argv[++i]));
+		}
+
+		if (!wcscmp(argv[i], L"--net"))
+		{
+			char ip[MAX_PATH];
+
+			WriteData<11>((void*)0x789D02, 0x90); // remove mutex
+			
+			if (!wcstombs_s(NULL, ip, MAX_PATH, argv[i + 2], wcslen(argv[i + 2])))
+			{
+				network.Create(!wcscmp(argv[i + 1], L"host") ? Network::Type::Server : Network::Type::Client, ip, _wtoi(argv[i + 3]));
+			}
+
+			i += 3;
 		}
 	}
 
