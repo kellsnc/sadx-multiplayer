@@ -70,10 +70,10 @@ extern "C"
 	//	
 	//}
 
-	//__declspec(dllexport) void __cdecl OnControl()
-	//{
-	//	
-	//}
+	__declspec(dllexport) void __cdecl OnControl()
+	{
+		network.PollInputs();
+	}
 
 	//__declspec(dllexport) void __cdecl OnRenderDeviceReset()
 	//{
@@ -95,10 +95,10 @@ extern "C"
 	//	
 	//}
 
-	//__declspec(dllexport) void __cdecl OnExit()
-	//{
-	//	
-	//}
+	__declspec(dllexport) void __cdecl OnExit()
+	{
+		network.Exit();
+	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };
 }

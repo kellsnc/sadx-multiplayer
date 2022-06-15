@@ -1,19 +1,166 @@
 #include "pch.h"
 #include "SADXFunctions.h"
+#include "players.h"
+#include "splitscreen.h"
 
 #define NETWORK_BUILD
 #include "network.h"
 
 #define PRINT(text, ...) PrintDebug("[Multi] " text "\n", __VA_ARGS__)
 
+struct GameData
+{
+	int8_t TimerMinutes, TimerSeconds, TimerFrames;
+	GameModes GameMode;
+	int16_t GameState;
+	int16_t Level;
+	int32_t Act;
+};
+
+struct PlayerData
+{
+	NJS_POINT3 Position;
+	Angle3 Angle;
+	int8_t Mode, SMode;
+	int16_t Timer, Flag, Equipement, Item;
+	NJS_POINT3 Speed;
+	int16_t Rings, Lives;
+	int32_t Score;
+	int32_t AnimID;
+	float AnimFrame;
+};
+
+struct InputData
+{
+	PolarCoord Analog;
+	ControllerData Controller;
+};
+
+static InputData netInputData[PLAYER_MAX];
+
+void Network::SendPacket(PACKET_CHANNEL channel, ENetPacket* packet)
+{
+	if (IsServer())
+	{
+		for (auto& peer : m_ConnectedPeers)
+		{
+			enet_peer_send(peer, channel, packet);
+		}
+	}
+	else
+	{
+		enet_peer_send(m_pPeer, channel, packet);
+	}
+}
+
+void Network::PollInputs()
+{
+	if (!IsConnected())
+	{
+		return;
+	}
+
+	if (PlayerNum > -1)
+	{
+		InputData data;
+		data.Analog = NormalizedAnalogs[PlayerNum];
+		data.Controller = Controllers[PlayerNum];
+		SendDataT(PACKET_INPUT, INPUT_CHANNEL, ENET_PACKET_FLAG_RELIABLE, data);
+	}
+	
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (i != PlayerNum)
+		{
+			auto& data = netInputData[i];
+			NormalizedAnalogs[i] = data.Analog;
+			Controllers[i] = data.Controller;
+		}
+	}
+}
+
+int Network::GetPlayer()
+{
+	return PlayerNum;
+}
+
+bool Network::IsConnected()
+{
+	return connected;
+}
+
 bool Network::IsServer()
 {
 	return m_Type == Type::Server;
 }
 
+void Network::ReadPacket(ENetPacket* packet)
+{
+	size_t position = 0;
+	PACKET_TYPE header;
+	PNUM pnum;
+
+	packet_read(packet, position, header);
+	packet_read(packet, position, pnum);
+
+	switch (header)
+	{
+	case PACKET_PNUM:
+		PlayerNum = pnum;
+		break;
+	case PACKET_INPUT:
+		packet_read(packet, position, netInputData[pnum].Analog);
+		packet_read(packet, position, netInputData[pnum].Controller);
+		break;
+	case PACKET_PLAYER:
+	{
+		auto twp = playertwp[pnum];
+		auto pwp = playerpwp[pnum];
+
+		if (twp && pwp)
+		{
+			PlayerData data;
+			packet_read(packet, position, data);
+
+			twp->pos = data.Position;
+			twp->ang = data.Angle;
+			twp->mode = data.Mode;
+			twp->smode = data.SMode;
+			twp->wtimer = data.Timer;
+			twp->flag = data.Flag;
+			pwp->equipment = data.Equipement;
+			pwp->item = data.Item;
+			pwp->spd = data.Speed;
+			pwp->mj.reqaction = pwp->mj.action = data.AnimID;
+			pwp->mj.nframe = data.AnimFrame;
+			SetNumRingM(pnum, data.Rings);
+			SetNumPlayerM(pnum, data.Lives);
+			SetEnemyScoreM(pnum, data.Score);
+		}
+		break;
+	}
+	case PACKET_GAME:
+	{
+		GameData data;
+		packet_read(packet, position, data);
+
+		if (pnum == 0)
+		{
+			TimeMinutes = data.TimerMinutes;
+			TimeSeconds = data.TimerSeconds;
+			TimeFrames = data.TimerFrames;
+		}
+
+		break;
+	}
+	}
+
+	enet_packet_destroy(packet);
+}
+
 void Network::Poll()
 {
-	if (!m_pHost)
+	if (!IsConnected())
 	{
 		return;
 	}
@@ -24,14 +171,66 @@ void Network::Poll()
 		switch (event.type)
 		{
 		case ENET_EVENT_TYPE_CONNECT:
+			if (IsServer())
+			{
+				m_ConnectedPeers.push_back(event.peer);
+				PNUM pnum = (m_ConnectedPeers.size());
+
+				auto packet = enet_packet_create(NULL, sizeof(PACKET_TYPE) + sizeof(PlayerNum), ENET_PACKET_FLAG_RELIABLE);
+				size_t position = 0;
+				packet_write(packet, position, PACKET_PNUM);
+				packet_write(packet, position, pnum);
+				enet_peer_send(event.peer, GLOBAL_CHANNEL, packet);
+			}
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
+			ReadPacket(event.packet);
 			break;
 		case ENET_EVENT_TYPE_DISCONNECT:
-			event.peer->data = NULL;
+			if (IsServer())
+			{
+				event.peer->data = NULL;
+			}
 			break;
 		}
 	}
+
+	if (GameTimer % 3 != 0 || PlayerNum < 0)
+	{
+		return;
+	}
+
+	auto twp = playertwp[PlayerNum];
+	auto pwp = playerpwp[PlayerNum];
+	if (twp && pwp)
+	{
+		PlayerData data;
+		data.Position = twp->pos;
+		data.Angle = twp->ang;
+		data.Mode = twp->mode;
+		data.SMode = twp->smode;
+		data.Flag = twp->flag;
+		data.Timer = twp->wtimer;
+		data.Equipement = pwp->equipment;
+		data.Item = pwp->item;
+		data.AnimFrame = pwp->mj.nframe;
+		data.AnimID = pwp->mj.jvmode == 2 ? pwp->mj.action : pwp->mj.reqaction;
+		data.Speed = pwp->spd;
+		data.Rings = GetNumRingM(PlayerNum);
+		data.Lives = GetNumPlayerM(PlayerNum);
+		data.Score = GetEnemyScoreM(PlayerNum);
+		SendDataT(PACKET_PLAYER, GLOBAL_CHANNEL, 0, data);
+	}
+
+	GameData data;
+	data.TimerMinutes = TimeMinutes;
+	data.TimerSeconds = TimeSeconds;
+	data.TimerFrames = TimeFrames;
+	data.GameMode = GameMode;
+	data.GameState = GameState;
+	data.Level = CurrentLevel;
+	data.Act = CurrentAct;
+	SendDataT(PACKET_GAME, GLOBAL_CHANNEL, 0, data);
 }
 
 bool Network::Create(Type type, const char* ip, unsigned __int16 port)
@@ -43,6 +242,7 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 	}
 
 	m_Type = type;
+	PlayerNum = -1;
 
 	m_Address.host = ENET_HOST_ANY;
 	m_Address.port = port;
@@ -58,7 +258,7 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 
 	if (type == Type::Server)
 	{
-		m_pHost = enet_host_create(&m_Address, 4, 2, 0, 0);
+		m_pHost = enet_host_create(&m_Address, PLAYER_MAX, MAX_CHANNEL, 0, 0);
 
 		if (m_pHost == nullptr)
 		{
@@ -67,11 +267,12 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 			return false;
 		}
 
+		PlayerNum = 0;
 		PRINT("Created server: %s:%d", ip == nullptr ? "localhost" : ip, port);
 	}
 	else
 	{
-		m_pHost = enet_host_create(NULL, 1, 2, 0, 0);
+		m_pHost = enet_host_create(NULL, 1, MAX_CHANNEL, 0, 0);
 
 		if (m_pHost == nullptr)
 		{
@@ -97,11 +298,12 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 		}
 		else
 		{
+			last_error = Error::ConnectionFailed;
 			return false;
 		}
 	}
 
-	return true;
+	return connected = true;
 }
 
 void Network::Exit()

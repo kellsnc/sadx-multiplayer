@@ -97,6 +97,16 @@ void AddEnemyScoreM(int pNum, int add)
     }
 }
 
+void SetEnemyScoreM(int pNum, int Number)
+{
+    score[pNum] = Number;
+
+    if (pNum == 0)
+    {
+        EnemyScore = score[0];
+    }
+}
+
 void __cdecl ResetNumPlayerM()
 {
     scNumPlayer = 4;
@@ -151,6 +161,16 @@ void AddNumPlayerM(int pNum, int Number)
     }
 }
 
+void SetNumPlayerM(int pNum, int Number)
+{
+    lives[pNum] = Number;
+
+    if (pNum == 0)
+    {
+        scNumPlayer = lives[0];
+    }
+}
+
 int GetNumRingM(int pNum)
 {
     if (multiplayer::IsBattleMode())
@@ -191,6 +211,16 @@ void AddNumRingM(int pNum, int add)
     else
     {
         AddNumRing(add);
+    }
+}
+
+void SetNumRingM(int pNum, int Number)
+{
+    rings[pNum] = Number;
+
+    if (pNum == 0)
+    {
+        ssNumRing = rings[0];
     }
 }
 

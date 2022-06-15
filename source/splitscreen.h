@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace SplitScreen
 {
 	struct ScreenRatio

@@ -81,7 +81,7 @@ void TestSpawn()
 		{
 			char ip[MAX_PATH];
 
-			WriteData<11>((void*)0x789D02, 0x90); // remove mutex
+			WriteData<2>(reinterpret_cast<void*>(0x00789D18), static_cast<uint8_t>(0x90));; // remove mutex
 			
 			if (!wcstombs_s(NULL, ip, MAX_PATH, argv[i + 2], wcslen(argv[i + 2])))
 			{
