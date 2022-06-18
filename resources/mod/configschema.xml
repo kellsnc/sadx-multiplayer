@@ -9,5 +9,9 @@
         <HelpText>Toggle player position indicators.</HelpText>
       </Property>
     </Group>
+    <Group name="Networking">
+      <Property name="DefaultAddress" type="string" defaultvalue="localhost" display="Default Address" />
+      <Property name="DefaultPort" type="int" defaultvalue="27015" minvalue="0" maxvalue="65535" display="Default Port" />
+    </Group>
   </Groups>
 </ConfigSchema>
