@@ -31,15 +31,18 @@ public:
 	bool Create(Type type, const char* address, unsigned __int16 port);
 	void Exit();
 
-	int GetPlayer();
+	int GetPlayerCount();
+	int GetPlayerNum();
+	bool IsPlayerConnected(int pnum);
 	bool IsConnected();
 
 	Network();
 	~Network();
 
 private:
-	enum PACKET_TYPE : int8_t
+	enum PACKET_TYPE : uint8_t
 	{
+		PACKET_CUSTOM, // for mods, keep as 0
 		PACKET_PNUM,
 		PACKET_INPUT,
 		PACKET_PLAYER,
@@ -66,7 +69,12 @@ private:
 	Type m_Type	     = Type::Client;
 	bool connected   = false;
 	PNUM PlayerNum = -1;
+	PNUM PlayerCount = 0;
 
+	// Update the player id of each peer
+	void UpdatePeers();
+
+	// If the current client is the server as well
 	bool IsServer();
 
 #ifdef NETWORK_BUILD

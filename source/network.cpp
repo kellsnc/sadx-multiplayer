@@ -79,9 +79,19 @@ void Network::PollInputs()
 	}
 }
 
-int Network::GetPlayer()
+int Network::GetPlayerCount()
+{
+	return IsConnected() ? PlayerCount : 0;
+}
+
+int Network::GetPlayerNum()
 {
 	return PlayerNum;
+}
+
+bool Network::IsPlayerConnected(int pnum)
+{
+	return pnum < GetPlayerCount();
 }
 
 bool Network::IsConnected()
@@ -107,6 +117,7 @@ void Network::ReadPacket(ENetPacket* packet)
 	{
 	case PACKET_PNUM:
 		PlayerNum = pnum;
+		packet_read(packet, position, PlayerCount);
 		break;
 	case PACKET_INPUT:
 		packet_read(packet, position, netInputData[pnum].Analog);
@@ -158,6 +169,22 @@ void Network::ReadPacket(ENetPacket* packet)
 	enet_packet_destroy(packet);
 }
 
+void Network::UpdatePeers()
+{
+	PlayerCount = static_cast<PNUM>(m_ConnectedPeers.size() + 1);
+
+	for (size_t i = 0; i < m_ConnectedPeers.size(); ++i)
+	{
+		auto packet = enet_packet_create(NULL, sizeof(PACKET_TYPE) + sizeof(PNUM) + sizeof(PNUM), ENET_PACKET_FLAG_RELIABLE);
+		size_t position = 0;
+		packet_write(packet, position, PACKET_PNUM);
+		packet_write(packet, position, static_cast<PNUM>(i + 1));
+		packet_write(packet, position, PlayerCount);
+		enet_peer_send(m_ConnectedPeers[i], GLOBAL_CHANNEL, packet);
+		m_ConnectedPeers[i]->data = reinterpret_cast<void*>(i + 1);
+	}
+}
+
 void Network::Poll()
 {
 	if (!IsConnected())
@@ -174,13 +201,7 @@ void Network::Poll()
 			if (IsServer())
 			{
 				m_ConnectedPeers.push_back(event.peer);
-				PNUM pnum = (m_ConnectedPeers.size());
-
-				auto packet = enet_packet_create(NULL, sizeof(PACKET_TYPE) + sizeof(PlayerNum), ENET_PACKET_FLAG_RELIABLE);
-				size_t position = 0;
-				packet_write(packet, position, PACKET_PNUM);
-				packet_write(packet, position, pnum);
-				enet_peer_send(event.peer, GLOBAL_CHANNEL, packet);
+				UpdatePeers();
 			}
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
@@ -189,8 +210,14 @@ void Network::Poll()
 		case ENET_EVENT_TYPE_DISCONNECT:
 			if (IsServer())
 			{
+				m_ConnectedPeers.erase(std::remove(m_ConnectedPeers.begin(), m_ConnectedPeers.end(), event.peer), m_ConnectedPeers.end());
 				event.peer->data = NULL;
+				UpdatePeers();
 			}
+
+			PlayerNum = -1;
+			PlayerCount = 0;
+			connected = false;
 			break;
 		}
 	}
@@ -243,6 +270,7 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 
 	m_Type = type;
 	PlayerNum = -1;
+	PlayerCount = 0;
 
 	m_Address.host = ENET_HOST_ANY;
 	m_Address.port = port;
@@ -267,6 +295,7 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 			return false;
 		}
 
+		PlayerCount = 1;
 		PlayerNum = 0;
 		PRINT("Created server: %s:%d", ip == nullptr ? "localhost" : ip, port);
 	}
@@ -287,18 +316,22 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 		{
 			last_error = Error::NoPeerAvailable;
 			PRINT("No available peers for initializing an ENet connection");
+			Exit();
 			return false;
 		}
 
 		ENetEvent event;
 
-		if (enet_host_service(m_pHost, &event, 5000) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
+		if (enet_host_service(m_pHost, &event, 300) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
 		{
 			PRINT("Connected to %s:%d", ip == nullptr ? "localhost" : ip, port);
 		}
 		else
 		{
+			enet_peer_reset(m_pPeer);
+			m_pPeer = nullptr;
 			last_error = Error::ConnectionFailed;
+			Exit();
 			return false;
 		}
 	}
@@ -308,11 +341,58 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 
 void Network::Exit()
 {
+	if (!IsServer())
+	{
+		if (m_pPeer)
+		{
+			ENetEvent event;
+			enet_peer_disconnect(m_pPeer, 0);
+
+			bool succeeded = false;
+
+			while (!succeeded && enet_host_service(m_pHost, &event, 1000) > 0)
+			{
+				switch (event.type)
+				{
+				case ENET_EVENT_TYPE_RECEIVE:
+					enet_packet_destroy(event.packet);
+					break;
+				case ENET_EVENT_TYPE_DISCONNECT:
+					succeeded = true;
+					PRINT("Disconnection succeeded.");
+					break;
+				}
+			}
+
+			if (!succeeded)
+			{
+				enet_peer_reset(m_pPeer);
+			}
+
+			m_pPeer = nullptr;
+		}
+	}
+	else
+	{
+		// Disconnected all connected peers
+		for (auto& p : m_ConnectedPeers)
+		{
+			enet_peer_disconnect(p, 0);
+			enet_host_flush(p->host);
+		}
+
+		m_ConnectedPeers.clear();
+	}
+
 	if (m_pHost)
 	{
 		enet_host_destroy(m_pHost);
 		m_pHost = nullptr;
 	}
+
+	PlayerNum = -1;
+	PlayerCount = 0;
+	connected = false;
 }
 
 Network::Network()
