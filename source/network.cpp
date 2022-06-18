@@ -42,10 +42,7 @@ void Network::SendPacket(PACKET_CHANNEL channel, ENetPacket* packet)
 {
 	if (IsServer())
 	{
-		for (auto& peer : m_ConnectedPeers)
-		{
-			enet_peer_send(peer, channel, packet);
-		}
+		enet_host_broadcast(m_pHost, channel, packet);
 	}
 	else
 	{
@@ -74,7 +71,7 @@ void Network::PollInputs()
 		{
 			auto& data = netInputData[i];
 			NormalizedAnalogs[i] = data.Analog;
-			Controllers[i] = data.Controller;
+			*ControllerPointers[i] = data.Controller;
 		}
 	}
 }

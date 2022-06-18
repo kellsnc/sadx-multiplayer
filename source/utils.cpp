@@ -11,16 +11,6 @@ void DrawSADXText(const char* text, __int16 y)
 	MSG_LoadTexture(&jimakumsgc);
 }
 
-int MenuSelectButtonsPressedM(int pnum)
-{
-	return PressedButtons[pnum] & (Buttons_Start | Buttons_A);
-}
-
-int MenuBackButtonsPressedM(int pnum)
-{
-	return PressedButtons[pnum] & (Buttons_X | Buttons_B);
-}
-
 short tolevelnum(short num)
 {
 	return num >> 8;

@@ -21,7 +21,6 @@ General patches to allow compatibility for 4+ players
 Trampoline* PGetRotation_t                 = nullptr;
 Trampoline* PGetAcceleration_t             = nullptr;
 Trampoline* PGetAccelerationSnowBoard_t    = nullptr;
-Trampoline* GetPlayersInputData_t          = nullptr;
 Trampoline* PInitialize_t                  = nullptr;
 Trampoline* NpcMilesSet_t                  = nullptr;
 Trampoline* Ring_t                         = nullptr;
@@ -92,66 +91,6 @@ void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* 
 	}
 
 	TARGET_DYNAMIC(PGetAccelerationSnowBoard)(twp, mwp, pwp, Max_Speed);
-}
-
-// Patch analog forward calculation to use multiplayer cameras
-void __cdecl GetPlayersInputData_r()
-{
-	if (!SplitScreen::IsActive())
-	{
-		TARGET_DYNAMIC(GetPlayersInputData)();
-		return;
-	}
-
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		auto controller = per[i];
-		float lx = static_cast<float>(controller->x1 << 8); // left stick x
-		float ly = static_cast<float>(controller->y1 << 8); // left stick y
-
-		Angle ang;
-		float strk;
-
-		if (lx > 3072.0f || lx < -3072.0f || ly > 3072.0f || ly < -3072.0f)
-		{
-			lx = lx <= 3072.0f ? (lx >= -3072.0f ? 0.0f : lx + 3072.0f) : lx - 3072.0f;
-			ly = ly <= 3072.0f ? (ly >= -3072.0f ? 0.0f : ly + 3072.0f) : ly - 3072.0f;
-
-			auto cam_ang = GetCameraAngle(i);
-
-			if (cam_ang)
-			{
-				ang = -cam_ang->y - NJM_RAD_ANG(-atan2f(ly, lx));
-			}
-			else
-			{
-				ang = NJM_RAD_ANG(-atan2f(ly, lx));
-			}
-
-			double magnitude = ly * ly + lx * lx;
-			strk = static_cast<float>(sqrt(magnitude) * magnitude * 3.9187027e-14);
-			if (strk > 1.0f)
-			{
-				strk = 1.0f;
-			}
-		}
-		else
-		{
-			strk = 0.0f;
-			ang = 0;
-		}
-
-		input_data[i] = { ang, strk };
-
-		if (ucInputStatus == 1 && (i >= 4 || ucInputStatusForEachPlayer[i] == 1))
-		{
-			input_dataG[i] = input_data[i];
-		}
-		else
-		{
-			input_dataG[i] = { 0, 0.0f };
-		}
-	}
 }
 
 // Patch for other players to collect rings
@@ -792,36 +731,6 @@ void __cdecl SpinnaDisplayer_r(task* tp)
 	}
 }
 
-void PadReadOnP_r(int8_t pnum)
-{
-	if (pnum == -1)
-	{
-		for (size_t i = 0ui32; i < ucInputStatusForEachPlayer.size(); ++i)
-		{
-			ucInputStatusForEachPlayer[i] = TRUE;
-		}
-	}
-	else
-	{
-		ucInputStatusForEachPlayer[pnum] = TRUE;
-	}
-}
-
-void PadReadOffP_r(int8_t pnum)
-{
-	if (pnum < 0)
-	{
-		for (size_t i = 0ui32; i < ucInputStatusForEachPlayer.size(); ++i)
-		{
-			ucInputStatusForEachPlayer[i] = FALSE;
-		}
-	}
-	else
-	{
-		ucInputStatusForEachPlayer[pnum] = FALSE;
-	}
-}
-
 BOOL dsCheckViewV_r(NJS_POINT3* ft, float radius)
 {
 	if (multiplayer::IsActive())
@@ -876,7 +785,6 @@ void InitPatches()
 	PGetRotation_t                 = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
 	PGetAcceleration_t             = new Trampoline(0x44C270, 0x44C278, PGetAcceleration_r);
 	PGetAccelerationSnowBoard_t    = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
-	GetPlayersInputData_t          = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
 	Ring_t                         = new Trampoline(0x450370, 0x450375, Ring_r);
 	Tobitiri_t                     = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);
 	PlayerVacumedRing_t            = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
@@ -917,10 +825,6 @@ void InitPatches()
 	ObjectSpringB_t = new Trampoline(0x7A4E50, 0x7A4E55, ObjectSpringB_r);
 	WriteData((uint8_t*)0x7A4DC4, (uint8_t)PLAYER_MAX); // ObjectSpring
 	WriteData((uint8_t*)0x79F77C, (uint8_t)PLAYER_MAX); // spring_h_exec
-
-	// Fix controller toggles
-	WriteJump(PadReadOnP, PadReadOnP_r);
-	WriteJump(PadReadOffP, PadReadOffP_r);
 
 	// dsCheckViewV in exec functions
 	WriteCall((void*)0x4E138F, dsCheckViewV_r); // wv hane, bigfloot, saku...

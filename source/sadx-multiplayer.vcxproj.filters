@@ -394,6 +394,9 @@
     <ClCompile Include="network.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -532,6 +535,9 @@
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="network.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="input.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>

@@ -4,6 +4,7 @@
 #include "menu.h"
 #include "network.h"
 #include "config.h"
+#include "input.h"
 #include "menu_multi.h"
 
 enum AVA_MULTI_TEX
@@ -805,7 +806,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 	bool done = true;
 
 	// Return to main menu
-	if (MenuBackButtonsPressed())
+	if (MenuBackButtonsPressedM())
 	{
 		if (gNextMultiMode == multiplayer::mode::coop || chara_ready[0] == false)
 		{
@@ -818,7 +819,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 	for (int i = gNextMultiMode == multiplayer::mode::coop ? 1 : 0; i < PLAYER_MAX; ++i)
 	{
 		auto& sel = selected_characters[i];
-		auto press = PressedButtons[i];
+		auto press = GetPressedButtons(i);
 
 		if (player_ready[i] == false) // If player is not connected
 		{
@@ -1060,7 +1061,7 @@ void menu_multi_online_serverselect(MultiMenuWK* wk)
 			}
 			else
 			{
-				if (MenuSelectButtonsPressed())
+				if (MenuSelectButtonsPressedM(0))
 				{
 					CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
 					wk->T = 0.0f;
@@ -1072,14 +1073,14 @@ void menu_multi_online_serverselect(MultiMenuWK* wk)
 	else
 	{
 		// Return to main menu
-		if (MenuBackButtonsPressed())
+		if (MenuBackButtonsPressedM(0))
 		{
 			CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
 			wk->T = 0.0f;
 			wk->Stat = ADVA_STAT_FADEOUT;
 		}
 
-		if (MenuSelectButtonsPressed())
+		if (MenuSelectButtonsPressedM(0))
 		{
 			MSG_Close(&msgc_connect);
 			MSG_Open(&msgc_connect, 0, 200, 0, 0, 0xD0000020);
@@ -1092,7 +1093,7 @@ void menu_multi_online_serverselect(MultiMenuWK* wk)
 		}
 	}
 
-	auto button = PressedButtons[0];
+	auto button = GetPressedButtons(0);
 
 	if (button & Buttons_Down)
 	{
@@ -1152,7 +1153,7 @@ void menu_multi_online_hub(MultiMenuWK* wk)
 	}
 
 	// Return to main menu
-	if (MenuBackButtonsPressed())
+	if (MenuBackButtonsPressedM(0))
 	{
 		network.Exit();
 		gConnectMenuMode = ConnectMenuMode::Select;
@@ -1160,7 +1161,7 @@ void menu_multi_online_hub(MultiMenuWK* wk)
 	}
 
 	// If at least one player is there
-	if (MenuSelectButtonsPressed() && network.IsConnected() && network.GetPlayerCount() > 1)
+	if (MenuSelectButtonsPressedM() && network.IsConnected() && network.GetPlayerCount() > 1)
 	{
 		pcount = network.GetPlayerCount();
 		PlayMenuEnterSound();
@@ -1185,7 +1186,7 @@ void menu_multi_localcon(MultiMenuWK* wk)
 	pcount = 0;
 
 	// Return to main menu
-	if (MenuBackButtonsPressed() && player_ready[0] == false)
+	if (MenuBackButtonsPressedM(0) && player_ready[0] == false)
 	{
 		CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
 		wk->T = 0.0f;
@@ -1195,7 +1196,7 @@ void menu_multi_localcon(MultiMenuWK* wk)
 	// Manage input
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		auto press = PressedButtons[i];
+		auto press = GetPressedButtons(i);
 
 		if (player_ready[i] == false) // Character selection
 		{
@@ -1220,7 +1221,7 @@ void menu_multi_localcon(MultiMenuWK* wk)
 	}
 
 	// If everyone is ready and at least two players are there (including player 1)
-	if (MenuSelectButtonsPressed() && player_ready[0] == true && pcount > 1)
+	if (MenuSelectButtonsPressedM() && player_ready[0] == true && pcount > 1)
 	{
 		PlayMenuEnterSound();
 		menu_multi_change(wk, MD_MULTI_MODESEL);

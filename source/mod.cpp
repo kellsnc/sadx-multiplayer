@@ -21,6 +21,7 @@
 #include "gravity.h"
 #include "fog.h"
 #include "network.h"
+#include "input.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -33,6 +34,7 @@ extern "C"
 
 		InitSplitScreen();
 		InitCamera();
+		InitInputPatches();
 		InitPatches();
 		InitDeathPatches();
 		InitPlayerPatches();
@@ -54,46 +56,11 @@ extern "C"
 		InitFogPatches();
 	}
 
-	//__declspec(dllexport) void __cdecl OnInitEnd()
-	//{
-	//	
-	//}
-
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
 		network.Poll();
 		UpdatePlayersInfo();
 	}
-
-	//__declspec(dllexport) void __cdecl OnInput()
-	//{
-	//	
-	//}
-
-	__declspec(dllexport) void __cdecl OnControl()
-	{
-		network.PollInputs();
-	}
-
-	//__declspec(dllexport) void __cdecl OnRenderDeviceReset()
-	//{
-	//	
-	//}
-
-	//__declspec(dllexport) void __cdecl OnRenderDeviceLost()
-	//{
-	//	
-	//}
-
-	//__declspec(dllexport) void __cdecl OnRenderSceneStart()
-	//{
-	//	
-	//}
-
-	//__declspec(dllexport) void __cdecl OnRenderSceneEnd()
-	//{
-	//	
-	//}
 
 	__declspec(dllexport) void __cdecl OnExit()
 	{
