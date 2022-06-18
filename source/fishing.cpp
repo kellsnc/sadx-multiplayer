@@ -241,6 +241,11 @@ static void __cdecl dispFishingLure_r(task* tp)
 	}
 	else
 	{
+		if (!playertp[tp->twp->btimer])
+		{
+			return;
+		}
+
 		TARGET_DYNAMIC(dispFishingLure)(tp);
 	}
 }
@@ -1730,6 +1735,12 @@ static void __cdecl fishingLureCtrl_r(task* tp)
 	}
 	else
 	{
+		if (!playertp[tp->twp->btimer])
+		{
+			FreeTask(tp);
+			return;
+		}
+
 		TARGET_DYNAMIC(fishingLureCtrl)(tp);
 	}
 }
