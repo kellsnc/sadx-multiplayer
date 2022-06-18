@@ -38,15 +38,16 @@ struct InputData
 
 static InputData netInputData[PLAYER_MAX];
 
-void Network::SendPacket(PACKET_CHANNEL channel, ENetPacket* packet)
+bool Network::SendPacket(int channel, ENetPacket* packet)
 {
 	if (IsServer())
 	{
 		enet_host_broadcast(m_pHost, channel, packet);
+		return true;
 	}
 	else
 	{
-		enet_peer_send(m_pPeer, channel, packet);
+		return !enet_peer_send(m_pPeer, channel, packet);
 	}
 }
 
@@ -101,24 +102,23 @@ bool Network::IsServer()
 	return m_Type == Type::Server;
 }
 
-void Network::ReadPacket(ENetPacket* packet)
+void Network::ReadPacket(Packet& packet)
 {
 	size_t position = 0;
 	PACKET_TYPE header;
 	PNUM pnum;
 
-	packet_read(packet, position, header);
-	packet_read(packet, position, pnum);
+	packet >> header;
+	packet >> pnum;
 
 	switch (header)
 	{
 	case PACKET_PNUM:
 		PlayerNum = pnum;
-		packet_read(packet, position, PlayerCount);
+		packet >> PlayerCount;
 		break;
 	case PACKET_INPUT:
-		packet_read(packet, position, netInputData[pnum].Analog);
-		packet_read(packet, position, netInputData[pnum].Controller);
+		packet >> netInputData[pnum].Analog >> netInputData[pnum].Controller;
 		break;
 	case PACKET_PLAYER:
 	{
@@ -128,7 +128,7 @@ void Network::ReadPacket(ENetPacket* packet)
 		if (twp && pwp)
 		{
 			PlayerData data;
-			packet_read(packet, position, data);
+			packet >> data;
 
 			twp->pos = data.Position;
 			twp->ang = data.Angle;
@@ -150,7 +150,7 @@ void Network::ReadPacket(ENetPacket* packet)
 	case PACKET_GAME:
 	{
 		GameData data;
-		packet_read(packet, position, data);
+		packet >> data;
 
 		if (pnum == 0)
 		{
@@ -162,8 +162,6 @@ void Network::ReadPacket(ENetPacket* packet)
 		break;
 	}
 	}
-
-	enet_packet_destroy(packet);
 }
 
 void Network::UpdatePeers()
@@ -172,12 +170,9 @@ void Network::UpdatePeers()
 
 	for (size_t i = 0; i < m_ConnectedPeers.size(); ++i)
 	{
-		auto packet = enet_packet_create(NULL, sizeof(PACKET_TYPE) + sizeof(PNUM) + sizeof(PNUM), ENET_PACKET_FLAG_RELIABLE);
-		size_t position = 0;
-		packet_write(packet, position, PACKET_PNUM);
-		packet_write(packet, position, static_cast<PNUM>(i + 1));
-		packet_write(packet, position, PlayerCount);
-		enet_peer_send(m_ConnectedPeers[i], GLOBAL_CHANNEL, packet);
+		Packet pnum_packet = Packet(sizeof(PACKET_TYPE) + sizeof(PNUM) + sizeof(PNUM), true);
+		pnum_packet << PACKET_PNUM << static_cast<PNUM>(i + 1) << PlayerCount;
+		pnum_packet.Send(m_ConnectedPeers[i]);
 		m_ConnectedPeers[i]->data = reinterpret_cast<void*>(i + 1);
 	}
 }
@@ -202,8 +197,11 @@ void Network::Poll()
 			}
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
-			ReadPacket(event.packet);
-			break;
+			{
+				Packet packet = Packet(event.packet);
+				ReadPacket(packet);
+				break;
+			}
 		case ENET_EVENT_TYPE_DISCONNECT:
 			if (IsServer())
 			{

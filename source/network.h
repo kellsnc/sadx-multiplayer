@@ -5,6 +5,8 @@
 #include "enet/enet.h"
 #endif //NETWORK_BUILD
 
+#include "packet.h"
+
 class Network
 {
 public:
@@ -38,6 +40,10 @@ public:
 
 	Network();
 	~Network();
+
+#ifdef NETWORK_BUILD
+	bool SendPacket(int channel, ENetPacket* packet);
+#endif
 
 private:
 	enum PACKET_TYPE : uint8_t
@@ -78,53 +84,14 @@ private:
 	bool IsServer();
 
 #ifdef NETWORK_BUILD
-	void SendPacket(PACKET_CHANNEL channel, ENetPacket* packet);
-	void ReadPacket(ENetPacket*);
-
-	template <typename T>
-	bool packet_write(ENetPacket* packet, size_t& pos, const T& data)
-	{
-		auto end_pos = pos + sizeof(T);
-		if (end_pos <= packet->dataLength)
-		{
-			*(T*)(packet->data + pos) = data;
-			pos = end_pos;
-			return true;
-		}
-		return false;
-	}
-
-	template <typename T>
-	bool packet_read(ENetPacket* packet, size_t& pos, T& output)
-	{
-		auto end_pos = pos + sizeof(T);
-		if (end_pos <= packet->dataLength)
-		{
-			output = *(T*)(packet->data + pos);
-			pos = end_pos;
-			return true;
-		}
-		return false;
-	}
+	void ReadPacket(Packet&);
 
 	template <typename T>
 	bool SendDataT(PACKET_TYPE packet_type, PACKET_CHANNEL channel, enet_uint32 flag, T& data)
 	{
-		PacketHeader header = { packet_type, PlayerNum };
-
-		auto packet = enet_packet_create(NULL, sizeof(header) + sizeof(T), flag);
-
-		if (packet == NULL)
-		{
-			return false;
-		}
-
-		size_t position = 0;
-		if (!packet_write(packet, position, header)) return false;
-		if (!packet_write(packet, position, data)) return false;
-
-		SendPacket(channel, packet);
-		return true;
+		Packet packet = Packet(sizeof(packet_type) + sizeof(PlayerNum) + sizeof(T));
+		packet << packet_type << PlayerNum << data;
+		return packet.Send();
 	}
 
 	std::vector<ENetPeer*> m_ConnectedPeers;

@@ -391,11 +391,14 @@
     <ClCompile Include="e_robo.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="network.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="input.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="network.cpp">
+      <Filter>Source Files\networking</Filter>
+    </ClCompile>
+    <ClCompile Include="packet.cpp">
+      <Filter>Source Files\networking</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -534,11 +537,14 @@
     <ClInclude Include="objects\e_cart.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
-    <ClInclude Include="network.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
     <ClInclude Include="input.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="network.h">
+      <Filter>Header FIles\networking</Filter>
+    </ClInclude>
+    <ClInclude Include="packet.h">
+      <Filter>Header FIles\networking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -565,6 +571,12 @@
     </Filter>
     <Filter Include="Source Files\objects\figure">
       <UniqueIdentifier>{e38cc25c-b522-4b83-8bbb-f8b0ab72ed79}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\networking">
+      <UniqueIdentifier>{e3a1b93c-f944-426a-b922-707b7b85d8be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\networking">
+      <UniqueIdentifier>{fbedaab8-05f5-4755-8346-ba4688365961}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

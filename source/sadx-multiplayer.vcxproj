@@ -131,6 +131,7 @@
     <ClInclude Include="objects\ObjectItemBox.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
     <ClInclude Include="objects\SnowBoard.h" />
+    <ClInclude Include="packet.h" />
     <ClInclude Include="patches.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="players.h" />
@@ -266,6 +267,7 @@
     <ClCompile Include="objects\Sakana.cpp" />
     <ClCompile Include="objects\SnowBoard.cpp" />
     <ClCompile Include="objects\sonic.cpp" />
+    <ClCompile Include="packet.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
