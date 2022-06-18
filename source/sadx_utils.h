@@ -313,6 +313,10 @@ DataPointer(NJS_OBJECT, object_cl_uki_cl_uki, 0x1A29EEC);
 DataPointer(NJS_OBJECT, object_mdlelv1_cl_elvtr_cl_elvtr, 0x1A3D74C);
 DataPointer(NJS_ACTION, action_fun_funflot, 0x1A3037C);
 FunctionPointer(int, PCheckJump, (taskwk* twp), 0x43BF40);
+FunctionPointer(void, MSG_Open, (MSGC* msgc, int x, int y, int width, int height, unsigned int globalindex), 0x40E430);
+FunctionPointer(void, MSG_Disp, (MSGC* msgc), 0x40D490);
+FunctionPointer(void, MSG_Puts_, (MSGC* msgc, const char* str), 0x40E570);
+FunctionPointer(void, NH_MSG_Close, (MSGC* msgc), 0x40E2C0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

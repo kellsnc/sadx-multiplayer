@@ -1,5 +1,9 @@
 #include "pch.h"
 #include <utility>
+#include "SADXModLoader.h"
+#include "menu.h"
+#include "network.h"
+#include "config.h"
 #include "menu_multi.h"
 
 enum AVA_MULTI_TEX
@@ -24,6 +28,8 @@ enum AVA_MULTI_TEX
 	AVAMULTITEX_YES,
 	AVAMULTITEX_NO,
 	AVAMULTITEX_CONTINUE,
+	AVAMULTITEX_CONNECT,
+	AVAMULTITEX_HOST,
 	AVAMULTITEX_COOP,
 	AVAMULTITEX_BATTLE,
 	AVAMULTITEX_CURSORBG,
@@ -125,6 +131,19 @@ enum CharSelChara
 	CharSelChara_Gamma,
 	CharSelChara_Tikal,
 	CharSelChara_Eggman,
+};
+
+enum class ConnectMenuSelection
+{
+	AddressBar,
+	Client,
+	Host
+};
+
+enum class ConnectMenuMode
+{
+	Select,
+	Hub,
 };
 
 struct MultiMenuWK
@@ -419,6 +438,7 @@ const char* press_start_texts[] {
 	"Press start to join"
 };
 
+static constexpr size_t address_limit = 32;
 task* MultiMenuTp = nullptr;
 int stgacttexid = 0;
 int selected_characters[PLAYER_MAX];
@@ -429,7 +449,26 @@ bool enabled_characters[8];
 MD_MULTI saved_mode;
 MD_MULTI next_mode;
 int gNextDialogStat;
+ConnectMenuSelection gConnectSelection;
+ConnectMenuMode gConnectMenuMode;
 multiplayer::mode gNextMultiMode;
+std::string address_text;
+
+static MSGC msgc_address;
+static MSGC msgc_connect;
+
+static void FreeAddressText()
+{
+	MSG_Close(&msgc_address);
+}
+
+static void LoadAddressText()
+{
+	MSG_Open(&msgc_address, 0, 230, 0, 0, 0xD0000020);
+	MSG_Cls(&msgc_address);
+	MSG_Puts_(&msgc_address, address_text.c_str());
+	MSG_LoadTexture(&msgc_address);
+}
 
 void menu_multi_charsel_unready()
 {
@@ -526,12 +565,35 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	int nextdial = wk->SubMode < id ? 0 : gNextDialogStat;
 
 	CloseDialog();
+
+	auto previous = wk->SubMode;
+
 	wk->SubMode = id;
 
 	switch (id)
 	{
 	case MD_MULTI_CONNECT:
-		wk->SubMode = MD_MULTI_LOCALCON;
+		if (selected_multi_mode != 1)
+		{
+			wk->SubMode = MD_MULTI_LOCALCON;
+		}
+		else
+		{
+			wk->SubMode = MD_MULTI_ONLINECON;
+
+			if (previous != MD_MULTI_MODESEL)
+			{
+				gConnectSelection = ConnectMenuSelection::Client;
+				gConnectMenuMode = ConnectMenuMode::Select;
+				if (address_text.empty()) address_text = config::network::default_ip + ":" + std::to_string(config::network::default_port);
+				if (address_text.size() > address_limit)
+				{
+					address_text.resize(address_limit);
+				}
+				LoadAddressText();
+			}
+		}
+
 		menu_multi_unready();
 		saved_mode = wk->SubMode;
 		break;
@@ -929,6 +991,195 @@ void menu_multi_modesel(MultiMenuWK* wk)
 	}
 }
 
+void menu_multi_online_serverselect(MultiMenuWK* wk)
+{
+	if (gConnectSelection == ConnectMenuSelection::AddressBar)
+	{
+		if (!address_text.empty() && address_text.size() < address_limit)
+		{
+			bool modified = false;
+
+			if (KeyboardKeyPressed(42))
+			{
+				address_text.pop_back();
+				modified = true;
+			}
+
+			for (int i = 0; i < 9; ++i)
+			{
+				if (KeyboardKeyPressed(30 + i))
+				{
+					address_text += (char)(49 + i);
+					modified = true;
+				}
+			}
+
+			if (KeyboardKeyPressed(39))
+			{
+				address_text += '0';
+				modified = true;
+			}
+
+			for (int i = 0; i < 26; ++i)
+			{
+				if (KeyboardKeyPressed(4 + i))
+				{
+					address_text += (char)(97 + i);
+					modified = true;
+				}
+			}
+
+			if (KeyboardKeyPressed(51))
+			{
+				address_text += ':';
+				modified = true;
+			}
+
+			if (KeyboardKeyPressed(55))
+			{
+				address_text += '.';
+				modified = true;
+			}
+
+			if (KeyboardKeyPressed(45))
+			{
+				address_text += '-';
+				modified = true;
+			}
+
+			if (KeyboardKeyPressed(56))
+			{
+				address_text += '/';
+				modified = true;
+			}
+
+			if (modified)
+			{
+				FreeAddressText();
+				LoadAddressText();
+			}
+			else
+			{
+				if (MenuSelectButtonsPressed())
+				{
+					CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
+					wk->T = 0.0f;
+					wk->Stat = ADVA_STAT_FADEOUT;
+				}
+			}
+		}
+	}
+	else
+	{
+		// Return to main menu
+		if (MenuBackButtonsPressed())
+		{
+			CmnAdvaModeProcedure(ADVA_MODE_TITLE_MENU);
+			wk->T = 0.0f;
+			wk->Stat = ADVA_STAT_FADEOUT;
+		}
+
+		if (MenuSelectButtonsPressed())
+		{
+			MSG_Close(&msgc_connect);
+			MSG_Open(&msgc_connect, 0, 200, 0, 0, 0xD0000020);
+			MSG_Cls(&msgc_connect);
+			MSG_Puts_(&msgc_connect, gConnectSelection == ConnectMenuSelection::Host ? "Waiting for players..." : "Connecting to server...");
+			MSG_LoadTexture(&msgc_connect);
+
+			PlayMenuEnterSound();
+			gConnectMenuMode = ConnectMenuMode::Hub;
+		}
+	}
+
+	auto button = PressedButtons[0];
+
+	if (button & Buttons_Down)
+	{
+		gConnectSelection = ConnectMenuSelection::Client;
+		PlayMenuBipSound();
+	}
+	else if (button & Buttons_Up)
+	{
+		gConnectSelection = ConnectMenuSelection::AddressBar;
+		PlayMenuBipSound();
+	}
+	else if (button & Buttons_Left)
+	{
+		if (gConnectSelection == ConnectMenuSelection::Host)
+		{
+			gConnectSelection = ConnectMenuSelection::Client;
+			PlayMenuBipSound();
+		}
+	}
+	else if (button & Buttons_Right)
+	{
+		if (gConnectSelection == ConnectMenuSelection::Client)
+		{
+			gConnectSelection = ConnectMenuSelection::Host;
+			PlayMenuBipSound();
+		}
+	}
+}
+
+void menu_multi_online_hub(MultiMenuWK* wk)
+{
+	if (!network.IsConnected())
+	{
+		if (GameTimer % 60 == 0)
+		{
+			size_t s = address_text.find_last_of(':');
+			int port;
+			std::string ip;
+
+			if (s != std::string::npos)
+			{
+				ip = address_text.substr(0, s);
+				port = std::stoi(address_text.substr(s + 1));
+			}
+			else
+			{
+				port = 80;
+			}
+
+			network.Create(gConnectSelection == ConnectMenuSelection::Host ? Network::Type::Server : Network::Type::Client, ip.c_str(), port);
+		}
+	}
+
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		player_ready[i] = network.IsPlayerConnected(i);
+	}
+
+	// Return to main menu
+	if (MenuBackButtonsPressed())
+	{
+		network.Exit();
+		gConnectMenuMode = ConnectMenuMode::Select;
+		LoadAddressText();
+	}
+
+	// If at least one player is there
+	if (MenuSelectButtonsPressed() && network.IsConnected() && network.GetPlayerCount() > 1)
+	{
+		pcount = network.GetPlayerCount();
+		PlayMenuEnterSound();
+		menu_multi_change(wk, MD_MULTI_MODESEL);
+	}
+}
+
+void menu_multi_onlinecon(MultiMenuWK* wk)
+{
+	if (gConnectMenuMode == ConnectMenuMode::Select)
+	{
+		menu_multi_online_serverselect(wk);
+	}
+	else
+	{
+		menu_multi_online_hub(wk);
+	}
+}
+
 void menu_multi_localcon(MultiMenuWK* wk)
 {
 	pcount = 0;
@@ -983,6 +1234,9 @@ void menu_multi_subexec(MultiMenuWK* wk)
 	case MD_MULTI_LOCALCON:
 		menu_multi_localcon(wk);
 		break;
+	case MD_MULTI_ONLINECON:
+		menu_multi_onlinecon(wk);
+		break;
 	case MD_MULTI_CHARSEL:
 		menu_multi_charsel(wk);
 		break;
@@ -1027,7 +1281,7 @@ void menu_multi_subexec(MultiMenuWK* wk)
 
 void menu_multi_disp_controls(MultiMenuWK* wk)
 {
-	if (wk->SubMode != MD_MULTI_STGSEL_SPD && wk->SubMode > MD_MULTI_ONLINECON && wk->SubMode != MD_MULTI_STGASK && wk->Stat != ADVA_STAT_FADEOUT)
+	if (wk->SubMode != MD_MULTI_STGSEL_SPD && wk->SubMode >= MD_MULTI_ONLINECON && wk->SubMode != MD_MULTI_STGASK && wk->Stat != ADVA_STAT_FADEOUT)
 	{
 		if (wk->alphaControls < 1.0f) wk->alphaControls += 0.05f;
 	}
@@ -1127,22 +1381,6 @@ void menu_multi_disp_charsel(MultiMenuWK* wk)
 
 void menu_multi_disp_localcon(MultiMenuWK* wk)
 {
-	if (wk->SubMode == MD_MULTI_LOCALCON && wk->Stat != ADVA_STAT_FADEOUT)
-	{
-		if (wk->alphaConnect < 1.0f) wk->alphaConnect += 0.05f;
-	}
-	else
-	{
-		if (wk->alphaConnect > 0.0f) wk->alphaConnect -= 0.1f;
-	}
-
-	if (wk->alphaConnect <= 0.0f)
-	{
-		return;
-	}
-
-	wk->alphaConnect = min(1.0f, wk->alphaConnect);
-
 	// Draw window
 	ghSetPvrTexVertexColor(0x78002E67u, 0x78117BFFu, 0x78002E67u, 0x78117BFFu);
 	DrawShadowWindow(120.0f, 180.0f, wk->BaseZ - 6.0f, 400.0f, 180.0f);
@@ -1196,6 +1434,96 @@ void menu_multi_disp_localcon(MultiMenuWK* wk)
 	ghDrawPvrTexture(AVAMULTITEX_CONTINUE, 255.0f, 305.0f, wk->BaseZ + 300);
 }
 
+void menu_multi_disp_onlinecon(MultiMenuWK* wk)
+{
+	if (wk->alphaConnect <= 0.0f)
+	{
+		return;
+	}
+
+	ghSetPvrTexVertexColor(0x78002E67u, 0x78117BFFu, 0x78002E67u, 0x78117BFFu);
+	DrawShadowWindow(110.0f, 180.0f, wk->BaseZ - 6.0f, 420.0f, 180.0f);
+
+	SetMaterial(wk->alphaConnect, 1.0f, 1.0f, 1.0f);
+
+	if (gConnectMenuMode == ConnectMenuMode::Select)
+	{
+		DrawSquareC(0xFF303030u, 320.0f, 240.0f, wk->BaseZ + 100.0f, 1.480f, 0.551f);
+		if (gConnectSelection == ConnectMenuSelection::AddressBar) DrawDlgCsrSqr(0xFFu, 320.0f, 240.0f, wk->BaseZ + 200.0f, 1.480f, 0.551f);
+
+		MSG_Disp(&msgc_address);
+
+		const float buttons_pos[] = { 220.0f, 420.0f };
+		const float text_pos[] = { 155.0f, 355.0f };
+		const int texs[] = { AVAMULTITEX_CONNECT, AVAMULTITEX_HOST };
+		for (int i = 0; i < 2; ++i)
+		{
+			DrawSquareC(0xFF12B4FFu, buttons_pos[i], 300.0f, wk->BaseZ + 100.0f, 0.715f, 0.551f);
+
+			if ((int)gConnectSelection - 1 == i)
+			{
+				DrawDlgCsrSqr(0xFFu, buttons_pos[i], 300.0f, wk->BaseZ + 200.0f, 0.715f, 0.551f);
+				ghSetPvrTexMaterial(0xFFFFFFFFu);
+			}
+			else
+			{
+				ghSetPvrTexMaterial(0x90FFFFFFu);
+			}
+
+			njSetTexture(&AVA_MULTI_TEXLIST);
+			ghDrawPvrTexture(texs[i], text_pos[i], 285.0f, wk->BaseZ + 300.0f);
+		}
+	}
+	else
+	{
+		MSG_Disp(&msgc_connect);
+
+		AVA_MULTI_SPRITE.p.x = 220.0f;
+		AVA_MULTI_SPRITE.p.y = 260.0f;
+
+		for (int p = 0; p < PLAYER_MAX; ++p)
+		{
+			AVA_MULTI_SPRITE.p.x += 40.0f;
+
+			if (player_ready[p])
+			{
+				if (wk->Stat != ADVA_STAT_FADEOUT)
+				{
+					CursorColors[p].a = 0.75f + 0.25f * njSin(FrameCounter * 1000);
+				}
+				else
+				{
+					CursorColors[p].a = wk->alphaConnect;
+				}
+
+				___njSetConstantMaterial(&CursorColors[p]);
+			}
+			else
+			{
+				SetMaterial(min(0.75f, wk->alphaConnect), 0.75f, 0.75f, 0.75f);
+			}
+
+			njDrawSprite2D_ForcePriority(&AVA_MULTI_SPRITE, AVAMULTIANM_ICON, wk->BaseZ + 100.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+			SetMaterial(wk->alphaConnect, 1.0f, 1.0f, 1.0f);
+		}
+
+		if (player_ready[1] == true)
+		{
+			DrawSquareC(0xFF12B4FFu, 320.0f, 320.0f, wk->BaseZ + 100.0f, 0.715f, 0.551f);
+			DrawDlgCsrSqr(0xFFu, 320.0f, 320.0f, wk->BaseZ + 200.0f, 0.715f, 0.551f);
+			ghSetPvrTexMaterial(0xFFFFFFFFu);
+		}
+		else
+		{
+			DrawSquareC(0x9012B4FFu, 320.0f, 320.0f, wk->BaseZ + 100.0f, 0.695f, 0.531f);
+			ghSetPvrTexMaterial(0x90FFFFFFu);
+		}
+
+		njSetTexture(&AVA_MULTI_TEXLIST);
+		ghDrawPvrTexture(AVAMULTITEX_CONTINUE, 255.0f, 305.0f, wk->BaseZ + 300);
+	}
+}
+
 void __cdecl MultiMenuExec_Display(task* tp)
 {
 	auto wk = (MultiMenuWK*)tp->awp;
@@ -1214,9 +1542,32 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		njSetTexture(&AVA_MULTI_TEXLIST);
 		ghDrawPvrTexture(AVAMULTITEX_TITLE, 40.0f, 47.0f, wk->BaseZ - 18.0f);
 
-		// Draw local player connection
-		menu_multi_disp_localcon(wk);
+		// Menu alpha
+		if ((wk->SubMode == MD_MULTI_LOCALCON || wk->SubMode == MD_MULTI_ONLINECON) && wk->Stat != ADVA_STAT_FADEOUT)
+		{
+			if (wk->alphaConnect < 1.0f) wk->alphaConnect += 0.05f;
+		}
+		else
+		{
+			if (wk->alphaConnect > 0.0f) wk->alphaConnect -= 0.1f;
+		}
 
+		wk->alphaConnect = min(1.0f, wk->alphaConnect);
+
+		if (wk->alphaConnect > 0)
+		{
+			if (selected_multi_mode != 1)
+			{
+				// Draw local player connection
+				menu_multi_disp_localcon(wk);
+			}
+			else
+			{
+				// Draw distant player connection
+				menu_multi_disp_onlinecon(wk);
+			}
+		}
+		
 		// Draw charsel background and items
 		menu_multi_disp_charsel(wk);
 
@@ -1306,6 +1657,9 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
 
 			AvaReleaseTexForEachMode();
+
+			FreeAddressText();
+			MSG_Close(&msgc_connect);
 
 			// Force stage mode:
 			if (wk->SelStg >= 0)

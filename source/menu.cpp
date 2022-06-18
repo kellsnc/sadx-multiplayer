@@ -2,6 +2,7 @@
 #include "menu.h"
 #include "menu_multi.h"
 #include "splitscreen.h"
+#include "network.h"
 
 // Menu layout with minigames
 PanelPrmType PanelPrmTitleMenu1[]
@@ -63,10 +64,14 @@ bool AvaGetMultiEnable()
 
 void title_menu_sub_exec_r(TitleMenuWk* wkp)
 {
+	// Failsafe just in case
+	if (network.IsConnected())
+	{
+		network.Exit();
+	}
+
 	if (wkp->SubMode == TITLEMENU_SMD_STAY || wkp->SubMode == TITLEMENU_SMD_TO_MAINMENU)
 	{
-		selected_multi_mode = 0;
-
 		char csrp[9]{}; // disable items
 		int cnt = 0; // amount of disabled items
 
@@ -119,8 +124,6 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 			WriteData((int*)0x7EEB58, (int)ADVA_MODE_CHAR_SEL); // Restore changes made to force return to multi menu (failsafe)
 		}
 
-		char csrp[2]{ 1, -1 };
-
 		switch (stat)
 		{
 		case 0: // Adventure
@@ -129,7 +132,7 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 			TARGET_DYNAMIC(title_menu_sub_exec)(wkp); // first three items do not need adjusting so original is fine
 			break;
 		case 3: // Multiplayer (custom)
-			OpenDialogCsrLet(&MainMenuMultiDialog, selected_multi_mode, csrp);
+			OpenDialogCsrLet(&MainMenuMultiDialog, selected_multi_mode, nullptr);
 			wkp->SubMode = (TitleMenuSbMdEnum)7;
 			break;
 		case 4: // MiniGame
