@@ -4,6 +4,7 @@
 #include "milesrace.h"
 #include "hud_indicator.h"
 #include "players.h"
+#include "network.h"
 
 /*
 
@@ -427,8 +428,101 @@ void SetPlayerTargetable(taskwk* twp)
     }
 }
 
+static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+{
+    auto ptwp = playertwp[pnum];
+    auto pmwp = playermwp[pnum];
+    auto ppwp = playerpwp[pnum];
+
+    if (!ptwp || !ppwp || !pmwp)
+    {
+        return false;
+    }
+
+    switch (type)
+    {
+    case Network::PACKET_PLAYER_LOCATION:
+        packet >> ptwp->pos >> ptwp->ang >> ppwp->spd >> pmwp->spd >> ptwp->flag;
+        return true;
+    case Network::PACKET_PLAYER_MODE:
+        packet >> ptwp->mode;
+        return true;
+    case Network::PACKET_PLAYER_SMODE:
+        packet >> ptwp->smode;
+        ptwp->flag |= Status_DoNextAction;
+        return true;
+    case Network::PACKET_PLAYER_ANIM:
+        packet >> ppwp->mj.mtnmode >> (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) >> ppwp->mj.nframe;
+        return true;
+    default:
+        return false;
+    }
+}
+
+static bool PlayerSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+{
+    auto ptwp = playertwp[pnum];
+    auto ppwp = playerpwp[pnum];
+    auto pmwp = playermwp[pnum];
+
+    switch (type)
+    {
+    case Network::PACKET_PLAYER_LOCATION:
+        packet << ptwp->pos << ptwp->ang << ppwp->spd << pmwp->spd << ptwp->flag;
+        return true;
+    case Network::PACKET_PLAYER_MODE:
+        packet << ptwp->mode;
+        return true;
+    case Network::PACKET_PLAYER_SMODE:
+        packet << ptwp->smode;
+        return true;
+    case Network::PACKET_PLAYER_ANIM:
+        packet << ppwp->mj.mtnmode << (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) << ppwp->mj.nframe;
+        return true;
+    default:
+        return false;
+    }
+}
+
 void UpdatePlayersInfo()
 {
+    if (network.IsConnected())
+    {
+        auto pnum = network.GetPlayerNum();
+        auto ptwp = playertwp[pnum];
+        auto ppwp = playerpwp[pnum];
+
+        if (ptwp && ppwp)
+        {
+            if (GameTimer % 20 == 0)
+            {
+                network.Send(Network::PACKET_PLAYER_LOCATION, PlayerSender);
+                network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
+            }
+
+            static char last_action = 0;
+            if (last_action != ptwp->mode)
+            {
+                network.Send(Network::PACKET_PLAYER_MODE, PlayerSender);
+                last_action = ptwp->mode;
+            }
+
+            if (ptwp->flag & Status_DoNextAction)
+            {
+                network.Send(Network::PACKET_PLAYER_SMODE, PlayerSender);
+            }
+
+            static short last_mtnmode = 0;
+            static short last_mtnaction = 0;
+            if (last_mtnmode != ppwp->mj.mtnmode || last_mtnaction != (last_mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction))
+            {
+                network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
+                last_mtnaction = (last_mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction);
+                last_mtnmode = ppwp->mj.mtnmode;
+            }
+        }
+    }
+    
     rings[0] = ssNumRing;
     lives[0] = scNumPlayer;
     score[0] = EnemyScore;
@@ -538,4 +632,9 @@ void InitPlayerPatches()
 
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteJump(ResetNumRing, ResetNumRingM);
+
+    network.RegisterListener(Network::PACKET_PLAYER_LOCATION, PlayerListener);
+    network.RegisterListener(Network::PACKET_PLAYER_MODE, PlayerListener);
+    network.RegisterListener(Network::PACKET_PLAYER_SMODE, PlayerListener);
+    network.RegisterListener(Network::PACKET_PLAYER_ANIM, PlayerListener);
 }

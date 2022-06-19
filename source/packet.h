@@ -1,8 +1,6 @@
 #pragma once
 
-#ifdef NETWORK_BUILD
 #include "enet/enet.h"
-#endif //NETWORK_BUILD
 
 class Packet
 {
@@ -10,21 +8,20 @@ private:
 	size_t position = 0;
 	bool sent = false;
 	bool m_reliable = false;
-
-#ifdef NETWORK_BUILD
 	ENetPacket* m_packet = nullptr;
-#endif
 
 public:
 	Packet(size_t size, bool reliable = false);
+	Packet(ENetPacket* packet);
 	~Packet();
 
 	bool Send();
-
-#ifdef NETWORK_BUILD
-	Packet(ENetPacket* packet);
-
 	bool Send(ENetPeer* peer);
+
+	size_t size();
+
+	uint8_t* at(size_t);
+	uint8_t* operator[](size_t);
 
 	template<typename T>
 	Packet& operator<<(const T& data)
@@ -62,5 +59,4 @@ public:
 
 		return *this;
 	}
-#endif
 };

@@ -1,18 +1,6 @@
 #include "pch.h"
-
-#define NETWORK_BUILD
 #include "network.h"
 #include "packet.h"
-
-bool Packet::Send()
-{
-	return sent = network.SendPacket(m_reliable ? 1 : 0, m_packet);
-}
-
-bool Packet::Send(ENetPeer* peer)
-{
-	return sent = !enet_peer_send(peer, m_reliable ? 1 : 0, m_packet);
-}
 
 Packet::Packet(size_t size, bool reliable)
 {
@@ -31,4 +19,36 @@ Packet::~Packet()
 	{
 		enet_packet_destroy(m_packet);
 	}
+}
+
+bool Packet::Send()
+{
+	return sent = network.SendPacket(m_packet, m_reliable);
+}
+
+bool Packet::Send(ENetPeer* peer)
+{
+	return sent = network.SendPacket(peer, m_packet, m_reliable);
+}
+
+size_t Packet::size()
+{
+	return m_packet->dataLength;
+}
+
+uint8_t* Packet::at(size_t position)
+{
+	if (position < m_packet->dataLength)
+	{
+		return (BYTE*)(m_packet->data + position);
+	}
+	else
+	{
+		return nullptr;
+	}
+}
+
+uint8_t* Packet::operator[](size_t position)
+{
+	return at(position);
 }

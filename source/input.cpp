@@ -5,6 +5,12 @@
 #include "network.h"
 #include "camera.h"
 
+// Everything related to inputs
+// Networking part of the code originally by @michael-fadely
+
+static SONIC_INPUT net_analogs[PLAYER_MAX]{};
+static PDS_PERIPHERAL net_pers[PLAYER_MAX]{};
+
 Trampoline* GetPlayersInputData_t = nullptr;
 
 static void __cdecl PadReadOnP_r(int8_t pnum)
@@ -97,15 +103,6 @@ static void __cdecl GetPlayersInputData_r()
 	}
 }
 
-void InitInputPatches()
-{
-	GetPlayersInputData_t = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
-
-	// Patch controller toggles for 4 players
-	WriteJump(PadReadOnP, PadReadOnP_r);
-	WriteJump(PadReadOffP, PadReadOffP_r);
-}
-
 unsigned int GetPressedButtons(int pnum)
 {
 	return PressedButtons[pnum];
@@ -141,11 +138,117 @@ bool MenuBackButtonsPressedM()
 	return (GetPressedButtons() & (Buttons_X | Buttons_B));
 }
 
+static bool InputListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+{
+	switch (type)
+	{
+	case Network::PACKET_INPUT_BUTTONS:
+		packet >> net_pers[pnum].on;
+		return true;
+	case Network::PACKET_INPUT_STICK_X:
+		packet >> net_pers[pnum].x1 >> net_pers[pnum].x2;
+		return true;
+	case Network::PACKET_INPUT_STICK_Y:
+		packet >> net_pers[pnum].y1 >> net_pers[pnum].y2;
+		return true;
+	case Network::PACKET_INPUT_ANALOG:
+		packet >> net_analogs[pnum];
+		return true;
+	default:
+		return false;
+	}
+}
+
+static bool InputSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+{
+	switch (type)
+	{
+	case Network::PACKET_INPUT_BUTTONS:
+		packet << net_pers[pnum].on;
+		return true;
+	case Network::PACKET_INPUT_STICK_X:
+		packet << net_pers[pnum].x1 << net_pers[pnum].x2;
+		return true;
+	case Network::PACKET_INPUT_STICK_Y:
+		packet << net_pers[pnum].y1 << net_pers[pnum].y2;
+		return true;
+	case Network::PACKET_INPUT_ANALOG:
+		packet << net_analogs[pnum];
+		return true;
+	default:
+		return false;
+	}
+}
+
+void InitInputPatches()
+{
+	GetPlayersInputData_t = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
+
+	// Patch controller toggles for 4 players
+	WriteJump(PadReadOnP, PadReadOnP_r);
+	WriteJump(PadReadOffP, PadReadOffP_r);
+	
+	network.RegisterListener(Network::PACKET_INPUT_BUTTONS, InputListener);
+	network.RegisterListener(Network::PACKET_INPUT_STICK_X, InputListener);
+	network.RegisterListener(Network::PACKET_INPUT_STICK_Y, InputListener);
+	network.RegisterListener(Network::PACKET_INPUT_ANALOG, InputListener);
+}
+
 extern "C"
 {
 	__declspec(dllexport) void __cdecl OnInput()
 	{
-		network.PollInputs();
+		if (!network.IsConnected())
+			return;
+
+		// Update local/online controller data
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			auto local_per = per[i];
+			auto& net_per = net_pers[i];
+
+			if (i == network.GetPlayerNum())
+			{
+				if (local_per->press || local_per->release)
+				{
+					net_per.on = local_per->on;
+					network.Send(Network::PACKET_INPUT_BUTTONS, InputSender);
+				}
+
+				if (local_per->x1 != net_per.x1 || local_per->x2 != net_per.x2)
+				{
+					net_per.x1 = local_per->x1;
+					net_per.x2 = local_per->x2;
+					network.Send(Network::PACKET_INPUT_STICK_X, InputSender);
+				}
+
+				if (local_per->y1 != net_per.y1 || local_per->y2 != net_per.y2)
+				{
+					net_per.y1 = local_per->y1;
+					net_per.y2 = local_per->y2;
+					network.Send(Network::PACKET_INPUT_STICK_Y, InputSender);
+				}
+			}
+			else
+			{
+				local_per->x1 = net_per.x1;
+				local_per->x2 = net_per.x2;
+				local_per->y1 = net_per.y1;
+				local_per->y2 = net_per.y2;
+
+				local_per->on = net_per.on;
+				local_per->off = ~local_per->on;
+
+				const auto mask = local_per->on ^ net_per.old;
+				local_per->release = net_per.old & mask;
+				local_per->press = local_per->on & mask;
+
+				net_per.old = local_per->old = local_per->on;
+
+				local_per->l = local_per->on & Buttons_L ? UCHAR_MAX : 0;
+				local_per->r = local_per->on & Buttons_R ? UCHAR_MAX : 0;
+			}
+		}
 	}
 
 	__declspec(dllexport) void __cdecl OnControl()
@@ -155,11 +258,34 @@ extern "C"
 		{
 			if (CheckPadReadModeP(i))
 			{
-				Controllers[i] = *ControllerPointers[i];
+				perG[i] = *per[i];
 			}
 			else
 			{
-				Controllers[i] = {};
+				perG[i] = {};
+			}
+		}
+
+		// Update network analog data
+		if (network.IsConnected())
+		{
+			for (auto i = 0; i < PLAYER_MAX; i++)
+			{
+				auto& current = input_dataG[i];
+				auto& net_analog = net_analogs[i];
+
+				if (i == network.GetPlayerNum())
+				{
+					if (current.angle != net_analog.angle || std::abs(current.stroke - net_analog.stroke) >= std::numeric_limits<float>::epsilon())
+					{
+						net_analog = current;
+						network.Send(Network::PACKET_INPUT_ANALOG, InputSender);
+					}
+				}
+				else
+				{
+					input_dataG[i] = net_analog;
+				}
 			}
 		}
 	}

@@ -22,6 +22,7 @@
 #include "fog.h"
 #include "network.h"
 #include "input.h"
+#include "logic.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -32,6 +33,7 @@ extern "C"
 		gHelperFunctions = &helperFunctions;
 		config::read(path);
 
+		InitLogic();
 		InitSplitScreen();
 		InitCamera();
 		InitInputPatches();
@@ -54,12 +56,6 @@ extern "C"
 		InitForceWorkPatches();
 		InitGravityPatches();
 		InitFogPatches();
-	}
-
-	__declspec(dllexport) void __cdecl OnFrame()
-	{
-		network.Poll();
-		UpdatePlayersInfo();
 	}
 
 	__declspec(dllexport) void __cdecl OnExit()

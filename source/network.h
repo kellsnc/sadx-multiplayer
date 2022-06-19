@@ -1,10 +1,7 @@
 #pragma once
 
-#ifdef NETWORK_BUILD
 #include <vector>
 #include "enet/enet.h"
-#endif //NETWORK_BUILD
-
 #include "packet.h"
 
 class Network
@@ -27,43 +24,67 @@ public:
 		AlreadyRunning
 	};
 
-	void PollInputs();
+	enum PACKET_TYPE : uint8_t
+	{
+		PACKET_CUSTOM, // for mods, keep as 0
+		PACKET_PNUM,
 
+		PACKET_INPUT_BUTTONS,
+		PACKET_INPUT_STICK_X,
+		PACKET_INPUT_STICK_Y,
+		PACKET_INPUT_ANALOG,
+
+		PACKET_PLAYER_LOCATION,
+		PACKET_PLAYER_MODE,
+		PACKET_PLAYER_SMODE,
+		PACKET_PLAYER_ANIM,
+		PACKET_PLAYER_RINGS,
+		PACKET_PLAYER_SCORE,
+		PACKET_PLAYER_LIVES,
+
+		PACKET_LOGIC_TIMER,
+		PACKET_LOGIC_CLOCK,
+		PACKET_LOGIC_MODE
+	};
+
+	using PNUM = int8_t;
+	using PACKET_CALL = bool(*)(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum);
+
+	bool SendPacket(ENetPacket* packet, bool reliable);
+	bool SendPacket(ENetPeer* peer, ENetPacket* packet, bool reliable);
+
+	template<typename T>
+	bool Send(PACKET_TYPE type, const T& data, bool reliable = false)
+	{
+		Packet packet = Packet(sizeof(type) + sizeof(PlayerNum) + sizeof(T));
+		packet << type << PlayerNum << data;
+		return packet.Send();
+	}
+
+	bool Send(PACKET_TYPE type, PACKET_CALL cb, bool reliable = false);
+
+	void RegisterListener(PACKET_TYPE type, PACKET_CALL);
 	void Poll();
-	bool Create(Type type, const char* address, unsigned __int16 port);
-	void Exit();
 
 	int GetPlayerCount();
 	int GetPlayerNum();
 	bool IsPlayerConnected(int pnum);
 	bool IsConnected();
 
+	bool Create(Type type, const char* address, unsigned __int16 port);
+	void Exit();
+
 	Network();
 	~Network();
 
-#ifdef NETWORK_BUILD
-	bool SendPacket(int channel, ENetPacket* packet);
-#endif
-
 private:
-	enum PACKET_TYPE : uint8_t
+	enum PACKET_CHANNEL : enet_uint8
 	{
-		PACKET_CUSTOM, // for mods, keep as 0
-		PACKET_PNUM,
-		PACKET_INPUT,
-		PACKET_PLAYER,
-		PACKET_GAME
-	};
-
-	enum PACKET_CHANNEL
-	{
-		GLOBAL_CHANNEL,
-		INPUT_CHANNEL,
+		CHANNEL_RELIABLE,
+		CHANNEL_UNRELIABLE,
 
 		MAX_CHANNEL
 	};
-
-	using PNUM = int8_t;
 
 	struct PacketHeader
 	{
@@ -77,28 +98,16 @@ private:
 	PNUM PlayerNum = -1;
 	PNUM PlayerCount = 0;
 
-	// Update the player id of each peer
 	void UpdatePeers();
-
-	// If the current client is the server as well
 	bool IsServer();
-
-#ifdef NETWORK_BUILD
 	void ReadPacket(Packet&);
 
-	template <typename T>
-	bool SendDataT(PACKET_TYPE packet_type, PACKET_CHANNEL channel, enet_uint32 flag, T& data)
-	{
-		Packet packet = Packet(sizeof(packet_type) + sizeof(PlayerNum) + sizeof(T));
-		packet << packet_type << PlayerNum << data;
-		return packet.Send();
-	}
-
 	std::vector<ENetPeer*> m_ConnectedPeers;
+	std::vector<std::pair<PACKET_TYPE, PACKET_CALL>> listeners;
+
 	ENetAddress m_Address;
 	ENetHost* m_pHost = nullptr;
 	ENetPeer* m_pPeer = nullptr;
-#endif //NETWORK_BUILD
 };
 
 extern Network network;

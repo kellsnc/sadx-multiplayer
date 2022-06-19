@@ -400,6 +400,9 @@
     <ClCompile Include="packet.cpp">
       <Filter>Source Files\networking</Filter>
     </ClCompile>
+    <ClCompile Include="logic.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -545,6 +548,9 @@
     </ClInclude>
     <ClInclude Include="packet.h">
       <Filter>Header FIles\networking</Filter>
+    </ClInclude>
+    <ClInclude Include="logic.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

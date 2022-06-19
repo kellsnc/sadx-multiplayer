@@ -114,6 +114,7 @@
     <ClInclude Include="hud_result.h" />
     <ClInclude Include="input.h" />
     <ClInclude Include="levels.h" />
+    <ClInclude Include="logic.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="milesrace.h" />
     <ClInclude Include="mod.h" />
@@ -162,6 +163,7 @@
     <ClCompile Include="hud_itembox.cpp" />
     <ClCompile Include="hud_result.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="logic.cpp" />
     <ClCompile Include="milesrace.cpp" />
     <ClCompile Include="multiapi.cpp" />
     <ClCompile Include="levels.cpp" />
