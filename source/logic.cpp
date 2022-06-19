@@ -53,9 +53,12 @@ extern "C"
         {
             network.Poll();
 
-            network.Send(Network::PACKET_LOGIC_TIMER, LogicSender);
-            network.Send(Network::PACKET_LOGIC_CLOCK, LogicSender);
-            network.Send(Network::PACKET_LOGIC_MODE, LogicSender);
+            if (GameTimer % 20 == 0)
+            {
+                network.Send(Network::PACKET_LOGIC_TIMER, LogicSender);
+                network.Send(Network::PACKET_LOGIC_CLOCK, LogicSender);
+                network.Send(Network::PACKET_LOGIC_MODE, LogicSender);
+            }
         }
         
         UpdatePlayersInfo();
