@@ -41,6 +41,8 @@ MAKEVARMULTI(int8_t, EnemyScore, 0x3B0F104);
 
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
+static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack;
+
 TaskFuncPtr charfuncs[] = {
     SonicTheHedgehog,
     (TaskFuncPtr)Eggman_Main,
@@ -403,7 +405,7 @@ static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::P
     switch (type)
     {
     case Network::PACKET_PLAYER_LOCATION:
-        packet >> ptwp->pos >> ptwp->ang >> ppwp->spd >> pmwp->spd >> ptwp->flag;
+        packet >> ptwp->pos >> ptwp->ang >> ppwp->spd >> pmwp->spd;
         return true;
     case Network::PACKET_PLAYER_MODE:
         packet >> ptwp->mode;
@@ -412,6 +414,13 @@ static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::P
         packet >> ptwp->smode;
         ptwp->flag |= Status_DoNextAction;
         return true;
+    case Network::PACKET_PLAYER_FLAG:
+    {
+        short flag;
+        packet >> ptwp->pos >> ptwp->ang >> ppwp->spd >> pmwp->spd >> flag;
+        ptwp->flag = (ptwp->flag & ~FLAG_MASK) | (flag & FLAG_MASK);
+        return true;
+    }
     case Network::PACKET_PLAYER_ANIM:
         packet >> ppwp->mj.mtnmode >> (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) >> ppwp->mj.nframe;
         return true;
@@ -434,17 +443,20 @@ static bool PlayerSender(Packet& packet, Network::PACKET_TYPE type, Network::PNU
     auto ptwp = playertwp[pnum];
     auto ppwp = playerpwp[pnum];
     auto pmwp = playermwp[pnum];
-
+    
     switch (type)
     {
     case Network::PACKET_PLAYER_LOCATION:
-        packet << ptwp->pos << ptwp->ang << ppwp->spd << pmwp->spd << ptwp->flag;
+        packet << ptwp->pos << ptwp->ang << ppwp->spd << pmwp->spd;
         return true;
     case Network::PACKET_PLAYER_MODE:
         packet << ptwp->mode;
         return true;
     case Network::PACKET_PLAYER_SMODE:
         packet << ptwp->smode;
+        return true;
+    case Network::PACKET_PLAYER_FLAG:
+        packet << ptwp->pos << ptwp->ang << ppwp->spd << pmwp->spd << (short)(ptwp->flag & FLAG_MASK);
         return true;
     case Network::PACKET_PLAYER_ANIM:
         packet << ppwp->mj.mtnmode << (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) << ppwp->mj.nframe;
@@ -477,6 +489,7 @@ void UpdatePlayersInfo()
             {
                 network.Send(Network::PACKET_PLAYER_LOCATION, PlayerSender);
                 network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
+                network.Send(Network::PACKET_PLAYER_FLAG, PlayerSender);
             }
 
             static char last_action = 0;
@@ -632,6 +645,7 @@ void InitPlayerPatches()
     network.RegisterListener(Network::PACKET_PLAYER_LOCATION, PlayerListener);
     network.RegisterListener(Network::PACKET_PLAYER_MODE, PlayerListener);
     network.RegisterListener(Network::PACKET_PLAYER_SMODE, PlayerListener);
+    network.RegisterListener(Network::PACKET_PLAYER_FLAG, PlayerListener);
     network.RegisterListener(Network::PACKET_PLAYER_ANIM, PlayerListener);
 
     network.RegisterListener(Network::PACKET_PLAYER_RINGS, PlayerListener);
