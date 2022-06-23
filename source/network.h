@@ -21,7 +21,9 @@ public:
 		ClientCreationFailed,
 		NoPeerAvailable,
 		ConnectionFailed,
-		AlreadyRunning
+		AlreadyRunning,
+		TimedOut,
+		VersionMismatch
 	};
 
 	enum PACKET_TYPE : uint8_t
@@ -60,8 +62,9 @@ public:
 	}
 
 	bool Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player = -1, bool reliable = false);
-
 	void RegisterListener(PACKET_TYPE type, PACKET_CALL);
+
+	bool PollMessage(PACKET_TYPE, Packet& packet);
 	void Poll();
 
 	int GetPlayerCount();
@@ -90,10 +93,12 @@ private:
 		PNUM player_num; // of sender, or additional identifier
 	};
 
+	static constexpr int32_t Version = 1;
+
 	Error last_error = Error::None;
 	Type m_Type	     = Type::Client;
 	bool connected   = false;
-	PNUM PlayerNum = -1;
+	PNUM PlayerNum   = -1;
 	PNUM PlayerCount = 0;
 
 	void UpdatePeers();

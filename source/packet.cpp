@@ -24,7 +24,7 @@ Packet::Packet(ENetPacket* packet)
 	recipient = (address & 0x0F) - 1;
 }
 
-Packet::~Packet()
+void Packet::Destroy()
 {
 	if (m_packet && !sent)
 	{

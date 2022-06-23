@@ -72,13 +72,6 @@ void Network::ReadPacket(ENetEvent& event)
 	auto sender = packet.GetSender();
 	auto receiver = packet.GetReceiver();
 
-	if (header == PACKET_PNUM)
-	{
-		PlayerNum = receiver;
-		packet >> PlayerCount;
-		return;
-	}
-
 	// If we're the server, bounce packet to other peers
 	if (IsServer() && receiver != PlayerNum)
 	{
@@ -106,6 +99,7 @@ void Network::ReadPacket(ENetEvent& event)
 			{
 				if (i.second(packet, (PACKET_TYPE)header, sender))
 				{
+					packet.Destroy();
 					return;
 				}
 			}
@@ -120,10 +114,30 @@ void Network::UpdatePeers()
 	for (size_t i = 0; i < m_ConnectedPeers.size(); ++i)
 	{
 		Packet pnum_packet = Packet(PACKET_PNUM, static_cast<PNUM>(i + 1), true);
-		pnum_packet << PlayerCount;
+		pnum_packet << PlayerCount << Version;
 		pnum_packet.Send(m_ConnectedPeers[i]);
 		m_ConnectedPeers[i]->data = reinterpret_cast<void*>(i + 1);
 	}
+}
+
+bool Network::PollMessage(PACKET_TYPE type, Packet& packet)
+{
+	ENetEvent event;
+	while (enet_host_service(m_pHost, &event, 1) > 0)
+	{
+		if (event.type == ENET_EVENT_TYPE_RECEIVE)
+		{
+			auto packet_ = Packet(event.packet);
+			auto receiver = packet_.GetReceiver();
+
+			if (packet_.GetIndentifier() == type && (PlayerNum == -1 || receiver == -1 || receiver == PlayerNum))
+			{
+				packet = packet_;
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void Network::Poll()
@@ -204,6 +218,7 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 		PlayerCount = 1;
 		PlayerNum = 0;
 		PRINT("Created server: %s:%d", ip == nullptr ? "localhost" : ip, port);
+		return connected = true;
 	}
 	else
 	{
@@ -230,19 +245,41 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 
 		if (enet_host_service(m_pHost, &event, 300) > 0 && event.type == ENET_EVENT_TYPE_CONNECT)
 		{
-			PRINT("Connected to %s:%d", ip == nullptr ? "localhost" : ip, port);
+			for (int i = 0; i < 120; ++i)
+			{
+				Packet packet;
+				if (PollMessage(PACKET_PNUM, packet))
+				{
+					int32_t incomingver;
+					PlayerNum = packet.GetReceiver();
+					packet >> PlayerCount >> incomingver;
+					packet.Destroy();
+
+					if (incomingver != Version)
+					{
+						last_error = Error::VersionMismatch;
+						PRINT("Server/client version mismatch");
+						Exit();
+						return false;
+					}
+
+					PRINT("Connected to %s:%d", ip == nullptr ? "localhost" : ip, port);
+					return connected = true;
+				}
+			}
 		}
 		else
 		{
 			enet_peer_reset(m_pPeer);
 			m_pPeer = nullptr;
 			last_error = Error::ConnectionFailed;
-			Exit();
-			return false;
 		}
-	}
 
-	return connected = true;
+		last_error = Error::TimedOut;
+		PRINT("Timed out");
+		Exit();
+	}
+	return false;
 }
 
 void Network::Exit()

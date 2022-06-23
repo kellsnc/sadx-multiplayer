@@ -15,9 +15,11 @@ private:
 	uint8_t m_identifier;
 
 public:
+	Packet() {};
 	Packet(uint8_t identifier, int8_t to = -1, bool reliable = false);
 	Packet(ENetPacket* packet);
-	~Packet();
+	
+	void Destroy();
 
 	uint8_t GetIndentifier();
 	int8_t GetSender();
