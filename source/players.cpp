@@ -417,7 +417,7 @@ static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::P
     case Network::PACKET_PLAYER_FLAG:
     {
         short flag;
-        packet >> ptwp->pos >> ptwp->ang >> ppwp->spd >> pmwp->spd >> flag;
+        packet >> flag;
         ptwp->flag = (ptwp->flag & ~FLAG_MASK) | (flag & FLAG_MASK);
         return true;
     }
@@ -456,7 +456,7 @@ static bool PlayerSender(Packet& packet, Network::PACKET_TYPE type, Network::PNU
         packet << ptwp->smode;
         return true;
     case Network::PACKET_PLAYER_FLAG:
-        packet << ptwp->pos << ptwp->ang << ppwp->spd << pmwp->spd << (short)(ptwp->flag & FLAG_MASK);
+        packet << (short)(ptwp->flag & FLAG_MASK);
         return true;
     case Network::PACKET_PLAYER_ANIM:
         packet << ppwp->mj.mtnmode << (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) << ppwp->mj.nframe;
