@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "SADXFunctions.h"
-#include "players.h"
-#include "splitscreen.h"
 #include "network.h"
 
 // Networking system
@@ -9,34 +7,31 @@
 
 #define PRINT(text, ...) PrintDebug("[Multi] " text "\n", __VA_ARGS__)
 
-bool Network::SendPacket(ENetPacket* packet, bool reliable)
-{
-	auto channel = reliable ? CHANNEL_RELIABLE : CHANNEL_UNRELIABLE;
-	if (IsServer())
-	{
-		enet_host_broadcast(m_pHost, channel, packet);
-		return true;
-	}
-	else
-	{
-		return !enet_peer_send(m_pPeer, channel, packet);
-	}
-}
-
-bool Network::SendPacket(ENetPeer* peer, ENetPacket* packet, bool reliable)
-{
-	return !enet_peer_send(peer, reliable ? CHANNEL_RELIABLE : CHANNEL_UNRELIABLE, packet);
-}
-
-bool Network::Send(PACKET_TYPE type, PACKET_CALL cb, bool reliable)
+bool Network::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
 {
 	if (IsConnected())
 	{
-		Packet packet = Packet(sizeof(type) + sizeof(PlayerNum));
-		packet << type << PlayerNum;
+		Packet packet = Packet(type, player);
 		cb(packet, type, PlayerNum);
-		return packet.Send();
+
+		if (IsServer())
+		{
+			for (auto& p : m_ConnectedPeers)
+			{
+				auto peer_pnum = reinterpret_cast<int>(p->data);
+				if (player == -1 || player == peer_pnum)
+				{
+					packet.Send(p);
+				}
+			}
+			return true;
+		}
+		else
+		{
+			return packet.Send(m_pPeer);
+		}
 	}
+	return false;
 }
 
 void Network::RegisterListener(PACKET_TYPE type, PACKET_CALL cb)
@@ -69,29 +64,50 @@ bool Network::IsServer()
 	return m_Type == Type::Server;
 }
 
-void Network::ReadPacket(Packet& packet)
+void Network::ReadPacket(ENetEvent& event)
 {
-	size_t position = 0;
-	PACKET_TYPE header;
-	PNUM pnum;
+	Packet packet = Packet(event.packet);
 
-	packet >> header;
-	packet >> pnum;
+	auto header = packet.GetIndentifier();
+	auto sender = packet.GetSender();
+	auto receiver = packet.GetReceiver();
 
 	if (header == PACKET_PNUM)
 	{
-		PlayerNum = pnum;
+		PlayerNum = receiver;
 		packet >> PlayerCount;
 		return;
 	}
-	
-	for (auto& i : listeners)
+
+	// If we're the server, bounce packet to other peers
+	if (IsServer() && receiver != PlayerNum)
 	{
-		if (header == i.first)
+		for (auto& p : m_ConnectedPeers)
 		{
-			if (i.second(packet, header, pnum))
+			auto peer_pnum = reinterpret_cast<int>(p->data);
+
+			// Do not send back to sender
+			if (sender != peer_pnum)
 			{
-				return;
+				if (receiver == -1 || receiver == peer_pnum)
+				{
+					packet.Send(p);
+				}
+			}
+		}
+	}
+	
+	// Read packet if it's for us
+	if (receiver == -1 || receiver == PlayerNum)
+	{
+		for (auto& i : listeners)
+		{
+			if (header == i.first)
+			{
+				if (i.second(packet, (PACKET_TYPE)header, sender))
+				{
+					return;
+				}
 			}
 		}
 	}
@@ -103,8 +119,8 @@ void Network::UpdatePeers()
 
 	for (size_t i = 0; i < m_ConnectedPeers.size(); ++i)
 	{
-		Packet pnum_packet = Packet(sizeof(PACKET_TYPE) + sizeof(PNUM) + sizeof(PNUM), true);
-		pnum_packet << PACKET_PNUM << static_cast<PNUM>(i + 1) << PlayerCount;
+		Packet pnum_packet = Packet(PACKET_PNUM, static_cast<PNUM>(i + 1), true);
+		pnum_packet << PlayerCount;
 		pnum_packet.Send(m_ConnectedPeers[i]);
 		m_ConnectedPeers[i]->data = reinterpret_cast<void*>(i + 1);
 	}
@@ -131,8 +147,7 @@ void Network::Poll()
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
 			{
-				Packet packet = Packet(event.packet);
-				ReadPacket(packet);
+				ReadPacket(event);
 				break;
 			}
 		case ENET_EVENT_TYPE_DISCONNECT:

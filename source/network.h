@@ -50,9 +50,6 @@ public:
 	using PNUM = int8_t;
 	using PACKET_CALL = bool(*)(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum);
 
-	bool SendPacket(ENetPacket* packet, bool reliable);
-	bool SendPacket(ENetPeer* peer, ENetPacket* packet, bool reliable);
-
 	template<typename T>
 	bool Send(PACKET_TYPE type, const T& data, bool reliable = false)
 	{
@@ -61,7 +58,7 @@ public:
 		return packet.Send();
 	}
 
-	bool Send(PACKET_TYPE type, PACKET_CALL cb, bool reliable = false);
+	bool Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player = -1, bool reliable = false);
 
 	void RegisterListener(PACKET_TYPE type, PACKET_CALL);
 	void Poll();
@@ -100,7 +97,7 @@ private:
 
 	void UpdatePeers();
 	bool IsServer();
-	void ReadPacket(Packet&);
+	void ReadPacket(ENetEvent&);
 
 	std::vector<ENetPeer*> m_ConnectedPeers;
 	std::vector<std::pair<PACKET_TYPE, PACKET_CALL>> listeners;

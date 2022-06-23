@@ -10,12 +10,19 @@ private:
 	bool m_reliable = false;
 	ENetPacket* m_packet = nullptr;
 
+	int8_t sender;
+	int8_t recipient;
+	uint8_t m_identifier;
+
 public:
-	Packet(size_t size, bool reliable = false);
+	Packet(uint8_t identifier, int8_t to = -1, bool reliable = false);
 	Packet(ENetPacket* packet);
 	~Packet();
 
-	bool Send();
+	uint8_t GetIndentifier();
+	int8_t GetSender();
+	int8_t GetReceiver();
+
 	bool Send(ENetPeer* peer);
 
 	size_t size();
