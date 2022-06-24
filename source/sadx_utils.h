@@ -317,6 +317,7 @@ FunctionPointer(void, MSG_Open, (MSGC* msgc, int x, int y, int width, int height
 FunctionPointer(void, MSG_Disp, (MSGC* msgc), 0x40D490);
 FunctionPointer(void, MSG_Puts_, (MSGC* msgc, const char* str), 0x40E570);
 FunctionPointer(void, NH_MSG_Close, (MSGC* msgc), 0x40E2C0);
+DataPointer(int, bWake, 0x912DF0); // Timer toggle
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

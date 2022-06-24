@@ -143,6 +143,7 @@
     <ClInclude Include="sound.h" />
     <ClInclude Include="splitscreen.h" />
     <ClInclude Include="testspawn.h" />
+    <ClInclude Include="timer.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
@@ -282,6 +283,7 @@
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="splitscreen.cpp" />
     <ClCompile Include="testspawn.cpp" />
+    <ClCompile Include="timer.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

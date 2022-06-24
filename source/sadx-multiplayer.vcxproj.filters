@@ -403,6 +403,9 @@
     <ClCompile Include="logic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="timer.cpp">
+      <Filter>Source Files\networking</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -551,6 +554,9 @@
     </ClInclude>
     <ClInclude Include="logic.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="timer.h">
+      <Filter>Header FIles\networking</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

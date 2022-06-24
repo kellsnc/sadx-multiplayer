@@ -1,10 +1,11 @@
 #include "pch.h"
+#include "network.h"
+#include "timer.h"
 #include "multiplayer.h"
 #include "result.h"
 #include "milesrace.h"
 #include "hud_indicator.h"
 #include "players.h"
-#include "network.h"
 
 /*
 
@@ -15,6 +16,8 @@ Multiplayer manager
 - GameStates
 
 */
+
+static Timer update_timer(std::chrono::steady_clock::duration(std::chrono::milliseconds(100)));
 
 DataPointer(GM_START_POSANG*, paSonicIP_Ptr, 0x41491E);
 DataPointer(GM_START_POSANG*, paMilesIP_Ptr, 0x414925);
@@ -485,7 +488,7 @@ void UpdatePlayersInfo()
 
         if (ptwp && ppwp)
         {
-            if (GameTimer % 20 == 0)
+            if (update_timer.Finished())
             {
                 network.Send(Network::PACKET_PLAYER_LOCATION, PlayerSender);
                 network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
