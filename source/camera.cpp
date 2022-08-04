@@ -231,7 +231,7 @@ void RunMultiCamera(int num)
     }
     else
     {
-        cam->mode &= ~MODE_AUTHORIZED;
+        cam->mode &= ~MODE_TIMER;
     }
 
     if (cam->mode & MODE_UPDATE)
@@ -240,7 +240,7 @@ void RunMultiCamera(int num)
         vec.x = cam->pos.x - pltwp->pos.x;
         vec.y = cam->pos.y - pltwp->pos.y - 10.5f;
         vec.z = cam->pos.z - pltwp->pos.z;
-        float magnitude = fabsf(njScalor(&vec));
+        float magnitude = (float)abs((int)njScalor(&vec));
         njUnitVector(&vec);
         cam->wk._ang.y = NJM_RAD_ANG(atan2f(vec.x, vec.z));
         cam->wk._ang.x = NJM_RAD_ANG(-asinf(vec.y));
@@ -417,7 +417,7 @@ void RunMultiCamera(int num)
     vec.y = plmwp->spd.y;
     vec.z = plmwp->spd.z;
 
-    if (fabsf(vec.x) >= 1.0f)
+    if ((float)abs((int)vec.x) >= 1.0f)
     {
         vec.x *= 1.1f;
     }
@@ -428,14 +428,14 @@ void RunMultiCamera(int num)
 
     if (TASKWK_CHARID(pltwp) == Characters_Gamma && pltwp->mode == 31)
     {
-        float y = fabsf(vec.y);
+        float y = (float)abs((int)vec.y);
         if (y >= 2.0f && y <= 4.0f)
         {
             vec.y = 0.0f;
         }
     }
 
-    if (fabsf(vec.y) >= 1.0f)
+    if ((float)abs((int)vec.y) >= 1.0f)
     {
         vec.y *= 1.1f;
     }
@@ -444,7 +444,7 @@ void RunMultiCamera(int num)
         vec.y = 0.0f;
     }
 
-    if (fabsf(vec.z) >= 1.0f)
+    if ((float)abs((int)vec.z) >= 1.0f)
     {
         vec.z *= 1.1f;
     }
@@ -463,9 +463,9 @@ void RunMultiCamera(int num)
     vec.x = cam->wk.campos.x - pltwp->pos.x;
     vec.y = cam->wk.campos.y - pltwp->pos.y - 10.5f;
     vec.z = cam->wk.campos.z - pltwp->pos.z;
-    cam->wk.dist = fabsf(njScalor(&vec));
+    cam->wk.dist = (float)abs((int)njScalor(&vec));
 
-    if (cam->wk.dist <= cam->wk.dist2 + 1.0f) // added a 1.0 because it keeps being very slightly above dist2
+    if (cam->wk.dist <= cam->wk.dist2)
     {
         cam->wk.counter = 0;
     }
