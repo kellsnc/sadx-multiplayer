@@ -12,7 +12,12 @@ bool Network::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
 	if (IsConnected())
 	{
 		Packet packet = Packet(type, player);
-		cb(packet, type, PlayerNum);
+		
+		if (!cb(packet, type, PlayerNum))
+		{
+			packet.Destroy();
+			return false;
+		}
 
 		if (IsServer())
 		{
