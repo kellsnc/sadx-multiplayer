@@ -8,6 +8,51 @@ Trampoline* CheckRangeOutWithR_t   = nullptr;
 Trampoline* SDCheckRangeOutWithR_t = nullptr;
 Trampoline* LoadSetFile_t          = nullptr;
 
+// Function to get a specific SET task, used to sync object state for netplay
+task* GetSetTask(int set_id, const char* name)
+{
+	if (numStatusEntry < set_id)
+	{
+		return nullptr;
+	}
+
+	// Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
+	OBJ_CONDITION* item = &(*(OBJ_CONDITION**)0x46B817)[set_id];
+
+	if (!item->pTask)
+	{
+		return nullptr;
+	}
+
+	auto& objinfo = pObjItemTable->pObjItemEntry[item->pObjEditEntry->usID & 0xFFF];
+
+	if (strcmp(objinfo.strObjName, name))
+	{
+		return nullptr;
+	}
+
+	return item->pTask;
+}
+
+// Function to get id of SET task, used to sync object state for netplay
+int GetSetID(task* tp)
+{
+	if (tp->ocp)
+	{
+		for (int i = 0; i < numStatusEntry; ++i)
+		{
+			// Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
+			OBJ_CONDITION* item = &(*(OBJ_CONDITION**)0x46B817)[i];
+
+			if (tp->ocp == item)
+			{
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
 void CreateSetTask(OBJ_CONDITION* item, _OBJ_EDITENTRY* objentry, _OBJ_ITEMENTRY* objinfo, float distance)
 {
 	if (item->ssCondition & 1)
