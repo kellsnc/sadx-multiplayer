@@ -65,6 +65,9 @@ static bool LogicListener(Packet& packet, Network::PACKET_TYPE type, Network::PN
     case Network::PACKET_LOGIC_PAUSE:
         packet >> PauseEnabled >> PauseSelection;
         return true;
+    case Network::PACKET_LOGIC_RAND:
+        packet >> seed;
+        return true;
     default:
         return false;
     }
@@ -97,6 +100,9 @@ static bool LogicSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM
         return true;
     case Network::PACKET_LOGIC_PAUSE:
         packet << PauseEnabled << PauseSelection;
+        return true;
+    case Network::PACKET_LOGIC_RAND:
+        packet << seed;
         return true;
     default:
         return false;
@@ -180,6 +186,8 @@ extern "C"
                         oldTimerWake = bWake;
                     }
                 }
+
+                network.Send(Network::PACKET_LOGIC_RAND, LogicSender, -1, true);
             }
         }
         
@@ -193,11 +201,11 @@ void InitLogic()
 	network.RegisterListener(Network::PACKET_LOGIC_CLOCK, LogicListener);
 	network.RegisterListener(Network::PACKET_LOGIC_MODE, LogicListener);
 	network.RegisterListener(Network::PACKET_LOGIC_LEVEL, LogicListener);
-
 	network.RegisterListener(Network::PACKET_LOGIC_ACTSWAP, LogicListener);
 	network.RegisterListener(Network::PACKET_LOGIC_EXIT, LogicListener);
 	network.RegisterListener(Network::PACKET_LOGIC_STAGECHG, LogicListener);
 	network.RegisterListener(Network::PACKET_LOGIC_PAUSE, LogicListener);
+	network.RegisterListener(Network::PACKET_LOGIC_RAND, LogicListener);
 
     AdvanceActLocal_t = new Trampoline(0x4146E0, 0x4146E5, AdvanceActLocal_r);
     SetChangeGameMode_t = new Trampoline(0x413C90, 0x413C96, SetChangeGameMode_r);
