@@ -38,9 +38,9 @@ Trampoline* SetPlayer_t = nullptr;
 
 static bool isCharSel = false;
 
-MAKEVARMULTI(int16_t, ssNumRing, 0x3B0F0E4);
-MAKEVARMULTI(int8_t, scNumPlayer, 0x3B0EF34);
-MAKEVARMULTI(int8_t, EnemyScore, 0x3B0F104);
+VariableHook<int16_t, 0x3B0F0E4> ssNumRing_m;
+VariableHook<int8_t, 0x3B0EF34> scNumPlayer_m;
+VariableHook<int32_t, 0x3B0F104> EnemyScore_m;
 
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
@@ -69,60 +69,35 @@ void LoadCharObj(int pnum, int character)
 void ResetEnemyScoreM()
 {
     InitActionScore();
-
-    for (auto& s : ssNumRing_m)
-    {
-        *s = 0;
-    }
+    ssNumRing_m.clear();
 }
 
 int GetEnemyScoreM(int pNum)
 {
-    if (multiplayer::IsBattleMode())
-    {
-        return *EnemyScore_m[pNum];
-    }
-    else
-    {
-        return EnemyScore;
-    }
+    return EnemyScore_m[pNum];
 }
 
 void AddEnemyScoreM(int pNum, int add)
 {
-    if (multiplayer::IsBattleMode())
-    {
-        *EnemyScore_m[pNum] += add;
-    }
-    else
-    {
-        AddEnemyScore(add);
-    }
+    EnemyScore_m[pNum] += add;
 }
 
 void SetEnemyScoreM(int pNum, int Number)
 {
-    *EnemyScore_m[pNum] = Number;
+    EnemyScore_m[pNum] = Number;
 }
 
 void __cdecl ResetNumPlayerM()
 {
     for (auto& i : scNumPlayer_m)
     {
-        *i = 4;
+        i = 4;
     }
 }
 
 int GetNumPlayerM(int pNum)
 {
-    if (multiplayer::IsBattleMode())
-    {
-        return *scNumPlayer_m[pNum];
-    }
-    else
-    {
-        return GetNumPlayer();
-    }
+    return scNumPlayer_m[pNum];
 }
 
 void AddNumPlayerM(int pNum, int Number)
@@ -134,7 +109,7 @@ void AddNumPlayerM(int pNum, int Number)
             PlaySound(743, 0, 0, 0);
         }
 
-        auto& counter = *scNumPlayer_m[pNum];
+        auto& counter = scNumPlayer_m[pNum];
 
         counter += Number;
 
@@ -156,19 +131,12 @@ void AddNumPlayerM(int pNum, int Number)
 
 void SetNumPlayerM(int pNum, int Number)
 {
-    *scNumPlayer_m[pNum] = Number;
+    scNumPlayer_m[pNum] = Number;
 }
 
 int GetNumRingM(int pNum)
 {
-    if (multiplayer::IsBattleMode())
-    {
-        return *ssNumRing_m[pNum];
-    }
-    else
-    {
-        return GetNumRing();
-    }
+    return ssNumRing_m[pNum];
 }
 
 void AddNumRingM(int pNum, int add)
@@ -177,7 +145,7 @@ void AddNumRingM(int pNum, int add)
     {
         int origc, newc = 0;
 
-        auto& counter = *ssNumRing_m[pNum];
+        auto& counter = ssNumRing_m[pNum];
 
         origc = counter / 100;
         counter += add;
@@ -201,20 +169,17 @@ void AddNumRingM(int pNum, int add)
 
 void SetNumRingM(int pNum, int Number)
 {
-    *ssNumRing_m[pNum] = Number;
+    ssNumRing_m[pNum] = Number;
 }
 
 void ResetNumRingM()
 {
-    for (auto& i : ssNumRing_m)
-    {
-        *i = 0;
-    }
+    ssNumRing_m.clear();
 }
 
 void ResetNumRingP(int pNum)
 {
-    *ssNumRing_m[pNum] = 0;
+    ssNumRing_m[pNum] = 0;
 }
 
 void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
@@ -428,13 +393,13 @@ static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::P
         packet >> ppwp->mj.mtnmode >> (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) >> ppwp->mj.nframe;
         return true;
     case Network::PACKET_PLAYER_RINGS:
-        packet >> *ssNumRing_m[pnum];
+        packet >> ssNumRing_m[pnum];
         return true;
     case Network::PACKET_PLAYER_LIVES:
-        packet >> *scNumPlayer_m[pnum];
+        packet >> scNumPlayer_m[pnum];
         return true;
     case Network::PACKET_PLAYER_SCORE:
-        packet >> *EnemyScore_m[pnum];
+        packet >> EnemyScore_m[pnum];
         return true;
     default:
         return false;
@@ -465,13 +430,13 @@ static bool PlayerSender(Packet& packet, Network::PACKET_TYPE type, Network::PNU
         packet << ppwp->mj.mtnmode << (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) << ppwp->mj.nframe;
         return true;
     case Network::PACKET_PLAYER_RINGS:
-        packet << *ssNumRing_m[pnum];
+        packet << ssNumRing_m[pnum];
         return true;
     case Network::PACKET_PLAYER_LIVES:
-        packet << *scNumPlayer_m[pnum];
+        packet << scNumPlayer_m[pnum];
         return true;
     case Network::PACKET_PLAYER_SCORE:
-        packet << *EnemyScore_m[pnum];
+        packet << EnemyScore_m[pnum];
         return true;
     default:
         return false;
@@ -517,24 +482,24 @@ void UpdatePlayersInfo()
             }
 
             static int16_t old_rings = 0;
-            if (old_rings != *ssNumRing_m[pnum])
+            if (old_rings != ssNumRing_m[pnum])
             {
                 network.Send(Network::PACKET_PLAYER_RINGS, PlayerSender);
-                old_rings = *ssNumRing_m[pnum];
+                old_rings = ssNumRing_m[pnum];
             }
 
             static int8_t old_lives = 0;
-            if (old_lives != *scNumPlayer_m[pnum])
+            if (old_lives != scNumPlayer_m[pnum])
             {
                 network.Send(Network::PACKET_PLAYER_LIVES, PlayerSender);
-                old_lives = *scNumPlayer_m[pnum];
+                old_lives = scNumPlayer_m[pnum];
             }
 
             static int32_t old_score = 0;
-            if (old_score != *EnemyScore_m[pnum])
+            if (old_score != EnemyScore_m[pnum])
             {
                 network.Send(Network::PACKET_PLAYER_SCORE, PlayerSender);
-                old_score = *EnemyScore_m[pnum];
+                old_score = EnemyScore_m[pnum];
             }
         }
     }

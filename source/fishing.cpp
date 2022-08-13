@@ -36,7 +36,7 @@ struct lurewk // custom; todo: find symbol struct
 	NJS_POINT3* pos;
 };
 
-MAKEVARMULTI(BIGETC, bigetc, 0x3C524E8);
+VariableHook<BIGETC, 0x3C524E8> bigetc_m;
 
 FunctionPointer(BOOL, checkturipoint2, (), 0x48D030);
 FunctionPointer(int, sub_46EE90, (), 0x46EE90); // inline, get fished item
@@ -60,7 +60,7 @@ Trampoline* SetFishingCursorTask_t  = nullptr;
 
 BIGETC* GetBigEtc(int pnum)
 {
-	return pnum >= 0 && pnum <= 3 ? bigetc_m[pnum] : nullptr;
+	return pnum >= 0 && pnum <= 3 ? &bigetc_m[pnum] : nullptr;
 }
 
 #pragma region utilities
@@ -1829,13 +1829,13 @@ static void BigStateInit_r()
 {
 	for (auto& i : bigetc_m)
 	{
-		i->Big_Sakana_Weight = 0;
-		i->Big_Sakana_Weight_High = 0i16;
-		i->Big_Sakana_Kind_High = 0;
-		i->Big_Sakana_Weight_Limit = static_cast<int>(BigChkHeavyWeight());
-		i->big_item_pos.z = 0.0f;
-		i->big_item_pos.y = 0.0f;
-		i->big_item_pos.x = 0.0f;
+		i.Big_Sakana_Weight = 0;
+		i.Big_Sakana_Weight_High = 0i16;
+		i.Big_Sakana_Kind_High = 0;
+		i.Big_Sakana_Weight_Limit = static_cast<int>(BigChkHeavyWeight());
+		i.big_item_pos.z = 0.0f;
+		i.big_item_pos.y = 0.0f;
+		i.big_item_pos.x = 0.0f;
 	}
 }
 

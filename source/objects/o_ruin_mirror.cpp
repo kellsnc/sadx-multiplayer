@@ -43,7 +43,7 @@ struct ruinfogwk
 
 static ruinfogwk ruinfogwp[PLAYER_MAX];
 
-MAKEVARMULTI(uint8_t, fog_switch, 0x2038C34);
+VariableHook<uint8_t, 0x2038C34> fog_switch_m;
 
 static bool IsMirrorActive(int id)
 {

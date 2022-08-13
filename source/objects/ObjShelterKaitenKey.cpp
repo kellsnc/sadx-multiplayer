@@ -7,7 +7,7 @@
 Trampoline* HandleTest_t = nullptr;
 Trampoline* AmyHndlGetHandleAngle_t = nullptr;
 
-MAKEVARMULTI(amyhndlstr, amyhndlstatus, 0x3C5B300); // Add handle information for all players
+VariableHook<amyhndlstr, 0x3C5B300> amyhndlstatus_m; // Add handle information for all players
 
 static auto KeitenCount = GenerateUsercallWrapper<void (*)(int, int)>(noret, 0x5A26C0, rEAX, rECX);
 
@@ -15,11 +15,11 @@ amyhndlstr* __cdecl AmyHndlGetInfoStrP_r() // Get handle information from the pl
 {
 	if (multiplayer::IsActive())
 	{
-		return amyhndlstatus_m[TASKWK_PLAYERID(gpCharTwp)];
+		return &amyhndlstatus_m[TASKWK_PLAYERID(gpCharTwp)];
 	}
 	else
 	{
-		return amyhndlstatus_m[0];
+		return &amyhndlstatus_m[0];
 	}
 }
 
@@ -56,25 +56,25 @@ static amyhndlstr* AmyHndlEntryTouchHandle_m(int pnum, NJS_POINT3* hndlpos, int 
 
 	if (ptwp && TASKWK_CHARID(ptwp) == Characters_Amy)
 	{
-		auto hndl = amyhndlstatus_m[TASKWK_PLAYERID(ptwp)];
+		auto& hndl = amyhndlstatus_m[TASKWK_PLAYERID(ptwp)];
 
 		if (hndlpos)
 		{
-			hndl->hndlpos = *hndlpos;
+			hndl.hndlpos = *hndlpos;
 		}
 
-		hndl->hndlangy = hndlangy;
-		hndl->hndlmode = 0;
-		hndl->touchflag = 0;
+		hndl.hndlangy = hndlangy;
+		hndl.hndlmode = 0;
+		hndl.touchflag = 0;
 
 		if (ptwp->mode == 15)
 		{
-			hndl->hndlmode = 1; // grab
+			hndl.hndlmode = 1; // grab
 			Angle turnang;
 			if (AmyHndlGetHandleAngle_m(pnum, &turnang))
 			{
-				hndl->touchflag = 1;
-				hndl->turnang = turnang;
+				hndl.touchflag = 1;
+				hndl.turnang = turnang;
 			}
 		}
 
@@ -83,12 +83,12 @@ static amyhndlstr* AmyHndlEntryTouchHandle_m(int pnum, NJS_POINT3* hndlpos, int 
 		if (ppwp)
 		{
 			ppwp->free.sb[6] |= 1u;
-			return hndl;
+			return &hndl;
 		}
 		else
 		{
-			hndl->hndlmode = 0;
-			hndl->touchflag = 0;
+			hndl.hndlmode = 0;
+			hndl.touchflag = 0;
 		}
 	}
 

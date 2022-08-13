@@ -4,13 +4,13 @@
 
 Trampoline* ___njFogEnable_t = nullptr;
 
-MAKEVARMULTI(___stcFog, gFog, 0x3ABDC60);
+VariableHook<___stcFog, 0x3ABDC60> gFog_m;
 
 ___stcFog* GetScreenFog(int num)
 {
 	if (num >= 0 || num < PLAYER_MAX)
 	{
-		auto fog = gFog_m[num];
+		auto fog = &gFog_m[num];
 
 		if (num != 0 && fog->u8Enable == 0i8)
 		{
@@ -68,11 +68,11 @@ static void ___njFogEnable_m()
 		}
 
 		// Use first screen fog if no fog is set for the current screen
-		auto fog = gFog_m[num]->u8Enable ? gFog_m[num] : gFog_m[0];
+		auto fog = gFog_m[num].u8Enable ? gFog_m[num] : gFog_m[0];
 
-		if (fog->u8Enable)
+		if (fog.u8Enable)
 		{
-			if (setfog_m(fog))
+			if (setfog_m(&fog))
 			{
 				if (!(fogemulation & 1))
 				{

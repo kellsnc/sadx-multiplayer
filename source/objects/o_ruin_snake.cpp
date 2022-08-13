@@ -4,7 +4,7 @@
 static void MoveSnake_w();
 Trampoline MoveSnake_t(0x5E4360, 0x5E4367, MoveSnake_w);
 
-MAKEVARMULTI(int, semafo, 0x3C7ED74);
+VariableHook<int, 0x3C7ED74> semafo_m;
 
 DataPointer(char, flag_1, 0x3C7ED84);
 DataPointer(float, suimen_ypos, 0x20397A0);
@@ -86,7 +86,7 @@ static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (*semafo_m[i])
+			if (semafo_m[i])
 			{
 				continue;
 			}
@@ -103,7 +103,7 @@ static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 					head->fwp[i].ang_spd.x = add_ang_x;
 					head->fwp[i].ang_spd.y = add_ang_y;
 					head->fwp[i].ang_spd.z = add_ang_z;
-					*semafo_m[i] = 1;
+					semafo_m[i] = 1;
 				}
 			}
 		}
@@ -172,7 +172,7 @@ static void __cdecl ObjectRuinSnake_r(task* tp)
 
 			for (auto& i : semafo_m)
 			{
-				*i = 0;
+				i = 0;
 			}
 		}
 

@@ -2,9 +2,9 @@
 #include "utils.h"
 #include "multiplayer.h"
 
-MAKEVARMULTI(int, inwind_timer, 0x3C80620);
-MAKEVARMULTI(BOOL, windshadow, 0x3C80618);
-MAKEVARMULTI(int, EC_mode, 0x3C80608);
+VariableHook<int, 0x3C80620> inwind_timer_m;
+VariableHook<Bool, 0x3C80618> windshadow_m;
+VariableHook<int, 0x3C80608> EC_mode_m;
 
 static void __cdecl ObjectSkydeck_Wall_r(task* tp);
 static void __cdecl RdSkydeckWind_r(__int16 act);
@@ -44,7 +44,7 @@ static void Skydeck_EggcarrierCtrl_m(__int16 act)
 			continue;
 		}
 
-		auto& EC_mode = *EC_mode_m[i];
+		auto& EC_mode = EC_mode_m[i];
 
 		// Manage mode for current player
 		switch (EC_mode)
@@ -133,8 +133,8 @@ static void Skydeck_EggcarrierCtrl_m(__int16 act)
 		int target_mode = 0;
 		for (auto& i : EC_mode_m)
 		{
-			if (*i > target_mode)
-				target_mode = *i;
+			if (i > target_mode)
+				target_mode = i;
 		}
 
 		// Turn ship:
@@ -191,8 +191,8 @@ static void RdSkydeckWind_m(__int16 act)
 			continue;
 
 		auto pmwp = playermwp[i];
-		auto& inwind_timer = *inwind_timer_m[i];
-		auto& windshadow = *windshadow_m[i];
+		auto& inwind_timer = inwind_timer_m[i];
+		auto& windshadow = windshadow_m[i];
 
 		float v1 = (SkyDeck_SkyPosition.y - 1350.0f - 50.0f) * 0.005f;
 		float pow_y, pow_x;
@@ -286,7 +286,7 @@ static void __cdecl ObjectSkydeck_Wall_r(task* tp)
 
 		if (player)
 		{
-			*windshadow_m[TASKWK_PLAYERID(player)] = TRUE;
+			windshadow_m[TASKWK_PLAYERID(player)] = TRUE;
 		}
 	}
 	else

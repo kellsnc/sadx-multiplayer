@@ -13,7 +13,7 @@ enum : __int8
 Trampoline* manager_Disp_t = nullptr;
 Trampoline* itemBoxManager_t = nullptr;
 
-MAKEVARMULTI(ITEM_MANAGER, manager_data, 0x3C5A9D8);
+VariableHook<ITEM_MANAGER, 0x3C5A9D8> manager_data_m;
 
 static void manager_DrawItems(ITEM_MANAGER* data, int num) // custom
 {
@@ -111,7 +111,7 @@ static void manager_Disp_m(task* tp)
 		{
 			if (SplitScreen::GetCurrentScreenNum() == i)
 			{
-				manager_DrawItems(manager_data_m[i], i);
+				manager_DrawItems(&manager_data_m[i], i);
 			}
 		}
 
@@ -211,16 +211,16 @@ static void itemBoxManager_m(task* tp)
 {
 	for (auto& data : manager_data_m)
 	{
-		switch (data->mode)
+		switch (data.mode)
 		{
 		case MODE_MOVE:
-			manager_Move_m(data);
+			manager_Move_m(&data);
 			break;
 		case MODE_WAIT:
-			manager_Wait_m(data);
+			manager_Wait_m(&data);
 			break;
 		case MODE_SHRINK:
-			manager_Shrink_m(data);
+			manager_Shrink_m(&data);
 			break;
 		}
 	}
@@ -252,12 +252,12 @@ static void __cdecl itemBoxManager_r(task* tp)
 void EntryItemBoxPanel_m(int panel, int pnum)
 {
 	auto& data = manager_data_m[pnum];
-	data->itemdata[data->current_list].item_list = panel;
-	data->itemdata[data->current_list].item_pos = -60.0f;
-	data->itemdata[data->current_list].scale = 2.0f;
-	data->itemdata[data->current_list].random_ring = RandomRingNum;
-	++data->current_list;
-	data->mode = 1;
+	data.itemdata[data.current_list].item_list = panel;
+	data.itemdata[data.current_list].item_pos = -60.0f;
+	data.itemdata[data.current_list].scale = 2.0f;
+	data.itemdata[data.current_list].random_ring = RandomRingNum;
+	++data.current_list;
+	data.mode = 1;
 }
 
 void InitItemBoxHUD()
