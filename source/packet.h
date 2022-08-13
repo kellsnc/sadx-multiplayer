@@ -33,26 +33,24 @@ public:
 	uint8_t* operator[](size_t);
 
 	template<typename T>
-	T& read()
+	bool read(T& data)
 	{
 		auto end_pos = position + sizeof(T);
 
-		T data;
 		if (end_pos <= m_packet->dataLength)
 		{
 			data = *(T*)(m_packet->data + position);
 			position = end_pos;
+			return true;
 		}
 		else
 		{
-			data = {};
+			return false;
 		}
-
-		return data;
 	}
 
 	template<typename T>
-	void write(const T& data)
+	bool write(const T& data)
 	{
 		auto end_pos = position + sizeof(T);
 
@@ -60,12 +58,13 @@ public:
 		{
 			if (enet_packet_resize(m_packet, end_pos) < 0)
 			{
-				return;
+				return false;
 			}
 		}
 
 		*(T*)(m_packet->data + position) = data;
 		position = end_pos;
+		return true;
 	}
 
 	template<typename T>
@@ -78,7 +77,7 @@ public:
 	template<typename T>
 	Packet& operator>>(T& data)
 	{
-		data = read<T>();
+		read(data);
 		return *this;
 	}
 };

@@ -15,18 +15,22 @@ static bool SaiListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM
 {
     if (type == Network::PACKET_OBJECT_RHINOTANK)
     {
-        auto set_id = packet.read<uint32_t>();
-        auto task = GetSetTask(set_id, "E SAITO");
-
-        if (task)
+        uint32_t set_id;
+        
+        if (packet.read(set_id))
         {
-            auto twp = task->twp;
-            auto ewp = (enemywk*)task->mwp;
+            auto task = GetSetTask(set_id, "E SAITO");
 
-            if (twp && twp->mode < MODE_DYING && ewp)
+            if (task)
             {
-                packet >> twp->mode >> twp->pos >> twp->ang.y >> ewp->aim >> ewp->aim_angle >> ewp->velo >> ewp->ang_spd;
-                return true;
+                auto twp = task->twp;
+                auto ewp = (enemywk*)task->mwp;
+
+                if (twp && twp->mode < MODE_DYING && ewp)
+                {
+                    packet >> twp->mode >> twp->pos >> twp->ang.y >> ewp->aim >> ewp->aim_angle >> ewp->velo >> ewp->ang_spd;
+                    return true;
+                }
             }
         }
     }
