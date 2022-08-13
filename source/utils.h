@@ -53,10 +53,7 @@ public:
 
 	constexpr void clear() noexcept
 	{
-		for (int i = 0; i < count; ++i)
-		{
-			get(i) = 0;
-		}
+		std::fill(begin(), end(), 0);
 	}
 
 	constexpr pointer operator&() const noexcept { return &get(0); }

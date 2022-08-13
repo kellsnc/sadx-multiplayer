@@ -89,10 +89,7 @@ void SetEnemyScoreM(int pNum, int Number)
 
 void __cdecl ResetNumPlayerM()
 {
-    for (auto& i : scNumPlayer_m)
-    {
-        i = 4;
-    }
+    std::fill(scNumPlayer_m.begin(), scNumPlayer_m.end(), 4);
 }
 
 int GetNumPlayerM(int pNum)
