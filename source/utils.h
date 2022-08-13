@@ -1,7 +1,7 @@
 #pragma once
 
 template<typename T, intptr_t address>
-class VariableHook
+class VariableHook final
 {
 	using value_type = T;
 	using pointer = value_type*;  // or also value_type*
@@ -10,25 +10,25 @@ class VariableHook
 	struct iterator
 	{
 	private:
-		VariableHook* m_ptr;
+		VariableHook& m_ptr;
 		int m_index;
 	public:
 		using iterator_category = std::random_access_iterator_tag;
 		using difference_type = std::ptrdiff_t;
 
-		reference operator*() const { return m_ptr->get(m_index); }
-		pointer operator->() { return &m_ptr[m_index]; }
+		constexpr reference operator*() const { return m_ptr.get(m_index); }
+		constexpr pointer operator->() { return &m_ptr.get(m_index); }
+		
+		constexpr iterator& operator++() { m_index++; return *this; }
+		constexpr iterator& operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+		
+		constexpr iterator& operator--() { m_index--; return *this; }
+		constexpr iterator& operator--(int) { iterator tmp = *this; --(*this); return tmp; }
+		
+		friend constexpr bool operator== (const iterator& a, const iterator& b) { return a.m_index == b.m_index; };
+		friend constexpr bool operator!= (const iterator& a, const iterator& b) { return a.m_index != b.m_index; };
 
-		iterator& operator++() { m_index++; return *this; }
-		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-
-		iterator& operator--() { m_index--; return *this; }
-		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
-
-		friend bool operator== (const iterator& a, const iterator& b) { return a.m_ptr == b.m_ptr && a.m_index == b.m_index; };
-		friend bool operator!= (const iterator& a, const iterator& b) { return a.m_ptr != b.m_ptr || a.m_index != b.m_index; };
-
-		constexpr iterator(VariableHook* ptr, int i) { m_ptr = ptr; m_index = i; }
+		constexpr iterator(VariableHook& ptr, int i) : m_ptr(ptr), m_index(i) {};
 	};
 
 private:
@@ -60,8 +60,8 @@ public:
 	constexpr operator pointer() const noexcept { return &get(0); }
 	constexpr reference operator[](int i) const noexcept { return get(i); }
 
-	constexpr iterator begin() noexcept { return iterator(this, 0); }
-	constexpr iterator end() noexcept { return iterator(this, count); }
+	constexpr iterator begin() noexcept { return iterator(*this, 0); }
+	constexpr iterator end() noexcept { return iterator(*this, count); }
 };
 
 void DrawSADXText(const char* text, __int16 y);
