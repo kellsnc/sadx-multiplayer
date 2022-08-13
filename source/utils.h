@@ -3,12 +3,43 @@
 template<typename T, intptr_t address>
 class VariableHook
 {
+	using value_type = T;
+	using pointer = value_type*;  // or also value_type*
+	using reference = value_type&;  // or also value_type&
+	
+	struct iterator
+	{
+	private:
+		VariableHook* m_ptr;
+		int m_index;
+	public:
+		using iterator_category = std::random_access_iterator_tag;
+		using difference_type = std::ptrdiff_t;
+
+		reference operator*() const { return m_ptr->get(m_index); }
+		pointer operator->() { return &m_ptr[m_index]; }
+
+		iterator& operator++() { m_index++; return *this; }
+		iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
+
+		iterator& operator--() { m_index--; return *this; }
+		iterator operator--(int) { iterator tmp = *this; --(*this); return tmp; }
+
+		friend bool operator== (const iterator& a, const iterator& b) { return a.m_ptr == b.m_ptr && a.m_index == b.m_index; };
+		friend bool operator!= (const iterator& a, const iterator& b) { return a.m_ptr != b.m_ptr || a.m_index != b.m_index; };
+
+		constexpr iterator(VariableHook* ptr, int i) { m_ptr = ptr; m_index = i; }
+	};
+
 private:
-	T data[PLAYER_MAX - 1];
+	static constexpr int count = PLAYER_MAX;
+
+	value_type data[count - 1];
+
 public:
 	VariableHook() = default;
 
-	constexpr T& operator[](const int i) const noexcept
+	constexpr reference get(int i) const noexcept
 	{
 		if (i == 0)
 		{
@@ -19,13 +50,22 @@ public:
 			return (T&)data[i - 1];
 		}
 	}
-};
 
-#define MAKEVARMULTI(type, name, addr) \
-	static type name##P2{}; \
-	static type name##P3{}; \
-	static type name##P4{}; \
-	static type* const name##_m[PLAYER_MAX] = { (type*)addr, &##name##P2, &##name##P3, &##name##P4 };
+	constexpr void clear() noexcept
+	{
+		for (int i = 0; i < count; ++i)
+		{
+			get(i) = 0;
+		}
+	}
+
+	constexpr pointer operator&() const noexcept { return &get(0); }
+	constexpr operator pointer() const noexcept { return &get(0); }
+	constexpr reference operator[](int i) const noexcept { return get(i); }
+
+	constexpr iterator begin() noexcept { return iterator(this, 0); }
+	constexpr iterator end() noexcept { return iterator(this, count); }
+};
 
 void DrawSADXText(const char* text, __int16 y);
 short tolevelnum(short num);
