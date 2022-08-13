@@ -1,5 +1,26 @@
 #pragma once
 
+template<typename T, intptr_t address>
+class VariableHook
+{
+private:
+	T data[PLAYER_MAX - 1];
+public:
+	VariableHook() = default;
+
+	constexpr T& operator[](const int i) const noexcept
+	{
+		if (i == 0)
+		{
+			return *reinterpret_cast<T*>(address);
+		}
+		else
+		{
+			return (T&)data[i - 1];
+		}
+	}
+};
+
 #define MAKEVARMULTI(type, name, addr) \
 	static type name##P2{}; \
 	static type name##P3{}; \
