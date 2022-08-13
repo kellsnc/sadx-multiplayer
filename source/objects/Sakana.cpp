@@ -132,10 +132,10 @@ static void setDirSakanaTurn_m(task* tp)
     if (--twp->value.w[0] <= 0)
     {
         twp->mode = MODE_FISHING;
-        twp->value.w[0] = (short)((UNIT_RAND + 1.0) * 60.0);
+        twp->value.w[0] = (short)((njRandom() + 1.0) * 60.0);
         mwp->ang_aim.y = etc->Big_Lure_Ptr->mwp->ang_aim.y + 0x8000;
         
-        if (UNIT_RAND >= 0.5)
+        if (njRandom() >= 0.5)
         {
             mwp->ang_aim.y -= 0x3000;
         }
@@ -144,7 +144,7 @@ static void setDirSakanaTurn_m(task* tp)
             mwp->ang_aim.y += 0x3000;
         }
         
-        if (((mwp->weight - 600.0f) * 0.000125f + (etc->Big_Fishing_Timer >= 900 ? 0.0f : 0.2f)) < UNIT_RAND)
+        if (((mwp->weight - 600.0f) * 0.000125f + (etc->Big_Fishing_Timer >= 900 ? 0.0f : 0.2f)) < njRandom())
         {
             etc->Big_Fish_Flag &= ~LUREFLAG_ESCAPE;
             VibShot(pnum, 5);
@@ -208,7 +208,7 @@ static void setDirSakana2_m(task* tp)
             twp->mode = MODE_FISHING;
         }
 
-        twp->value.w[0] = (short)((UNIT_RAND + 1.0) * 60.0);
+        twp->value.w[0] = (short)((njRandom() + 1.0) * 60.0);
         mwp->ang_aim.y = etc->Big_Lure_Ptr->mwp->ang_aim.y + 0x8000;
 
         if (twp->ang.y - mwp->ang_aim.y >= 0)
@@ -220,7 +220,7 @@ static void setDirSakana2_m(task* tp)
             mwp->ang_aim.y += 0x100;
         }
 
-        if (UNIT_RAND >= 0.5f)
+        if (njRandom() >= 0.5f)
         {
             mwp->ang_aim.y -= 0x3000;
         }
@@ -229,7 +229,7 @@ static void setDirSakana2_m(task* tp)
             mwp->ang_aim.y += 0x3000;
         }
 
-        if (((double)(mwp->weight - 600.0f) * 0.000125 + (etc->Big_Fishing_Timer >= 900 ? 0.0 : 0.2)) < UNIT_RAND)
+        if (((double)(mwp->weight - 600.0f) * 0.000125 + (etc->Big_Fishing_Timer >= 900 ? 0.0 : 0.2)) < njRandom())
         {
             VibShot(pnum, 5);
         }
@@ -254,7 +254,7 @@ static void moveFishingSakana_m(task* tp)
     {
         NJS_POINT3 v = { -0.4f, -0.002f, 0.0f };
         
-        if ((etc->Big_Fish_Flag & LUREFLAG_ESCAPE) && UNIT_RAND < 0.5f)
+        if ((etc->Big_Fish_Flag & LUREFLAG_ESCAPE) && njRandom() < 0.5f)
         {
             v.x = -0.8f;
         }
@@ -722,7 +722,7 @@ static void SakanaGenerater_m(task* tp)
     case 1i8:
         if (sakana_stgAct == (CurrentAct | (CurrentLevel << 8)) && Sakana_Num < MAX_FISH)
         {
-            if (IsPlayerInSphere(&twp->pos, 400.0f) && UNIT_RAND <= 0.3
+            if (IsPlayerInSphere(&twp->pos, 400.0f) && njRandom() <= 0.3
                 && (GetStageNumber() != LevelAndActIDs_HotShelter1 || twp->scl.y == 0.0f || Big_Stg12_Flag))
             {
                 twp->value.ptr = setSakana(tp);

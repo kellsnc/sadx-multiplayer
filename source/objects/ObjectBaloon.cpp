@@ -89,7 +89,7 @@ static void ObjectBaloon_m(task* tp)
             CCL_Init(tp, (CCL_INFO*)0x38CD140, 2, 4u);
 
             twp->mode = MODE_NORMAL;
-            twp->counter.l = static_cast<int>(UNIT_RAND * 100.0);
+            twp->counter.l = static_cast<int>(njRandom() * 100.0);
             twp->value.l = 0;
             twp->ang.z = 0;
             twp->scl.x = 1.0f;

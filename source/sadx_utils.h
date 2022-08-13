@@ -2,7 +2,6 @@
 
 #define TASKWK_PLAYERID(a) a->counter.b[0] // Get player id from player's taskwk
 #define TASKWK_CHARID(a) a->counter.b[1] // Get character id from player's taskwk
-#define UNIT_RAND ((double)rand() / (double)(RAND_MAX + 1)) // Outputs a number between 0.0 and 1.0
 
 static constexpr int ADVA_MODE_MULTI = 0x8;
 

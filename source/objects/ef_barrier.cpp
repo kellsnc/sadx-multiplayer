@@ -22,15 +22,15 @@ static void __cdecl TBarrier_r(task* tp)
 		{
 			EffBarrierPosSet(twp, pltwp);
 
-			if (UNIT_RAND > 0.70)
+			if (njRandom() > 0.70)
 			{
 				auto ctp = CreateChildTask(LoadObj_Data1, ThunderB, tp);
 				auto ctwp = ctp->twp;
 
 				if (ctwp)
 				{
-					ctwp->ang.x = (Angle)(UNIT_RAND * 65536.0);
-					ctwp->ang.y = (Angle)(UNIT_RAND * 65536.0);
+					ctwp->ang.x = (Angle)(njRandom() * 65536.0);
+					ctwp->ang.y = (Angle)(njRandom() * 65536.0);
 					ctwp->value.f = 1.0f;
 					ctp->disp = TBarrierDisp;
 				}
@@ -66,8 +66,8 @@ static void __cdecl NBarrier_r(task* tp)
 
 			if (ctwp)
 			{
-				ctwp->ang.x = (Angle)(UNIT_RAND * 65536.0);
-				ctwp->ang.y = (Angle)(UNIT_RAND * 65536.0);
+				ctwp->ang.x = (Angle)(njRandom() * 65536.0);
+				ctwp->ang.y = (Angle)(njRandom() * 65536.0);
 				ctp->disp = (TaskFuncPtr)0x4B9F40;
 			}
 
@@ -103,15 +103,15 @@ static void __cdecl Muteki_r(task* tp)
 
 			for (int i = 0; i < 3; ++i)
 			{
-				if (UNIT_RAND > 0.70)
+				if (njRandom() > 0.70)
 				{
 					auto ctp = CreateChildTask(LoadObj_Data1, (TaskFuncPtr)0x4BA240, tp);
 					auto ctwp = ctp->twp;
 
 					if (ctwp)
 					{
-						ctwp->ang.x = (Angle)(UNIT_RAND * 65536.0);
-						ctwp->ang.y = (Angle)(UNIT_RAND * 65536.0);
+						ctwp->ang.x = (Angle)(njRandom() * 65536.0);
+						ctwp->ang.y = (Angle)(njRandom() * 65536.0);
 						ctp->disp = (TaskFuncPtr)0x4BA070;
 					}
 				}

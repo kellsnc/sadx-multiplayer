@@ -120,13 +120,13 @@ static void Exec_m(task* tp)
 				if (!--twp->wtimer)
 				{
 					twp->mode = MODE_2;
-					twp->wtimer = SAL_funsleeptime - (int)(UNIT_RAND * -150.0);
+					twp->wtimer = SAL_funsleeptime - (int)(njRandom() * -150.0);
 				}
 			}
 			else
 			{
 				twp->mode = MODE_2;
-				twp->wtimer = SAL_funsleeptime - (int)(UNIT_RAND * -300.0);
+				twp->wtimer = SAL_funsleeptime - (int)(njRandom() * -300.0);
 			}
 		}
 		else
@@ -142,7 +142,7 @@ static void Exec_m(task* tp)
 			else if (IsPlayerRangeIn(twp, 1.0f))
 			{
 				twp->mode = MODE_SLEEP;
-				twp->wtimer = SAL_funalivetime - (int)(UNIT_RAND * -300.0);
+				twp->wtimer = SAL_funalivetime - (int)(njRandom() * -300.0);
 			}
 
 			twp->value.f = max(0, twp->value.f - SAL_funfraction * SAL_funrotacc);
@@ -156,9 +156,9 @@ static void Exec_m(task* tp)
 			{
 				float pow = twp->value.f / SAL_funrotspd * SAL_funaccy;
 
-				if ((float)UNIT_RAND <= SAL_randpitch)
+				if ((float)njRandom() <= SAL_randpitch)
 				{
-					pow += ((float)(UNIT_RAND - 0.5) * SAL_randspd) * 2.0f;
+					pow += ((float)(njRandom() - 0.5) * SAL_randspd) * 2.0f;
 				}
 
 				pow = pow + pow;

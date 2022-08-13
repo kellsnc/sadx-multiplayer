@@ -348,7 +348,7 @@ void __cdecl DamegeRingScatter_r(uint8_t pno)
             {
                 auto tp = CreateElementalTask(LoadObj_UnknownB | LoadObj_Data1, 2, (TaskFuncPtr)0x44FD10);
                 tp->twp->pos = playertwp[pno]->pos;
-                tp->twp->ang.y = NJM_DEG_ANG(((double)(i * 350.0) / (double)rings) + (UNIT_RAND * 360.0));
+                tp->twp->ang.y = NJM_DEG_ANG(((double)(i * 350.0) / (double)rings) + (njRandom() * 360.0));
             }
 
             dsPlay_oneshot(0, 0, 0, 0);

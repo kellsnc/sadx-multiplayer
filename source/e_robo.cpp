@@ -241,10 +241,10 @@ static BOOL RoboSearchPlayer_m(taskwk* twp, enemywk* ewp)
 		if (twp->wtimer > twp->btimer)
 		{
 			twp->wtimer = 0;
-			twp->btimer = 60 - (int)(UNIT_RAND * -70.0f);
+			twp->btimer = 60 - (int)(njRandom() * -70.0f);
 			if (twp->btimer < 0x78u)
 			{
-				ewp->aim_angle = NJM_DEG_ANG(UNIT_RAND * 360.0);
+				ewp->aim_angle = NJM_DEG_ANG(njRandom() * 360.0);
 			}
 		}
 		if (twp->btimer > 0x78u)

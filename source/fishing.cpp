@@ -368,7 +368,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 				else
 				{
 					etc->reel_tension_aim = weight * 1.1f - idk * 2.1f;
-					idk = etc->reel_tension_aim + (float)(UNIT_RAND * (0.24 - (double)weight) * 1.2);
+					idk = etc->reel_tension_aim + (float)(njRandom() * (0.24 - (double)weight) * 1.2);
 				}
 
 				if (idk < 0.5f)
@@ -439,7 +439,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 		etc->reel_tension_aim = 0.1f;
 	}
 
-	etc->reel_tension_aim += (float)(UNIT_RAND * 0.1);
+	etc->reel_tension_aim += (float)(njRandom() * 0.1);
 	
 	if (!loop_count)
 	{
@@ -615,7 +615,7 @@ static void setLureSpd_D_m(motionwk* mwp, BIGETC* etc)
 		{
 			mwp->spd.y = 0.1f;
 		}
-		else if (UNIT_RAND >= 0.8)
+		else if (njRandom() >= 0.8)
 		{
 			mwp->spd.y = 0.05f;
 		}
@@ -1041,7 +1041,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 
 		calcTension_m(twp, mwp, etc, &spd, pnum);
 
-		etc->reel_tension_aim += (float)(UNIT_RAND * 0.1);
+		etc->reel_tension_aim += (float)(njRandom() * 0.1);
 
 		if (twp->pos.y > max_pos + 0.1f)
 		{
