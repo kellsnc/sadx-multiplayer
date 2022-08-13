@@ -155,6 +155,17 @@ void __cdecl SpLoopOnlyDisplay_r()
     }
 }
 
+// Call all task displays
+static void DisplayTask_o()
+{
+    ResetMaterial();
+    DispTask(8);
+    for (int i = 0; i < 7; ++i)
+    {
+        DispTask(i);
+    }
+}
+
 // Draw every task in subscreen
 static void DrawScreen(int num)
 {
@@ -165,7 +176,7 @@ static void DrawScreen(int num)
             // If player exists, draw all objects into viewport:
 
             SplitScreen::numScreen = num;
-            TARGET_DYNAMIC(DisplayTask)(); // call all object display subs
+            DisplayTask_o();
             DisplayMultiHud(num);
         }
         else
@@ -195,7 +206,7 @@ void __cdecl DisplayTask_r()
     {
         // Otherwise, normal behaviour:
 
-        TARGET_DYNAMIC(DisplayTask)();
+        DisplayTask_o();
     }
 }
 
@@ -254,8 +265,9 @@ void InitSplitScreen()
     {
         LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
         WriteCall((void*)((int)(LoopTask_t->Target()) + 3), RunObjectIndex); // Repair LoopTask_t
-        DisplayTask_t = new Trampoline(0x40B540, 0x40B546, DisplayTask_r);
-        WriteCall((void*)((int)(LoopTask_t->Target()) + 3), (void*)0x40B0C0); // Repair DisplayTask_t
+        
+        WriteJump((void*)0x40B540, DisplayTask_r);
+        
         SpLoopOnlyDisplay_t = new Trampoline(0x456CD0, 0x456CD9, SpLoopOnlyDisplay_r);
         WriteCall((void*)((int)(SpLoopOnlyDisplay_t->Target()) + 4), ___njFogDisable); // Repair SpLoopOnlyDisplay_t
 

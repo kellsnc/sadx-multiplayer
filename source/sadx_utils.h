@@ -321,6 +321,7 @@ DataPointer(int, bWake, 0x912DF0); // Timer toggle
 DataPointer(int16_t, ssGameModeChange, 0x3B22E1C);
 DataPointer(int16_t, ssNextStageNumber, 0x3B22DF0);
 DataPointer(int16_t, ssNextActNumber, 0x3B22E18);
+FunctionPointer(void, DispTask, (int level), 0x40B4F0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
