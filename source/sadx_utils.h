@@ -4,32 +4,6 @@
 #define TASKWK_CHARID(a) a->counter.b[1] // Get character id from player's taskwk
 #define UNIT_RAND ((double)rand() / (double)(RAND_MAX + 1)) // Outputs a number between 0.0 and 1.0
 
-#define njAbs(n)         ((Float)fabsf   ((Float)(n)))
-#define njArcCos(n)      ((Angle)NJM_RAD_ANG(acosf  ((Float)(n)) ))
-#define njArcCosec(n)    ((Angle)NJM_RAD_ANG(asinf  (1.0f/(Float)(n)) ))
-#define njArcCot(n)      ((Angle)NJM_RAD_ANG(atanf  (1.0f/(Float)(n)) ))
-#define njArcSec(n)      ((Angle)NJM_RAD_ANG(acosf  (1.0f/(Float)(n)) ))
-#define njArcSin(n)      ((Angle)NJM_RAD_ANG(asinf  ((Float)(n)) ))
-#define njArcTan(n)      ((Angle)NJM_RAD_ANG(atanf  ((Float)(n)) ))
-#define njArcTan2(y,x)   ((Angle)NJM_RAD_ANG(atan2f ((Float)(y),(Float)(x)) ))
-
-#define njCeil(n)        ((Float)ceilf   ((Float)(n)))
-#define njCosech(n)      ((Float)( 1.0f / sinhf((Float)NJM_ANG_RAD(n)) ))
-#define njCosh(n)        ((Float)coshf   ((Float)NJM_ANG_RAD(n)))
-#define njCoth(n)        ((Float)( 1.0f / tanhf((Float)NJM_ANG_RAD(n)) ))
-#define njExp(x)         ((Float)expf((x)))
-#define njFloor(n)       ((Float)floorf  ((Float)(n)))
-#define njHypot(x,y)     ((Float)njSqrt  ( (x)*(x) + (y)*(y) ))
-#define njLog(n)         ((Float)logf    ((Float)(n)))
-#define njLog10(n)       ((Float)log10f  ((Float)(n)))
-#define njLog2(n)        ((Float)( njLog((n)) / njLog(2.f) ))
-#define njPow(n1,n2)     ((Float)powf    ((Float)(n1),(Float)(n2)))
-#define njSech(n)        ((Float)( 1.0 / coshf((Float)NJM_ANG_RAD(n)) ))
-#define njSinh(n)        ((Float)sinhf   ((Float)NJM_ANG_RAD(n)))
-#define njTanh(n)        ((Float)tanhf   ((Float)NJM_ANG_RAD(n)))
-#define njRandom()       ((Float)((Float)rand()/(Float)(RAND_MAX+1)))
-#define njRandomSeed(n)  (srand((Uint32)(n)))
-
 static constexpr int ADVA_MODE_MULTI = 0x8;
 
 enum AvaTexLdEnum : __int32
@@ -88,43 +62,6 @@ enum TGT_MODE : __int32
 	MODE_MAX = 0x8,
 };
 
-enum
-{
-	CDM_NONE,
-	CDM_TGTOFST,
-	CDM_LOOKAT,
-	CDM_CAMSTATUS,
-	CDM_NUM
-};
-
-enum
-{
-	CLEVEL_NORMAL,
-	CLEVEL_AREA,
-	CLEVEL_EVENT,
-	CLEVEL_COMPULSION,
-	CLEVEL_COLLISION,
-	CLEVEL_DEBUG,
-	CLEVEL_NUM
-};
-
-enum
-{
-	CAMCOL_SPHERE,
-	CAMCOL_PLANE,
-	CAMCOL_BLOCK,
-	CAMCOL_NUM
-};
-
-struct sParabola
-{
-	NJS_POINT3 pos_start;
-	NJS_POINT3 pos_end;
-	float gravity;
-	int time;
-	NJS_POINT3 speed;
-};
-
 struct Mass
 {
 	NJS_POINT3 trans[12];
@@ -138,78 +75,11 @@ struct String
 	unsigned int flag;
 };
 
-struct Big_ydata
-{
-	int attr;
-	int angx;
-	int angz;
-	float ypos;
-};
-
-struct Big_ypos
-{
-	Big_ydata top;
-	Big_ydata bottom;
-	Big_ydata water;
-};
-
 struct erctrlstr
 {
 	int command;
 	NJS_POINT3 pos0;
 	NJS_POINT3 pos1;
-};
-
-struct KeyInfo
-{
-	int LastKey;
-	int Buff[4];
-	int Point;
-	int RightCount;
-	int LeftCount;
-};
-
-struct amyhndlstr
-{
-	int hndlmode;
-	int touchflag;
-	int turnang;
-	int hndlangy;
-	NJS_POINT3 hndlpos;
-};
-
-struct ITEM_MANAGER_DATA
-{
-	int item_list;
-	float item_pos;
-	float scale;
-	int random_ring;
-};
-
-struct ITEM_MANAGER
-{
-	int mode;
-	int current_list;
-	unsigned int counter;
-	ITEM_MANAGER_DATA itemdata[20];
-};
-
-struct OBJECT_ITEMBOX_AIR_DATA
-{
-	int flag;
-	int item;
-	NJS_POINT3 position;
-	int panel_ang;
-	float scale;
-	float timer;
-};
-
-struct VolumeInfo
-{
-	__int16 nearVolOfs;
-	__int16 farVolOfs;
-	float nearDist;
-	float farDist;
 };
 
 struct OCMDATA
@@ -222,23 +92,13 @@ struct OCMDATA
 	char sflag;
 };
 
-struct _OBJ_CAMERAENTRYTABLE
-{
-	Sint16 ssCount;
-	Sint16 ssAttribute;
-	_OBJ_CAMERAENTRY* pObjCameraEntry;
-};
-
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
 ObjectFunc(sub_425B30, 0x425B30);
 ObjectFunc(sub_425BB0, 0x425BB0);
-DataPointer(NJS_ARGB, cur_argb, 0x3AB9864);
 DataPointer(int, Cart_demo_flag, 0x3C4ACA8); // Status of 
 DataArray(NJS_TEXANIM, cartsprite_score, 0x3C5D558, 13); // simply "score" in symbols
-FunctionPointer(BOOL, GetPlayerPosition, (unsigned __int8 pno, char frame, NJS_VECTOR* pos, Rotation3* ang), 0x4419C0);
-FunctionPointer(BOOL, SetPlayerPosition, (unsigned __int8 pno, char frame, NJS_VECTOR* pos, Rotation3* ang), 0x441A40);
 VoidFunc(InitActionScore, 0x427EF0);
 DataPointer(BOOL, boolOneShot, 0x3C52464);
 FunctionPointer(bool, CheckEditMode, (), 0x4258F0);
@@ -316,7 +176,6 @@ TaskFunc(FragmEmeraldDigDisplay, 0x4A31D0);
 FunctionPointer(int, Knuckles_Status, (int plnmb), 0x475600);
 FunctionPointer(void, CreateKiranR, (NJS_POINT3* pos, NJS_POINT3* velo, float scl, Angle ang), 0x4BAD80);
 TaskFunc(Knuckles_KakeraGame, 0x476440);
-DataPointer(int, ulGlobalMode, 0x3ABDC7C);
 TaskFunc(SonicTheHedgehog, 0x49A9B0);
 FunctionPointer(int, GetMRaceLevel, (), 0x47C200);
 DataPointer(int, MRaceLevel, 0x3C53AB8);
@@ -324,11 +183,8 @@ DataPointer(int, MRaceStageNumber, 0x3C539EC);
 TaskFunc(InitMoble2PControl, 0x47D8C0);
 TaskFunc(InitSonic2PControl, 0x47D820);
 TaskFunc(late_DispMilesMeter2P, 0x47C260);
-DataPointer(sParabola, SonicPaboBuff, 0x3C53A68);
 DataPointer(NJS_POINT3, VecTemp0, 0x3B0F140);
 DataPointer(NJS_POINT3, VecTemp1, 0x3B0F12C);
-FunctionPointer(void, MakeParabolaInitSpeed, (sParabola* para), 0x4BD2D0);
-FunctionPointer(int, ChkParabolaEnd, (sParabola* para), 0x4BD380);
 DataPointer(int, slJudge, 0x3B0EF44);
 DataArray(int*, MPT_MRaceEachStage, 0x91C0E0, 10);
 DataPointer(taskwk*, rd_mountain_twp, 0x03C80F84);
@@ -345,7 +201,6 @@ FunctionPointer(void, ERobStart, (erctrlstr* cmd), 0x4B3EB0);
 TaskFunc(Eggrob_Init, 0x4D3ED0);
 VoidFunc(EV_NpcMilesStandByOff, 0x42CE20);
 FunctionPointer(void, SetFreeCameraMode, (int sw), 0x4348A0);
-DataArray(KeyInfo, KeyBuff, 0x3C72C38, 8);
 DataPointer(SaveFileData, sd, 0x3C52558);
 DataPointer(float, distance, 0x3C52AC8);
 DataPointer(float, distancep, 0x3C52ACC);
@@ -356,12 +211,10 @@ FunctionPointer(void, String_Exe, (String* ___this, const NJS_POINT3* v0, const 
 FunctionPointer(void, String_Dsp, (String* ___this), 0x4BFD40);
 DataPointer(float, No2CargoSpd, 0x3C72E5C);
 DataPointer(int, item_kind, 0x3C5C888);
-DataPointer(OBJECT_ITEMBOX_AIR_DATA*, itembox_air_data, 0x3C5A9D4);
 FunctionPointer(void, CreateSnow, (NJS_POINT3* pos, NJS_POINT3* velo, float scl), 0x4B9B10);
 FunctionPointer(void, DrawSquareC, (unsigned int col, float x, float y, float z, float magx, float magy), 0x431CB0);
 FunctionPointer(void, DrawDlgCsrSqr, (unsigned __int8 col_alpha, float x, float y, float z, float magx, float magy), 0x431BB0);
 FunctionPointer(void, CreateWater, (NJS_POINT3* pos, NJS_POINT3* velo, float scl), 0x4B9540);
-FunctionPointer(void, MirenSoundPlayOneShotSE, (int se, const NJS_POINT3* pos_p, const VolumeInfo* info_p), 0x79E400);
 TaskFunc(CartGetOffPlayer, 0x798C60);
 TaskFunc(EnemyAir, 0x4AA340);
 TaskFunc(EffectSkyScope, 0x5F1AA0);
@@ -385,19 +238,8 @@ DataPointer(int16_t, ssNextStageNumber, 0x3B22DF0);
 DataPointer(int16_t, ssNextActNumber, 0x3B22E18);
 VoidFunc(late_execCancel, 0x403E60);
 VoidFunc(sub_437100, 0x437100);
-DataPointer(Sint32, debug_disp_camera_timer, 0x3B2C6C8);
-DataPointer(Bool, boolCameraCollision, 0x915090);
-DataPointer(Bool, Player_stop_flag, 0x3B2CAAC);
-DataPointer(NJS_POINT3, CameraInertia, 0x3B2C9CC);
-DataPointer(taskwk, oldTaskWork, 0x3B2C9D8);
 DataPointer(_OBJ_CAMERAPARAM, cameraParam, 0x3B2CB7C);
-DataArray(_OBJ_CAMERAENTRYTABLE*, objCameraEntryTable, 0x3C58180, 8);
-DataPointer(_OBJ_CAMERAENTRYTABLE*, pNumCameraEntry, 0x3B2C9C4);
-DataPointer(_OBJ_CAMERAMODE*, pObjCameraMode, 0x3B2CACC);
-DataPointer(_OBJ_CAMERAADJUST*, pObjCameraAdjust, 0x3B2CABC);
 DataPointer(NJS_PLANE, plCollision, 0x915094);
-StdcallFunctionPointer(float, njSqrt, (float n), 0x7871F0);
-FastcallFunctionPointer(Float, njDistanceL2PL, (NJS_LINE* l, NJS_PLANE* pl, NJS_POINT3* cp), 0x788640);
 FunctionPointer(void, DispTask, (int level), 0x40B4F0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
