@@ -88,6 +88,34 @@ enum TGT_MODE : __int32
 	MODE_MAX = 0x8,
 };
 
+enum
+{
+	CDM_NONE,
+	CDM_TGTOFST,
+	CDM_LOOKAT,
+	CDM_CAMSTATUS,
+	CDM_NUM
+};
+
+enum
+{
+	CLEVEL_NORMAL,
+	CLEVEL_AREA,
+	CLEVEL_EVENT,
+	CLEVEL_COMPULSION,
+	CLEVEL_COLLISION,
+	CLEVEL_DEBUG,
+	CLEVEL_NUM
+};
+
+enum
+{
+	CAMCOL_SPHERE,
+	CAMCOL_PLANE,
+	CAMCOL_BLOCK,
+	CAMCOL_NUM
+};
+
 struct sParabola
 {
 	NJS_POINT3 pos_start;
@@ -194,6 +222,13 @@ struct OCMDATA
 	char sflag;
 };
 
+struct _OBJ_CAMERAENTRYTABLE
+{
+	Sint16 ssCount;
+	Sint16 ssAttribute;
+	_OBJ_CAMERAENTRY* pObjCameraEntry;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -203,6 +238,7 @@ DataPointer(NJS_ARGB, cur_argb, 0x3AB9864);
 DataPointer(int, Cart_demo_flag, 0x3C4ACA8); // Status of 
 DataArray(NJS_TEXANIM, cartsprite_score, 0x3C5D558, 13); // simply "score" in symbols
 FunctionPointer(BOOL, GetPlayerPosition, (unsigned __int8 pno, char frame, NJS_VECTOR* pos, Rotation3* ang), 0x4419C0);
+FunctionPointer(BOOL, SetPlayerPosition, (unsigned __int8 pno, char frame, NJS_VECTOR* pos, Rotation3* ang), 0x441A40);
 VoidFunc(InitActionScore, 0x427EF0);
 DataPointer(BOOL, boolOneShot, 0x3C52464);
 FunctionPointer(bool, CheckEditMode, (), 0x4258F0);
@@ -347,6 +383,21 @@ DataPointer(int, bWake, 0x912DF0); // Timer toggle
 DataPointer(int16_t, ssGameModeChange, 0x3B22E1C);
 DataPointer(int16_t, ssNextStageNumber, 0x3B22DF0);
 DataPointer(int16_t, ssNextActNumber, 0x3B22E18);
+VoidFunc(late_execCancel, 0x403E60);
+VoidFunc(sub_437100, 0x437100);
+DataPointer(Sint32, debug_disp_camera_timer, 0x3B2C6C8);
+DataPointer(Bool, boolCameraCollision, 0x915090);
+DataPointer(Bool, Player_stop_flag, 0x3B2CAAC);
+DataPointer(NJS_POINT3, CameraInertia, 0x3B2C9CC);
+DataPointer(taskwk, oldTaskWork, 0x3B2C9D8);
+DataPointer(_OBJ_CAMERAPARAM, cameraParam, 0x3B2CB7C);
+DataArray(_OBJ_CAMERAENTRYTABLE*, objCameraEntryTable, 0x3C58180, 8);
+DataPointer(_OBJ_CAMERAENTRYTABLE*, pNumCameraEntry, 0x3B2C9C4);
+DataPointer(_OBJ_CAMERAMODE*, pObjCameraMode, 0x3B2CACC);
+DataPointer(_OBJ_CAMERAADJUST*, pObjCameraAdjust, 0x3B2CABC);
+DataPointer(NJS_PLANE, plCollision, 0x915094);
+StdcallFunctionPointer(float, njSqrt, (float n), 0x7871F0);
+FastcallFunctionPointer(Float, njDistanceL2PL, (NJS_LINE* l, NJS_PLANE* pl, NJS_POINT3* cp), 0x788640);
 FunctionPointer(void, DispTask, (int level), 0x40B4F0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;

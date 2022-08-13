@@ -409,6 +409,9 @@
     <ClCompile Include="e_sai.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="camerafunc.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -560,6 +563,9 @@
     </ClInclude>
     <ClInclude Include="timer.h">
       <Filter>Header FIles\networking</Filter>
+    </ClInclude>
+    <ClInclude Include="camerafunc.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
