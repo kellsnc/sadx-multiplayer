@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "death.h"
+#include "camera.h"
 
 Trampoline* KillHimP_t                    = nullptr;
 Trampoline* KillHimByFallingDownP_t       = nullptr;
@@ -38,6 +39,8 @@ void __cdecl GamePlayerMissed_r(task* tp)
 			{
 				if (multiplayer::IsBattleMode() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
 				SetPlayerInitialPosition(playertwp[pNum]);
+
+				CameraReleaseEventCamera_m(pNum);
 
 				// Don't reset mode in levels where the player is riding something
 				if (ssStageNumber != LevelIDs_TwinkleCircuit && ssStageNumber != LevelIDs_SandHill && !(ssStageNumber == LevelIDs_IceCap && ssActNumber == 2))
@@ -79,7 +82,7 @@ void ExecFallingDownP_r(int pNum)
 	auto ptwp = playertwp[pNum];
 	auto ppwp = playerpwp[pNum];
 
-	CameraSetEventCameraFunc(CameraStay, 0, 0);
+	CameraSetEventCameraFunc_m(pNum, CameraStay, CAMADJ_NONE, CDM_NONE);
 
 	if (!ppwp || !(ppwp->item & Powerups_Dead))
 	{
