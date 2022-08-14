@@ -243,6 +243,9 @@ FunctionPointer(void, DispTask, (int level), 0x40B4F0);
 FunctionPointer(void, CamcontSetCameraTGTOFST, (taskwk* pTaskWork), 0x435D10);
 FunctionPointer(void, CamcontSetCameraLOOKAT, (taskwk* pTaskWork), 0x435C70);
 FunctionPointer(void, CamcontSetCameraCAMSTATUS, (taskwk* pTaskWork), 0x435C30);
+DataPointer(Sint32, default_camera_mode, 0x3B2CBAC);
+DataPointer(Sint32, default_camera_adjust, 0x3B2CAC4);
+DataPointer(Sint32, start_camera_mode, 0x3B2CAA8);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

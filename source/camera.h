@@ -13,6 +13,14 @@ Sint32 GetAdjustMode_m(int pnum);
 Sint32 GetCameraMode_m(int pnum);
 void SetCameraMode_m(int pnum, Sint32 mode);
 
+void CameraSetNormalCamera_m(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType);
+void CameraReleaseCollisionCamera_m(int pnum);
+void CameraSetCollisionCamera(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType);
+void CameraSetCollisionCameraFunc(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPARAM*), Uint8 ucAdjustType, Sint8 scCameraDirect);
+void CameraReleaseEventCamera_m(int pnum);
+void CameraSetEventCamera_m(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType);
+void CameraSetEventCameraFunc_m(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPARAM*), Uint8 ucAdjustType, Sint8 scCameraDirect);
+
 static Angle ds_GetPerspectiveM(int pnum) { return 0; };
 static void njSetPerspectiveM(int pnum, Angle bams) {};
 static void ResetPerspectiveM(int pnum) {};

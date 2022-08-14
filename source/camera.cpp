@@ -191,6 +191,137 @@ void CameraCancelCamera_m(int pnum)
     objAdjustParam_m[pnum].counter = 0;
 }
 
+void CameraSetNormalCamera_m(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType)
+{
+    auto& system = cameraSystemWork_m[pnum];
+
+    if (!system.G_scCameraLevel)
+    {
+        Sint16 cameraLevel = system.G_ssCameraEntry;
+
+        system.G_scRestoreAttribute[0] = system.G_scCameraAttribute;
+        system.G_ssRestoreLevel[0] = 0;
+        system.G_ssRestoreEntry[0] = cameraLevel;
+        system.G_scRestoreCameraMode[0] = system.G_scCameraMode;
+        system.G_pfnRestoreCamera[0] = system.G_pfnCamera;
+
+        Sint8 adjust = cameraLevel == -1 ? 21 : pObjCameraEntry[cameraLevel].ucAdjType;
+
+        system.G_scRestoreCameraAdjust[cameraLevel] = adjust;
+        system.G_pfnRestoreAdjust[0] = pObjCameraAdjust[adjust].fnAdjust;
+
+        system.G_scCameraLevel = CLEVEL_NORMAL;
+
+        SetCameraMode_m(pnum, ssCameraMode);
+        SetAdjustMode_m(pnum, ucAdjustType);
+
+        if (pObjCameraAdjust[ucAdjustType].slAttribute)
+        {
+            system.G_scCameraAttribute |= 1u;
+        }
+
+        system.G_scCameraDirect = pObjCameraMode[ssCameraMode].scCameraDirectMode;
+        system.G_boolSwitched = 1;
+    }
+}
+
+void CameraReleaseCollisionCamera_m(int pnum)
+{
+    auto& system = cameraSystemWork_m[pnum];
+
+    if (system.G_scCameraLevel == CLEVEL_COLLISION)
+    {
+        system.G_ssCameraEntry = system.G_ssRestoreEntry[CLEVEL_COLLISION];
+        system.G_scCameraMode = system.G_scRestoreCameraMode[CLEVEL_COLLISION];
+        system.G_scCameraLevel = system.G_ssRestoreLevel[CLEVEL_COLLISION];
+        system.G_scCameraAttribute = system.G_scRestoreAttribute[CLEVEL_COLLISION];
+        system.G_pfnCamera = system.G_pfnRestoreCamera[CLEVEL_COLLISION];
+        system.G_scCameraAdjust = system.G_scRestoreCameraAdjust[CLEVEL_COLLISION];
+        system.G_pfnAdjust = system.G_pfnRestoreAdjust[CLEVEL_COLLISION];
+        system.G_scCameraDirect = pObjCameraMode[system.G_scRestoreCameraMode[CLEVEL_COLLISION]].scCameraDirectMode;
+        system.G_boolSwitched = 1;
+        system.G_ulTimer = 0;
+        objAdjustParam_m[pnum].counter = 0;
+
+        if (!(system.G_ssRestoreLevel[CLEVEL_COLLISION] >> 8) && default_camera_mode != -1)
+        {
+            CameraSetNormalCamera_m(pnum, default_camera_mode, default_camera_adjust);
+        }
+    }
+}
+
+void CameraSetCollisionCamera(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType)
+{
+    auto& system = cameraSystemWork_m[pnum];
+
+    if (system.G_scCameraLevel <= CLEVEL_COLLISION)
+    {
+        if (system.G_scCameraLevel != CLEVEL_COLLISION)
+        {
+            system.G_scRestoreAttribute[CLEVEL_COLLISION] = system.G_scCameraAttribute;
+            system.G_ssRestoreLevel[CLEVEL_COLLISION] = system.G_scCameraLevel;
+            system.G_scRestoreCameraMode[CLEVEL_COLLISION] = system.G_scCameraMode;
+            system.G_ssRestoreEntry[CLEVEL_COLLISION] = system.G_ssCameraEntry;
+            system.G_pfnRestoreCamera[CLEVEL_COLLISION] = system.G_pfnCamera;
+
+            Sint8 adjust = system.G_ssCameraEntry == -1 ? 21 : pObjCameraEntry[system.G_ssCameraEntry].ucAdjType;
+            system.G_scRestoreCameraAdjust[CLEVEL_COLLISION] = adjust;
+            system.G_pfnRestoreAdjust[CLEVEL_COLLISION] = pObjCameraAdjust[adjust].fnAdjust;
+            system.G_scCameraLevel = CLEVEL_COLLISION;
+        }
+
+        SetCameraMode_m(pnum, ssCameraMode);
+        SetAdjustMode_m(pnum, ucAdjustType);
+
+        system.G_scCameraAttribute = 2;
+        if (pObjCameraAdjust[ucAdjustType].slAttribute)
+        {
+            system.G_scCameraAttribute = 3;
+        }
+
+        system.G_scCameraDirect = pObjCameraMode[ssCameraMode].scCameraDirectMode;
+        system.G_boolSwitched = 1;
+    }
+}
+
+void CameraSetCollisionCameraFunc(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPARAM*), Uint8 ucAdjustType, Sint8 scCameraDirect)
+{
+    auto& system = cameraSystemWork_m[pnum];
+
+    if (system.G_scCameraLevel <= CLEVEL_COLLISION)
+    {
+        if (system.G_scCameraLevel != CLEVEL_COLLISION)
+        {
+            system.G_ssRestoreLevel[CLEVEL_COLLISION] = system.G_scCameraLevel;
+            system.G_scRestoreAttribute[CLEVEL_COLLISION] = system.G_scCameraAttribute;
+            system.G_ssRestoreEntry[CLEVEL_COLLISION] = system.G_ssCameraEntry;
+            system.G_scRestoreCameraMode[CLEVEL_COLLISION] = system.G_scCameraMode;
+            system.G_pfnRestoreCamera[CLEVEL_COLLISION] = system.G_pfnCamera;
+
+            Sint8 adjust = system.G_ssCameraEntry == -1 ? 21 : pObjCameraEntry[system.G_ssCameraEntry].ucAdjType;
+            system.G_scRestoreCameraAdjust[CLEVEL_COLLISION] = adjust;
+            system.G_pfnRestoreAdjust[CLEVEL_COLLISION] = pObjCameraAdjust[adjust].fnAdjust;
+            system.G_scCameraLevel = CLEVEL_COLLISION;
+        }
+
+        system.G_ssCameraEntry = -1;
+        system.G_scCameraMode = -1;
+        system.G_pfnCamera = fnCamera;
+
+        SetAdjustMode_m(pnum, ucAdjustType);
+
+        system.G_scCameraAttribute = 2;
+
+        if (pObjCameraAdjust[ucAdjustType].slAttribute)
+        {
+            system.G_scCameraAttribute = 3;
+        }
+
+        system.G_scCameraDirect = scCameraDirect;
+        system.G_boolSwitched = 1;
+    }
+}
+
 void CameraReleaseEventCamera_m(int pnum)
 {
     auto& system = cameraSystemWork_m[pnum];
@@ -209,13 +340,99 @@ void CameraReleaseEventCamera_m(int pnum)
         system.G_ulTimer = 0;
         objAdjustParam_m[pnum].counter = 0;
 
-        //if (!(system.G_ssRestoreLevel[CLEVEL_EVENT] >> 8) && default_camera_mode != -1)
-        //{
-        //    CameraSetNormalCamera(default_camera_mode, default_camera_adjust);
-        //}
+        if (!(system.G_ssRestoreLevel[CLEVEL_EVENT] >> 8) && default_camera_mode != -1)
+        {
+            CameraSetNormalCamera_m(pnum, default_camera_mode, default_camera_adjust);
+        }
     }
 
     eventReleaseTimer_m[pnum] = 0;
+}
+
+void CanselCAMSURVEY_m(int pnum)
+{
+    if (cameraSystemWork_m[pnum].G_scCameraMode == CAMMD_SURVEY || cameraSystemWork_m[pnum].G_scCameraMode == CAMMD_KOSCAM)
+    {
+        CameraReleaseCollisionCamera_m(pnum);
+        SetAdjustMode_m(pnum, CAMADJ_TIME);
+    }
+}
+
+void CameraSetEventCamera_m(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType)
+{
+    auto& system = cameraSystemWork_m[pnum];
+
+    CanselCAMSURVEY_m(pnum);
+
+    if (system.G_scCameraLevel <= CLEVEL_EVENT)
+    {
+        if (system.G_scCameraLevel != CLEVEL_EVENT)
+        {
+            system.G_ssRestoreLevel[CLEVEL_EVENT] = system.G_scCameraLevel;
+            system.G_scRestoreCameraMode[CLEVEL_EVENT] = system.G_scCameraMode;
+            system.G_scRestoreAttribute[CLEVEL_EVENT] = system.G_scCameraAttribute;
+            system.G_ssRestoreEntry[CLEVEL_EVENT] = system.G_ssCameraEntry;
+            system.G_pfnRestoreCamera[CLEVEL_EVENT] = system.G_pfnCamera;
+
+            Sint8 adjust = system.G_ssCameraEntry == -1 ? 21 : pObjCameraEntry[system.G_ssCameraEntry].ucAdjType;
+
+            system.G_scRestoreCameraAdjust[CLEVEL_EVENT] = adjust;
+            system.G_pfnRestoreAdjust[CLEVEL_EVENT] = pObjCameraAdjust[adjust].fnAdjust;
+            system.G_scCameraLevel = CLEVEL_EVENT;
+        }
+
+        SetCameraMode_m(pnum, ssCameraMode);
+        SetAdjustMode_m(pnum, ucAdjustType);
+
+        system.G_scCameraAttribute = 2;
+        if (pObjCameraAdjust[ucAdjustType].slAttribute)
+        {
+            system.G_scCameraAttribute = 3;
+        }
+
+        system.G_scCameraDirect = pObjCameraMode[ssCameraMode].scCameraDirectMode;
+        system.G_boolSwitched = 1;
+    }
+}
+
+void CameraSetEventCameraFunc_m(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPARAM*), Uint8 ucAdjustType, Sint8 scCameraDirect)
+{
+    auto& system = cameraSystemWork_m[pnum];
+
+    CanselCAMSURVEY_m(pnum);
+
+    if (system.G_scCameraLevel <= CLEVEL_EVENT)
+    {
+        if (system.G_scCameraLevel != CLEVEL_EVENT)
+        {
+            system.G_ssRestoreLevel[CLEVEL_EVENT] = system.G_scCameraLevel;
+            system.G_scRestoreCameraMode[CLEVEL_EVENT] = system.G_scCameraMode;
+            system.G_scRestoreAttribute[CLEVEL_EVENT] = system.G_scCameraAttribute;
+            system.G_ssRestoreEntry[CLEVEL_EVENT] = system.G_ssCameraEntry;
+            system.G_pfnRestoreCamera[CLEVEL_EVENT] = system.G_pfnCamera;
+
+            Sint8 adjust = system.G_ssCameraEntry == -1 ? 21 : pObjCameraEntry[system.G_ssCameraEntry].ucAdjType;
+
+            system.G_scRestoreCameraAdjust[CLEVEL_EVENT] = adjust;
+            system.G_pfnRestoreAdjust[CLEVEL_EVENT] = pObjCameraAdjust[adjust].fnAdjust;
+            system.G_scCameraLevel = CLEVEL_EVENT;
+        }
+
+        system.G_ssCameraEntry = -1;
+        system.G_scCameraMode = -1;
+        system.G_pfnCamera = fnCamera;
+
+        SetAdjustMode_m(pnum, ucAdjustType);
+
+        system.G_scCameraAttribute = 2;
+        if (pObjCameraAdjust[ucAdjustType].slAttribute)
+        {
+            system.G_scCameraAttribute = 3;
+        }
+
+        system.G_scCameraDirect = scCameraDirect;
+        system.G_boolSwitched = 1;
+    }
 }
 
 void ApplyMultiCamera(int pnum)
@@ -1242,13 +1459,13 @@ void __cdecl Camera_r(task* tp)
     }
     else if (twp->mode == 1) /* Second init pass */
     {
-        //if (start_camera_mode != -1)
-        //{
-        //    CameraSetNormalCamera(start_camera_mode, 0);
-        //}
-
         for (int i = 0; i < PLAYER_MAX; ++i)
         {
+            if (start_camera_mode != -1)
+            {
+                CameraSetNormalCamera_m(i, start_camera_mode, 0);
+            }
+
             InitCameraParam_m(i);
 
             __PlayerStatus_last_pos_m[i] = playertwp[0]->pos;
