@@ -240,6 +240,9 @@ VoidFunc(sub_437100, 0x437100);
 DataPointer(_OBJ_CAMERAPARAM, cameraParam, 0x3B2CB7C);
 DataPointer(NJS_PLANE, plCollision, 0x915094);
 FunctionPointer(void, DispTask, (int level), 0x40B4F0);
+FunctionPointer(void, CamcontSetCameraTGTOFST, (taskwk* pTaskWork), 0x435D10);
+FunctionPointer(void, CamcontSetCameraLOOKAT, (taskwk* pTaskWork), 0x435C70);
+FunctionPointer(void, CamcontSetCameraCAMSTATUS, (taskwk* pTaskWork), 0x435C30);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -447,5 +450,16 @@ static inline BOOL RoboHeadCaptureBeam(task* tp)
 	{
 		mov eax, [tp]
 		call RoboHeadCaptureBeamPtr
+	}
+}
+
+static const void* const CameraCollisitonCheckAdjPtr = (void*)0x462CF0;
+static inline void CameraCollisitonCheckAdj(NJS_POINT3* src, NJS_POINT3* dst)
+{
+	__asm
+	{
+		mov edi, [dst]
+		mov esi, [src]
+		call CameraCollisitonCheckAdjPtr
 	}
 }

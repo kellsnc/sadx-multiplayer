@@ -17,8 +17,6 @@ static Angle ds_GetPerspectiveM(int pnum) { return 0; };
 static void njSetPerspectiveM(int pnum, Angle bams) {};
 static void ResetPerspectiveM(int pnum) {};
 
-void CamcontSetCameraLOOKAT_m(int pnum);
-
 void ApplyMultiCamera(int pnum);
 void __cdecl Camera_r(task* tp);
 void __cdecl CameraPause_r(task* tp);

@@ -15,6 +15,139 @@ VariableHook<Sint32, 0x3C4ABD8> param_inertia_m;
 VariableHook<Angle3, 0x3C4AC64> screen_in_ang_m;
 VariableHook<Float, 0x3C4ABCC> adjust_point_m;
 
+void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
+{
+    auto pnum = TASKWK_PLAYERID(playertwp[0]);
+    auto ptwp = playertwp[pnum];
+
+    NJS_POINT3 dst;
+    dst.x = pTaskWork->pos.x - ptwp->pos.x;
+    dst.y = pTaskWork->pos.y - ptwp->pos.y;
+    dst.z = pTaskWork->pos.z - ptwp->pos.z;
+    Float dst_radius = njScalor(&dst);
+
+    NJS_POINT3 src;
+    GetPlayerPosition(pnum, 2, &src, 0);
+    src.x = pOldTaskWork->pos.x - src.x;
+    src.y = pOldTaskWork->pos.y - src.y;
+    src.z = pOldTaskWork->pos.z - src.z;
+    Float src_radius = njScalor(&src);
+
+    Float dist = max(src_radius + (dst_radius - src_radius) * 0.3f, 20.0f);
+
+    if (cameraControlWork.ssFlag & 1)
+    {
+        cameraControlWork.ssFlag &= ~1;
+    }
+    else
+    {
+        Angle angy = SubAngle(pOldTaskWork->ang.y, pTaskWork->ang.y);
+
+        if (angy & 0x8000)
+        {
+            angy |= 0xFFFF0000;
+        }
+
+        if (angy > -0x40 && angy < 0x40)
+        {
+            cameraControlWork.angy = pTaskWork->ang.y;
+            pCameraAdjustWork->ssAdjustFlag &= ~0x40u;
+            pCameraAdjustWork->angSpeed[1] = 0;
+        }
+        else
+        {
+            Angle limit = angy / 4;
+            Angle ang;
+
+            if (angy >= 0)
+            {
+                ang = pCameraAdjustWork->angSpeed[1] + 0x40;
+                if (ang >= limit)
+                {
+                    ang = limit;
+                }
+
+                if (ang >= 0x100)
+                {
+                    ang = 0x100;
+                }
+            }
+            else
+            {
+                ang = pCameraAdjustWork->angSpeed[1] - 0x40;
+                if (ang <= limit)
+                {
+                    ang = limit;
+                }
+
+                if (ang <= -0x100)
+                {
+                    ang = -0x100;
+                }
+            }
+
+            pCameraAdjustWork->angSpeed[1] = ang;
+            cameraControlWork.angy = ang + pOldTaskWork->ang.y;
+        }
+    }
+
+    Angle angx = SubAngle(pOldTaskWork->ang.x, pTaskWork->ang.x);
+
+    if (angx & 0x8000)
+    {
+        angx |= 0xFFFF0000;
+    }
+
+    if (angx > -0x80 && angx < 0x80)
+    {
+        cameraControlWork.angx = pTaskWork->ang.x;
+        pCameraAdjustWork->ssAdjustFlag &= ~0x20u;
+        pCameraAdjustWork->angSpeed[0] = 0;
+    }
+    else
+    {
+        Angle limit = angx / 4;
+        Angle ang;
+
+        if (angx >= 0)
+        {
+            ang = pCameraAdjustWork->angSpeed[0] + 0x80;
+            if (ang >= limit)
+            {
+                ang = limit;
+            }
+
+            if (ang >= 0x200)
+            {
+                ang = 0x200;
+            }
+        }
+        else
+        {
+            ang = pCameraAdjustWork->angSpeed[0] - 0x80;
+            if (ang <= limit)
+            {
+                ang = limit;
+            }
+
+            if (ang <= -0x200)
+            {
+                ang = -0x200;
+            }
+        }
+
+        pCameraAdjustWork->angSpeed[0] = ang;
+        cameraControlWork.angx = ang + pOldTaskWork->ang.x;
+    }
+
+    cameraControlWork.tgtxpos = ptwp->pos.x;
+    cameraControlWork.tgtypos = ptwp->pos.y + 15.0f;
+    cameraControlWork.tgtzpos = ptwp->pos.z;
+    cameraControlWork.tgtdist = dist;
+    cameraControlWork.angz = 0;
+    CamcontSetCameraTGTOFST(pTaskWork);
+}
+
 void AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
     auto pnum = TASKWK_PLAYERID(playertwp[0]);
@@ -124,7 +257,7 @@ void AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTP
     cameraControlWork.tgtzpos = ptwp->pos.z;
     cameraControlWork.tgtdist = dist;
     cameraControlWork.angz = 0;
-    CamcontSetCameraLOOKAT_m(pnum);
+    CamcontSetCameraLOOKAT(pTaskWork);
 }
 
 void atpInitParam_m(int pnum, taskwk* twp, taskwk* ptwp, _OBJ_ADJUSTPARAM* adjwp)
@@ -274,6 +407,6 @@ void AdjustThreePoint_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARA
 
     if (param_collision_m[pnum])
     {
-        //CameraCollisitonCheckAdj(&pTaskWork->pos, &pOldTaskWork->pos);
+        CameraCollisitonCheckAdj(&pTaskWork->pos, &pOldTaskWork->pos);
     }
 }

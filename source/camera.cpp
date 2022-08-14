@@ -31,7 +31,13 @@ VariableHook<uint32_t, 0x3B2CBA8> free_camera_mode_m;
 VariableHook<_OBJ_ADJUSTPARAM, 0x3B2CA20> objAdjustParam_m;
 VariableHook<FCWRK, 0x3B2C958> fcwrk_m;
 
-CameraLocation cameraLocations[PLAYER_MAX];
+static taskwk* backup_pl;
+static motionwk2* backup_mtn;
+static playerwk* backup_pwp;
+static PDS_PERIPHERAL backup_per;
+static _camcontwk backup_work;
+
+static CameraLocation cameraLocations[PLAYER_MAX];
 
 NJS_POINT3* GetCameraPosition(int pnum)
 {
@@ -250,19 +256,6 @@ void __cdecl CameraPause_r(task* tp)
     }
 }
 
-void CamcontSetCameraCAMSTATUS_m(int pnum)
-{
-    auto& ctrl = cameraControlWork_m[pnum];
-    auto& loc = cameraLocations[pnum];
-
-    loc.pos.x = ctrl.camxpos;
-    loc.pos.y = ctrl.camypos;
-    loc.pos.z = ctrl.camzpos;
-    loc.ang.x = ctrl.angx;
-    loc.ang.y = ctrl.angy;
-    loc.ang.z = ctrl.angz;
-}
-
 void CamcontSetCameraLOOKAT_m(int pnum)
 {
     auto& ctrl = cameraControlWork_m[pnum];
@@ -276,20 +269,6 @@ void CamcontSetCameraLOOKAT_m(int pnum)
     Float z = ctrl.camzpos - ctrl.tgtzpos;
     loc.ang.x = njArcTan2(ctrl.tgtypos - ctrl.camypos, njSqrt(z * z + x * x));
     loc.ang.y = njArcTan2(x, z);
-    loc.ang.z = ctrl.angz;
-}
-
-void CamcontSetCameraTGTOFST_m(int pnum)
-{
-    auto& ctrl = cameraControlWork_m[pnum];
-    auto& loc = cameraLocations[pnum];
-
-    Float dist = njCos(ctrl.angx) * ctrl.tgtdist;
-    loc.pos.y = ctrl.tgtypos - njSin(ctrl.angx) * ctrl.tgtdist;
-    loc.pos.x = njSin(ctrl.angy) * dist + ctrl.tgtxpos;
-    loc.pos.z = njCos(ctrl.angy) * dist + ctrl.tgtzpos;
-    loc.ang.x = ctrl.angx;
-    loc.ang.y = ctrl.angy;
     loc.ang.z = ctrl.angz;
 }
 
@@ -688,67 +667,34 @@ void sub_4364B0_m(_OBJ_CAMERAENTRY* pEntry)
     cameraParam.fDistance = pEntry->fDistance;
 }
 
-void CallMode(int pnum)
+// To avoid having to rewrite every camera, and to be compatible with eventual camera mods
+// we replace all references to player 0 with needed player
+void PushPlayerSwap(int pnum)
 {
     camera_twp->pos = cameraLocations[pnum].pos;
     camera_twp->ang = cameraLocations[pnum].ang;
 
     if (pnum != 0)
     {
-        auto backup_pl = playertwp[0];
-        auto backup_mtn = playermwp[0];
-        auto backup_pwp = playerpwp[0];
-        auto backup_per = perG[0];
-        auto backup_work = cameraControlWork_m[0];
+        backup_pl = playertwp[0];
+        backup_mtn = playermwp[0];
+        backup_pwp = playerpwp[0];
+        backup_per = perG[0];
+        backup_work = cameraControlWork_m[0];
 
         playertwp[0] = playertwp[pnum];
         playermwp[0] = playermwp[pnum];
         playerpwp[0] = playerpwp[pnum];
         perG[0] = perG[pnum];
         cameraControlWork_m[0] = cameraControlWork_m[pnum];
-
-        cameraSystemWork_m[pnum].G_pfnCamera(&cameraParam);
-
-        cameraControlWork_m[pnum] = cameraControlWork_m[0];
-
-        playertwp[0] = backup_pl;
-        playermwp[0] = backup_mtn;
-        playerpwp[0] = backup_pwp;
-        perG[0] = backup_per;
-        cameraControlWork_m[0] = backup_work;
-    }
-    else
-    {
-        cameraSystemWork_m[pnum].G_pfnCamera(&cameraParam);
     }
 }
 
-void CallAdjust(int pnum, bool freecam)
+// Restore changes
+void PopPlayerSwap(int pnum)
 {
-    return;
-
-    camera_twp->pos = cameraLocations[pnum].pos;
-    camera_twp->ang = cameraLocations[pnum].ang;
-
     if (pnum != 0)
     {
-        auto backup_pl = playertwp[0];
-        auto backup_mtn = playermwp[0];
-        auto backup_pwp = playerpwp[0];
-        auto backup_per = perG[0];
-        auto backup_work = cameraControlWork_m[0];
-
-        playertwp[0] = playertwp[pnum];
-        playermwp[0] = playermwp[pnum];
-        playerpwp[0] = playerpwp[pnum];
-        perG[0] = perG[pnum];
-        cameraControlWork_m[0] = cameraControlWork_m[pnum];
-
-        if (freecam)
-            pObjCameraAdjust[CAMADJ_FORFREECAMERA].fnAdjust(camera_twp, &oldTaskWork, &objAdjustParam_m[pnum]);
-        else
-            cameraSystemWork_m[pnum].G_pfnAdjust(camera_twp, &oldTaskWork, &objAdjustParam_m[pnum]);
-        
         cameraControlWork_m[pnum] = cameraControlWork_m[0];
 
         playertwp[0] = backup_pl;
@@ -756,13 +702,6 @@ void CallAdjust(int pnum, bool freecam)
         playerpwp[0] = backup_pwp;
         perG[0] = backup_per;
         cameraControlWork_m[0] = backup_work;
-    }
-    else
-    {
-        if (freecam)
-            pObjCameraAdjust[CAMADJ_FORFREECAMERA].fnAdjust(camera_twp, &oldTaskWork, &objAdjustParam_m[pnum]);
-        else
-            cameraSystemWork_m[pnum].G_pfnAdjust(camera_twp, &oldTaskWork, &objAdjustParam_m[pnum]);
     }
 
     cameraLocations[pnum].pos = camera_twp->pos;
@@ -785,10 +724,12 @@ void CameraCameraMode_m(int pnum)
         ctrl.camypos = loc.pos.y;
         ctrl.camzpos = loc.pos.z;
 
-        if ((perG[pnum].on & (Buttons_L | Buttons_R)) == (Buttons_L | Buttons_R) && (perG[pnum].press & Buttons_B))
+        if ((perG[pnum].on & (Buttons_L | Buttons_R)) == (Buttons_L | Buttons_R) && (perG[pnum].press & Buttons_Y))
         {
             SetFreeCamera_m(pnum, !GetFreeCamera_m(pnum));
         }
+
+        PushPlayerSwap(pnum);
 
         fcmode &= ~MODE_ACTIVE;
 
@@ -814,36 +755,38 @@ void CameraCameraMode_m(int pnum)
             cameraParam.ulTimer = system.G_ulTimer;
 
             /* Call current auto camera mode with information from camera layout */
-            CallMode(pnum);
+            cameraSystemWork_m[pnum].G_pfnCamera(&cameraParam);
         }
 
         /* Apply processed auto camera data based on direct mode */
         switch (system.G_scCameraDirect)
         {
         case CDM_TGTOFST:
-            CamcontSetCameraTGTOFST_m(pnum);
+            CamcontSetCameraTGTOFST(camera_twp);
             break;
         case CDM_LOOKAT:
-            CamcontSetCameraLOOKAT_m(pnum);
+            CamcontSetCameraLOOKAT(camera_twp);
             break;
         case CDM_CAMSTATUS:
-            CamcontSetCameraCAMSTATUS_m(pnum);
+            CamcontSetCameraCAMSTATUS(camera_twp);
             break;
         }
 
         /* Run adjust function (interpolation between previous and current data) */
         if (fcmode & MODE_ACTIVE)
         {
-            CallAdjust(pnum, true);
+            pObjCameraAdjust[CAMADJ_FORFREECAMERA].fnAdjust(camera_twp, &oldTaskWork, &objAdjustParam_m[pnum]);
         }
         else
         {
             if ((system.G_ulTimer || !(system.G_scCameraAttribute & 1)) && cameraTimer_m[pnum] > 0x3C)
             {
-                CallAdjust(pnum, false);
+                cameraSystemWork_m[pnum].G_pfnAdjust(camera_twp, &oldTaskWork, &objAdjustParam_m[pnum]);
                 ++objAdjustParam_m[pnum].counter;
             }
         }
+
+        PopPlayerSwap(pnum);
     }
 }
 
@@ -1237,9 +1180,9 @@ void cameraAdjustCheck_m(int pnum, taskwk* pTaskWork, taskwk* pOldTaskWork)
     Float x = (pTaskWork->pos.x - pOldTaskWork->pos.x);
     if ((x * x) + ((z * z) + (y * y)) < 0.01f)
     {
-        if (DiffAngle(pTaskWork->ang.x, pOldTaskWork->ang.x) < 91
-            && DiffAngle(pTaskWork->ang.y, pOldTaskWork->ang.y) < 91
-            && DiffAngle(pTaskWork->ang.z, pOldTaskWork->ang.z) < 91)
+        if (DiffAngle(pTaskWork->ang.x, pOldTaskWork->ang.x) < 0x5B
+            && DiffAngle(pTaskWork->ang.y, pOldTaskWork->ang.y) < 0x5B
+            && DiffAngle(pTaskWork->ang.z, pOldTaskWork->ang.z) < 0x5B)
         {
             switch (cameraSystemWork_m[pnum].G_scCameraAdjust)
             {
@@ -1391,6 +1334,8 @@ void InitCamera()
     WriteJump((void*)0x434870, InitFreeCamera_r);
     WriteJump((void*)0x434880, ResetFreeCamera_r);
 
+    CameraAdjust[CAMADJ_NORMAL].fnAdjust = AdjustNormal_m;
+    CameraAdjust[CAMADJ_NORMAL_S].fnAdjust = AdjustNormal_m;
     CameraAdjust[CAMADJ_FORFREECAMERA].fnAdjust = AdjustForFreeCamera_m;
     for (int i = CAMADJ_THREE1; i <= CAMADJ_RELATIVE6C; ++i)
         CameraAdjust[i].fnAdjust = AdjustThreePoint_m;
