@@ -4,6 +4,8 @@
 #include "camera.h"
 #include "camerafunc.h"
 
+VariableHook<CAM_ANYPARAM, 0x3B2CA38> CamAnyParam_m;
+
 /* ADJUST THREE POINT */
 VariableHook<NJS_POINT3, 0x3C4ABB8> inertia_m;
 VariableHook<Angle3, 0x3C4AC1C> angle_c2p_m;
@@ -14,6 +16,11 @@ VariableHook<Float, 0x3C4AC60> param_max_time_m;   /* guessed name */
 VariableHook<Sint32, 0x3C4ABD8> param_inertia_m;
 VariableHook<Angle3, 0x3C4AC64> screen_in_ang_m;
 VariableHook<Float, 0x3C4ABCC> adjust_point_m;
+
+CAM_ANYPARAM* GetCamAnyParam(int pnum)
+{
+    return &CamAnyParam_m[pnum];
+}
 
 void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {

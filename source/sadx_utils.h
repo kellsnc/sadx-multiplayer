@@ -91,6 +91,15 @@ struct OCMDATA
 	char sflag;
 };
 
+struct CAM_ANYPARAM
+{
+	NJS_POINT3 camAnyParamPos;
+	NJS_POINT3 camAnyParamTgt;
+	Angle3 camAnyParamAng;
+	int camAnyTmpSint32[2];
+	float camAnyTmpFloat[2];
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -246,6 +255,8 @@ FunctionPointer(void, CamcontSetCameraCAMSTATUS, (taskwk* pTaskWork), 0x435C30);
 DataPointer(Sint32, default_camera_mode, 0x3B2CBAC);
 DataPointer(Sint32, default_camera_adjust, 0x3B2CAC4);
 DataPointer(Sint32, start_camera_mode, 0x3B2CAA8);
+CamFunc(CameraFishingCatch, 0x46E4C0);
+CamFunc(CameraLureAndFish, 0x46E9A0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

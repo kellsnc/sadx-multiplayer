@@ -218,14 +218,18 @@ static void ObjectRuinMirror_m(task* tp)
 
                         SetInputP(pnum, PL_OP_PLACEON);
 
-                        //CamAnyParam.camAnyParamPos.x = twp->pos.x;
-                        //CamAnyParam.camAnyParamPos.y = twp->pos.y + 10.0;
-                        //CamAnyParam.camAnyParamPos.z = twp->pos.z;
-                        //CamAnyParam.camAnyParamAng.x = 0;
-                        //CamAnyParam.camAnyParamAng.y = twp->ang.y;
-                        //CamAnyParam.camAnyParamAng.z = 0;
-                        //SetFreeCameraMode(0);
-                        //CameraSetEventCamera(65, 0);
+                        auto param = GetCamAnyParam(pnum);
+                        if (param)
+                        {
+                            param->camAnyParamPos.x = twp->pos.x;
+                            param->camAnyParamPos.y = twp->pos.y + 10.0f;
+                            param->camAnyParamPos.z = twp->pos.z;
+                            param->camAnyParamAng.x = 0;
+                            param->camAnyParamAng.y = twp->ang.y;
+                            param->camAnyParamAng.z = 0;
+                            SetFreeCameraMode_m(pnum, FALSE);
+                            CameraSetEventCamera_m(pnum, CAMMD_TAIHO, CAMADJ_NONE);
+                        }
 
                         PClearSpeed(playermwp[pnum], playerpwp[pnum]);
                         MIRROR_PNUM(twp) = pnum;
@@ -260,7 +264,7 @@ static void ObjectRuinMirror_m(task* tp)
                     max_dist = -175.0f;
                 }
 
-                //CameraReleaseEventCamera();
+                CameraReleaseEventCamera_m(pnum);
                 dsStop_num(197);
                 SetInputP(pnum, PL_OP_LETITGO);
             }

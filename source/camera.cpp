@@ -36,6 +36,7 @@ static motionwk2* backup_mtn;
 static playerwk* backup_pwp;
 static PDS_PERIPHERAL backup_per;
 static _camcontwk backup_work;
+static CAM_ANYPARAM backup_any;
 
 static CameraLocation cameraLocations[PLAYER_MAX];
 
@@ -69,6 +70,28 @@ Bool GetFreeCamera_m(int pnum)
 {
     return !!(free_camera_mode_m[pnum] & MODE_ENABLED);
 }
+
+void SetFreeCameraMode_m(int pnum, Sint32 sw)
+{
+    auto& fcmode = free_camera_mode_m[pnum];
+    if (sw)
+    {
+        if (!(fcmode & MODE_AUTHORIZED))
+        {
+            fcmode |= MODE_AUTHORIZED | MODE_UPDATE;
+        }
+    }
+    else
+    {
+        fcmode = fcmode & ~MODE_AUTHORIZED | MODE_UPDATE;
+    }
+}
+
+Bool GetFreeCameraMode_m(int pnum)
+{
+    return !!(free_camera_mode_m[pnum] & MODE_AUTHORIZED);
+}
+
 
 void SetAdjustMode_m(int pnum, Sint32 AdjustType)
 {
@@ -284,7 +307,7 @@ void CameraSetCollisionCamera(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType)
     }
 }
 
-void CameraSetCollisionCameraFunc(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPARAM*), Uint8 ucAdjustType, Sint8 scCameraDirect)
+void CameraSetCollisionCameraFunc_m(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPARAM*), Uint8 ucAdjustType, Sint8 scCameraDirect)
 {
     auto& system = cameraSystemWork_m[pnum];
 
@@ -433,6 +456,11 @@ void CameraSetEventCameraFunc_m(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPAR
         system.G_scCameraDirect = scCameraDirect;
         system.G_boolSwitched = 1;
     }
+}
+
+void ResetCameraTimer_m(int pnum)
+{
+    cameraTimer_m[pnum] = 0;
 }
 
 void ApplyMultiCamera(int pnum)
@@ -898,12 +926,14 @@ void PushPlayerSwap(int pnum)
         backup_pwp = playerpwp[0];
         backup_per = perG[0];
         backup_work = cameraControlWork_m[0];
+        backup_any = *GetCamAnyParam(0);
 
         playertwp[0] = playertwp[pnum];
         playermwp[0] = playermwp[pnum];
         playerpwp[0] = playerpwp[pnum];
         perG[0] = perG[pnum];
         cameraControlWork_m[0] = cameraControlWork_m[pnum];
+        *GetCamAnyParam(0) = *GetCamAnyParam(pnum);
     }
 }
 
@@ -919,6 +949,7 @@ void PopPlayerSwap(int pnum)
         playerpwp[0] = backup_pwp;
         perG[0] = backup_per;
         cameraControlWork_m[0] = backup_work;
+        *GetCamAnyParam(0) = backup_any;
     }
 
     cameraLocations[pnum].pos = camera_twp->pos;

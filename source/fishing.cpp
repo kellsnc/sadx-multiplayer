@@ -4,6 +4,7 @@
 #include "hud_fishing.h"
 #include "hud_itembox.h"
 #include "result.h"
+#include "camera.h"
 #include "fishing.h"
 
 /*
@@ -534,6 +535,103 @@ static bool chkLureDistance_m(BIGETC* etc, NJS_POINT3* rod_pos_p, NJS_POINT3* lu
 	return etc->water_level - 10.0f < lure_pos_p->y;
 }
 
+static void setCatchCameraPos_m(taskwk* twp, int pnum)
+{
+	auto param = GetCamAnyParam(pnum);
+	if (param)
+	{
+		auto ptwp = playertwp[pnum];
+		njPushMatrix(_nj_unit_matrix_);
+
+		njRotateZ_(ptwp->ang.z);
+		njRotateX_(ptwp->ang.x);
+		njRotateY_(0x8000 - ptwp->ang.y);
+
+		NJS_VECTOR v = { 100.0f, 0.0f, 0.0f };
+		njCalcVector(0, &v, &v);
+		njPopMatrixEx();
+
+		param->camAnyParamPos.x = v.x + ptwp->pos.x;
+		param->camAnyParamPos.y = v.y + ptwp->pos.y;
+		param->camAnyParamPos.z = v.z + ptwp->pos.z;
+	}
+}
+
+static void setLureCameraPos_m(taskwk* twp, BIGETC* etc, int pnum)
+{
+	if (!etc->Big_Lure_Ptr)
+	{
+		return;
+	}
+
+	auto param = GetCamAnyParam(pnum);
+
+	if (!param)
+	{
+		return;
+	}
+
+	if (!etc->Big_Fish_Ptr || etc->Big_Fish_Ptr->twp)
+	{
+		param->camAnyParamPos = twp->pos;
+
+		NJS_VECTOR v;
+		Float dist;
+
+		if (!etc->Big_Fish_Ptr || (etc->Big_Fish_Flag & LUREFLAG_HIT))
+		{
+			v = playertwp[pnum]->pos;
+			njSubVector(&v, &twp->pos);
+			dist = -10.0f;
+			v.y = twp->pos.y;
+		}
+		else
+		{
+			v = etc->Big_Fish_Ptr->twp->pos;
+			njSubVector(&v, &twp->pos);
+			dist = 10.0f;
+		}
+
+		njUnitVector(&v);
+		v.x = v.x * dist + twp->pos.x;
+		v.y = v.y * dist + twp->pos.y;
+		v.z = v.z * dist + twp->pos.z;
+
+		dist = (v.x - param->camAnyParamTgt.x) * (v.x - param->camAnyParamTgt.x)
+			 + (v.y - param->camAnyParamTgt.y) * (v.y - param->camAnyParamTgt.y)
+			 + (v.z - param->camAnyParamTgt.z) * (v.z - param->camAnyParamTgt.z);
+		
+		if (njSqrt(dist) >= 5.0f)
+		{
+			njSubVector(&v, &param->camAnyParamTgt);
+			njUnitVector(&v);
+			param->camAnyParamTgt.x += v.x * 10.0f;
+			param->camAnyParamTgt.y += v.y * 10.0f;
+			param->camAnyParamTgt.z += v.z * 10.0f;
+		}
+		else
+		{
+			param->camAnyParamTgt = v;
+		}
+	}
+}
+
+static void setCameraReturn_m(taskwk* twp, int pnum)
+{
+	auto param = GetCamAnyParam(pnum);
+	if (param)
+	{
+		auto ptwp = playertwp[pnum];
+		
+		NJS_VECTOR v = { twp->pos.x - ptwp->pos.x, 0.0f, twp->pos.z - ptwp->pos.z };
+		njUnitVector(&v);
+
+		param->camAnyParamPos.x = v.x * 30.0 + ptwp->pos.x;
+		param->camAnyParamPos.y = ptwp->pos.y;
+		param->camAnyParamPos.z = v.z * 30.0 + ptwp->pos.z;
+	}
+}
+
 static void setLureReturn_m(taskwk* twp, BIGETC* etc, int pnum)
 {
 	if ((GetLevelType() != 1 || GameMode == MD_GAME_FADEOUT_CHANGE2) && !IsLevelChaoGarden())
@@ -541,10 +639,10 @@ static void setLureReturn_m(taskwk* twp, BIGETC* etc, int pnum)
 		dsStop_num(845);
 		etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 
-		//if (twp->mode > 4)
-		//	CameraReleaseCollisionCamera();
-		//else
-		//	CameraReleaseEventCamera();
+		if (twp->mode > 4)
+			CameraReleaseCollisionCamera_m(pnum);
+		else
+			CameraReleaseEventCamera_m(pnum);
 
 		if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 		{
@@ -553,8 +651,8 @@ static void setLureReturn_m(taskwk* twp, BIGETC* etc, int pnum)
 			if (GetDistance(&twp->pos, &playertwp[pnum]->pos) < 50.0f)
 			{
 				twp->mode = MODE_LURE_RETURN_GET;
-				//CameraSetEventCameraFunc(CameraFishingCatch, 0, 2);
-				//setCatchCameraPos(tp);
+				CameraSetEventCameraFunc_m(pnum, CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
+				setCatchCameraPos_m(twp, pnum);
 			}
 			else
 			{
@@ -568,16 +666,16 @@ static void setLureReturn_m(taskwk* twp, BIGETC* etc, int pnum)
 
 				if (GetStageNumber() == LevelAndActIDs_HotShelter1)
 				{
-					//CameraSetEventCameraFunc(CameraFishingCatch, 0, 2);
-					//setCatchCameraPos(tp);
+					CameraSetEventCameraFunc_m(pnum, CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
+					setCatchCameraPos_m(twp, pnum);
 				}
 			}
 		}
 		else
 		{
 			twp->mode = MODE_LURE_RETURN;
-			//CameraSetEventCameraFunc(CameraFishing, 0, 2);
-			//setCameraReturn(v4)
+			CameraSetEventCameraFunc_m(pnum, CameraFishing, CAMADJ_NONE, CDM_LOOKAT);
+			setCameraReturn_m(twp, pnum);
 		}
 	}
 }
@@ -1520,7 +1618,7 @@ static void fishingLureCtrl_m(task* tp)
 		twp->mode = MODE_LURE_FISHING;
 		twp->pos.y -= 0.5f;
 
-		//setLureCameraPos_m(tp);
+		setLureCameraPos_m(twp, etc, pnum);
 		MoveFishingLureSink_m(twp, mwp, etc, &rod_pos, pnum);
 
 		if (lure->string)
@@ -1544,7 +1642,7 @@ static void fishingLureCtrl_m(task* tp)
 
 			etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 			twp->mode = MODE_LURE_RETURN;
-			//CameraReleaseEventCamera();
+			CameraReleaseEventCamera_m(pnum);
 		}
 		else
 		{
@@ -1571,13 +1669,13 @@ static void fishingLureCtrl_m(task* tp)
 				mwp->spd.z *= 0.25f;
 				twp->ang.x = 0;
 				dsPlay_timer(843, (int)twp, 1, 0, 27);
-				//CameraReleaseEventCamera();
-				//CameraSetCollisionCameraFunc(CameraLureAndFish, 0, 2);
+				CameraReleaseEventCamera_m(pnum);
+				CameraSetCollisionCameraFunc_m(pnum, CameraLureAndFish, CAMADJ_NONE, CDM_LOOKAT);
 			}
 		}
 		break;
 	case MODE_LURE_FISHING:
-		//setLureCameraPos_m(tp);
+		setLureCameraPos_m(twp, etc, pnum);
 		MoveFishingLureSink_m(twp, mwp, etc, &rod_pos, pnum);
 		moveFishingRotX_m(twp, mwp, etc, pnum);
 		moveFishingRotY(tp);
@@ -1594,25 +1692,23 @@ static void fishingLureCtrl_m(task* tp)
 		{
 			etc->Big_Fish_Flag |= LUREFLAG_CANCEL;
 
-			/*
 			CameraReleaseCollisionCamera();
 			if (GetStageNumber() == LevelAndActIDs_HotShelter1)
 			{
-				//CameraSetEventCameraFunc(CameraFishingCatch, 0, 2);
-				//setCatchCameraPos(tp);
+				CameraSetEventCameraFunc(CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
+				setCatchCameraPos_m(twp, pnum);
 			}
 			else
 			{
-				CameraSetEventCameraFunc(CameraFishing, 0, 2);
-				setCameraReturn(tp);
+				CameraSetEventCameraFunc(CameraFishing, CAMADJ_NONE, CDM_LOOKAT);
+				setCameraReturn_m(twp, pnum);
 
 				if (checkturipoint2())
 				{
-					CameraReleaseEventCamera();
-					ResetCameraTimer();
+					CameraReleaseEventCamera_m(pnum);
+					ResetCameraTimer_m(pnum);
 				}
 			}
-			*/
 		}
 
 		if ((etc->Big_Fish_Flag & LUREFLAG_HOOK) && GetStageNumber() == LevelAndActIDs_HotShelter1 && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
@@ -1620,11 +1716,9 @@ static void fishingLureCtrl_m(task* tp)
 			etc->Big_Fish_Flag |= LUREFLAG_CANCEL;
 			etc->Big_Fish_Flag &= ~LUREFLAG_HOOK;
 
-			/*
-			CameraReleaseCollisionCamera();
-			SetCameraEvent(sub_46E4C0, 0, 2);
-			setCatchCameraPos(tp);
-			*/
+			CameraReleaseCollisionCamera_m(pnum);
+			CameraSetEventCameraFunc(CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
+			setCatchCameraPos_m(twp, pnum);
 		}
 
 		if (etc->Big_Fish_Flag & LUREFLAG_CANCEL)
@@ -1661,7 +1755,7 @@ static void fishingLureCtrl_m(task* tp)
 
 		break;
 	case MODE_LURE_HIT:
-		//setLureCameraPos_m(tp);
+		setLureCameraPos_m(twp, etc, pnum);
 		MoveFishingLureSink_m(twp, mwp, etc, &rod_pos, pnum);
 		moveFishingRotX_m(twp, mwp, etc, pnum);
 		moveFishingRotY(tp);
@@ -1703,10 +1797,10 @@ static void fishingLureCtrl_m(task* tp)
 			{
 				if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 				{
-					//CameraReleaseEventCamera();
-					//CameraSetEventCameraFunc(CameraFishingCatch, 0, 2);
+					CameraReleaseEventCamera();
+					CameraSetEventCameraFunc(CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
+					setCatchCameraPos_m(twp, pnum);
 					etc->Big_Fish_Flag |= LUREFLAG_RELEASE;
-					//setCatchCameraPos(tp)
 				}
 			}
 
@@ -1775,6 +1869,29 @@ static void MoveFishingCursor_m(task* tp, int pnum) // todo: rewrite properly
 	playermwp[0] = backup_mwp;
 }
 
+static void setCameraFishingTgt_m(task* tp, int pnum)
+{
+	auto param = GetCamAnyParam(pnum);
+	if (param)
+	{
+		auto twp = tp->twp;
+		auto ptwp = playertwp[pnum];
+
+		NJS_VECTOR v = { twp->pos.x - ptwp->pos.x, 0.0f, twp->pos.z - ptwp->pos.z };
+		
+		if (njScalor(&v) < 30.0f)
+		{
+			njUnitVector(&v);
+			v.x *= 30.0f;
+			v.z *= 30.0f;
+		}
+
+		param->camAnyParamTgt.x = v.x + ptwp->pos.x;
+		param->camAnyParamTgt.y = tp->awp->work.f[1];
+		param->camAnyParamTgt.z = v.z + ptwp->pos.z;
+	}
+}
+
 static void fishingCursorCtrl_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -1795,7 +1912,7 @@ static void fishingCursorCtrl_m(task* tp)
 
 		twp->ang.y += 0x200;
 
-		//setCameraFishingTgt_m(tp);
+		setCameraFishingTgt_m(tp, pnum);
 		MoveFishingCursor_m(tp, pnum);
 
 		ptwp->ang.y = 0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - ptwp->pos.x, twp->pos.z - ptwp->pos.z));

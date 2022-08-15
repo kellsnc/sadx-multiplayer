@@ -554,7 +554,7 @@ void cartSonicRidingCartM(task* tp, taskwk* twp, int pnum)
 		// Tell on which cart task the player is
 		taskOfPlayerOn_m[pnum] = tp;
 
-		//CameraSetEventCamera(49, 5u);
+		CameraSetEventCamera_m(pnum, CAMMD_CART, CAMADJ_TIME);
 	}
 	else
 	{
@@ -592,7 +592,22 @@ void cartTakeSonicM(taskwk* twp, int pnum)
 	playertwp[pnum]->ang.y = 0x4000 - twp->ang.y;
 	playertwp[pnum]->ang.z = twp->ang.z;
 	pLockingOnTargetEnemy2(playermwp[pnum], playertwp[pnum], playerpwp[pnum]);
-	// Camera stuff here
+	
+	auto param = GetCamAnyParam(pnum);
+	if (param)
+	{
+		param->camAnyParamPos = twp->pos;
+		param->camAnyParamAng = twp->ang;
+
+		if (0 /* ego_flag == 2 */)
+		{
+			param->camAnyParamTgt.x = 0.0f;
+		}
+		else
+		{
+			param->camAnyParamTgt.x = (Float)(cart_data->flag & 0x10);
+		}
+	}
 }
 
 void cartCheckGoalM(taskwk* twp, int pnum)
@@ -846,7 +861,8 @@ void __cdecl CartGetOffPlayer_r(task* tp)
 		cart_data->ignor_collision = 30;
 		playertwp[pnum]->cwp->info->a = cart_data->player_colli_r;
 
-		// Camera release
+		if (ssStageNumber != STAGE_MG_CART)
+			CameraReleaseEventCamera_m(pnum);
 	}
 	else
 	{
