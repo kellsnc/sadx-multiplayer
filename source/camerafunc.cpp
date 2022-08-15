@@ -22,6 +22,19 @@ CAM_ANYPARAM* GetCamAnyParam(int pnum)
     return &CamAnyParam_m[pnum];
 }
 
+// Make this use CamAnyParam as it should have...
+void CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
+{
+    auto param = GetCamAnyParam(TASKWK_PLAYERID(playertwp[0]));
+    cameraControlWork.camxpos = param->camAnyParamPos.x;
+    cameraControlWork.camypos = param->camAnyParamPos.y;
+    cameraControlWork.camzpos = param->camAnyParamPos.z;
+    cameraControlWork.tgtxpos = param->camAnyParamTgt.x;
+    cameraControlWork.tgtypos = param->camAnyParamTgt.y;
+    cameraControlWork.tgtzpos = param->camAnyParamTgt.z;
+    cameraControlWork.angz = 0;
+}
+
 void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
     auto pnum = TASKWK_PLAYERID(playertwp[0]);

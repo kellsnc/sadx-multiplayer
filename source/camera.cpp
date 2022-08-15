@@ -1582,6 +1582,7 @@ void InitCamera()
     WriteJump((void*)0x434870, InitFreeCamera_r);
     WriteJump((void*)0x434880, ResetFreeCamera_r);
 
+    CameraMode[CAMMD_RuinWaka1].fnCamera = CameraRuinWaka1_m;
     CameraAdjust[CAMADJ_NORMAL].fnAdjust = AdjustNormal_m;
     CameraAdjust[CAMADJ_NORMAL_S].fnAdjust = AdjustNormal_m;
     CameraAdjust[CAMADJ_FORFREECAMERA].fnAdjust = AdjustForFreeCamera_m;

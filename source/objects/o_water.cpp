@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "camera.h"
 #include "multiplayer.h"
 
 // Waterslide in Lost World
@@ -65,7 +66,7 @@ static void __cdecl Normal_m(task* tp)
 		// End of path:
 		if (twp->scl.x >= 2521.0f)
 		{
-			//CameraReleaseEventCamera();
+			CameraReleaseEventCamera_m(pnum);
 			twp->scl.y = 1.0;
 			twp->wtimer = 18204;
 			tp->exec = Normal2_m;
@@ -132,12 +133,15 @@ static void __cdecl Normal_m(task* tp)
 		NJS_POINT3 velo = { 0.0f, 0.2f, 0.0f };
 		CreateWater(&pos, &velo, 1.0f);
 
-		//camera_twp->scl.x = pi2.xpos + sin * 0.5f;
-		//camera_twp->scl.y = pi2.ypos + 6.0f;
-		//camera_twp->scl.z = pi2.zpos + cos * 0.5f;
-		//camera_twp->counter.f = pi1.xpos + sin * 0.5f;
-		//camera_twp->timer.f = pi1.ypos + 6.0f;
-		//camera_twp->value.f = pi1.zpos + cos * 0.5f;
+		if (auto param = GetCamAnyParam(pnum))
+		{
+			param->camAnyParamPos.x = pi2.xpos + sin * 0.5f;
+			param->camAnyParamPos.y = pi2.ypos + 6.0f;
+			param->camAnyParamPos.z = pi2.zpos + cos * 0.5f;
+			param->camAnyParamTgt.x = pi1.xpos + sin * 0.5f;
+			param->camAnyParamTgt.y = pi1.ypos + 6.0f;
+			param->camAnyParamTgt.z = pi1.zpos + cos * 0.5f;
+		}
 	}
 	else
 	{
@@ -167,7 +171,7 @@ static void __cdecl Wait_m(task* tp)
 			twp->counter.f = ptwp->pos.x;
 			twp->value.f = ptwp->pos.z;
 			SetInputP(pnum, PL_OP_PLACEWITHRAFT);
-			//CameraSetEventCamera(62, 0x10u);
+			CameraSetEventCamera_m(pnum, CAMMD_RuinWaka1, CAMADJ_RELATIVE1);
 			dsPlay_oneshot(198, 0, 0, 0);
 			tp->exec = Normal_m;
 		}
@@ -178,7 +182,7 @@ static void __cdecl ObjectWater_r(task* tp);
 Trampoline ObjectWater_t(0x5E3830, 0x5E3837, ObjectWater_r);
 static void __cdecl ObjectWater_r(task* tp)
 {
-	TARGET_STATIC(ObjectWater)(tp);
+	tp->exec = Wait_m;
 
 	for (int i = 1; i < PLAYER_MAX; ++i)
 	{
