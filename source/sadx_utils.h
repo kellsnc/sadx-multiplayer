@@ -477,3 +477,14 @@ static inline void CameraCollisitonCheckAdj(NJS_POINT3* src, NJS_POINT3* dst)
 		call CameraCollisitonCheckAdjPtr
 	}
 }
+
+static const void* const sub_46E940Ptr = (void*)0x46E940;
+static inline void sub_46E940(NJS_POINT3* src, NJS_POINT3* dst)
+{
+	__asm
+	{
+		mov edi, [dst]
+		mov esi, [src]
+		call sub_46E940Ptr
+	}
+}

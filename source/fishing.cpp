@@ -129,6 +129,64 @@ void AddSakanaWeight_m(int weight, int kind, int pnum)
 }
 #pragma endregion
 
+#pragma region Cameras
+void __cdecl CameraLureAndFish_m(_OBJ_CAMERAPARAM* pParam)
+{
+	auto pnum = TASKWK_PLAYERID(playertwp[0]);
+	auto param = GetCamAnyParam(pnum);
+	NJS_POINT3 old_pos, any_pos, any_tgt;
+
+	old_pos = camera_twp->pos;
+	any_pos = param->camAnyParamPos;
+	any_tgt = param->camAnyParamTgt;
+
+	cameraControlWork.tgtxpos = (any_tgt.x + any_tgt.x) * 0.5f;
+	cameraControlWork.tgtypos = (any_tgt.y + any_pos.y) * 0.5f;
+	cameraControlWork.tgtzpos = (any_tgt.z + any_pos.z) * 0.5f;
+
+	NJS_POINT3 vec, spd;
+	spd.x = cameraControlWork.camxpos - cameraControlWork.tgtxpos;
+	spd.y = cameraControlWork.camypos - cameraControlWork.tgtypos;
+	spd.z = cameraControlWork.camzpos - cameraControlWork.tgtzpos;
+	vec.x = any_pos.x - any_tgt.x;
+	vec.y = any_pos.y - any_tgt.y;
+	vec.z = any_pos.z - any_tgt.z;
+
+	Float dist = njScalor(&vec);
+	dist = dist + dist;
+
+	njUnitVector(&spd);
+
+	spd.x = dist * spd.x + cameraControlWork.tgtxpos - cameraControlWork.camxpos;
+	spd.y = dist * spd.y + cameraControlWork.tgtypos - cameraControlWork.camypos;
+	spd.z = dist * spd.z + cameraControlWork.tgtzpos - cameraControlWork.camzpos;
+
+	if (njScalor(&spd) >= 20.0f)
+	{
+		njUnitVector(&spd);
+		cameraControlWork.camxpos = spd.x * 20.0f + cameraControlWork.camxpos;
+		cameraControlWork.camypos = spd.y * 20.0f + cameraControlWork.camypos;
+		cameraControlWork.camzpos = spd.z * 20.0f + cameraControlWork.camzpos;
+	}
+	else
+	{
+		cameraControlWork.camxpos = spd.x + cameraControlWork.camxpos;
+		cameraControlWork.camypos = spd.y + cameraControlWork.camypos;
+		cameraControlWork.camzpos = spd.z + cameraControlWork.camzpos;
+	}
+
+	if (cameraControlWork.camypos < cameraControlWork.tgtypos)
+	{
+		cameraControlWork.camypos = cameraControlWork.tgtypos;
+	}
+
+	if (GetBigEtc(pnum)->water_level - 5.0f > cameraControlWork.camypos)
+	{
+		sub_46E940((NJS_POINT3*)&cameraControlWork.camxpos, (NJS_POINT3*)&old_pos);
+	}
+}
+#pragma endregion
+
 #pragma region BigDisplayFishWeight
 static void __cdecl dispFishWeightTexture_r(task* tp)
 {
@@ -1670,7 +1728,7 @@ static void fishingLureCtrl_m(task* tp)
 				twp->ang.x = 0;
 				dsPlay_timer(843, (int)twp, 1, 0, 27);
 				CameraReleaseEventCamera_m(pnum);
-				CameraSetCollisionCameraFunc_m(pnum, CameraLureAndFish, CAMADJ_NONE, CDM_LOOKAT);
+				CameraSetCollisionCameraFunc_m(pnum, CameraLureAndFish_m, CAMADJ_NONE, CDM_LOOKAT);
 			}
 		}
 		break;
