@@ -943,6 +943,7 @@ void PopPlayerSwap(int pnum)
     if (pnum != 0)
     {
         cameraControlWork_m[pnum] = cameraControlWork_m[0];
+        *GetCamAnyParam(pnum) = *GetCamAnyParam(0);
 
         playertwp[0] = backup_pl;
         playermwp[0] = backup_mtn;
