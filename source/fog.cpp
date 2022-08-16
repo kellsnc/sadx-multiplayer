@@ -5,6 +5,8 @@
 Trampoline* ___njFogEnable_t = nullptr;
 
 VariableHook<___stcFog, 0x3ABDC60> gFog_m;
+VariableHook<Float, 0x90A098> oldn_m;
+VariableHook<Float, 0x90A09C> oldf_m;
 
 ___stcFog* GetScreenFog(int num)
 {
@@ -27,29 +29,33 @@ ___stcFog* GetScreenFog(int num)
 	}
 }
 
-static bool setfog_m(___stcFog* fog)
+static bool setfog_m(int pnum)
 {
 	if (!(gFogEmu.u8Emulation & 1))
 	{
-		auto start = fog->f32StartZ;
-		auto end = fog->f32EndZ;
+		auto& fog = gFog_m[pnum];
+		auto& _oldn = oldn_m[pnum];
+		auto& _oldf = oldf_m[pnum];
 
-		if (start > 0.0f)
-			start = -start;
+		auto n = fog.f32StartZ;
+		auto f = fog.f32EndZ;
 
-		if (end > 0.0f)
-			end = -end;
+		if (n > 0.0f)
+			n = -n;
 
-		njSetFogColor(fog->Col);
+		if (f > 0.0f)
+			f = -f;
 
-		if (start != LastFogLayer || end != LastFogDistance)
+		njSetFogColor(fog.Col);
+
+		if (n != _oldn || f != _oldf)
 		{
-			njGenerateFogTable3((float*)&FogTable, fog->f32StartZ, fog->f32EndZ);
-			njSetFogTable((float*)&FogTable);
+			njGenerateFogTable3((float*)&FogTable, n, f);
+			njSetFogTable_((float*)&FogTable);
 		}
 
-		LastFogLayer = start;
-		LastFogDistance = end;
+		_oldn = n;
+		_oldf = f;
 	}
 
 	return true;
@@ -68,11 +74,15 @@ static void ___njFogEnable_m()
 		}
 
 		// Use first screen fog if no fog is set for the current screen
-		auto fog = gFog_m[num].u8Enable ? gFog_m[num] : gFog_m[0];
 
-		if (fog.u8Enable)
+		if (gFog_m[num].u8Enable == 0)
 		{
-			if (setfog_m(&fog))
+			num = 0;
+		}
+
+		if (gFog_m[num].u8Enable)
+		{
+			if (setfog_m(num))
 			{
 				if (!(fogemulation & 1))
 				{
