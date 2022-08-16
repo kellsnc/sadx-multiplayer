@@ -53,9 +53,9 @@ namespace gravity
 				return false;
 			}
 
-			*v = g.vG;
-			*angx = g.angGx;
-			*angz = g.angGz;
+			if (v) *v = g.vG;
+			if (angx) *angx = g.angGx;
+			if (angz) *angz = g.angGz;
 			
 			return true;
 		}
