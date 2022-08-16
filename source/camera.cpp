@@ -472,7 +472,7 @@ void ApplyMultiCamera(int pnum)
     camera_twp->pos = cameraLocations[pnum].pos;
     camera_twp->ang = cameraLocations[pnum].ang;
 
-    CameraSetView(camera_twp);
+    CameraViewSet(camera_twp);
 }
 
 void __cdecl cameraDisplay_r(task* tp)

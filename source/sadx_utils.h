@@ -236,10 +236,7 @@ DataPointer(NJS_OBJECT, object_cl_uki_cl_uki, 0x1A29EEC);
 DataPointer(NJS_OBJECT, object_mdlelv1_cl_elvtr_cl_elvtr, 0x1A3D74C);
 DataPointer(NJS_ACTION, action_fun_funflot, 0x1A3037C);
 FunctionPointer(int, PCheckJump, (taskwk* twp), 0x43BF40);
-FunctionPointer(void, MSG_Open, (MSGC* msgc, int x, int y, int width, int height, unsigned int globalindex), 0x40E430);
-FunctionPointer(void, MSG_Disp, (MSGC* msgc), 0x40D490);
-FunctionPointer(void, MSG_Puts_, (MSGC* msgc, const char* str), 0x40E570);
-FunctionPointer(void, NH_MSG_Close, (MSGC* msgc), 0x40E2C0);
+FunctionPointer(void, NH_MSG_Open, (MSGC* msgc, int x, int y, int width, int height, int globalindex, void* buf), 0x40E1E0);
 DataPointer(int, bWake, 0x912DF0); // Timer toggle
 DataPointer(int16_t, ssGameModeChange, 0x3B22E1C);
 DataPointer(int16_t, ssNextStageNumber, 0x3B22DF0);
@@ -249,27 +246,6 @@ VoidFunc(sub_437100, 0x437100);
 DataPointer(_OBJ_CAMERAPARAM, cameraParam, 0x3B2CB7C);
 DataPointer(NJS_PLANE, plCollision, 0x915094);
 FunctionPointer(void, DispTask, (int level), 0x40B4F0);
-FunctionPointer(void, CamcontSetCameraTGTOFST, (taskwk* pTaskWork), 0x435D10);
-FunctionPointer(void, CamcontSetCameraLOOKAT, (taskwk* pTaskWork), 0x435C70);
-FunctionPointer(void, CamcontSetCameraCAMSTATUS, (taskwk* pTaskWork), 0x435C30);
-DataPointer(Sint32, default_camera_mode, 0x3B2CBAC);
-DataPointer(Sint32, default_camera_adjust, 0x3B2CAC4);
-DataPointer(Sint32, start_camera_mode, 0x3B2CAA8);
-CamFunc(CameraFishingCatch, 0x46E4C0);
-CamFunc(CameraLureAndFish, 0x46E9A0);
-DataPointer(_camcontwk*, camcont_wp, 0x7DFF90);
-DataPointer(_CameraSystemWork*, pCameraSystemWork, 0x7DFF94);
-DataPointer(_OBJ_ADJUSTPARAM*, pObjAdjustParam, 0x7DFF98);
-DataPointer(Angle, angGx, 0x3B0F10C);
-DataPointer(Angle, angGz, 0x3B0F0F4);
-FunctionPointer(void, SetAdjustMode, (Sint32 AdjustType), 0x436560);
-FunctionPointer(Sint32, GetAdjustMode, (), 0x436590);
-FunctionPointer(Sint32, _GetCameraMode, (), 0x4365A0);
-FunctionPointer(void, _SetCameraMode, (Sint32 mode), 0x4365B0); /* underscore added because clash with old includes */
-FunctionPointer(void, ChangeCamsetMode, (Sint8 mode), 0x4367A0);
-FunctionPointer(Sint32, CameraAdditionalCollision, (NJS_POINT3* pos), 0x437E90);
-FunctionPointer(Sint32, CameraAdditionalPlane, (NJS_POINT3* src, NJS_POINT3* pos), 0x437F20);
-FunctionPointer(void, CameraPositionSmooth, (NJS_POINT3* last, NJS_POINT3* pos), 0x436C60);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -477,28 +453,6 @@ static inline BOOL RoboHeadCaptureBeam(task* tp)
 	{
 		mov eax, [tp]
 		call RoboHeadCaptureBeamPtr
-	}
-}
-
-static const void* const CameraCollisitonCheckPtr = (void*)0x462B40;
-static inline void CameraCollisitonCheck(NJS_POINT3* src, NJS_POINT3* dst)
-{
-	__asm
-	{
-		mov edi, [dst]
-		mov esi, [src]
-		call CameraCollisitonCheckPtr
-	}
-}
-
-static const void* const CameraCollisitonCheckAdjPtr = (void*)0x462CF0;
-static inline void CameraCollisitonCheckAdj(NJS_POINT3* src, NJS_POINT3* dst)
-{
-	__asm
-	{
-		mov edi, [dst]
-		mov esi, [src]
-		call CameraCollisitonCheckAdjPtr
 	}
 }
 

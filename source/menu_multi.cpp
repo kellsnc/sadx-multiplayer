@@ -467,7 +467,7 @@ static void LoadAddressText()
 {
 	MSG_Open(&msgc_address, 0, 230, 0, 0, 0xD0000020);
 	MSG_Cls(&msgc_address);
-	MSG_Puts_(&msgc_address, address_text.c_str());
+	MSG_Puts(&msgc_address, address_text.c_str());
 	MSG_LoadTexture(&msgc_address);
 }
 
@@ -1085,7 +1085,7 @@ void menu_multi_online_serverselect(MultiMenuWK* wk)
 			MSG_Close(&msgc_connect);
 			MSG_Open(&msgc_connect, 0, 200, 0, 0, 0xD0000020);
 			MSG_Cls(&msgc_connect);
-			MSG_Puts_(&msgc_connect, gConnectSelection == ConnectMenuSelection::Host ? "Waiting for players..." : "Connecting to server...");
+			MSG_Puts(&msgc_connect, gConnectSelection == ConnectMenuSelection::Host ? "Waiting for players..." : "Connecting to server...");
 			MSG_LoadTexture(&msgc_connect);
 
 			PlayMenuEnterSound();
