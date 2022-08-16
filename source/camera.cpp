@@ -1502,10 +1502,13 @@ void __cdecl Camera_r(task* tp)
 
             InitCameraParam_m(i);
 
-            __PlayerStatus_last_pos_m[i] = playertwp[0]->pos;
+            __PlayerStatus_last_pos_m[i] = playertwp[i] ? playertwp[i]->pos : playertwp[0]->pos;
             __CameraInertia_last_pos_m[i] = camera_twp->pos;
 
-            CameraCameraMode_m(i);
+            if (playertwp[i])
+            {
+                CameraCameraMode_m(i);
+            }
         }
 
         twp->mode = 2;
@@ -1631,6 +1634,52 @@ void __cdecl CamcontSetCameraTGTOFST_r(taskwk* pTaskWork)
     pTaskWork->pos.z = njCos(camcont_wp->angy) * dist + camcont_wp->tgtzpos;
     pTaskWork->ang = *(Angle3*)&camcont_wp->angx;
 }
+
+void __cdecl cameraModeInit_r()
+{
+    for (auto& system : cameraSystemWork_m)
+    {
+        system.G_scCameraLevel = 0;
+        system.G_ssCameraEntry = 0;
+
+        Sint8 cameraMode = pObjCameraEntry[0].scMode;
+        system.G_scCameraMode = cameraMode;
+
+        _OBJ_CAMERAMODE* objCameraMode = &pObjCameraMode[cameraMode];
+        system.G_pfnCamera = objCameraMode->fnCamera;
+        system.G_scCameraDirect = objCameraMode->scCameraDirectMode;
+
+        system.G_scCameraAdjust = 0;
+        system.G_pfnAdjust = pObjCameraAdjust[0].fnAdjust;
+
+        system.G_boolSwitched = 1;
+        system.G_scCameraAttribute = 2;
+    }
+    
+    for (auto& param : objAdjustParam_m)
+    {
+        param.counter = 0;
+    }
+}
+
+void __cdecl AddCameraStage_r(Sint16 ssStep)
+{
+    if (ChkGameMode())
+    {
+        ssAct += ssStep;
+
+        pNumCameraEntry = objCameraEntryTable[ssAct];
+        pObjCameraEntry = (_OBJ_CAMERAENTRY*)&pNumCameraEntry[8];
+
+        cameraModeInit_r();
+
+        for (int i = 0; i < PLAYER_MAX; ++i)
+        {
+            cameraTimer_m[i] = 0;
+            eventReleaseTimer_m[i] = 0;
+        }
+    }
+}
 #pragma endregion
 
 void InitCamera()
@@ -1649,6 +1698,8 @@ void InitCamera()
     WriteJump((void*)0x435C30, CamcontSetCameraCAMSTATUS_r);
     WriteJump((void*)0x435C70, CamcontSetCameraLOOKAT_r);
     WriteJump((void*)0x435D10, CamcontSetCameraTGTOFST_r);
+    WriteJump((void*)0x434600, cameraModeInit_r);
+    WriteJump((void*)0x434680, AddCameraStage_r);
 
     CameraMode[CAMMD_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_A_KLAMATH].fnCamera = CameraKlamath_m;

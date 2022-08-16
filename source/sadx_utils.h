@@ -246,6 +246,8 @@ VoidFunc(sub_437100, 0x437100);
 DataPointer(_OBJ_CAMERAPARAM, cameraParam, 0x3B2CB7C);
 DataPointer(NJS_PLANE, plCollision, 0x915094);
 FunctionPointer(void, DispTask, (int level), 0x40B4F0);
+FunctionPointer(Bool, ChkGameMode, (), 0x414D90);
+DataPointer(Sint16, ssAct, 0x3B2CAC8);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
