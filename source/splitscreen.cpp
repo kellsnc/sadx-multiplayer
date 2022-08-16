@@ -99,6 +99,11 @@ namespace SplitScreen
     // Change the viewport (-1 is whole screen)
     bool ChangeViewPort(int num)
     {
+        if (config::splitScreenEnabled == false)
+        {
+            num = -1;
+        }
+
         if (num == numViewPort)
         {
             return false;
@@ -110,6 +115,7 @@ namespace SplitScreen
             Direct3D_ViewPort = { 0, 0, (unsigned long)HorizontalResolution, (unsigned long)VerticalResolution, 0.0f, 1.0f };
             Direct3D_Device->SetViewport(&Direct3D_ViewPort);
             numViewPort = -1;
+            ___njFogEnable();
             return true;
         }
 
