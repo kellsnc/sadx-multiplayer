@@ -1,10 +1,16 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "sadx_utils.h"
+#include "gravity.h"
 #include "camera.h"
 #include "camerafunc.h"
 
 VariableHook<CAM_ANYPARAM, 0x3B2CA38> CamAnyParam_m;
+
+/* CAMERA KLAMATH */
+VariableHook<Float, 0x3C4ABC8> y_off_m;
+VariableHook<Float, 0x3C4ADEC> last_y_off_m;
+VariableHook<Bool, 0x3C4ABD4> klamath_LR_flag_m;
 
 /* ADJUST THREE POINT */
 VariableHook<NJS_POINT3, 0x3C4ABB8> inertia_m;
@@ -20,6 +26,150 @@ VariableHook<Float, 0x3C4ABCC> adjust_point_m;
 CAM_ANYPARAM* GetCamAnyParam(int pnum)
 {
     return &CamAnyParam_m[pnum];
+}
+
+void gravDispose3_m(int pnum)
+{
+    NJS_VECTOR up = { 0.0f, 1.0f, 0.0f };
+
+    if (GetStageNumber() == 0x602)
+    {
+        NJS_VECTOR v;
+        v.x = camcont_wp->camxpos - camcont_wp->tgtxpos;
+        v.z = camcont_wp->camzpos - camcont_wp->tgtzpos;
+
+        Angle gz = angGz;
+        Angle gx = angGx;
+
+        gravity::GetUserGravity(pnum, nullptr, &gx, &gz);
+
+        njUnitVector(&up);
+        njPushMatrix(0);
+        njUnitMatrix(0);
+        njRotateZ_(gz);
+        njRotateX_(gx);
+        njCalcVector(0, &up, &up);
+        njPopMatrix(1);
+
+        Angle roll = njArcSin(njSqrt(up.z * up.z + up.x * up.x));
+
+        v.y = 0.0f;
+        up.y = 0.0f;
+        njUnitVector(&v);
+        njUnitVector(&up);
+
+        if (roll & 0x8000)
+        {
+            roll |= 0xFFFF0000;
+        }
+        else
+        {
+            roll &= 0xFFFF;
+        }
+
+        Float diff = v.z * up.z + v.x * up.x; /* distance between up vector and camera direction */
+        roll *= (Angle)(1.0f - (diff * diff));
+
+        if (v.z * up.z - v.x * up.x < 0.0f)
+        {
+            camcont_wp->angz = -roll;
+        }
+        else
+        {
+            camcont_wp->angz = roll;
+        }
+    }
+    else
+    {
+        camcont_wp->angz = 0;
+    }
+}
+
+void CameraKlamath_m(_OBJ_CAMERAPARAM* pParam)
+{
+    auto pnum = TASKWK_PLAYERID(playertwp[0]);
+    auto ptwp = playertwp[pnum];
+    auto& _y_off = y_off_m[pnum];
+    auto& _last_y_off = last_y_off_m[pnum];
+    auto& _klamath_LR_flag = klamath_LR_flag_m[pnum];
+
+    if (pParam->ulTimer)
+    {
+        if (_klamath_LR_flag)
+        {
+            /* Revert to KNUCKLE camera for LR logic */
+            CameraKnuckle(pParam);
+            if ((perG[0].l - 128) << 8 <= 128 && (perG[0].r - 128) << 8 <= 128 && Player_stop_flag == FALSE)
+            {
+                _klamath_LR_flag = Player_stop_flag;
+                SetAdjustMode(CAMADJ_RELATIVE6C);
+            }
+            return;
+        }
+    }
+    else
+    {
+        /* If xCamAng is set, overide Y distance */
+        if (pParam->xCamAng)
+        {
+            _y_off = (Float)pParam->xCamAng * 0.1f;
+        }
+        else
+        {
+            _y_off = pParam->fDistance * 0.5f;
+        }
+
+        _last_y_off = 0.0f;
+        _klamath_LR_flag = FALSE;
+    }
+
+    /* Check if LR mode should trigger */
+    if ((perG[0].l - 128) << 8 > 128 || (perG[0].r - 128) << 8 > 128)
+    {
+        if (CheckPadReadModeP(pnum))
+        {
+            _klamath_LR_flag = TRUE;
+        }
+    }
+
+    NJS_POINT3 save = camera_twp->pos;
+
+    camcont_wp->tgtxpos = ptwp->pos.x;
+    camcont_wp->tgtypos = ptwp->pos.y;
+    camcont_wp->tgtzpos = ptwp->pos.z;
+
+    NJS_VECTOR v;
+    v.y = 0.0f;
+    v.x = ptwp->pos.x - pParam->xDirPos;
+    v.z = ptwp->pos.z - pParam->zDirPos;
+
+    njUnitVector(&v);
+    camcont_wp->camxpos = v.x * pParam->fDistance + camcont_wp->tgtxpos;
+    camcont_wp->camypos = _y_off + camcont_wp->tgtypos;
+    camcont_wp->camzpos = v.z * pParam->fDistance + camcont_wp->tgtzpos;
+
+    if (!(ptwp->flag & (Status_Ground | Status_OnColli)) && pParam->yCamAng == 0)
+    {
+        _last_y_off -= 0.2f;
+    }
+    else
+    {
+        _last_y_off *= 0.9f;
+    }
+
+    camcont_wp->camypos -= _last_y_off;
+
+    v.y = 0.0f;
+    v.x = ptwp->pos.x - pParam->xDirPos;
+    v.z = ptwp->pos.z - pParam->zDirPos;
+
+    Float r = njUnitVector(&v);
+    camcont_wp->tgtypos += ((r - pParam->fDistance) / r) * _y_off;
+    CameraAdditionalCollision((NJS_POINT3*)&camcont_wp->camxpos);
+    CameraAdditionalPlane(&save, (NJS_POINT3*)&camcont_wp->camxpos);
+    CameraPositionSmooth(&save, (NJS_POINT3*)&camcont_wp->camxpos);
+    CameraCollisitonCheck(&save, (NJS_POINT3*)&camcont_wp->camxpos);
+    gravDispose3_m(pnum);
 }
 
 // Make this use CamAnyParam as it should have...
