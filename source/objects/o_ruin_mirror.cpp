@@ -424,7 +424,7 @@ static void ChangeFogDensity_m(float dist, float density_speed, int num)
     auto fog = GetScreenFog(num);
     fog->f32StartZ = 8.0f;
     fog->Col = 0xFF000000;
-    fog->f32EndZ = 410.0f - wk->now_dist * 2.5f;
+    fog->f32EndZ = 210.0f - wk->now_dist; // newer ver, 2004 version is: 410.0f - wk->now_dist * 2.5f
 }
 
 static void ObjectRuinFogChange_m(task* tp)
@@ -466,7 +466,7 @@ static void ObjectRuinFogChange_m(task* tp)
             {
                 if (wk->nocontimer > 0 && !--wk->nocontimer)
                 {
-                    //SetFreeCameraMode(1);
+                    SetFreeCameraMode_m(i, 1);
                 }
 
                 if (twp->counter.w[1] != GetStageNumber())
@@ -490,7 +490,7 @@ static void ObjectRuinFogChange_m(task* tp)
                         NJS_POINT3 aim_pos = wk->aim_position;
                         GetClosestActiveMirror(&ptwp->pos, &aim_pos);
                         auto aim_dist = GetDistance(&ptwp->pos, &aim_pos);
-                        ChangeFogDensity_m(aim_dist, 10.0f, i);
+                        ChangeFogDensity_m(-aim_dist, 10.0f, i);
                     }
                 }
                 else
