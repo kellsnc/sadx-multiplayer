@@ -140,14 +140,14 @@ void __cdecl CameraLureAndFish_m(_OBJ_CAMERAPARAM* pParam)
 	any_pos = param->camAnyParamPos;
 	any_tgt = param->camAnyParamTgt;
 
-	cameraControlWork.tgtxpos = (any_tgt.x + any_tgt.x) * 0.5f;
-	cameraControlWork.tgtypos = (any_tgt.y + any_pos.y) * 0.5f;
-	cameraControlWork.tgtzpos = (any_tgt.z + any_pos.z) * 0.5f;
+	camcont_wp->tgtxpos = (any_tgt.x + any_tgt.x) * 0.5f;
+	camcont_wp->tgtypos = (any_tgt.y + any_pos.y) * 0.5f;
+	camcont_wp->tgtzpos = (any_tgt.z + any_pos.z) * 0.5f;
 
 	NJS_POINT3 vec, spd;
-	spd.x = cameraControlWork.camxpos - cameraControlWork.tgtxpos;
-	spd.y = cameraControlWork.camypos - cameraControlWork.tgtypos;
-	spd.z = cameraControlWork.camzpos - cameraControlWork.tgtzpos;
+	spd.x = camcont_wp->camxpos - camcont_wp->tgtxpos;
+	spd.y = camcont_wp->camypos - camcont_wp->tgtypos;
+	spd.z = camcont_wp->camzpos - camcont_wp->tgtzpos;
 	vec.x = any_pos.x - any_tgt.x;
 	vec.y = any_pos.y - any_tgt.y;
 	vec.z = any_pos.z - any_tgt.z;
@@ -157,32 +157,32 @@ void __cdecl CameraLureAndFish_m(_OBJ_CAMERAPARAM* pParam)
 
 	njUnitVector(&spd);
 
-	spd.x = dist * spd.x + cameraControlWork.tgtxpos - cameraControlWork.camxpos;
-	spd.y = dist * spd.y + cameraControlWork.tgtypos - cameraControlWork.camypos;
-	spd.z = dist * spd.z + cameraControlWork.tgtzpos - cameraControlWork.camzpos;
+	spd.x = dist * spd.x + camcont_wp->tgtxpos - camcont_wp->camxpos;
+	spd.y = dist * spd.y + camcont_wp->tgtypos - camcont_wp->camypos;
+	spd.z = dist * spd.z + camcont_wp->tgtzpos - camcont_wp->camzpos;
 
 	if (njScalor(&spd) >= 20.0f)
 	{
 		njUnitVector(&spd);
-		cameraControlWork.camxpos = spd.x * 20.0f + cameraControlWork.camxpos;
-		cameraControlWork.camypos = spd.y * 20.0f + cameraControlWork.camypos;
-		cameraControlWork.camzpos = spd.z * 20.0f + cameraControlWork.camzpos;
+		camcont_wp->camxpos = spd.x * 20.0f + camcont_wp->camxpos;
+		camcont_wp->camypos = spd.y * 20.0f + camcont_wp->camypos;
+		camcont_wp->camzpos = spd.z * 20.0f + camcont_wp->camzpos;
 	}
 	else
 	{
-		cameraControlWork.camxpos = spd.x + cameraControlWork.camxpos;
-		cameraControlWork.camypos = spd.y + cameraControlWork.camypos;
-		cameraControlWork.camzpos = spd.z + cameraControlWork.camzpos;
+		camcont_wp->camxpos = spd.x + camcont_wp->camxpos;
+		camcont_wp->camypos = spd.y + camcont_wp->camypos;
+		camcont_wp->camzpos = spd.z + camcont_wp->camzpos;
 	}
 
-	if (cameraControlWork.camypos < cameraControlWork.tgtypos)
+	if (camcont_wp->camypos < camcont_wp->tgtypos)
 	{
-		cameraControlWork.camypos = cameraControlWork.tgtypos;
+		camcont_wp->camypos = camcont_wp->tgtypos;
 	}
 
-	if (GetBigEtc(pnum)->water_level - 5.0f > cameraControlWork.camypos)
+	if (GetBigEtc(pnum)->water_level - 5.0f > camcont_wp->camypos)
 	{
-		sub_46E940((NJS_POINT3*)&cameraControlWork.camxpos, (NJS_POINT3*)&old_pos);
+		sub_46E940((NJS_POINT3*)&camcont_wp->camxpos, (NJS_POINT3*)&old_pos);
 	}
 }
 #pragma endregion

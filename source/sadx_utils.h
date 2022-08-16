@@ -257,6 +257,19 @@ DataPointer(Sint32, default_camera_adjust, 0x3B2CAC4);
 DataPointer(Sint32, start_camera_mode, 0x3B2CAA8);
 CamFunc(CameraFishingCatch, 0x46E4C0);
 CamFunc(CameraLureAndFish, 0x46E9A0);
+DataPointer(_camcontwk*, camcont_wp, 0x7DFF90);
+DataPointer(_CameraSystemWork*, pCameraSystemWork, 0x7DFF94);
+DataPointer(_OBJ_ADJUSTPARAM*, pObjAdjustParam, 0x7DFF98);
+DataPointer(Angle, angGx, 0x3B0F10C);
+DataPointer(Angle, angGz, 0x3B0F0F4);
+FunctionPointer(void, SetAdjustMode, (Sint32 AdjustType), 0x436560);
+FunctionPointer(Sint32, GetAdjustMode, (), 0x436590);
+FunctionPointer(Sint32, _GetCameraMode, (), 0x4365A0);
+FunctionPointer(void, _SetCameraMode, (Sint32 mode), 0x4365B0); /* underscore added because clash with old includes */
+FunctionPointer(void, ChangeCamsetMode, (Sint8 mode), 0x4367A0);
+FunctionPointer(Sint32, CameraAdditionalCollision, (NJS_POINT3* pos), 0x437E90);
+FunctionPointer(Sint32, CameraAdditionalPlane, (NJS_POINT3* src, NJS_POINT3* pos), 0x437F20);
+FunctionPointer(void, CameraPositionSmooth, (NJS_POINT3* last, NJS_POINT3* pos), 0x436C60);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -464,6 +477,17 @@ static inline BOOL RoboHeadCaptureBeam(task* tp)
 	{
 		mov eax, [tp]
 		call RoboHeadCaptureBeamPtr
+	}
+}
+
+static const void* const CameraCollisitonCheckPtr = (void*)0x462B40;
+static inline void CameraCollisitonCheck(NJS_POINT3* src, NJS_POINT3* dst)
+{
+	__asm
+	{
+		mov edi, [dst]
+		mov esi, [src]
+		call CameraCollisitonCheckPtr
 	}
 }
 

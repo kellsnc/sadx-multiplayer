@@ -92,7 +92,6 @@ Bool GetFreeCameraMode_m(int pnum)
     return !!(free_camera_mode_m[pnum] & MODE_AUTHORIZED);
 }
 
-
 void SetAdjustMode_m(int pnum, Sint32 AdjustType)
 {
     cameraSystemWork_m[pnum].G_scCameraAdjust = AdjustType;
@@ -921,18 +920,20 @@ void PushPlayerSwap(int pnum)
 
     if (pnum != 0)
     {
+        camcont_wp = &cameraControlWork_m[pnum];
+        pCameraSystemWork = &cameraSystemWork_m[pnum];
+        pObjAdjustParam = &objAdjustParam_m[pnum];
+
         backup_pl = playertwp[0];
         backup_mtn = playermwp[0];
         backup_pwp = playerpwp[0];
         backup_per = perG[0];
-        backup_work = cameraControlWork_m[0];
         backup_any = *GetCamAnyParam(0);
 
         playertwp[0] = playertwp[pnum];
         playermwp[0] = playermwp[pnum];
         playerpwp[0] = playerpwp[pnum];
         perG[0] = perG[pnum];
-        cameraControlWork_m[0] = cameraControlWork_m[pnum];
         *GetCamAnyParam(0) = *GetCamAnyParam(pnum);
     }
 }
@@ -942,14 +943,15 @@ void PopPlayerSwap(int pnum)
 {
     if (pnum != 0)
     {
-        cameraControlWork_m[pnum] = cameraControlWork_m[0];
+        camcont_wp = &cameraControlWork_m[0];
+        pCameraSystemWork = &cameraSystemWork_m[0];
+        pObjAdjustParam = &objAdjustParam_m[0];
         *GetCamAnyParam(pnum) = *GetCamAnyParam(0);
 
         playertwp[0] = backup_pl;
         playermwp[0] = backup_mtn;
         playerpwp[0] = backup_pwp;
         perG[0] = backup_per;
-        cameraControlWork_m[0] = backup_work;
         *GetCamAnyParam(0) = backup_any;
     }
 
@@ -1556,6 +1558,7 @@ void __cdecl Camera_r(task* tp)
     tp->disp(tp);
 }
 
+#pragma region Vanilla patches
 void __cdecl InitFreeCamera_r()
 {
     for (int i = 0; i < PLAYER_MAX; ++i)
@@ -1574,6 +1577,62 @@ void __cdecl ResetFreeCamera_r()
     }
 }
 
+void __cdecl SetAdjustMode_r(Sint32 AdjustType)
+{
+    pCameraSystemWork->G_scCameraAdjust = AdjustType;
+    pCameraSystemWork->G_pfnAdjust = pObjCameraAdjust[AdjustType].fnAdjust;
+    pObjAdjustParam->counter = 0;
+}
+
+Sint32 __cdecl GetAdjustMode_r()
+{
+    return pCameraSystemWork->G_scCameraAdjust;
+}
+
+Sint32 __cdecl GetCameraMode_r()
+{
+    return pCameraSystemWork->G_scCameraMode;
+}
+
+void __cdecl SetCameraMode_r(Sint32 mode)
+{
+    pCameraSystemWork->G_scCameraMode = mode;
+    pCameraSystemWork->G_ssCameraEntry = -1;
+    pCameraSystemWork->G_pfnCamera = pObjCameraMode[mode].fnCamera;
+}
+
+void __cdecl ChangeCamsetMode_r(Sint8 mode)
+{
+    pCameraSystemWork->G_scCameraDirect = mode;
+}
+
+void __cdecl CamcontSetCameraCAMSTATUS_r(taskwk* pTaskWork)
+{
+    pTaskWork->pos = *(NJS_VECTOR*)&camcont_wp->camxpos;
+    pTaskWork->ang = *(Angle3*)&camcont_wp->angx;
+}
+
+void __cdecl CamcontSetCameraLOOKAT_r(taskwk* pTaskWork)
+{
+    pTaskWork->pos = *(NJS_VECTOR*)&camcont_wp->camxpos;
+
+    Float x = camcont_wp->camxpos - camcont_wp->tgtxpos;
+    Float z = camcont_wp->camzpos - camcont_wp->tgtzpos;
+    pTaskWork->ang.x = njArcTan2(camcont_wp->tgtypos - camcont_wp->camypos, njSqrt(z * z + x * x));
+    pTaskWork->ang.y = njArcTan2(x, z);
+    pTaskWork->ang.z = camcont_wp->angz;
+}
+
+void __cdecl CamcontSetCameraTGTOFST_r(taskwk* pTaskWork)
+{
+    Float dist = njCos(camcont_wp->angx) * camcont_wp->tgtdist;
+    pTaskWork->pos.y = camcont_wp->tgtypos - njSin(camcont_wp->angx) * camcont_wp->tgtdist;
+    pTaskWork->pos.x = njSin(camcont_wp->angy) * dist + camcont_wp->tgtxpos;
+    pTaskWork->pos.z = njCos(camcont_wp->angy) * dist + camcont_wp->tgtzpos;
+    pTaskWork->ang = *(Angle3*)&camcont_wp->angx;
+}
+#pragma endregion
+
 void InitCamera()
 {
     Camera_t = new Trampoline(0x438090, 0x438097, Camera_r);
@@ -1582,6 +1641,14 @@ void InitCamera()
 
     WriteJump((void*)0x434870, InitFreeCamera_r);
     WriteJump((void*)0x434880, ResetFreeCamera_r);
+    WriteJump((void*)0x43656A, SetAdjustMode_r);
+    WriteJump((void*)0x436590, GetAdjustMode_r);
+    WriteJump((void*)0x4365A0, GetCameraMode_r);
+    WriteJump((void*)0x4365B0, SetCameraMode_r);
+    WriteJump((void*)0x4367A0, ChangeCamsetMode_r);
+    WriteJump((void*)0x435C30, CamcontSetCameraCAMSTATUS_r);
+    WriteJump((void*)0x435C70, CamcontSetCameraLOOKAT_r);
+    WriteJump((void*)0x435D10, CamcontSetCameraTGTOFST_r);
 
     CameraMode[CAMMD_RuinWaka1].fnCamera = CameraRuinWaka1_m;
     CameraAdjust[CAMADJ_NORMAL].fnAdjust = AdjustNormal_m;

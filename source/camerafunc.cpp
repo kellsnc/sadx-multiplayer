@@ -26,13 +26,13 @@ CAM_ANYPARAM* GetCamAnyParam(int pnum)
 void CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 {
     auto param = GetCamAnyParam(TASKWK_PLAYERID(playertwp[0]));
-    cameraControlWork.camxpos = param->camAnyParamPos.x;
-    cameraControlWork.camypos = param->camAnyParamPos.y;
-    cameraControlWork.camzpos = param->camAnyParamPos.z;
-    cameraControlWork.tgtxpos = param->camAnyParamTgt.x;
-    cameraControlWork.tgtypos = param->camAnyParamTgt.y;
-    cameraControlWork.tgtzpos = param->camAnyParamTgt.z;
-    cameraControlWork.angz = 0;
+    camcont_wp->camxpos = param->camAnyParamPos.x;
+    camcont_wp->camypos = param->camAnyParamPos.y;
+    camcont_wp->camzpos = param->camAnyParamPos.z;
+    camcont_wp->tgtxpos = param->camAnyParamTgt.x;
+    camcont_wp->tgtypos = param->camAnyParamTgt.y;
+    camcont_wp->tgtzpos = param->camAnyParamTgt.z;
+    camcont_wp->angz = 0;
 }
 
 void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
@@ -55,9 +55,9 @@ void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* p
 
     Float dist = max(src_radius + (dst_radius - src_radius) * 0.3f, 20.0f);
 
-    if (cameraControlWork.ssFlag & 1)
+    if (camcont_wp->ssFlag & 1)
     {
-        cameraControlWork.ssFlag &= ~1;
+        camcont_wp->ssFlag &= ~1;
     }
     else
     {
@@ -70,7 +70,7 @@ void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* p
 
         if (angy > -0x40 && angy < 0x40)
         {
-            cameraControlWork.angy = pTaskWork->ang.y;
+            camcont_wp->angy = pTaskWork->ang.y;
             pCameraAdjustWork->ssAdjustFlag &= ~0x40u;
             pCameraAdjustWork->angSpeed[1] = 0;
         }
@@ -107,7 +107,7 @@ void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* p
             }
 
             pCameraAdjustWork->angSpeed[1] = ang;
-            cameraControlWork.angy = ang + pOldTaskWork->ang.y;
+            camcont_wp->angy = ang + pOldTaskWork->ang.y;
         }
     }
 
@@ -120,7 +120,7 @@ void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* p
 
     if (angx > -0x80 && angx < 0x80)
     {
-        cameraControlWork.angx = pTaskWork->ang.x;
+        camcont_wp->angx = pTaskWork->ang.x;
         pCameraAdjustWork->ssAdjustFlag &= ~0x20u;
         pCameraAdjustWork->angSpeed[0] = 0;
     }
@@ -157,14 +157,14 @@ void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* p
         }
 
         pCameraAdjustWork->angSpeed[0] = ang;
-        cameraControlWork.angx = ang + pOldTaskWork->ang.x;
+        camcont_wp->angx = ang + pOldTaskWork->ang.x;
     }
 
-    cameraControlWork.tgtxpos = ptwp->pos.x;
-    cameraControlWork.tgtypos = ptwp->pos.y + 15.0f;
-    cameraControlWork.tgtzpos = ptwp->pos.z;
-    cameraControlWork.tgtdist = dist;
-    cameraControlWork.angz = 0;
+    camcont_wp->tgtxpos = ptwp->pos.x;
+    camcont_wp->tgtypos = ptwp->pos.y + 15.0f;
+    camcont_wp->tgtzpos = ptwp->pos.z;
+    camcont_wp->tgtdist = dist;
+    camcont_wp->angz = 0;
     CamcontSetCameraTGTOFST(pTaskWork);
 }
 
@@ -189,9 +189,9 @@ void AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTP
 
     Float dist = max(src_radius + (dst_radius - src_radius) * 0.3f, 20.0f);
 
-    if (cameraControlWork.ssFlag & 1) // LR Flag carried on from some auto cameras
+    if (camcont_wp->ssFlag & 1) // LR Flag carried on from some auto cameras
     {
-        cameraControlWork.ssFlag &= ~1;
+        camcont_wp->ssFlag &= ~1;
     }
     else
     {
@@ -204,7 +204,7 @@ void AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTP
 
         if (angy > -0x200 && angy < 0x200)
         {
-            cameraControlWork.angy = pTaskWork->ang.y;
+            camcont_wp->angy = pTaskWork->ang.y;
             pCameraAdjustWork->ssAdjustFlag &= ~0x40u;
             pCameraAdjustWork->angSpeed[1] = 0;
         }
@@ -230,7 +230,7 @@ void AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTP
             }
             
             pCameraAdjustWork->angSpeed[1] = spd;
-            cameraControlWork.angy = spd + pOldTaskWork->ang.y;
+            camcont_wp->angy = spd + pOldTaskWork->ang.y;
         }
     }
 
@@ -243,7 +243,7 @@ void AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTP
 
     if (angx > -0x200 && angx < 0x200)
     {
-        cameraControlWork.angx = pTaskWork->ang.x;
+        camcont_wp->angx = pTaskWork->ang.x;
         pCameraAdjustWork->ssAdjustFlag &= ~0x20u;
         pCameraAdjustWork->angSpeed[0] = 0;
     }
@@ -269,14 +269,14 @@ void AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTP
         }
 
         pCameraAdjustWork->angSpeed[0] = spd;
-        cameraControlWork.angx = spd + pOldTaskWork->ang.x;
+        camcont_wp->angx = spd + pOldTaskWork->ang.x;
     }
 
-    cameraControlWork.tgtxpos = ptwp->pos.x;
-    cameraControlWork.tgtypos = ppwp->p.center_height + ptwp->pos.y;
-    cameraControlWork.tgtzpos = ptwp->pos.z;
-    cameraControlWork.tgtdist = dist;
-    cameraControlWork.angz = 0;
+    camcont_wp->tgtxpos = ptwp->pos.x;
+    camcont_wp->tgtypos = ppwp->p.center_height + ptwp->pos.y;
+    camcont_wp->tgtzpos = ptwp->pos.z;
+    camcont_wp->tgtdist = dist;
+    camcont_wp->angz = 0;
     CamcontSetCameraLOOKAT(pTaskWork);
 }
 
