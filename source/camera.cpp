@@ -32,7 +32,7 @@ VariableHook<_OBJ_ADJUSTPARAM, 0x3B2CA20> objAdjustParam_m;
 VariableHook<FCWRK, 0x3B2C958> fcwrk_m;
 VariableHook<NJS_CACTION*, 0x3B2C950> pCameraAction_m;
 VariableHook<Float, 0x3B2CA6C> fActionFrame_m;
-VariableHook<Float, 0x3B2CAC0> dword_3B2CAC0_m;
+VariableHook<Bool, 0x3B2CAC0> dword_3B2CAC0_m;
 
 static taskwk* backup_pl;
 static motionwk2* backup_mtn;
