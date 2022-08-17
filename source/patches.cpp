@@ -735,7 +735,7 @@ BOOL dsCheckViewV_r(NJS_POINT3* ft, float radius)
 {
 	if (multiplayer::IsActive())
 	{
-		return TRUE;
+		return SplitScreen::IsVisible(ft, radius);
 	}
 	else
 	{
@@ -828,7 +828,6 @@ void InitPatches()
 
 	// dsCheckViewV in exec functions
 	WriteCall((void*)0x4E138F, dsCheckViewV_r); // wv hane, bigfloot, saku...
-	WriteCall((void*)0x4DF5C8, dsCheckViewV_r); // ObjectWindySetInEff
 	WriteCall((void*)0x5D3D54, dsCheckViewV_r); // ObjectCasinoCris
 	WriteCall((void*)0x5E8327, dsCheckViewV_r); // ObjectRuinFire
 	WriteCall((void*)0x4AB41A, dsCheckViewV_r); // EnemySaru

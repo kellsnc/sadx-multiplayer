@@ -17,6 +17,8 @@ namespace SplitScreen
 	unsigned int GetCurrentScreenNum();
 	bool IsScreenEnabled(int num);
 	bool ChangeViewPort(int num);
+	bool IsVisible(int num, NJS_POINT3* pos, Float radius);
+	bool IsVisible(NJS_POINT3* pos, Float radius);
 }
 
 void InitSplitScreen();

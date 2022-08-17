@@ -99,7 +99,7 @@ namespace SplitScreen
     // Change the viewport (-1 is whole screen)
     bool ChangeViewPort(int num)
     {
-        if (config::splitScreenEnabled == false)
+        if (!IsActive())
         {
             num = -1;
         }
@@ -136,6 +136,29 @@ namespace SplitScreen
         ___njFogEnable();
 
         return true;
+    }
+
+    bool IsVisible(int num, NJS_POINT3* pos, Float radius)
+    {
+        return true;
+    }
+
+    bool IsVisible(NJS_POINT3* pos, Float radius)
+    {
+        if (!IsActive())
+        {
+            return dsCheckViewV(pos, radius) != FALSE;
+        }
+
+        for (int i = 0; i < multiplayer::GetPlayerCount(); ++i)
+        {
+            if (IsVisible(i, pos, radius))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
 
