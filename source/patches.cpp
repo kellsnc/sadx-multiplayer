@@ -735,7 +735,7 @@ BOOL dsCheckViewV_r(NJS_POINT3* ft, float radius)
 {
 	if (multiplayer::IsActive())
 	{
-		return SplitScreen::IsVisible(ft, radius);
+		return true;
 	}
 	else
 	{

@@ -100,6 +100,31 @@ struct CAM_ANYPARAM
 	float camAnyTmpFloat[2];
 };
 
+struct NES_LIB_PARAM
+{
+	const char* Company;
+	const char* AppName;
+	const char* DVDRoot;
+	Bool Windowed;
+	Sint32 GraphMode;
+	Sint32 Frame;
+	Sint32 Count;
+	Float AspectX;
+	Float AspectY;
+	Uint32 PolyBuff_QUAD;
+	Uint32 PolyBuff_CS;
+	Uint32 PolyBuff_CS_N;
+	Uint32 PolyBuff_CS_UVN;
+	Uint32 PolyBuff_CS_UVN_N;
+	Uint32 PolyBuff_CS_D8;
+	Uint32 PolyBuff_CS_N_D8;
+	Uint32 PolyBuff_CS_UVN_D8;
+	Uint32 PolyBuff_CS_UVN_N_D8;
+	Sint32 ZSearchMode;
+	Uint32 Width;
+	Uint32 Height;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -248,6 +273,13 @@ DataPointer(NJS_PLANE, plCollision, 0x915094);
 FunctionPointer(void, DispTask, (int level), 0x40B4F0);
 FunctionPointer(Bool, ChkGameMode, (), 0x414D90);
 DataPointer(Sint16, ssAct, 0x3B2CAC8);
+DataPointer(NJS_CAMERA, View, 0x3AAD0A0);
+DataPointer(NES_LIB_PARAM, nesparam, 0x892944);
+DataPointer(Float, clipZ_near, 0x90082C);
+DataPointer(Float, clipZ_far, 0x900830);
+DataPointer(NJS_CACTION*, pCameraAction, 0x3B2C950);
+DataPointer(Float, fActionFrame, 0x3B2CA6C);
+DataPointer(Sint32, camera_mode, 0x3B2C6C4); // no symbol name
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
