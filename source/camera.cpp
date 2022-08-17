@@ -30,6 +30,9 @@ VariableHook<int32_t, 0x3B2C6C4> camera_mode_m;
 VariableHook<uint32_t, 0x3B2CBA8> free_camera_mode_m;
 VariableHook<_OBJ_ADJUSTPARAM, 0x3B2CA20> objAdjustParam_m;
 VariableHook<FCWRK, 0x3B2C958> fcwrk_m;
+VariableHook<NJS_CACTION*, 0x3B2C950> pCameraAction_m;
+VariableHook<Float, 0x3B2CA6C> fActionFrame_m;
+VariableHook<Float, 0x3B2CAC0> dword_3B2CAC0_m;
 
 static taskwk* backup_pl;
 static motionwk2* backup_mtn;
@@ -39,6 +42,7 @@ static _camcontwk backup_work;
 static CAM_ANYPARAM backup_any;
 
 static CameraLocation cameraLocations[PLAYER_MAX];
+static Angle ds_perspective_value_m[PLAYER_MAX];
 
 NJS_POINT3* GetCameraPosition(int pnum)
 {
@@ -148,7 +152,7 @@ void CameraSetCamera_m(int pnum, Sint8 ssCameraMode, Sint16 ssCameraEntry)
 
     if (cameraEntryOld->scPriority < cameraEntry->scPriority)
     {
-        //dword_3B2CAC0 = 1;
+        dword_3B2CAC0_m[pnum] = TRUE;
     }
 
     Sint8 adjustType = (cameraEntryOld->scPriority < 10 || cameraEntry->scPriority < 10) ? cameraEntry->ucAdjType : 0;
@@ -195,7 +199,7 @@ void CameraCancelCamera_m(int pnum)
 
     if (priority < newPriority)
     {
-        //dword_3B2CAC0 = 1;
+        dword_3B2CAC0_m[pnum] = TRUE;
     }
 
     if (priority < 10 || newPriority < 10)
@@ -457,9 +461,97 @@ void CameraSetEventCameraFunc_m(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPAR
     }
 }
 
+Bool CameraCameraAction(int pnum, NJS_CACTION* caction, Float frame)
+{
+    switch (camera_mode_m[pnum])
+    {
+    case 0:
+        CameraSetEventCameraFunc_m(pnum, (CamFuncPtr)nullsub, 0, 0);
+    case 2:
+        pCameraAction = caction;
+        camera_mode_m[pnum] = 1;
+        fActionFrame = frame;
+        return FALSE;
+    default:
+        return TRUE;
+    }
+}
+
 void ResetCameraTimer_m(int pnum)
 {
     cameraTimer_m[pnum] = 0;
+}
+
+void CameraViewSet_m(int pnum)
+{
+    if (camera_mode_m[pnum])
+    {
+        /* Action camera (animation) */
+
+        NJS_VECTOR pos, vec;
+        Angle roll, fov;
+        NJS_CMOTION_DATA mdata;
+
+        mdata.pos = (Float*)&pos;
+        mdata.vect = (Float*)&vec;
+        mdata.roll = &roll;
+        mdata.ang = &fov;
+        njGetCameraMotion(pCameraAction[pnum].camera, pCameraAction[pnum].motion, &mdata, fActionFrame_m[pnum]);
+        njSetPerspective(fov);
+
+        NJS_CAMERA camera = View;
+        camera.px = pos.x;
+        camera.py = pos.y;
+        camera.pz = pos.z;
+        camera.vx = vec.x;
+        camera.vy = vec.y;
+        camera.vz = vec.z;
+        camera.roll = roll;
+        njSetCamera(&camera);
+
+        /* Some hack for an Egg Carrier camera action */
+        if (GetStageNumber() == 0x2000)
+        {
+            camera_twp->ang.y = 0;
+        }
+    }
+    else
+    {
+        /* Normal camera */
+
+        auto& loc = cameraLocations[pnum];
+        auto& work = cameraSystemWork_m[pnum];
+
+        NJS_VECTOR vs = { 0.0f, 0.0f, -1.0f };
+        NJS_VECTOR vd;
+
+        njPushMatrix(_nj_unit_matrix_);
+
+        njRotateY_(loc.ang.y);
+        njRotateX_(loc.ang.x);
+        njRotateZ_(loc.ang.z);
+
+        njCalcVector(0, &vs, &vd);
+        njPopMatrix(1u);
+
+        View.roll = -loc.ang.z;
+        View.px = work.G_vecCameraOffset.x + loc.pos.x;
+        View.py = work.G_vecCameraOffset.y + loc.pos.y;
+        View.pz = work.G_vecCameraOffset.z + loc.pos.z;
+        View.vx = vd.x;
+        View.vy = vd.y;
+        View.vz = vd.z;
+
+        njSetPerspective(ds_GetPerspective_m(pnum));
+        njSetCamera(&View);
+
+        work.G_vecCameraOffset.x = 0.0f;
+        work.G_vecCameraOffset.y = 0.0f;
+        work.G_vecCameraOffset.z = 0.0f;
+
+        camera_twp->pos = loc.pos;
+        camera_twp->ang = loc.ang;
+    }
 }
 
 void ApplyMultiCamera(int pnum)
@@ -469,10 +561,7 @@ void ApplyMultiCamera(int pnum)
         return;
     }
 
-    camera_twp->pos = cameraLocations[pnum].pos;
-    camera_twp->ang = cameraLocations[pnum].ang;
-
-    CameraViewSet(camera_twp);
+    CameraViewSet_m(pnum);
 }
 
 void __cdecl cameraDisplay_r(task* tp)
@@ -1052,10 +1141,11 @@ void CameraRunTimers(int pnum)
         system.G_boolSwitched = 0;
         if (!system.G_scCameraAdjust)
         {
-            //if (dword_3B2CAC0)
-            //{
-            //    GetPlayerWorkPointer(0)->nocontimer = 30;
-            //}
+            /* I have no idea what this does */
+            if (dword_3B2CAC0_m[pnum] && playerpwp[pnum])
+            {
+                playerpwp[pnum]->nocontimer = 30;
+            }
         }
     }
     /* otherwise run timer */
@@ -1063,6 +1153,8 @@ void CameraRunTimers(int pnum)
     {
         ++system.G_ulTimer;
     }
+
+    dword_3B2CAC0_m[pnum] = 0;
 }
 
 Bool CameraCollisionShpere_m(int pnum, _OBJ_CAMERAENTRY* pCameraEntry)
@@ -1505,7 +1597,7 @@ void __cdecl Camera_r(task* tp)
             __PlayerStatus_last_pos_m[i] = playertwp[i] ? playertwp[i]->pos : playertwp[0]->pos;
             __CameraInertia_last_pos_m[i] = camera_twp->pos;
 
-            if (playertwp[i])
+            if (SplitScreen::IsScreenEnabled(i))
             {
                 CameraCameraMode_m(i);
             }
@@ -1524,12 +1616,12 @@ void __cdecl Camera_r(task* tp)
 
         for (unsigned int i = 0; i < multiplayer::GetPlayerCount(); ++i)
         {
-            if (playertp[i])
+            if (SplitScreen::IsScreenEnabled(i))
             {
                 if (camera_mode_m[i] == 2)
                 {
                     camera_mode_m[i] = 0;
-                    CameraReleaseEventCamera();
+                    CameraReleaseEventCamera_m(i);
                 }
 
                 sub_436690_m(i);
@@ -1680,6 +1772,23 @@ void __cdecl AddCameraStage_r(Sint16 ssStep)
         }
     }
 }
+#pragma endregion
+
+#pragma region FOV
+Angle ds_GetPerspective_m(int pnum)
+{
+    return ds_perspective_value_m[pnum] == 0 ? 0x31C7 : ds_perspective_value_m[pnum];
+};
+
+void njSetPerspective_m(int pnum, Angle ang)
+{
+    ds_perspective_value_m[pnum] = ang;
+};
+
+void ResetPerspective_m(int pnum)
+{
+    ds_perspective_value_m[pnum] = 0;
+};
 #pragma endregion
 
 void InitCamera()

@@ -194,10 +194,10 @@ void camera_set_ang(uint32_t num, Angle x, Angle y, Angle z)
 
 uint32_t camera_get_fov(uint32_t num)
 {
-	return ds_GetPerspectiveM(num);
+	return ds_GetPerspective_m(num);
 }
 
 void camera_set_fov(uint32_t num, Angle fov)
 {
-	njSetPerspectiveM(num, fov);
+	njSetPerspective_m(num, fov);
 }

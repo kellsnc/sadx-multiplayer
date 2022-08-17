@@ -90,7 +90,7 @@ static void RdSnowBoardingRegular_m(task* tp)
 		// Detach
 		if (GetDistance(&pos_7E964C, &ptwp->pos) < 200.0f)
 		{
-			ResetPerspectiveM(i);
+			ResetPerspective_m(i);
 			SetInputP(i, PL_OP_LETITGO);
 			CameraReleaseEventCamera();
 			continue;
@@ -117,7 +117,7 @@ static void RdSnowBoardingRegular_m(task* tp)
 			deg = 1.0f;
 		}
 
-		njSetPerspectiveM(i, AdjustAngle(ds_GetPerspectiveM(i), 0x31C7 - static_cast<Angle>(sqrtf(deg) * -5461.0f), 512));
+		njSetPerspective_m(i, AdjustAngle(ds_GetPerspective_m(i), 0x31C7 - static_cast<Angle>(sqrtf(deg) * -5461.0f), 512));
 	}
 
 	if (done == true)

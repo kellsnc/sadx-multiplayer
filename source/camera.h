@@ -24,11 +24,12 @@ void CameraSetCollisionCameraFunc_m(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMER
 void CameraReleaseEventCamera_m(int pnum);
 void CameraSetEventCamera_m(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType);
 void CameraSetEventCameraFunc_m(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPARAM*), Uint8 ucAdjustType, Sint8 scCameraDirect);
+Bool CameraCameraAction(int pnum, NJS_CACTION* caction, Float frame);
 void ResetCameraTimer_m(int pnum);
 
-static Angle ds_GetPerspectiveM(int pnum) { return 0; };
-static void njSetPerspectiveM(int pnum, Angle bams) {};
-static void ResetPerspectiveM(int pnum) {};
+Angle ds_GetPerspective_m(int pnum);
+void njSetPerspective_m(int pnum, Angle ang);
+void ResetPerspective_m(int pnum);
 
 void ApplyMultiCamera(int pnum);
 void __cdecl Camera_r(task* tp);
