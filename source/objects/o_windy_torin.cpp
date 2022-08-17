@@ -3,7 +3,6 @@
 #include "Trampoline.h"
 #include "utils.h"
 #include "camera.h"
-#include "splitscreen.h"
 
 enum : __int8
 {
@@ -31,21 +30,18 @@ static void RotateObj_m(task* tp)
     }
     else if (twp->mode == MODE_NORMAL)
     {
-        if (SplitScreen::IsVisible(&twp->pos, 10.0f))
-        {
-            twp->counter.f += twp->scl.y * 1.5f + 8.0f;
-            Angle ang = NJM_DEG_ANG(-twp->counter.f);
-            twp->pos.x = njCos(ang) * 100.0f;
-            twp->pos.z = njSin(ang) * 100.0f;
+        twp->counter.f += twp->scl.y * 1.5f + 8.0f;
+        Angle ang = NJM_DEG_ANG(-twp->counter.f);
+        twp->pos.x = njCos(ang) * 100.0f;
+        twp->pos.z = njSin(ang) * 100.0f;
 
-            twp->pos.y = fabs(njRandom()) * 3.4f + twp->scl.y * 1.3f + twp->pos.y;
+        twp->pos.y = fabs(njRandom()) * 3.4f + twp->scl.y * 1.3f + twp->pos.y;
 
-            ang = -NJM_DEG_ANG(twp->scl.y + twp->scl.y);
-            twp->ang.x -= ang;
-            twp->ang.z -= ang;
+        ang = -NJM_DEG_ANG(twp->scl.y + twp->scl.y);
+        twp->ang.x -= ang;
+        twp->ang.z -= ang;
 
-            twp->ang.y += NJM_DEG_ANG(twp->scl.y * 5.0f);
-        }
+        twp->ang.y += NJM_DEG_ANG(twp->scl.y * 5.0f);
     }
 
     tp->disp(tp);
