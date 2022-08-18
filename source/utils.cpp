@@ -4,7 +4,7 @@
 
 void DrawSADXText(const char* text, __int16 y)
 {
-	MSG_Close(&jimakumsgc);
+	NH_MSG_Close(&jimakumsgc);
 	DialogJimakuInit();
 	NH_MSG_Open(&jimakumsgc, 0, y, 0, 0, 0xFF000020, jimakubuf);
 	DoSomethingRelatedToText_(text);
