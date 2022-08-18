@@ -336,6 +336,17 @@ static inline void SpinnaDraw(taskwk* twp, enemywk* ewp)
 	}
 }
 
+static const void* const PondDrawPtr = (void*)0x7AA2F0;
+static inline void PondDraw(taskwk* twp, enemywk* ewp)
+{
+	__asm
+	{
+		mov ebx, [ewp]
+		mov esi, [twp]
+		call PondDrawPtr
+	}
+}
+
 static const void* const HeliPathPtr = (void*)0x6134A0;
 static inline void HeliPath(taskwk* twp, pathtag* tag, pathinfo* info)
 {
