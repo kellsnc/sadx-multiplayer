@@ -4,6 +4,7 @@
 #include "VariableHook.hpp"
 #include "utils.h"
 #include "multiplayer.h"
+#include "camera.h"
 
 VariableHook<int, 0x3C80620> inwind_timer_m;
 VariableHook<Bool, 0x3C80618> windshadow_m;
@@ -19,10 +20,10 @@ Trampoline Skydeck_EggcarrierCtrl_t(0x5ECA80, 0x5ECA87, Skydeck_EggcarrierCtrl_r
 
 static void Skydeck_EggcarrierCtrl_m(__int16 act)
 {
-	//SetFreeCameraMode(0);
-
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
+		SetFreeCameraMode_m(i, FALSE);
+
 		auto ptwp = playertwp[i];
 
 		if (!ptwp)
