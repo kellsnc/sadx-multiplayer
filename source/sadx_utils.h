@@ -284,6 +284,7 @@ DataPointer(Sint32, camera_mode, 0x3B2C6C4); // no symbol name
 FastcallFunctionPointer(Float, njDistancePL2PL, (NJS_PLANE* pl1, NJS_PLANE* pl2, NJS_LINE* l), 0x7887D0);
 FunctionPointer(void, ListGroundForCollision, (Float xPosition, Float yPosition, Float zPosition, Float fRadius), 0x43ACD0);
 DataPointer(CCL_INFO, camera_sphere_info, 0x9BE8A8);
+FunctionPointer(Bool, IsThisTaskPlayer, (task* tp), 0x441AD0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

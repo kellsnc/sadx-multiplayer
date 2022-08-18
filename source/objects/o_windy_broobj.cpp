@@ -27,10 +27,10 @@ static void Exec_m(task* tp)
             bomb_twp->mode = 0;
             bomb_twp->ang.y = twp->ang.y;
             bomb_twp->pos = twp->pos;
-
-            auto pnum = GetClosestPlayerNumRange(&twp->pos, 10.0f);
-            if (pnum > -1)
-                SetVelocityP(pnum, 0.0f, 2.5f, 0.0f);
+            
+            task* hit_tp = twp->cwp->hit_cwp->mytask;
+            if (IsThisTaskPlayer(hit_tp) >= 0)
+                SetVelocityP(TASKWK_PLAYERID(hit_tp->twp), 0.0f, 2.5f, 0.0f);
         }
         else
         {
