@@ -157,9 +157,6 @@
     <ClCompile Include="objects\ObjShelterKaitendai.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\EnemyPondSkater.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ef_spark.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
@@ -421,6 +418,9 @@
     <ClCompile Include="objects\colli_space.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\e_pondskater.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -575,6 +575,9 @@
     </ClInclude>
     <ClInclude Include="camerafunc.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\e_pondskater.h">
+      <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

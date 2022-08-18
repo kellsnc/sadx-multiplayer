@@ -11,6 +11,7 @@
 #include "objects/ef_spark.h"
 #include "objects/ObjShelterKaitenKey.h"
 #include "objects/mirror.h"
+#include "objects/e_pondskater.h"
 
 /*
 
@@ -868,4 +869,5 @@ void InitPatches()
 	PatchEffectSpark();
 	PatchAmyHandles();
 	PatchTwinkleMirrors();
+	PatchPondSkater();
 }
