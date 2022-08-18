@@ -33,6 +33,7 @@ VariableHook<FCWRK, 0x3B2C958> fcwrk_m;
 VariableHook<NJS_CACTION*, 0x3B2C950> pCameraAction_m;
 VariableHook<Float, 0x3B2CA6C> fActionFrame_m;
 VariableHook<Bool, 0x3B2CAC0> dword_3B2CAC0_m;
+VariableHook<Bool, 0x3B2C6C0> flagCameraNoUnderWater_m;
 
 static taskwk* backup_pl;
 static motionwk2* backup_mtn;
@@ -43,6 +44,7 @@ static CAM_ANYPARAM backup_any;
 
 static CameraLocation cameraLocations[PLAYER_MAX];
 static Angle ds_perspective_value_m[PLAYER_MAX];
+static bool flagDrawCameraNoUnderWater[PLAYER_MAX];
 
 NJS_POINT3* GetCameraPosition(int pnum)
 {
@@ -564,12 +566,193 @@ void ApplyMultiCamera(int pnum)
     CameraViewSet_m(pnum);
 }
 
+void CameraFilter_m()
+{
+    // This function is restored by dc conversion
+    if (DreamcastConversionEnabled == false)
+    {
+        return;
+    }
+
+    for (int pnum = 0; pnum < PLAYER_MAX; ++pnum)
+    {
+        if (!SplitScreen::IsScreenEnabled(pnum))
+        {
+            continue;
+        }
+        
+        if (flagDrawCameraNoUnderWater[pnum] != FALSE)
+        {
+            continue;
+        }
+
+        auto& loc = cameraLocations[pnum];
+
+        NJS_VECTOR v = { 0.0f, 0.0f, -1.5f };
+        njPushMatrix(_nj_unit_matrix_);
+        njTranslateV(0, &loc.pos);
+        njRotateY_(loc.ang.y);
+        njRotateX_(loc.ang.x);
+        njCalcPoint(0, &v, &v);
+
+        NJS_PLANE pl1;
+        pl1.px = v.x;
+        pl1.py = v.y;
+        pl1.pz = v.z;
+        pl1.vx = 0.0f;
+        pl1.vy = 0.0f;
+        pl1.vz = -1.0f;
+
+        njCalcVector(0, (NJS_VECTOR*)&pl1.vx, (NJS_VECTOR*)&pl1.vx);
+        njPopMatrix(1u);
+
+        zxsdwstr carry;
+        carry.pos = v;
+        ListGroundForCollision(v.x, v.y, v.z, 200.0f);
+
+        NJS_VECTOR upper_pos, lower_pos;
+        upper_pos.y = 1000000.0f;
+        lower_pos.y = -1000000.0f;
+
+        if (numLandCollList > 0)
+        {
+            for (Int i = 0; i < numLandCollList; ++i)
+            {
+                NJS_OBJECT* pObject = LandCollList[i].pObject;
+
+                if (LandCollList[i].pTask)
+                {
+                    NJS_POINT3 center;
+                    center.x = pObject->pos[0] - v.x;
+                    center.y = 0.0;
+                    center.z = pObject->pos[2] - v.z;
+
+                    Float scale = pObject->scl[0];
+
+                    if (scale < pObject->scl[1])
+                    {
+                        scale = pObject->scl[1];
+                    }
+
+                    if (scale < pObject->scl[2])
+                    {
+                        scale = pObject->scl[2];
+                    }
+
+                    if (njScalor(&center) > scale * ((NJS_MODEL*)(pObject->model))->r)
+                    {
+                        continue;
+                    }
+                }
+
+                if (LandCollList[i].slAttribute & (ColFlags_Water | 0x400000))
+                {
+                    if (GetZxShadowOnFDPolygon(&carry, pObject))
+                    {
+                        if (carry.upper.findflag == TRUE && carry.pos.y < carry.upper.onpos && carry.upper.onpos < upper_pos.y)
+                        {
+                            upper_pos.y = carry.upper.onpos;
+                        }
+                        else if (carry.lower.findflag == TRUE && carry.pos.y > carry.lower.onpos && carry.lower.onpos < lower_pos.y)
+                        {
+                            lower_pos.y = carry.lower.onpos;
+                        }
+                    }
+                }
+            }
+
+            if (upper_pos.y != 1000000.0f || lower_pos.y != -1000000.0f)
+            {
+                NJS_PLANE pl_upper, pl_lower;
+                NJS_LINE ln;
+
+                pl_upper.px = v.x;
+                pl_lower.px = v.x;
+                pl_upper.pz = v.z;
+                pl_lower.pz = v.z;
+                pl_upper.py = upper_pos.y;
+                pl_upper.vx = 0.0f;
+                pl_upper.vy = 1.0f;
+                pl_upper.vz = 0.0f;
+                pl_lower.py = upper_pos.y; /* should be lower_pos */
+                pl_lower.vx = 0.0f;
+                pl_lower.vy = 1.0f;
+                pl_lower.vz = 0.0f;
+
+                if (njDistancePL2PL(&pl1, &pl_upper, &ln) == 0.0f)
+                {
+                    upper_pos.x = ln.px;
+                    upper_pos.y = ln.py;
+                    upper_pos.z = ln.pz;
+                }
+                else
+                {
+                    upper_pos.y = -1000000.0f;
+                }
+
+                if (njDistancePL2PL(&pl1, &pl_lower, &ln) == 0.0f)
+                {
+                    lower_pos.x = ln.px;
+                    lower_pos.y = ln.py;
+                    lower_pos.z = ln.pz;
+                }
+                else
+                {
+                    upper_pos.y = -1000000.0f; /* should be lower_pos */
+                }
+
+                NJS_POINT2 pos;
+
+                njPushMatrix(0);
+                njProjectScreen(0, &upper_pos, &pos);
+                njPopMatrix(1u);
+
+                if (pos.y < 0.0f || pos.y > 480.0f)
+                {
+                    njPushMatrix(0);
+                    njProjectScreen(0, &lower_pos, &pos);
+                    njPopMatrix(1u);
+
+                    if (auto ratio = SplitScreen::GetScreenRatio(pnum))
+                    {
+                        NJS_POINT2 rectpos[4];
+                        static NJS_COLOR rectcol[4] = { 0x40000040, 0x40000040, 0x40000040, 0x40000040 };
+                        NJS_POINT2COL rectp2;
+
+                        rectp2.p = rectpos;
+                        rectp2.col = rectcol;
+                        rectp2.tex = NULL;
+                        rectp2.num = 2;
+
+                        Float x = (float)HorizontalResolution * ratio->x;
+                        Float y = (float)VerticalResolution * ratio->y;
+                        Float w = (float)HorizontalResolution * ratio->w;
+                        Float h = (float)VerticalResolution * ratio->h;
+
+                        rectp2.p[0] = { x, y };
+                        rectp2.p[1] = { x + w, y };
+                        rectp2.p[2] = { x, y + h };
+                        rectp2.p[3] = { x + w, y + h };
+
+                        njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
+                        njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
+
+                        /* Drawn twice, would need late_DrawPolygon2D in SADX */
+                        late_DrawPolygon2D(&rectp2, 4, 0.01f, NJD_FILL | NJD_TRANSPARENT, LATE_MAT);
+                        late_DrawPolygon2D(&rectp2, 4, 0.01f, NJD_FILL | NJD_TRANSPARENT, LATE_MAT);
+                    }
+                }
+            }
+        }
+    }
+}
+
 void __cdecl cameraDisplay_r(task* tp)
 {
     if (SplitScreen::IsActive())
     {
         ApplyMultiCamera(SplitScreen::numScreen);
-        //CameraFilter(tp); <- Works individually but crashes when drawn more than once with DC Conv
+        CameraFilter_m();
     }
     else
     {
@@ -1155,6 +1338,17 @@ void CameraRunTimers(int pnum)
     }
 
     dword_3B2CAC0_m[pnum] = 0;
+
+    // Moved away from CameraFilter to be on logic time
+    if (flagCameraNoUnderWater_m[pnum] != FALSE)
+    {
+        flagCameraNoUnderWater_m[pnum] = FALSE;
+        flagDrawCameraNoUnderWater[pnum] = true;
+    }
+    else
+    {
+        flagDrawCameraNoUnderWater[pnum] = false;
+    }
 }
 
 Bool CameraCollisionShpere_m(int pnum, _OBJ_CAMERAENTRY* pCameraEntry)

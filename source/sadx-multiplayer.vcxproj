@@ -180,6 +180,7 @@
     <ClCompile Include="objects\BigKaeru.cpp" />
     <ClCompile Include="objects\BigTheCat.cpp" />
     <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp" />
+    <ClCompile Include="objects\colli_space.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
     <ClCompile Include="objects\ef_barrier.cpp" />
     <ClCompile Include="objects\ef_sky_scope.cpp" />

@@ -6,3 +6,4 @@
 #define BYTEn(x, n)   (*((uint8_t*)&(x)+n))
 
 extern const HelperFunctions* gHelperFunctions;
+extern bool DreamcastConversionEnabled;

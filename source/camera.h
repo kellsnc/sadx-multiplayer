@@ -2,6 +2,8 @@
 
 #include "camerafunc.h"
 
+extern VariableHook<Bool, 0x3B2C6C0> flagCameraNoUnderWater_m;
+
 NJS_POINT3* GetCameraPosition(int pnum);
 Angle3* GetCameraAngle(int pnum);
 static void SetCameraPosition(int pnum, float x, float y, float z) {};

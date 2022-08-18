@@ -26,12 +26,16 @@
 
 const HelperFunctions* gHelperFunctions;
 
+bool DreamcastConversionEnabled = false;
+
 extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
 		gHelperFunctions = &helperFunctions;
 		config::read(path);
+
+		DreamcastConversionEnabled = GetModuleHandle(L"DCMods_Main") != nullptr;
 
 		InitLogic();
 		InitSplitScreen();

@@ -272,6 +272,7 @@ DataPointer(_OBJ_CAMERAPARAM, cameraParam, 0x3B2CB7C);
 DataPointer(NJS_PLANE, plCollision, 0x915094);
 FunctionPointer(void, DispTask, (int level), 0x40B4F0);
 FunctionPointer(Bool, ChkGameMode, (), 0x414D90);
+FunctionPointer(Bool, ChkPause, (), 0x414D70);
 DataPointer(Sint16, ssAct, 0x3B2CAC8);
 DataPointer(NJS_CAMERA, View, 0x3AAD0A0);
 DataPointer(NES_LIB_PARAM, nesparam, 0x892944);
@@ -280,6 +281,9 @@ DataPointer(Float, clipZ_far, 0x900830);
 DataPointer(NJS_CACTION*, pCameraAction, 0x3B2C950);
 DataPointer(Float, fActionFrame, 0x3B2CA6C);
 DataPointer(Sint32, camera_mode, 0x3B2C6C4); // no symbol name
+FastcallFunctionPointer(Float, njDistancePL2PL, (NJS_PLANE* pl1, NJS_PLANE* pl2, NJS_LINE* l), 0x7887D0);
+FunctionPointer(void, ListGroundForCollision, (Float xPosition, Float yPosition, Float zPosition, Float fRadius), 0x43ACD0);
+DataPointer(CCL_INFO, camera_sphere_info, 0x9BE8A8);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -499,4 +503,18 @@ static inline void sub_46E940(NJS_POINT3* src, NJS_POINT3* dst)
 		mov esi, [src]
 		call sub_46E940Ptr
 	}
+}
+
+static const void* const CS_CheckCollisionPlayer2NoWaterPtr = (void*)0x4D4C50;
+static inline Bool CS_CheckCollisionPlayer2NoWater(CCL_INFO* pinf, taskwk* ctwp)
+{
+	Bool result;
+	__asm
+	{
+		mov esi, [ctwp]
+		mov edi, [pinf]
+		call CS_CheckCollisionPlayer2NoWaterPtr
+		mov result, eax
+	}
+	return result;
 }
