@@ -346,7 +346,6 @@ int spd_level_link[]{
 	LevelAndActIDs_SkyDeck1,
 	LevelAndActIDs_LostWorld1,
 	LevelAndActIDs_FinalEgg1,
-	LevelAndActIDs_HotShelter1,
 	LevelAndActIDs_SandHill
 };
 
