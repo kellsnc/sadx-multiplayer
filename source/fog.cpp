@@ -1,4 +1,7 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "Trampoline.h"
+#include "VariableHook.hpp"
 #include "splitscreen.h"
 #include "fog.h"
 

@@ -14,10 +14,12 @@ struct IUnknown;
 #include <d3d8types.h>
 #include <d3d8.h>
 
-#include <SADXModLoader.h>
-#include <Trampoline.h>
-#include <IniFile.hpp>
-#include <UsercallFunctionHandler.h>
+#include "SADXModLoader.h">"
+#include "Trampoline.h">"
+#include "IniFile.hpp">"
+#include "UsercallFunctionHandler.h">"
+
+#include "VariableHook.hpp"
 
 #include "mod.h"
 #include "sadx_utils.h"

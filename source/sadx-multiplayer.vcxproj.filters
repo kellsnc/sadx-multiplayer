@@ -579,6 +579,9 @@
     <ClInclude Include="objects\e_pondskater.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
+    <ClInclude Include="VariableHook.hpp">
+      <Filter>Header FIles\classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -610,6 +613,9 @@
     </Filter>
     <Filter Include="Header FIles\networking">
       <UniqueIdentifier>{fbedaab8-05f5-4755-8346-ba4688365961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\classes">
+      <UniqueIdentifier>{34326808-c3dc-4006-8538-7a1a518e93d3}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

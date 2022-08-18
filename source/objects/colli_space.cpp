@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "Trampoline.h"
+#include "VariableHook.hpp"
 #include "camera.h"
 
 static void ColliNoWaterRange_m(task* tp)

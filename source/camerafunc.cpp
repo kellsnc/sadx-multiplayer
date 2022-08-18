@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
+#include "VariableHook.hpp"
 #include "sadx_utils.h"
 #include "gravity.h"
 #include "camera.h"

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "VariableHook.hpp"
 #include "camerafunc.h"
 
 extern VariableHook<Bool, 0x3B2C6C0> flagCameraNoUnderWater_m;
