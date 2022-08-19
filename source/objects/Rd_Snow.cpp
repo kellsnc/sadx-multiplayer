@@ -138,6 +138,19 @@ static void __cdecl Rd_Snow_r(task* tp)
 		{
 		case 0:
 			RdSnowInit(tp);
+
+			if (twp->mode == 8)
+			{
+				// Reset camera when dying in multiplayer mode
+				SetDefaultNormalCameraMode(CAMMD_SNOWBOARD, CAMADJ_THREE1);
+
+				// Snowboard camera for other players
+				for (int i = 1; i < PLAYER_MAX; ++i)
+				{
+					CameraSetEventCameraFunc_m(i, CameraSnowboard, CAMADJ_THREE1, CDM_LOOKAT);
+				}
+			}
+
 			break;
 		case 1:
 			RdSnowCheckEnterIceCave_m(tp);

@@ -1956,6 +1956,31 @@ void __cdecl AddCameraStage_r(Sint16 ssStep)
         }
     }
 }
+
+void __cdecl CameraSetEventCameraFunc_PlayerHack(CamFuncPtr fnCamera, Uint8 ucAdjustType, Sint8 scCameraDirect)
+{
+    CameraSetEventCameraFunc_m(TASKWK_PLAYERID(gpCharTwp), fnCamera, ucAdjustType, scCameraDirect);
+}
+
+void __cdecl CameraSetEventCamera_PlayerHack(Sint16 ssCameraMode, Sint8 scCameraDirect)
+{
+    CameraSetEventCamera_m(TASKWK_PLAYERID(gpCharTwp), ssCameraMode, scCameraDirect);
+}
+
+void __cdecl CameraReleaseEventCamera_PlayerHack()
+{
+    CameraReleaseEventCamera_m(TASKWK_PLAYERID(gpCharTwp));
+}
+
+void __cdecl CameraSetEventCameraFunc_Hack(CamFuncPtr fnCamera, Uint8 ucAdjustType, Sint8 scCameraDirect)
+{
+    CameraSetEventCameraFunc_m(TASKWK_PLAYERID(playertwp[0]), fnCamera, ucAdjustType, scCameraDirect);
+}
+
+void __cdecl CameraReleaseEventCamera_Hack()
+{
+    CameraReleaseEventCamera_m(TASKWK_PLAYERID(playertwp[0]));
+}
 #pragma endregion
 
 #pragma region FOV
@@ -1993,6 +2018,32 @@ void InitCamera()
     WriteJump((void*)0x435D10, CamcontSetCameraTGTOFST_r);
     WriteJump((void*)0x434600, cameraModeInit_r);
     WriteJump((void*)0x434680, AddCameraStage_r);
+
+    WriteCall((void*)0x45ED73, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x45EEC4, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x45F686, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x45F6D8, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x478B30, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x478EA9, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x478F49, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x47AD58, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x48D287, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x48F644, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x48FADD, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x49289E, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x492EE0, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x4987C0, CameraReleaseEventCamera_PlayerHack);
+    WriteCall((void*)0x478962, CameraSetEventCamera_PlayerHack);
+    WriteCall((void*)0x45EE82, CameraSetEventCameraFunc_PlayerHack);
+    WriteCall((void*)0x460591, CameraSetEventCameraFunc_PlayerHack);
+    WriteCall((void*)0x4605AD, CameraSetEventCameraFunc_PlayerHack);
+    WriteCall((void*)0x493021, CameraSetEventCameraFunc_PlayerHack);
+    WriteCall((void*)0x499D57, CameraSetEventCameraFunc_PlayerHack);
+    WriteCall((void*)0x499D71, CameraSetEventCameraFunc_PlayerHack);
+    WriteCall((void*)0x469057, CameraReleaseEventCamera_Hack);
+    WriteCall((void*)0x469217, CameraReleaseEventCamera_Hack);
+    WriteCall((void*)0x469065, CameraSetEventCameraFunc_Hack);
+    WriteCall((void*)0x469225, CameraSetEventCameraFunc_Hack);
 
     CameraMode[CAMMD_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_A_KLAMATH].fnCamera = CameraKlamath_m;

@@ -1,6 +1,56 @@
 #include "pch.h"
 #include "multiplayer.h"
+#include "camera.h"
 #include "fishing.h"
+
+static void __cdecl sub_48CDE0_r();
+Trampoline sub_48CDE0_t(0x48CDE0, 0x48CDE5, sub_48CDE0_r);
+void __cdecl sub_48CDE0_r()
+{
+	if (multiplayer::IsActive())
+	{
+		auto pnum = TASKWK_PLAYERID(gpCharTwp);
+
+		if (GetLevelType() == 1)
+		{
+			CameraSetEventCamera_m(pnum, CAMMD_KNUCKLES2, CAMADJ_TIME);
+		}
+		else
+		{
+			CameraSetEventCameraFunc_m(pnum, CameraFishing, CAMADJ_SLOW, CDM_LOOKAT);
+		}
+	}
+	else
+	{
+		TARGET_STATIC(sub_48CDE0)();
+	}
+
+	
+}
+
+static void __cdecl sub_48CE10_r();
+Trampoline sub_48CE10_t(0x48CE10, 0x48CE17, sub_48CE10_r);
+static void __cdecl sub_48CE10_r()
+{
+	if (multiplayer::IsActive())
+	{
+		auto pnum = TASKWK_PLAYERID(gpCharTwp);
+		auto etc = GetBigEtc(pnum);
+
+		if (etc->Big_Fish_Flag & LUREFLAG_FISH)
+		{
+			CameraReleaseCollisionCamera_m(pnum);
+		}
+		else
+		{
+			CameraReleaseEventCamera_m(pnum);
+		}
+	}
+	else
+	{
+		TARGET_STATIC(sub_48CE10)();
+	}
+}
 
 static void __cdecl BigTheCat_r(task* tp);
 Trampoline BigTheCat_t(0x490A00, 0x490A05, BigTheCat_r);
