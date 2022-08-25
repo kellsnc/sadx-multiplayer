@@ -52,7 +52,7 @@ bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h)
 	return false;
 }
 
-void multi_set_charid(int32_t pnum, Characters character)
+void multi_set_charid(uint32_t pnum, Characters character)
 {
 	SetCurrentCharacter(pnum, character);
 }
@@ -62,12 +62,12 @@ void multi_score_reset()
 	ResetEnemyScoreM();
 }
 
-int32_t multi_score_get(int32_t pnum)
+int32_t multi_score_get(uint32_t pnum)
 {
 	return GetEnemyScoreM(pnum);
 }
 
-void multi_score_add(int32_t pnum, int32_t amount)
+void multi_score_add(uint32_t pnum, int32_t amount)
 {
 	AddEnemyScoreM(pnum, amount);
 }
@@ -77,27 +77,27 @@ void multi_lives_reset()
 	ResetNumPlayerM();
 }
 
-int32_t multi_lives_get(int32_t pnum)
+int32_t multi_lives_get(uint32_t pnum)
 {
 	return GetNumPlayerM(pnum);
 }
 
-void multi_lives_add(int32_t pnum, int32_t amount)
+void multi_lives_add(uint32_t pnum, int32_t amount)
 {
 	AddNumPlayerM(pnum, amount);
 }
 
-void multi_rings_reset(int32_t pnum)
+void multi_rings_reset(uint32_t pnum)
 {
 	ResetNumRingP(pnum);
 }
 
-int32_t multi_rings_get(int32_t pnum)
+int32_t multi_rings_get(uint32_t pnum)
 {
 	return GetNumRingM(pnum);
 }
 
-void multi_rings_add(int32_t pnum, int32_t amount)
+void multi_rings_add(uint32_t pnum, int32_t amount)
 {
 	AddNumRingM(pnum, amount);
 }
@@ -122,7 +122,7 @@ bool multi_is_coop()
 	return multiplayer::IsCoopMode();
 }
 
-void multi_enable(int player_count, bool battle)
+void multi_enable(uint32_t player_count, bool battle)
 {
 	multiplayer::Enable(player_count, battle ? multiplayer::mode::battle : multiplayer::mode::coop);
 }
@@ -142,7 +142,7 @@ int32_t multi_get_winner()
 	return GetWinnerMulti();
 }
 
-void multi_set_winner(int32_t pnum)
+void multi_set_winner(uint32_t pnum)
 {
 	SetWinnerMulti(pnum);
 }
@@ -154,32 +154,12 @@ void camera_apply(uint32_t num)
 
 bool camera_get_pos(uint32_t num, NJS_POINT3* pos)
 {
-	auto p = GetCameraPosition(num);
-
-	if (p)
-	{
-		*pos = *p;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return GetCameraPosition(num);
 }
 
-bool camera_get_ang(uint32_t num, Angle3* ang)
+Angle3* camera_get_ang(uint32_t num)
 {
-	auto a = GetCameraAngle(num);
-
-	if (a)
-	{
-		*ang = *a;
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+	return GetCameraAngle(num);
 }
 
 void camera_set_pos(uint32_t num, float x, float y, float z)
@@ -200,4 +180,44 @@ uint32_t camera_get_fov(uint32_t num)
 void camera_set_fov(uint32_t num, Angle fov)
 {
 	njSetPerspective_m(num, fov);
+}
+
+void camera_enable_freecam(uint32_t pnum, bool enable)
+{
+	SetFreeCamera_m(pnum, enable);
+}
+
+bool camera_is_freecam_enabled(uint32_t pnum)
+{
+	return GetFreeCamera_m(pnum);
+}
+
+void camera_allow_freecam(uint32_t pnum, bool allow)
+{
+	SetFreeCameraMode_m(pnum, allow);
+}
+
+bool camera_is_freecam_allowed(uint32_t pnum)
+{
+	return GetFreeCameraMode_m(pnum);
+}
+
+void camera_set_normal_camera(uint32_t pnum, uint32_t ssCameraMode, uint32_t ucAdjustType)
+{
+	CameraSetNormalCamera_m(pnum, ssCameraMode, ucAdjustType);
+}
+
+void camera_set_event_camera(uint32_t pnum, uint32_t ssCameraMode, uint32_t ucAdjustType)
+{
+	CameraSetEventCamera_m(pnum, ssCameraMode, ucAdjustType);
+}
+
+void camera_set_event_camera_func(uint32_t pnum, CamFuncPtr fnCamera, uint32_t ucAdjustType, uint32_t scCameraDirect)
+{
+	CameraSetEventCameraFunc_m(pnum, fnCamera, ucAdjustType, scCameraDirect);
+}
+
+void camera_release_event_camera(uint32_t pnum)
+{
+	CameraReleaseEventCamera_m(pnum);
 }
