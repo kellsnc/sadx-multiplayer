@@ -261,7 +261,6 @@ DataPointer(NJS_OBJECT, object_cl_uki_cl_uki, 0x1A29EEC);
 DataPointer(NJS_OBJECT, object_mdlelv1_cl_elvtr_cl_elvtr, 0x1A3D74C);
 DataPointer(NJS_ACTION, action_fun_funflot, 0x1A3037C);
 FunctionPointer(int, PCheckJump, (taskwk* twp), 0x43BF40);
-FunctionPointer(void, NH_MSG_Open, (MSGC* msgc, int x, int y, int width, int height, int globalindex, void* buf), 0x40E1E0);
 DataPointer(int, bWake, 0x912DF0); // Timer toggle
 DataPointer(int16_t, ssGameModeChange, 0x3B22E1C);
 DataPointer(int16_t, ssNextStageNumber, 0x3B22DF0);
@@ -272,7 +271,6 @@ DataPointer(_OBJ_CAMERAPARAM, cameraParam, 0x3B2CB7C);
 DataPointer(NJS_PLANE, plCollision, 0x915094);
 FunctionPointer(void, DispTask, (int level), 0x40B4F0);
 FunctionPointer(Bool, ChkGameMode, (), 0x414D90);
-FunctionPointer(Bool, ChkPause, (), 0x414D70);
 DataPointer(Sint16, ssAct, 0x3B2CAC8);
 DataPointer(NJS_CAMERA, View, 0x3AAD0A0);
 DataPointer(NES_LIB_PARAM, nesparam, 0x892944);
