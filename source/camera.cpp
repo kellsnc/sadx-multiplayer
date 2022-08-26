@@ -1755,6 +1755,11 @@ void sub_436700_m(int pnum)
 
 void __cdecl Camera_r(task* tp)
 {
+    if (!SplitScreen::IsActive())
+    {
+        return TARGET_DYNAMIC(Camera)(tp);
+    }
+
     auto twp = tp->twp;
     ResetMaterial();
 
