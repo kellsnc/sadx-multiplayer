@@ -269,7 +269,7 @@ void __cdecl late_exec_r()
         _nj_control_3d_flag_ = __nj_control_3d_flag_;
         _nj_constant_attr_and_ = __nj_constant_attr_and_;
         _nj_constant_attr_or_ = __nj_constant_attr_or_;
-        njSetScreenDist(_ds_perspective_value);
+        njSetScreenDist_(_ds_perspective_value);
 
         if (fog)
         {
