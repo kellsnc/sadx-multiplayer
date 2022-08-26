@@ -601,15 +601,17 @@ void SetOtherPlayers()
     {
         for (unsigned int i = 1; i < multiplayer::GetPlayerCount(); i++)
         {
-            int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
+            int playernum = characters[i];
 
-            if (playernum >= 0)
+            if (playernum >= 0 && !playertwp[i])
             {
                 LoadCharObj(i, playernum);
 
                 if (playertwp[i])
                 {
-                    playertwp[i]->pos = playertwp[0]->pos;
+                    playertwp[i]->pos = playertwp[i - 1]->pos;
+                    playertwp[i]->pos.z += 5.0f;
+                    playertwp[i]->ang = playertwp[i - 1]->ang;
                 }
             }
         }
