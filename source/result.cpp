@@ -53,7 +53,7 @@ static void PlayCharaWinSound()
 
 static void __cdecl SetFinishAction_r()
 {
-	if (multiplayer::IsBattleMode())
+	if (multiplayer::IsActive())
 	{
 		PadReadOffP(-1);
 		PauseEnabled = FALSE;
@@ -74,7 +74,8 @@ static void __cdecl SetFinishAction_r()
 			PlayCharaWinSound();
 		}
 
-		LoadMultiplayerResult();
+		if (multiplayer::IsBattleMode())
+			LoadMultiplayerResult();
 	}
 	else
 	{
