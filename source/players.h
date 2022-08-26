@@ -24,3 +24,4 @@ void ResetCharactersArray();
 void UpdatePlayersInfo();
 
 void InitPlayerPatches();
+void SetOtherPlayers();

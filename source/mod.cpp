@@ -60,6 +60,7 @@ extern "C"
 		InitForceWorkPatches();
 		InitGravityPatches();
 		InitFogPatches();
+		initEvents();
 	}
 
 	__declspec(dllexport) void __cdecl OnExit()

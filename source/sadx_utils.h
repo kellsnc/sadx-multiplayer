@@ -284,6 +284,7 @@ FunctionPointer(void, ListGroundForCollision, (Float xPosition, Float yPosition,
 DataPointer(CCL_INFO, camera_sphere_info, 0x9BE8A8);
 FunctionPointer(Bool, IsThisTaskPlayer, (task* tp), 0x441AD0);
 VoidFunc(SetPlayer, 0x4157C0);
+FunctionPointer(void, EV_Load2, (int num), 0x42FA30);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

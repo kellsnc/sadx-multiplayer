@@ -18,6 +18,7 @@ struct IUnknown;
 #include "Trampoline.h">"
 #include "IniFile.hpp">"
 #include "UsercallFunctionHandler.h">"
+#include "FunctionHook.h"
 
 #include "VariableHook.hpp"
 

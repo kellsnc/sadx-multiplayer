@@ -595,6 +595,27 @@ void SetPlayer_r()
     }
 }
 
+void SetOtherPlayers()
+{
+    if (multiplayer::IsActive())
+    {
+        for (unsigned int i = 1; i < multiplayer::GetPlayerCount(); i++)
+        {
+            int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
+
+            if (playernum >= 0)
+            {
+                LoadCharObj(i, playernum);
+
+                if (playertwp[i])
+                {
+                    playertwp[i]->pos = playertwp[0]->pos;
+                }
+            }
+        }
+    }
+}
+
 void InitPlayerPatches()
 {
     isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;

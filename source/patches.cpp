@@ -19,23 +19,24 @@ General patches to allow compatibility for 4+ players
 
 */
 
-Trampoline* PGetRotation_t                 = nullptr;
-Trampoline* PGetAcceleration_t             = nullptr;
-Trampoline* PGetAccelerationSnowBoard_t    = nullptr;
-Trampoline* PInitialize_t                  = nullptr;
-Trampoline* NpcMilesSet_t                  = nullptr;
-Trampoline* Ring_t                         = nullptr;
-Trampoline* Tobitiri_t                     = nullptr;
-Trampoline* PlayerVacumedRing_t            = nullptr;
-Trampoline* EnemyCheckDamage_t             = nullptr;
-Trampoline* EnemyDist2FromPlayer_t         = nullptr;
-Trampoline* EnemyCalcPlayerAngle_t         = nullptr;
-Trampoline* EnemyTurnToPlayer_t            = nullptr;
-Trampoline* savepointCollision_t           = nullptr;
-Trampoline* TikalDisplay_t                 = nullptr;
-Trampoline* ObjectSpringB_t                = nullptr;
-Trampoline* SpinnaDisplayer_t              = nullptr;
-Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
+static Trampoline* PGetRotation_t                 = nullptr;
+static Trampoline* PGetAcceleration_t             = nullptr;
+static Trampoline* PGetAccelerationSnowBoard_t    = nullptr;
+static Trampoline* PInitialize_t                  = nullptr;
+static Trampoline* NpcMilesSet_t                  = nullptr;
+static Trampoline* Ring_t                         = nullptr;
+static Trampoline* Tobitiri_t                     = nullptr;
+static Trampoline* PlayerVacumedRing_t            = nullptr;
+static Trampoline* EnemyCheckDamage_t             = nullptr;
+static Trampoline* EnemyDist2FromPlayer_t         = nullptr;
+static Trampoline* EnemyCalcPlayerAngle_t         = nullptr;
+static Trampoline* EnemyTurnToPlayer_t            = nullptr;
+static Trampoline* savepointCollision_t           = nullptr;
+static Trampoline* TikalDisplay_t                 = nullptr;
+static Trampoline* ObjectSpringB_t                = nullptr;
+static Trampoline* SpinnaDisplayer_t              = nullptr;
+static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
+
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
@@ -780,6 +781,7 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 		return CheckPlayerRideOnMobileLandObjectP(pno, ttp);
 	}
 }
+
 
 void InitPatches()
 {

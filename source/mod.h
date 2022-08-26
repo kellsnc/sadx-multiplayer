@@ -7,3 +7,5 @@
 
 extern const HelperFunctions* gHelperFunctions;
 extern bool DreamcastConversionEnabled;
+
+void initEvents();
