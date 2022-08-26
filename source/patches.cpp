@@ -36,6 +36,7 @@ static Trampoline* TikalDisplay_t                 = nullptr;
 static Trampoline* ObjectSpringB_t                = nullptr;
 static Trampoline* SpinnaDisplayer_t              = nullptr;
 static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
+static FunctionHook<void, task*> Sweep_Main_t(0x7AA870);
 
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
@@ -782,6 +783,31 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 	}
 }
 
+void Sweep_Main_r(task* obj)
+{
+	taskwk* data = obj->twp;
+	ObjectData2* objdata2 = (ObjectData2*)obj->mwp;
+
+	if (data && objdata2) {
+
+		if (data->mode < 3) {
+
+			if (OhNoImDead((EntityData1*)data, objdata2))
+			{
+				data->mode = 3;
+				data->counter.b[1] = 0;
+				data->counter.b[2] = 1;
+				data->wtimer = 0;
+				data->scl.z = 0.34999999f;
+				return;
+			}
+
+		}
+	}
+
+	Sweep_Main_t.Original(obj);
+}
+
 
 void InitPatches()
 {
@@ -808,6 +834,7 @@ void InitPatches()
 	EnemyCalcPlayerAngle_t = new Trampoline(0x4CD670, 0x4CD675, EnemyCalcPlayerAngle_r);
 	EnemyTurnToPlayer_t    = new Trampoline(0x4CD6F0, 0x4CD6F5, EnemyTurnToPlayer_r);
 	WriteData((char*)0x4CCB3F, (char)PLAYER_MAX); // EnemySearchPlayer
+	Sweep_Main_t.Hook(Sweep_Main_r); //patch a crash when speeps are killed too far from player 1
 
 	// Enemies
 	SpinnaDisplayer_t = new Trampoline(0x4AFD80, 0x4AFD85, SpinnaDisplayer_r);
