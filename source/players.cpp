@@ -36,8 +36,8 @@ DataPointer(ADVPOS**, vInitialPositionMR_Ptr, 0x5307AE);
 DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
 
 Trampoline* SetPlayerInitialPosition_t = nullptr;
-Trampoline* DamegeRingScatter_t = nullptr;
-//Trampoline* SetPlayer_t = nullptr;
+static FunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
+static FunctionHook<void> SetPlayer_t(SetPlayer);
 
 static bool isCharSel = false;
 
@@ -299,7 +299,7 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
     }
 }
 
-void __cdecl DamegeRingScatter_r(uint8_t pno)
+void __cdecl DamegeRingScatter_r(char pno)
 {
     if (multiplayer::IsBattleMode())
     {
@@ -334,7 +334,7 @@ void __cdecl DamegeRingScatter_r(uint8_t pno)
     }
     else
     {
-        TARGET_DYNAMIC(DamegeRingScatter)(pno);
+        return DamegeRingScatter_t.Original(pno);
     }
 }
 
@@ -591,7 +591,7 @@ void SetPlayer_r()
     else
     {
         //TARGET_DYNAMIC(SetPlayer)();
-        SetPlayer();
+        return SetPlayer_t.Original();
     }
 }
 
@@ -623,13 +623,8 @@ void InitPlayerPatches()
     isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
 
     SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
-    
-    DamegeRingScatter_t = new Trampoline(0x4506F0, 0x4506F7, DamegeRingScatter_r);
-    WriteCall((void*)((int)DamegeRingScatter_t->Target() + 2), rand); // Patch trampoline
-
-    //SetPlayer_t = new Trampoline(0x4157C0, 0x4157C8, SetPlayer_r);
-    //WriteCall((void*)((int)SetPlayer_t->Target() + 3), (void*)0x43B920); // Patch trampoline
-    WriteCall((void*)0x415A25, SetPlayer_r);
+    DamegeRingScatter_t.Hook(DamegeRingScatter_r);
+    SetPlayer_t.Hook(SetPlayer_r);
 
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteJump(ResetNumRing, ResetNumRingM);
