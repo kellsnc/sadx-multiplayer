@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "bosses.h"
 
-
 static const int timeLimit = 300;
 
 static FunctionHook<void, taskwk*, chaoswk*> turnToPlayer_t(0x7AE660);
 static FunctionHook<void, task*> chaos0_t(0x548640);
+static UsercallFunc(Angle, setApartTargetPos_t, (chaoswk* cwk), (cwk), 0x546460, rEAX, rEDI);
 
 //Patches Chaos effects to make them display on other player screens, it is done by manually setting a disp function that is lacking in vanilla.
 
@@ -54,6 +54,29 @@ void turnToPlayer_r(taskwk* twp, chaoswk* bwp)
 	}
 }
 
+Angle setApartTargetPos_r(chaoswk* cwk)
+{
+	if (!multiplayer::IsEnabled() || !playertwp[randomPnum])
+	{
+		return setApartTargetPos_t.Original(cwk);
+	}
+
+	Angle cos = 0;
+	float sin = 0.0f;
+	Angle result = 0;
+
+	cos = (unsigned __int64)(atan2(
+		chaosparam->field_center_pos.z - playertwp[randomPnum]->pos.z,
+		chaosparam->field_center_pos.x - playertwp[randomPnum]->pos.x)
+		* 65536.0
+		* 0.1591549762031479);
+	cwk->tgtpos.x = njCos(cos) * 60.0 + chaosparam->field_center_pos.x;
+	sin = njSin(cos);
+	result = cos;
+	cwk->tgtpos.z = sin * 60.0 + chaosparam->field_center_pos.z;
+
+	return result;
+}
 
 void Chaos0_Exec_r(task* tp)
 {
@@ -64,6 +87,7 @@ void Chaos0_Exec_r(task* tp)
 	Boss_SetNextPlayerToAttack(timeLimit);
 }
 
+
 void initChaos0Patches()
 {
 	WriteCall((void*)0x7AD3F3, LoadChaos0AttackEffB);	
@@ -72,4 +96,6 @@ void initChaos0Patches()
 	WriteData((TaskFuncPtr*)0x7AD221, ExecEffectChaos0AttackA);
 	turnToPlayer_t.Hook(turnToPlayer_r);
 	chaos0_t.Hook(Chaos0_Exec_r);
+	setApartTargetPos_t.Hook(setApartTargetPos_r);
+
 }
