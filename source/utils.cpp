@@ -215,3 +215,16 @@ void ChangeActM(int amount)
 	AdvanceAct(amount);
 	SetAllPlayersInitialPosition();
 }
+
+void __cdecl SetAndDisp(task* obj, TaskFuncPtr disp)
+{
+	auto data = obj->twp;
+
+	if (!data->mode)
+	{
+		obj->disp = disp;
+		data->mode++;
+	}
+
+	obj->disp(obj);
+}

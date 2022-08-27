@@ -2,6 +2,7 @@
 #include "death.h"
 #include "camera.h"
 #include "splitscreen.h"
+#include "bosses.h"
 
 #include "objects/ObjectItemBox.h"
 #include "objects/SnowBoard.h"
@@ -781,6 +782,14 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 	}
 }
 
+void initBossesPatches()
+{
+	InitE103Patches();
+	InitE104Patches();
+	InitE105Patches();
+	initChaos0Patches();
+}
+
 void InitPatches()
 {
 	PGetRotation_t                 = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -863,9 +872,7 @@ void InitPatches()
 	
 	InitItemBoxPatches();
 	InitSnowBoardPatches();
-	InitE103Patches();
-	InitE104Patches();
-	InitE105Patches();
+	initBossesPatches();
 	PatchEffectSpark();
 	PatchAmyHandles();
 	PatchTwinkleMirrors();

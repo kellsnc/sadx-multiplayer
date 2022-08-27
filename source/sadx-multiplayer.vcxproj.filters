@@ -424,6 +424,9 @@
     <ClCompile Include="event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="chaos0.cpp">
+      <Filter>Source Files\objects\bosses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -585,6 +588,9 @@
     <ClInclude Include="VariableHook.hpp">
       <Filter>Header FIles\classes</Filter>
     </ClInclude>
+    <ClInclude Include="bosses.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -619,6 +625,9 @@
     </Filter>
     <Filter Include="Header FIles\classes">
       <UniqueIdentifier>{34326808-c3dc-4006-8538-7a1a518e93d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\bosses">
+      <UniqueIdentifier>{7d85d775-a2ac-429b-9e63-1731455402c9}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

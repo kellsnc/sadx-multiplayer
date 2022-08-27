@@ -206,7 +206,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 
 void __cdecl late_exec_r()
 {
-    if (multiplayer::IsActive())
+    if (SplitScreen::IsActive())
     {
         NJS_MATRIX orig_matrix;
         njGetMatrix(orig_matrix);

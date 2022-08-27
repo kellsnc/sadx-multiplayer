@@ -19,3 +19,4 @@ void njRotateX_(Angle ang);
 void njRotateY_(Angle ang);
 void njRotateZ_(Angle ang);
 void ChangeActM(int amount);
+void __cdecl SetAndDisp(task* obj, TaskFuncPtr disp);

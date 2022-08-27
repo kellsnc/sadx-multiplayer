@@ -18,7 +18,7 @@ void EV_Load2_r(int no)
 			}
 		}
 
-		multiplayer::TemporaryDisable();
+		//multiplayer::TemporaryDisable();
 	}
 
 	return EV_Load2_t.Original(no);
@@ -26,7 +26,7 @@ void EV_Load2_r(int no)
 
 void RecreateMultiPlayer()
 {
-	multiplayer::Enable(multiplayer::GetPlayerCount(), (multiplayer::mode)backupMode);
+	//ultiplayer::Enable(multiplayer::GetPlayerCount(), (multiplayer::mode)backupMode);
 	SetOtherPlayers();
 	return RunLevelDestructor(5);
 }
