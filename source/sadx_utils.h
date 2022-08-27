@@ -300,6 +300,9 @@ FunctionPointer(void, setDrop, (taskwk* twp, int num, float size, float y_offset
 FunctionPointer(void, SetEffectPunchTameParticle, (NJS_POINT3* pos, int num), 0x7AD8E0);
 FunctionPointer(void, setShakeHeadParam, (float param), 0x549BB0);
 DataPointer(float, flt_3C63CEC, 0x3C63CEC);
+FunctionPointer(int, EH_PosPlayerCheck, (), 0x573310); //inlined in symbols
+FunctionPointer(void, sub_575190, (Egm1MissilesPrm* a1), 0x575190); 
+
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -544,4 +547,16 @@ static inline Bool CS_CheckCollisionPlayer2NoWater(CCL_INFO* pinf, taskwk* ctwp)
 		mov result, eax
 	}
 	return result;
+}
+
+static const void* const SetRouteDeletaPtr = (void*)0x573380;
+static inline void SetRouteDelta_0(bossextwk* egmwk,  float a2)
+{
+	__asm
+	{
+		push[a2]
+		mov esi, [egmwk]
+		call SetRouteDeletaPtr
+		add esp, 4
+	}
 }

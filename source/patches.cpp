@@ -810,6 +810,7 @@ void initBossesPatches()
 	InitE104Patches();
 	InitE105Patches();
 	initChaos0Patches();
+	initEggHornetPatches();
 }
 
 void InitPatches()

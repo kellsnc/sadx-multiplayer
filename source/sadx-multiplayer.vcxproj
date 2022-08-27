@@ -159,6 +159,7 @@
     <ClCompile Include="death.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
+    <ClCompile Include="egg-hornet.cpp" />
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="e_robo.cpp" />
