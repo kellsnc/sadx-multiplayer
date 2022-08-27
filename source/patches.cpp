@@ -108,7 +108,7 @@ void __cdecl Ring_r(task* tp)
 
 			if (player)
 			{
-				int pID = multiplayer::IsBattleMode() ? TASKWK_PLAYERID(player) : 0;
+				int pID = TASKWK_PLAYERID(player);
 
 				if (!(playerpwp[pID]->item & 0x4000))
 				{
@@ -146,7 +146,7 @@ void __cdecl Tobitiri_r(task* tp)
 
 				ResetParticle((EntityData1*)twp, (NJS_SPRITE*)0x3B42FC0);
 
-				int pID = multiplayer::IsBattleMode() ? TASKWK_PLAYERID(player) : 0;
+				int pID = TASKWK_PLAYERID(player);
 
 				if (!(playerpwp[pID]->item & 0x4000))
 				{
@@ -165,7 +165,7 @@ void __cdecl Tobitiri_r(task* tp)
 // Patch for other players to get kill score
 BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 {
-	if (!multiplayer::IsBattleMode())
+	if (!multiplayer::IsActive())
 	{
 		return TARGET_DYNAMIC(EnemyCheckDamage)(twp, ewp);
 	}
@@ -227,7 +227,7 @@ BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 // EBuyon is the only object to manually call AddEnemyScore
 void __cdecl EBuyon_ScorePatch(task* tp)
 {
-	if (multiplayer::IsBattleMode())
+	if (multiplayer::IsActive())
 	{
 		auto player = CCL_IsHitPlayer(tp->twp);
 

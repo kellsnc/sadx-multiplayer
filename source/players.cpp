@@ -256,6 +256,31 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 
             while (stpos->stage != CurrentLevel || stpos->act != CurrentAct)
             {
+                switch (CurrentLevel)
+                {
+                case LevelIDs_Chaos0:
+                case LevelIDs_Chaos4:
+                case LevelIDs_Chaos6:
+                case LevelIDs_EggHornet:
+                case LevelIDs_EggViper:
+                case LevelIDs_PerfectChaos:
+                    stpos = paSonicIP_Ptr;
+                    break;
+                case LevelIDs_EggWalker:
+                    stpos = paMilesIP_Ptr;
+                    break;
+                case LevelIDs_Chaos2:
+                    stpos = paKnucklesIP_Ptr;
+                    break;
+                case LevelIDs_Zero:
+                    stpos = paAmyIP_Ptr;
+                    break;
+                case LevelIDs_E101:
+                case LevelIDs_E101R:
+                    stpos = paE102IP_Ptr;
+                    break;
+                }
+
                 if (stpos->stage == LevelIDs_Invalid)
                 {
                     *pos = { 0.0f, 0.0f, 0.0f };
@@ -301,7 +326,7 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 
 void __cdecl DamegeRingScatter_r(char pno)
 {
-    if (multiplayer::IsBattleMode())
+    if (multiplayer::IsActive())
     {
         auto rings = GetNumRingM(pno);
 

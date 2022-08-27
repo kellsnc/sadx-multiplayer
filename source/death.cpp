@@ -37,8 +37,8 @@ void __cdecl GamePlayerMissed_r(task* tp)
 			}
 			else
 			{
-				if (multiplayer::IsBattleMode() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
-				SetPlayerInitialPosition(playertwp[pNum]);
+				if (multiplayer::IsActive() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
+					SetPlayerInitialPosition(playertwp[pNum]);
 
 				CameraReleaseEventCamera_m(pNum);
 
