@@ -53,14 +53,14 @@ static auto calcFishingLureY = GenerateUsercallWrapper<void (*)(taskwk* twp, Big
 static auto moveFishingRotY = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46E380, rEAX);
 static auto chkKabeAngle2 = GenerateUsercallWrapper<BOOL (*)(Angle3* angle3_p)>(noret, 0x46C6A0, rESI);
 
-Trampoline* dispFishWeightTexture_t = nullptr;
-Trampoline* exitFishWeightTexture_t = nullptr;
-Trampoline* dispFishingLure_t       = nullptr;
-Trampoline* dispFishingLureSwitch_t = nullptr;
-Trampoline* fishingLureCtrl_t       = nullptr;
-Trampoline* SetFishingLureTask_t    = nullptr;
-Trampoline* fishingCursorCtrl_t     = nullptr;
-Trampoline* SetFishingCursorTask_t  = nullptr;
+static Trampoline* dispFishWeightTexture_t = nullptr;
+static Trampoline* exitFishWeightTexture_t = nullptr;
+static Trampoline* dispFishingLure_t       = nullptr;
+static Trampoline* dispFishingLureSwitch_t = nullptr;
+static Trampoline* fishingLureCtrl_t       = nullptr;
+static Trampoline* SetFishingLureTask_t    = nullptr;
+static Trampoline* fishingCursorCtrl_t     = nullptr;
+static Trampoline* SetFishingCursorTask_t  = nullptr;
 
 BIGETC* GetBigEtc(int pnum)
 {

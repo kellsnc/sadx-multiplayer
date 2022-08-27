@@ -291,6 +291,16 @@ TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
 TaskFunc(dispEffectChaos0AttackA, 0x7AC9D0);
 TaskFunc(CircleLimit, 0x7AF300);
 
+DataPointer(char, chaos_nextmode, 0x3C5A7EC);
+DataPointer(char, chaos_reqmode, 0x3C5A7ED);
+DataPointer(char, chaos_oldmode, 0x3C5A7E1);
+DataPointer(char, chaos_punch_num, 0x3C5A7EE);
+DataPointer(char, chaos_pole_punch_num, 0x3C63D04);
+FunctionPointer(void, setDrop, (taskwk* twp, int num, float size, float y_offset), 0x7AD1C0);
+FunctionPointer(void, SetEffectPunchTameParticle, (NJS_POINT3* pos, int num), 0x7AD8E0);
+FunctionPointer(void, setShakeHeadParam, (float param), 0x549BB0);
+DataPointer(float, flt_3C63CEC, 0x3C63CEC);
+
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
 {
