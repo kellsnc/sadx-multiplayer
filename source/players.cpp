@@ -102,7 +102,7 @@ int GetNumPlayerM(int pNum)
 
 void AddNumPlayerM(int pNum, int Number)
 {
-    if (multiplayer::IsBattleMode())
+    if (multiplayer::IsActive())
     {
         if (Number > 0)
         {
@@ -141,7 +141,7 @@ int GetNumRingM(int pNum)
 
 void AddNumRingM(int pNum, int add)
 {
-    if (multiplayer::IsBattleMode())
+    if (multiplayer::IsActive())
     {
         int origc, newc = 0;
 
