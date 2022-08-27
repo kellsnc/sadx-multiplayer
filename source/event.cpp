@@ -2,11 +2,14 @@
 #include "players.h"
 
 static FunctionHook<void, int> EV_Load2_t(EV_Load2);
+static char backupMode = 0;
 
 void EV_Load2_r(int no)
 {
 	if (multiplayer::IsActive())
 	{
+		backupMode = multiplayer::IsCoopMode() ? 0 : 1;
+
 		for (int i = 1; i < PLAYER_MAX; i++)
 		{
 			if (playertwp[i])
@@ -14,6 +17,8 @@ void EV_Load2_r(int no)
 				FreeTask((task*)GetCharacterObject(i));
 			}
 		}
+
+		multiplayer::TemporaryDisable();
 	}
 
 	return EV_Load2_t.Original(no);
@@ -21,6 +26,7 @@ void EV_Load2_r(int no)
 
 void RecreateMultiPlayer()
 {
+	multiplayer::Enable(multiplayer::GetPlayerCount(), (multiplayer::mode)backupMode);
 	SetOtherPlayers();
 	return RunLevelDestructor(5);
 }

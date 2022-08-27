@@ -30,6 +30,11 @@ namespace multiplayer
         ResetCharactersArray();
     }
 
+    void TemporaryDisable()
+    {
+        enabled = false;
+    }
+
     bool IsEnabled()
     {
         return enabled;

@@ -11,6 +11,7 @@ namespace multiplayer
     unsigned int GetPlayerCount();
 
     void Enable(int player_count, mode md);
+    void TemporaryDisable();
     void Disable();
 
     bool IsEnabled(); // Check if multiplayer is enabled
@@ -19,4 +20,5 @@ namespace multiplayer
     bool IsCoopMode(); // Check if multiplayer is active and in coop mode
     bool IsFightMode(); // Check if multiplayer is active and in VS mode
     bool IsOnline(); // Check if in networking mode (todo: move)
+
 }
