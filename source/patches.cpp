@@ -37,7 +37,6 @@ static Trampoline* ObjectSpringB_t                = nullptr;
 static Trampoline* SpinnaDisplayer_t              = nullptr;
 static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 
-
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
 	if (SplitScreen::IsActive() && pwp->attr & 0x20000)
@@ -781,7 +780,6 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 		return CheckPlayerRideOnMobileLandObjectP(pno, ttp);
 	}
 }
-
 
 void InitPatches()
 {

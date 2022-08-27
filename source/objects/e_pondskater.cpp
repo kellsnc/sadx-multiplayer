@@ -2,8 +2,9 @@
 #include "SADXModLoader.h"
 #include "Trampoline.h"
 
-static void __cdecl PondDisplayer_r(task* tp);
-Trampoline PondDisplayer_t(0x7AA3D0, 0x7AA3D5, PondDisplayer_r);
+static FunctionHook<void, task*> PondExecutor_hook(0x7AA870);
+static FunctionHook<void, task*> PondDisplayer_hook(0x7AA3D0);
+
 static void __cdecl PondDisplayer_r(task* tp)
 {
     if (multiplayer::IsActive())
@@ -15,43 +16,36 @@ static void __cdecl PondDisplayer_r(task* tp)
     }
     else
     {
-        TARGET_STATIC(PondDisplayer)(tp);
+		PondDisplayer_hook.Original(tp);
     }
 }
 
-static FunctionHook<void, task*> PondExec_t(0x7AA870);
-
-void PondExec_r(task* obj)
+void PondExecutor_r(task* tp)
 {
-	taskwk* data = obj->twp;
-	ObjectData2* objdata2 = (ObjectData2*)obj->mwp;
+	auto twp = tp->twp;
+	auto ewp = (enemywk*)tp->mwp;
 
-	if (data && objdata2) {
-
-		if (data->mode < 3) {
-
-			if (OhNoImDead((EntityData1*)data, objdata2))
+	if (twp && ewp)
+	{
+		if (twp->mode < 3)
+		{
+			if (EnemyCheckDamage(twp, ewp))
 			{
-				data->mode = 3;
-				data->counter.b[1] = 0;
-				data->counter.b[2] = 1;
-				data->wtimer = 0;
-				data->scl.z = 0.34999999f;
+				twp->mode = 3;
+				twp->counter.b[1] = 0;
+				twp->counter.b[2] = 1;
+				twp->wtimer = 0;
+				twp->scl.z = 0.35f;
 				return;
 			}
-
 		}
 	}
 
-	PondExec_t.Original(obj);
+	PondExecutor_hook.Original(tp);
 }
-
 
 void PatchPondSkater()
 {
-    WriteData<5>((void*)0x7AA627, 0x90ui8); // remove redundant SetVelocityP
-    WriteData<5>((void*)0x7AA7A9, 0x90ui8); // remove redundant SetVelocityP
-    WriteData<5>((void*)0x7AA707, 0x90ui8); // remove redundant SetVelocityP
-
-	PondExec_t.Hook(PondExec_r); //patch a crash when speeps are killed too far from player 1
+	PondDisplayer_hook.Hook(PondDisplayer_r);
+	PondExecutor_hook.Hook(PondExecutor_r);
 }
