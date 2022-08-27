@@ -37,6 +37,7 @@ static Trampoline* TikalDisplay_t                 = nullptr;
 static Trampoline* ObjectSpringB_t                = nullptr;
 static Trampoline* SpinnaDisplayer_t              = nullptr;
 static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
+static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
@@ -782,6 +783,27 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 	}
 }
 
+task* __cdecl SetCircleLimit_r(NJS_POINT3* pPos, NJS_POINT3* a2, float radius)
+{
+	if (multiplayer::IsActive()) {
+
+		for (int i = 1; i < multiplayer::GetPlayerCount(); i++)
+		{
+			task* obj = CreateElementalTask((LoadObj_Data1), 0, CircleLimit);
+
+			if (obj && playertwp[i])
+			{
+				auto data = obj->twp;
+				data->pos = *a2;
+				data->scl.x = radius;
+				data->counter.l = (unsigned int)&playertwp[i]->pos;
+			}
+		}
+	}
+
+	return SetCircleLimit_t.Original(pPos, a2, radius);
+}
+
 void initBossesPatches()
 {
 	InitE103Patches();
@@ -818,6 +840,9 @@ void InitPatches()
 
 	// Enemies
 	SpinnaDisplayer_t = new Trampoline(0x4AFD80, 0x4AFD85, SpinnaDisplayer_r);
+
+	//bosses
+	SetCircleLimit_t.Hook(SetCircleLimit_r);
 
 	// Character shadows:
 	// Game draws shadow in logic sub but also in display sub *if* game is paused.

@@ -289,6 +289,7 @@ FunctionPointer(void, EV_Load2, (int num), 0x42FA30);
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
 TaskFunc(dispEffectChaos0AttackA, 0x7AC9D0);
+TaskFunc(CircleLimit, 0x7AF300);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
