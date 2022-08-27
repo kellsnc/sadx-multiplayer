@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="camerafunc.cpp" />
+    <ClCompile Include="boss-common.cpp" />
     <ClCompile Include="chaos0.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="death.cpp" />

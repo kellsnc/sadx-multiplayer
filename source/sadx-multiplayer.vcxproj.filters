@@ -427,6 +427,9 @@
     <ClCompile Include="chaos0.cpp">
       <Filter>Source Files\objects\bosses</Filter>
     </ClCompile>
+    <ClCompile Include="boss-common.cpp">
+      <Filter>Source Files\objects\bosses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
