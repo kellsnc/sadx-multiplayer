@@ -244,7 +244,7 @@ void MultiHudLives(int num)
 
 void DisplayMultiHud(int num)
 {
-    if (multiplayer::IsCoopMode() || MissedFrames || IsGamePaused() || CurrentLevel == LevelIDs_TwinkleCircuit || CurrentCharacter == Characters_Big)
+    if (MissedFrames || IsGamePaused() || CurrentLevel == LevelIDs_TwinkleCircuit || CurrentCharacter == Characters_Big)
     {
         return;
     }
@@ -306,7 +306,7 @@ void DisplayMultiHud(int num)
 
 void __cdecl DisplayScore_r()
 {
-    if (!multiplayer::IsBattleMode())
+    if (!multiplayer::IsActive())
     {
         TARGET_DYNAMIC(DisplayScore)();
     }
@@ -314,7 +314,7 @@ void __cdecl DisplayScore_r()
 
 void __cdecl DisplayTimer_r()
 {
-    if (!multiplayer::IsBattleMode())
+    if (!multiplayer::IsActive())
     {
         TARGET_DYNAMIC(DisplayTimer)();
     }

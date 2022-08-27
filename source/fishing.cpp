@@ -2019,11 +2019,14 @@ static void BigStateInit_r()
 
 void InitFishing()
 {
+
 	dispFishWeightTexture_t = new Trampoline(0x46F580, 0x46F585, dispFishWeightTexture_r);
 	exitFishWeightTexture_t = new Trampoline(0x470160, 0x470165, exitFishWeightTexture_r);
 	dispFishingLure_t       = new Trampoline(0x470580, 0x470588, dispFishingLure_r);
 	dispFishingLureSwitch_t = new Trampoline(0x4703F0, 0x4703F8, dispFishingLureSwitch_r);
 	fishingLureCtrl_t       = new Trampoline(0x471580, 0x471589, fishingLureCtrl_r);
+
+
 	SetFishingLureTask_t    = new Trampoline(0x471ED0, 0x471ED6, SetFishingLureTask_r);
 	fishingCursorCtrl_t     = new Trampoline(0x46FA10, 0x46FA18, fishingCursorCtrl_r);
 	SetFishingCursorTask_t  = new Trampoline(0x470330, 0x470336, SetFishingCursorTask_r);
@@ -2032,5 +2035,4 @@ void InitFishing()
 	WriteCall((void*)0x48CCE4, Big_CreateBigDisplayFishWeight_j);
 
 	WriteData<2>((void*)0x490C52, 0x90ui8); // force fishingLureCtrl to load for every player
-	WriteData<6>((void*)0x470425, 0x90ui8); // force things to display even if player 0 is not Big
 }
