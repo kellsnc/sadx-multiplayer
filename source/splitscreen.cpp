@@ -83,7 +83,7 @@ namespace SplitScreen
 
     bool IsActive()
     {
-        return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel();
+        return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel() && cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT;
     }
 
     unsigned int GetCurrentScreenNum()
