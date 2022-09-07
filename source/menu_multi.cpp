@@ -791,7 +791,7 @@ void menu_multi_stgsel(MultiMenuWK* wk, const DialogPrmType* dialog, int* list, 
 	if (stat == dialog->CsrCancel) // go back request
 	{
 		gNextDialogStat = back;
-		menu_multi_change(wk, MD_MULTI_BATTLESEL);
+		menu_multi_change(wk, gNextMultiMode == multiplayer::mode::battle ? MD_MULTI_BATTLESEL : MD_MULTI_COOPSEL);
 	}
 	else if (stat != -1) // launch game request
 	{
