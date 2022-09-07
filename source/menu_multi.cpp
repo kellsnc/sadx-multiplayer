@@ -423,7 +423,7 @@ const AvaTexLdEnum AvaTexLdListForMulti[]{
 };
 
 const char* stg_confirm_texts[] {
-	"Do you want to play this stage?"
+	"Do you want to play this stage?",
 	"Do you want to play this stage?",
 	"Voulez-vous jouer à ce niveau ?",
 	"¿Quieres jugar este nivel?",
