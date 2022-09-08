@@ -3,8 +3,8 @@
 #include "hud_result.h"
 #include "splitscreen.h"
 
-Trampoline* SetFinishAction_t = nullptr;
-Trampoline* CalcTotalScore_t = nullptr;
+static FunctionHook<void> SetFinishAction_t(SetFinishAction);
+static FunctionHook<void, task*> CalcTotalScore_t((intptr_t)0x42BCC0);
 
 int GetWinnerMulti()
 {
@@ -79,7 +79,7 @@ static void __cdecl SetFinishAction_r()
 	}
 	else
 	{
-		TARGET_DYNAMIC(SetFinishAction)();
+		SetFinishAction_t.Original();
 	}
 }
 
@@ -87,12 +87,12 @@ static void __cdecl CalcTotalScore_r(task* tp)
 {
 	SplitScreen::SaveViewPort();
 	SplitScreen::ChangeViewPort(-1);
-	TARGET_DYNAMIC(CalcTotalScore)(tp);
+	CalcTotalScore_t.Original(tp);
 	SplitScreen::RestoreViewPort();
 }
 
 void InitResult()
 {
-	SetFinishAction_t = new Trampoline(0x415540, 0x415545, SetFinishAction_r);
-	CalcTotalScore_t = new Trampoline(0x42BCC0, 0x42BCC5, CalcTotalScore_r);
+	SetFinishAction_t.Hook(SetFinishAction_r); 
+	CalcTotalScore_t.Hook(CalcTotalScore_r);
 }

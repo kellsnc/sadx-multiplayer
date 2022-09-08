@@ -107,12 +107,77 @@ static void __cdecl CalcTotalScoreM_dest(task* tp)
 	njReleaseTexture(&ava_csr_TEXLIST);
 }
 
+int16_t GetDefeatAnim(uint8_t pNum, uint16_t curAnim)
+{
+	if (!playertwp[pNum])
+		return 0;
+
+	uint8_t curChar = playertwp[pNum]->counter.b[1];
+
+	switch (curChar)
+	{
+	default:
+	case Characters_Sonic:
+		if (curAnim != 86 && curAnim != 87)
+			return 86;
+	case Characters_Tails:
+		if (curAnim != 56 && curAnim != 57)
+			return 56;
+		break;
+	case Characters_Knuckles:
+		if (curAnim != 27 && curAnim != 28)
+			return 27;
+		break;
+	case Characters_Amy:
+		if (curAnim != 26 && curAnim != 27)
+			return 26;
+		break;
+	case Characters_Big:
+		if (curAnim != 63 && curAnim != 64)
+			return 63;
+		break;
+	case Characters_Gamma:
+		if (curAnim != 69 && curAnim != 70)
+			return 69;
+		break;
+	}
+
+	return -1;
+}
+
+void PlayDefeatAnimation()
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (playertwp[i]) {
+
+			if (GetWinnerMulti() == i)
+			{
+				if (playertwp[i]->counter.b[1] == Characters_Tails)
+				{
+					SetTailsRaceVictory();
+				}
+
+				continue;
+			}
+
+			uint16_t curAnim = playerpwp[i]->mj.reqaction;
+			int16_t NewAnim = GetDefeatAnim(i, curAnim);
+
+			if (NewAnim != -1)
+				playerpwp[i]->mj.reqaction = NewAnim;
+		}
+	}
+}
+
+
 static void __cdecl CalcTotalScoreM(task* tp)
 {
 	auto twp = tp->twp;
 
 	HideLives = -1;
 	HideTimerAndRings = -1;
+	PlayDefeatAnimation();
 
 	switch (twp->mode)
 	{
@@ -161,6 +226,7 @@ static void __cdecl CalcTotalScoreM(task* tp)
 
 	tp->disp(tp);
 }
+
 
 void LoadMultiplayerResult()
 {
