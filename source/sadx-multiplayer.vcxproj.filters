@@ -433,6 +433,9 @@
     <ClCompile Include="objects\e_sai.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\egg-walker.cpp">
+      <Filter>Source Files\objects\bosses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

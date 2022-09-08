@@ -190,6 +190,7 @@
     <ClCompile Include="objects\ef_sky_scope.cpp" />
     <ClCompile Include="objects\ef_spark.cpp" />
     <ClCompile Include="objects\egg-hornet.cpp" />
+    <ClCompile Include="objects\egg-walker.cpp" />
     <ClCompile Include="objects\Eggrob.cpp" />
     <ClCompile Include="objects\EnemyHotE105.cpp" />
     <ClCompile Include="objects\EnemyHotTgtMissile.cpp" />
