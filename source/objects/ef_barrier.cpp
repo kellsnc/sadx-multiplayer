@@ -123,6 +123,8 @@ static void __cdecl Muteki_r(task* tp)
 		{
 			FreeTask(tp);
 		}
+
+		tp->disp(tp);
 	}
 	else
 	{
