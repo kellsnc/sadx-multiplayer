@@ -146,7 +146,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
         }
         njSetScreenDist_(0x31C7);
         njSetMatrix(0, data->po2d.mtx);
-        njDrawPolygon2D(&data->po2d.p2c, no, data->po2d.pri > -1.0f ? -1.0f : data->po2d.pri, data->po2d.atr);
+        ___SAnjDrawPolygon2D(&data->po2d.p2c, no, data->po2d.pri > -1.0f ? -1.0f : data->po2d.pri, data->po2d.atr);
         break;
     case QueuedModelType_3DTriFanThing:
         if (data->po3d.atr & NJD_USE_TEXTURE && data->rq.texLst)
