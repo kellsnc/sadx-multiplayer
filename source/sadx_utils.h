@@ -165,7 +165,6 @@ DataPointer(NJS_OBJECT, object_goaleme_blue_blue, 0xC3FDA0);
 DataPointer(NJS_OBJECT, object_goaleme_white_white, 0xC3F050);
 DataPointer(NJS_OBJECT, object_goaleme_green_green, 0xC3E300);
 FunctionPointer(task*, ADXTaskInit, (), 0x4258B0);
-FunctionPointer(void, BGM_Play, (int no), 0x425690);
 FunctionPointer(int, CheckWhichJumpPanelKicked, (), 0x4B84D0);
 DataPointer(unsigned __int8, NadareStart, 0x3C5E200);
 DataPointer(uint8_t, ccsi_flag, 0x3C4ABB4);
@@ -243,7 +242,6 @@ FunctionPointer(void, String_IniEasy, (String* ___this, const NJS_POINT3* v0, co
 FunctionPointer(void, String_Exe, (String* ___this, const NJS_POINT3* v0, const NJS_POINT3* vN, int mode), 0x4BFCA0);
 FunctionPointer(void, String_Dsp, (String* ___this), 0x4BFD40);
 DataPointer(float, No2CargoSpd, 0x3C72E5C);
-DataPointer(int, item_kind, 0x3C5C888);
 FunctionPointer(void, CreateSnow, (NJS_POINT3* pos, NJS_POINT3* velo, float scl), 0x4B9B10);
 FunctionPointer(void, DrawSquareC, (unsigned int col, float x, float y, float z, float magx, float magy), 0x431CB0);
 FunctionPointer(void, DrawDlgCsrSqr, (unsigned __int8 col_alpha, float x, float y, float z, float magx, float magy), 0x431BB0);
@@ -262,7 +260,6 @@ DataPointer(NJS_OBJECT, object_mdlelv1_cl_elvtr_cl_elvtr, 0x1A3D74C);
 DataPointer(NJS_ACTION, action_fun_funflot, 0x1A3037C);
 FunctionPointer(int, PCheckJump, (taskwk* twp), 0x43BF40);
 DataPointer(int, bWake, 0x912DF0); // Timer toggle
-DataPointer(int16_t, ssGameModeChange, 0x3B22E1C);
 DataPointer(int16_t, ssNextStageNumber, 0x3B22DF0);
 DataPointer(int16_t, ssNextActNumber, 0x3B22E18);
 VoidFunc(late_execCancel, 0x403E60);

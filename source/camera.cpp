@@ -1986,6 +1986,15 @@ void __cdecl CameraReleaseEventCamera_Hack()
 {
     CameraReleaseEventCamera_m(TASKWK_PLAYERID(playertwp[0]));
 }
+
+void __cdecl CameraSetEventCamera_AllPlayers(Sint16 ssCameraMode, Sint8 scCameraDirect)
+{
+    for (int i = 0; i < PLAYER_MAX; ++i)
+    {
+        CameraSetEventCamera_m(i, ssCameraMode, scCameraDirect);
+    }
+}
+
 #pragma endregion
 
 #pragma region FOV
@@ -2049,6 +2058,7 @@ void InitCamera()
     WriteCall((void*)0x469217, CameraReleaseEventCamera_Hack);
     WriteCall((void*)0x469065, CameraSetEventCameraFunc_Hack);
     WriteCall((void*)0x469225, CameraSetEventCameraFunc_Hack);
+    WriteCall((void*)0x548017, CameraSetEventCamera_AllPlayers);
 
     CameraMode[CAMMD_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_A_KLAMATH].fnCamera = CameraKlamath_m;

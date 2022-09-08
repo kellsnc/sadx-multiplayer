@@ -2,7 +2,7 @@
 #include "death.h"
 #include "camera.h"
 #include "splitscreen.h"
-#include "bosses.h"
+#include "objects/bosses.h"
 
 #include "objects/ObjectItemBox.h"
 #include "objects/SnowBoard.h"

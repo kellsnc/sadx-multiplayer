@@ -19,9 +19,9 @@ Series of hacks to make splitscreen possible
 
 */
 
-Trampoline* SpLoopOnlyDisplay_t   = nullptr;
-Trampoline* DisplayTask_t         = nullptr;
-Trampoline* LoopTask_t            = nullptr;
+FunctionHook<void> SpLoopOnlyDisplay_hook(0x456CD0);
+FunctionHook<void> DisplayTask_hook(0x40B540);
+FunctionHook<void> LoopTask_hook(0x40B170);
 Trampoline* njDrawQuadTextureEx_t = nullptr;
 
 void __cdecl DisplayTask_r();
@@ -83,7 +83,7 @@ namespace SplitScreen
 
     bool IsActive()
     {
-        return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel();
+        return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel() && cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT;
     }
 
     unsigned int GetCurrentScreenNum()
@@ -149,7 +149,7 @@ void __cdecl SpLoopOnlyDisplay_r()
             {
                 SplitScreen::ChangeViewPort(i);
                 ApplyMultiCamera(i);
-                TARGET_DYNAMIC(SpLoopOnlyDisplay)();
+                SpLoopOnlyDisplay_hook.Original();
             }
         }
 
@@ -157,18 +157,7 @@ void __cdecl SpLoopOnlyDisplay_r()
     }
     else
     {
-        TARGET_DYNAMIC(SpLoopOnlyDisplay)();
-    }
-}
-
-// Call all task displays
-static void DisplayTask_o()
-{
-    ResetMaterial();
-    DispTask(8);
-    for (int i = 0; i < 7; ++i)
-    {
-        DispTask(i);
+        SpLoopOnlyDisplay_hook.Original();
     }
 }
 
@@ -182,7 +171,7 @@ static void DrawScreen(int num)
             // If player exists, draw all objects into viewport:
 
             SplitScreen::numScreen = num;
-            DisplayTask_o();
+            DisplayTask_hook.Original();
             DisplayMultiHud(num);
         }
         else
@@ -212,7 +201,7 @@ void __cdecl DisplayTask_r()
     {
         // Otherwise, normal behaviour:
 
-        DisplayTask_o();
+        DisplayTask_hook.Original();
     }
 }
 
@@ -225,7 +214,7 @@ void __cdecl LoopTask_r()
 
         SplitScreen::ChangeViewPort(0);
         SplitScreen::numScreen = 0;
-        TARGET_DYNAMIC(LoopTask)();
+        LoopTask_hook.Original();
         DisplayMultiHud(0);
 
         for (unsigned int i = 1ui32; i < multiplayer::GetPlayerCount(); ++i)
@@ -239,7 +228,7 @@ void __cdecl LoopTask_r()
     {
         // Otherwise, normal behaviour:
 
-        TARGET_DYNAMIC(LoopTask)();
+        LoopTask_hook.Original();
     }
 }
 
@@ -256,27 +245,18 @@ void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
         quad->vy1 *= ratio->h;
         quad->vx2 *= ratio->w;
         quad->vy2 *= ratio->h;
+    }
 
-        TARGET_DYNAMIC(njDrawQuadTextureEx)(quad);
-    }
-    else
-    {
-        TARGET_DYNAMIC(njDrawQuadTextureEx)(quad);
-    }
+    TARGET_DYNAMIC(njDrawQuadTextureEx)(quad);
 }
 
 void InitSplitScreen()
 {
     if (config::splitScreenEnabled == true)
     {
-        LoopTask_t = new Trampoline(0x40B170, 0x40B178, LoopTask_r);
-        WriteCall((void*)((int)(LoopTask_t->Target()) + 3), RunObjectIndex); // Repair LoopTask_t
-        
-        WriteJump((void*)0x40B540, DisplayTask_r);
-        
-        SpLoopOnlyDisplay_t = new Trampoline(0x456CD0, 0x456CD9, SpLoopOnlyDisplay_r);
-        WriteCall((void*)((int)(SpLoopOnlyDisplay_t->Target()) + 4), ___njFogDisable); // Repair SpLoopOnlyDisplay_t
-
+        SpLoopOnlyDisplay_hook.Hook(SpLoopOnlyDisplay_r);
+        DisplayTask_hook.Hook(DisplayTask_r);
+        LoopTask_hook.Hook(LoopTask_r);
         njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
 
         DrawQueue_Init();
