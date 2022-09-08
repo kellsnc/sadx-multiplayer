@@ -1586,6 +1586,8 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	// Check if our menu is ready
 	if (SeqTp->awp->work.ul[1] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
 	{
+		PlayMenuMusicID(MusicIDs_JingleE);
+		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		AvaLoadTexForEachMode(ADVA_MODE_MULTI);
 
 		// Initialize menu or reset previous state
@@ -1605,9 +1607,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			wk->T = 1.0f;
 			wk->BaseCol = 0xFFFFFFFF;
 		}
-
-		PlayMenuMusicID(MusicIDs_JingleE);
-		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
+		
 		wk->alphaConnect = wk->alphaCharSel = wk->alphaControls = 0.0f;
 		wk->SelStg = -1;
 	}
