@@ -1,10 +1,18 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
+#include "UsercallFunctionHandler.h"
+#include "camera.h"
+#include "camerafunc.h"
+#include "splitscreen.h"
 #include "bosses.h"
 
 static const int timeLimit = 300;
 
 static FunctionHook<void, taskwk*, chaoswk*> turnToPlayer_t(0x7AE660);
 static FunctionHook<void, task*> chaos0_t(0x548640);
+static FunctionHook<void, task*> Bg_Chaos0_t(0x545DF0);
+static UsercallFuncVoid(SetChaos0LandFlags, (BOOL flag), (flag), 0x5485E0, rEDX);
 static UsercallFunc(Angle, setApartTargetPos_t, (chaoswk* cwk), (cwk), 0x546460, rEAX, rEDI);
 static UsercallFuncVoid(chaos0Pole_t, (chaoswk* cwk, taskwk* data), (cwk, data), 0x547260, rECX, rESI);
 static UsercallFuncVoid(chaos0Punch_t, (chaoswk* cwk, taskwk* data, bosswk* bwk), (cwk, data, bwk), 0x546790, rEDI, rESI, stack4);
@@ -213,15 +221,47 @@ void chaos0Punch_r(chaoswk* cwk, taskwk* data, bosswk* bwk)
     }
 }
 
-void Chaos0_Exec_r(task* tp)
+void Bg_Chaos0_r(task* tp)
 {
-	if (tp->twp && !tp->twp->mode)
-		ResetBossRNG();
+    if (!tp->disp)
+    {
+        tp->disp = Bg_Chaos0_r;
+    }
 
-	chaos0_t.Original(tp);
-	Boss_SetNextPlayerToAttack(timeLimit);
+    SetChaos0LandFlags(GetCameraMode_m(SplitScreen::GetCurrentScreenNum()) != CAMMD_CHAOS_P);
+    Bg_Chaos0_t.Original(tp);
 }
 
+void Chaos0_Exec_r(task* tp)
+{
+    auto twp = tp->twp;
+
+	if (twp && !twp->mode)
+		ResetBossRNG();
+
+    auto wk = (chaoswk*)tp->awp;
+
+    if (!twp || !wk)
+    {
+        SetDefaultNormalCameraMode(CAMMD_CHAOS, CAMADJ_NONE);
+        chaos0_t.Original(tp);
+        return;
+    }
+
+    auto oldcam = wk->camera_mode;
+
+	chaos0_t.Original(tp);
+
+    if (oldcam != wk->camera_mode)
+    {
+        for (int i = 1; i < PLAYER_MAX; ++i)
+        {
+            CameraSetEventCamera_m(i, wk->camera_mode, 0);
+        }
+    }
+
+	Boss_SetNextPlayerToAttack(timeLimit);
+}
 
 void initChaos0Patches()
 {
@@ -231,6 +271,7 @@ void initChaos0Patches()
 	WriteData((TaskFuncPtr*)0x7AD221, ExecEffectChaos0AttackA);
 	turnToPlayer_t.Hook(turnToPlayer_r);
 	chaos0_t.Hook(Chaos0_Exec_r);
+    Bg_Chaos0_t.Hook(Bg_Chaos0_r);
 	setApartTargetPos_t.Hook(setApartTargetPos_r);
     chaos0Pole_t.Hook(chaos0Pole_r);
     chaos0Punch_t.Hook(chaos0Punch_r);
