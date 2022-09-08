@@ -96,7 +96,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\include\multiapi.h" />
-    <ClInclude Include="bosses.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="camerafunc.h" />
     <ClInclude Include="config.h" />
@@ -125,6 +124,7 @@
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="network.h" />
     <ClInclude Include="objects\BigKaeru.h" />
+    <ClInclude Include="objects\bosses.h" />
     <ClInclude Include="objects\ef_spark.h" />
     <ClInclude Include="objects\EnemyHotE105.h" />
     <ClInclude Include="objects\EnemyWindyE103.h" />
@@ -153,17 +153,12 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="camerafunc.cpp" />
-    <ClCompile Include="boss-common.cpp" />
-    <ClCompile Include="chaos0.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="death.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="drawqueue.cpp" />
-    <ClCompile Include="egg-hornet.cpp" />
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="event.cpp" />
-    <ClCompile Include="e_robo.cpp" />
-    <ClCompile Include="e_sai.cpp" />
     <ClCompile Include="fishing.cpp" />
     <ClCompile Include="fog.cpp" />
     <ClCompile Include="forcewk.cpp" />
@@ -186,12 +181,15 @@
     <ClCompile Include="network.cpp" />
     <ClCompile Include="objects\BigKaeru.cpp" />
     <ClCompile Include="objects\BigTheCat.cpp" />
+    <ClCompile Include="objects\boss-common.cpp" />
+    <ClCompile Include="objects\chaos0.cpp" />
     <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp" />
     <ClCompile Include="objects\colli_space.cpp" />
     <ClCompile Include="objects\dispE102Laser.cpp" />
     <ClCompile Include="objects\ef_barrier.cpp" />
     <ClCompile Include="objects\ef_sky_scope.cpp" />
     <ClCompile Include="objects\ef_spark.cpp" />
+    <ClCompile Include="objects\egg-hornet.cpp" />
     <ClCompile Include="objects\Eggrob.cpp" />
     <ClCompile Include="objects\EnemyHotE105.cpp" />
     <ClCompile Include="objects\EnemyHotTgtMissile.cpp" />
@@ -202,6 +200,8 @@
     <ClCompile Include="objects\e_aircraft.cpp" />
     <ClCompile Include="objects\e_cart.cpp" />
     <ClCompile Include="objects\e_pondskater.cpp" />
+    <ClCompile Include="objects\e_robo.cpp" />
+    <ClCompile Include="objects\e_sai.cpp" />
     <ClCompile Include="objects\FragmEmeraldDigDisplay.cpp" />
     <ClCompile Include="objects\mirror.cpp" />
     <ClCompile Include="objects\ObjectBaloon.cpp" />

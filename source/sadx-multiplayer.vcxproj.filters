@@ -385,9 +385,6 @@
     <ClCompile Include="objects\o_finalegg_fun.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="e_robo.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -402,9 +399,6 @@
     </ClCompile>
     <ClCompile Include="timer.cpp">
       <Filter>Source Files\networking</Filter>
-    </ClCompile>
-    <ClCompile Include="e_sai.cpp">
-      <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="camerafunc.cpp">
       <Filter>Source Files</Filter>
@@ -424,14 +418,20 @@
     <ClCompile Include="event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="chaos0.cpp">
+    <ClCompile Include="objects\chaos0.cpp">
       <Filter>Source Files\objects\bosses</Filter>
     </ClCompile>
-    <ClCompile Include="boss-common.cpp">
+    <ClCompile Include="objects\egg-hornet.cpp">
       <Filter>Source Files\objects\bosses</Filter>
     </ClCompile>
-    <ClCompile Include="egg-hornet.cpp">
+    <ClCompile Include="objects\boss-common.cpp">
       <Filter>Source Files\objects\bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_robo.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_sai.cpp">
+      <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -594,7 +594,7 @@
     <ClInclude Include="VariableHook.hpp">
       <Filter>Header FIles\classes</Filter>
     </ClInclude>
-    <ClInclude Include="bosses.h">
+    <ClInclude Include="objects\bosses.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
