@@ -19,31 +19,171 @@ static UsercallFuncVoid(chaos0Punch_t, (chaoswk* cwk, taskwk* data, bosswk* bwk)
 
 //Patches Chaos effects to make them display on other player screens, it is done by manually setting a disp function that is lacking in vanilla.
 
-void __cdecl ExecEffectChaos0AttackB(task* obj)
+#pragma region drawEffectChaos0EffectB
+void __cdecl drawEffectChaos0EffectBDestroy(task* tp)
 {
-	SetAndDisp(obj, drawEffectChaos0EffectB);
+    tp->awp = nullptr;
 }
 
-void __cdecl ExecEffectChaos0LightParticleB(task* obj)
+void __cdecl drawEffectChaos0EffectBDisplay(task* tp)
 {
-	SetAndDisp(obj, drawEffectChaos0LightParticle);
+    if (!loop_count)
+    {
+        NJS_ARGB color = { 0.5f, 0.5f, 0.5f, 0.5f };
+        ___njSetConstantMaterial(&color);
+        njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_ONE);
+        njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
+        njSetTexture(&CHAOS_EFFECT_TEXLIST);
+        
+        for (int i = 0; i < reinterpret_cast<int>(tp->awp); ++i)
+        {
+            auto ctwp = (taskwk*)BigEntityArray[i];
+            njPushMatrixEx();
+            njTranslateV(0, &ctwp->pos);
+            njRotateY_(camera_twp->ang.y);
+            njRotateX_(camera_twp->ang.x);
+            njScale(0, ctwp->scl.x, ctwp->scl.x, ctwp->scl.x);
+            late_DrawSprite3D((NJS_SPRITE*)0x3D0D714, ctwp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+            njPopMatrixEx();
+        }
+
+        ResetMaterial();
+        njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
+        njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
+    }
 }
 
-void __cdecl ExecEffectChaos0AttackA(task* obj)
+void __cdecl drawEffectChaos0EffectB_r(task* tp)
 {
-	SetAndDisp(obj, dispEffectChaos0AttackA);
+    if (!tp->awp)
+    {
+        tp->awp = reinterpret_cast<anywk*>(BigEntityArrayLength);
+        tp->dest = drawEffectChaos0EffectBDestroy;
+        tp->disp = drawEffectChaos0EffectBDisplay;
+    }
+
+    tp->disp(tp);
+
+    BigEntityArrayLength = 0;
+    FreeTask(tp);
+}
+#pragma endregion
+
+#pragma region drawEffectChaos0LightParticle
+void __cdecl drawEffectChaos0LightParticleDestroy(task* tp)
+{
+    tp->awp = nullptr;
 }
 
-//Some Chaos effects don't have the flag data1 so we add it first
-task* LoadChaos0AttackEffB(LoadObj flags, int index, void(__cdecl* loadSub)(task*))
+void __cdecl drawEffectChaos0LightParticleDisplay(task* tp)
 {
-	return CreateElementalTask(LoadObj_Data1, index, ExecEffectChaos0AttackB);
+    if (!loop_count)
+    {
+        njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_ONE);
+        njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
+        njSetTexture(&CHAOS_EFFECT_TEXLIST);
+
+        for (int i = 0; i < reinterpret_cast<int>(tp->awp); ++i)
+        {
+            auto ctwp = (taskwk*)BigEntityArrayB[i];
+            njPushMatrixEx();
+
+            Float blend = max(0.0f, min((ctwp->timer.f - 0.25f) * 2, 1.0f));
+           
+            NJS_ARGB color;
+
+            color.r = 0.5f;
+            color.g = blend * 0.5f + 0.25f;
+            color.b = blend * 0.098f + 0.25f;
+            color.a = 0.75f - 0.5f * blend;
+
+            ___njSetConstantMaterial(&color);
+
+            njTranslateV(0, &ctwp->pos);
+            njRotateY_(camera_twp->ang.y);
+            njRotateX_(camera_twp->ang.x);
+            njScale(0, ctwp->scl.x, ctwp->scl.x, ctwp->scl.x);
+            late_DrawSprite3D((NJS_SPRITE*)0x3D0D73C, ctwp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+            njPopMatrixEx();
+        }
+
+        ResetMaterial();
+        njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
+        njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
+    }
 }
 
-task* LoadChaos0LightParticleB(LoadObj flags, int index, void(__cdecl* loadSub)(task*))
+void __cdecl drawEffectChaos0LightParticle_r(task* tp)
 {
-	return CreateElementalTask(LoadObj_Data1, index, ExecEffectChaos0LightParticleB);
+    if (!tp->awp)
+    {
+        tp->awp = reinterpret_cast<anywk*>(BigEntityArrayBLength);
+        tp->dest = drawEffectChaos0LightParticleDestroy;
+        tp->disp = drawEffectChaos0LightParticleDisplay;
+    }
+
+    tp->disp(tp);
+
+    BigEntityArrayBLength = 0;
+    FreeTask(tp);
 }
+#pragma endregion
+
+#pragma region dispEffectChaos0AttackA
+void __cdecl dispEffectChaos0AttackADisplay(task* tp)
+{
+    if (!loop_count)
+    {
+        auto twp = tp->twp;
+
+        if (twp->counter.f < 15.0f)
+        {
+            NJS_ARGB color = { 0.5f, -0.5f, -0.5f, -0.5f };
+            ___njSetConstantMaterial(&color);
+
+            njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_ONE);
+            njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
+            njSetTexture(&CHAOS_EFFECT_TEXLIST);
+
+            njPushMatrixEx();
+            njTranslateV(0, &twp->pos);
+            njRotateY_(camera_twp->ang.y);
+            njRotateX_(camera_twp->ang.x);
+            auto scl = twp->scl.x + 0.5f;
+            njScale(0, scl, scl, scl);
+            late_DrawSprite3D((NJS_SPRITE*)0x3D0D56C, twp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+            njPopMatrixEx();
+
+            ResetMaterial();
+            njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_SRCALPHA);
+            njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_INVSRCALPHA);
+        }
+    }
+}
+
+void __cdecl dispEffectChaos0AttackA_r(task* tp)
+{
+    if (!tp->disp)
+    {
+        tp->disp = dispEffectChaos0AttackADisplay;
+    }
+
+    auto twp = tp->twp;
+
+    twp->counter.f += 0.75f;
+
+    if (twp->counter.f < 15.0f)
+    {
+        twp->pos = *reinterpret_cast<NJS_POINT3*>(twp->timer.ptr);
+    }
+    else
+    {
+        FreeTask(tp);
+    }
+
+    tp->disp(tp);
+}
+#pragma endregion
 
 // series of hacks to make Chaos able to attack other players
 
@@ -265,10 +405,9 @@ void Chaos0_Exec_r(task* tp)
 
 void initChaos0Patches()
 {
-	WriteCall((void*)0x7AD3F3, LoadChaos0AttackEffB);	
-	WriteCall((void*)0x7AD388, LoadChaos0LightParticleB);	
-	WriteCall((void*)0x7AD75D, LoadChaos0LightParticleB);
-	WriteData((TaskFuncPtr*)0x7AD221, ExecEffectChaos0AttackA);
+	WriteJump(drawEffectChaos0EffectB, drawEffectChaos0EffectB_r);
+	WriteJump(drawEffectChaos0LightParticle, drawEffectChaos0LightParticle_r);
+	WriteJump(dispEffectChaos0AttackA, dispEffectChaos0AttackA_r);
 	turnToPlayer_t.Hook(turnToPlayer_r);
 	chaos0_t.Hook(Chaos0_Exec_r);
     Bg_Chaos0_t.Hook(Bg_Chaos0_r);
