@@ -196,53 +196,42 @@ void turnToPlayer_r(taskwk* twp, chaoswk* bwp)
 
 	float dist = 0.0f;
 
-	if (playertwp[randomPnum])
+    auto ptwp = playertwp[randomPnum];
+
+	if (ptwp)
 	{
-		dist = atan2((float)(playertwp[randomPnum]->pos.z - twp->pos.z), (float)(playertwp[randomPnum]->pos.x - twp->pos.x));
 		twp->ang.y = AdjustAngle(
 			twp->ang.y,
-			(int)(dist * 65536.0f * 0.1591549762031479f) - bwp->attack_yang,
+            njArcTan2(ptwp->pos.z - twp->pos.z, ptwp->pos.x - twp->pos.x) - bwp->attack_yang,
 			chaosparam->turn_spd);
 	}
 }
 
 Angle setApartTargetPos_r(chaoswk* cwk)
 {
-	if (!multiplayer::IsEnabled() || !playertwp[randomPnum])
+    auto ptwp = playertwp[randomPnum];
+
+	if (!multiplayer::IsEnabled() || !ptwp)
 	{
 		return setApartTargetPos_t.Original(cwk);
 	}
 
-	Angle cos = 0;
-	float sin = 0.0f;
-	Angle result = 0;
+    Angle ang = njArcTan2(chaosparam->field_center_pos.z - ptwp->pos.z, chaosparam->field_center_pos.x - ptwp->pos.x);
 
-	cos = (unsigned __int64)(atan2(
-		chaosparam->field_center_pos.z - playertwp[randomPnum]->pos.z,
-		chaosparam->field_center_pos.x - playertwp[randomPnum]->pos.x)
-		* 65536.0f
-		* 0.1591549762031479f);
+	cwk->tgtpos.x = njCos(ang) * 60.0f + chaosparam->field_center_pos.x;
+	cwk->tgtpos.z = njSin(ang) * 60.0f + chaosparam->field_center_pos.z;
 
-	cwk->tgtpos.x = njCos(cos) * 60.0f + chaosparam->field_center_pos.x;
-	sin = njSin(cos);
-	result = cos;
-	cwk->tgtpos.z = sin * 60.0f + chaosparam->field_center_pos.z;
-
-	return result;
+	return ang;
 }
 
 void chaos0Pole_r(chaoswk* cwk, taskwk* data)
 {
-    if (!multiplayer::IsEnabled() || !playertwp[randomPnum])
+    auto ptwp = playertwp[randomPnum];
+
+    if (!multiplayer::IsEnabled() || !ptwp)
     {
         return chaos0Pole_t.Original(cwk, data);
     }
-
-   float diffX = 0.0f;
-   float diffZ = 0.0f;
-   _BOOL1 isMode6 = false;
-
-    auto player = playertwp[randomPnum];
 
     if (data->smode)
     {
@@ -267,8 +256,8 @@ void chaos0Pole_r(chaoswk* cwk, taskwk* data)
 
     if (chaos_pole_punch_num > 0)
     {
-        diffX = player->pos.x - data->pos.x;
-        diffZ = player->pos.z - data->pos.z;
+        float diffX = ptwp->pos.x - data->pos.x;
+        float diffZ = ptwp->pos.z - data->pos.z;
 
         if (diffZ * diffZ + diffX * diffX >= 6400.0f)
         {
@@ -283,9 +272,8 @@ void chaos0Pole_r(chaoswk* cwk, taskwk* data)
         else
         {
             chaos_punch_num = MD_CHAOS_STND;
-            isMode6 = data->mode == 6;
             --chaos_pole_punch_num;
-            if (!isMode6)
+            if (data->mode != 6)
             {
                 chaos_reqmode = 6;
                 chaos_nextmode = data->mode;
@@ -308,14 +296,7 @@ void chaos0Pole_r(chaoswk* cwk, taskwk* data)
 
 void chaos0Punch_r(chaoswk* cwk, taskwk* data, bosswk* bwk)
 {
-    auto player = playertwp[randomPnum];
-    float X = 0.0f;
-    float Z = 0.0f;
-    float calcZ = 0.0f;
-    float calcY = 0.0f;
-    float calcX = 0.0f;
-    float result = 0.0f;
-    float calcDist = 0.0f;
+    auto ptwp = playertwp[randomPnum];
 
     if (data->smode != 3) 
     {
@@ -325,19 +306,17 @@ void chaos0Punch_r(chaoswk* cwk, taskwk* data, bosswk* bwk)
     {
         if (data->wtimer > 6)
         {
+            float x, y, z;
             turnToPlayer_r(data, cwk);
-            X = player->pos.x - data->pos.x;
-            Z = player->pos.z - data->pos.z;
-            calcDist = Z * Z + X * X;
-            cwk->attack_zang = (unsigned __int64)(atan2(player->pos.y - data->pos.y, squareroot(calcDist))
-                * 65536.0f
-                * -0.1591549762031479f);
 
-            calcZ = data->pos.z - player->pos.z;
-            calcY = data->pos.y - player->pos.y;
-            calcX = data->pos.x - player->pos.x;
-            result = calcX * calcX + calcY * calcY + calcZ * calcZ;
-            cwk->attack_dist = squareroot(result);
+            x = ptwp->pos.x - data->pos.x;
+            z = ptwp->pos.z - data->pos.z;
+            cwk->attack_zang = -njArcTan2(ptwp->pos.y - data->pos.y, njSqrt(z * z + x * x));
+
+            x = data->pos.x - ptwp->pos.x;
+            y = data->pos.y - ptwp->pos.y;
+            z = data->pos.z - ptwp->pos.z;
+            cwk->attack_dist = njSqrt(x * x + y * y + z * z);
           
             SetEffectPunchTameParticle((NJS_POINT3*)0x3C63DDC, 0);
         }
