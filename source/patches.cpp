@@ -36,6 +36,7 @@ static Trampoline* savepointCollision_t           = nullptr;
 static Trampoline* TikalDisplay_t                 = nullptr;
 static Trampoline* ObjectSpringB_t                = nullptr;
 static Trampoline* SpinnaDisplayer_t              = nullptr;
+static Trampoline* CCL_IsHitPlayer_t              = nullptr;
 static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
 
@@ -243,6 +244,12 @@ void __cdecl EBuyon_ScorePatch(task* tp)
 	}
 }
 
+void __cdecl CCL_IsHitPlayer_r(taskwk* twp)
+{
+	CCL_ClearSearch(); // <- needed when called by the same task twice, which actually happens vanilla
+	TARGET_DYNAMIC(CCL_IsHitPlayer)(twp);
+}
+
 int __cdecl CheckCollisionP_r(NJS_POINT3* vp, float d)
 {
 	return IsPlayerInSphere(vp, d);
@@ -402,28 +409,6 @@ void TikalDisplay_r(task* tp)
 	{
 		DrawCharacterShadow(tp->twp, &((playerwk*)tp->mwp->work.ptr)->shadow);
 	}
-}
-
-// Patch for this to work properly for 4+ players
-void ObjectSpringB_r(task* tp)
-{
-	auto twp = tp->twp;
-
-	if (twp->mode == 1 && twp->btimer > 10)
-	{
-		auto entity = CCL_IsHitPlayer(twp);
-
-		if (entity)
-		{
-			twp->smode = TASKWK_PLAYERID(entity);
-			twp->scl.z = 20.0f;
-			twp->timer.f = 270.0f;
-			twp->counter.f = 0.1f;
-			twp->mode = 2;
-		}
-	}
-
-	TARGET_DYNAMIC(ObjectSpringB)(tp);
 }
 
 void QueueMobileLandColl() // guessed inline function
@@ -831,6 +816,7 @@ void InitPatches()
 	WriteData<5>((void*)0x7B326D, 0x90); // EBuyon: remove original 100 points for player 0
 
 	// Collision checks:
+	CCL_IsHitPlayer_t = new Trampoline(0x41CBC0, 0x41CBC5, CCL_IsHitPlayer_r);
 	WriteJump(CheckCollisionP, CheckCollisionP_r);
 	WriteJump(CheckCollisionCylinderP, CheckCollisionCylinderP_r);
 
@@ -859,8 +845,8 @@ void InitPatches()
 	TikalDisplay_t = new Trampoline(0x7B33A0, 0x7B33A5, TikalDisplay_r);
 
 	// Springs for 4+ players
-	ObjectSpringB_t = new Trampoline(0x7A4E50, 0x7A4E55, ObjectSpringB_r);
 	WriteData((uint8_t*)0x7A4DC4, (uint8_t)PLAYER_MAX); // ObjectSpring
+	WriteData((uint8_t*)0x7A4FF7, (uint8_t)PLAYER_MAX); // ObjectSpringB
 	WriteData((uint8_t*)0x79F77C, (uint8_t)PLAYER_MAX); // spring_h_exec
 
 	// dsCheckViewV in exec functions
