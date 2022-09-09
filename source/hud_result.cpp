@@ -109,8 +109,6 @@ static void __cdecl CalcTotalScoreM_dest(task* tp)
 
 int16_t GetDefeatAnim(uint8_t pNum, uint16_t curAnim)
 {
-	if (!playertwp[pNum])
-		return 0;
 
 	uint8_t curChar = playertwp[pNum]->counter.b[1];
 
@@ -156,7 +154,7 @@ void PlayDefeatAnimation()
 			{
 				if (playertwp[i]->counter.b[1] == Characters_Tails)
 				{
-					SetTailsRaceVictory();
+					playerpwp[i]->mj.reqaction = 54;
 				}
 
 				continue;
