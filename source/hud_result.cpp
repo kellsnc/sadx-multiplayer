@@ -118,8 +118,9 @@ int16_t GetDefeatAnim(uint8_t pNum, uint16_t curAnim)
 	{
 	default:
 	case Characters_Sonic:
-		if (curAnim != 86 && curAnim != 87)
-			return 86;
+		if (curAnim != 87)
+			return 87;
+		break;
 	case Characters_Tails:
 		if (curAnim != 56 && curAnim != 57)
 			return 56;
