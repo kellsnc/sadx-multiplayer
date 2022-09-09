@@ -13,7 +13,7 @@ enum MD_RESULT
 };
 
 const char* continue_texts[]{
-	"Continue?"
+	"Continue?",
 	"Continue?",
 	"Continuer ?",
 	"¿Continuar?",
