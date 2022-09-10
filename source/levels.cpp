@@ -609,6 +609,21 @@ void InitLevels()
 	// Red Mountain Lava
 	WriteData<2>((void*)0x6087D6, 0x90ui8);
 
+	// Water animation
+	WriteData((intptr_t*)0x4F734B, 0); // BeachTexAnimAct1
+	WriteData((intptr_t*)0x4F73BB, 0); // BeachTexAnimWaveAct1
+	WriteData((intptr_t*)0x4F743B, 0); // BeachTexAnimWaveAct2
+	WriteData((intptr_t*)0x4F734B, 0); // BeachTexAnimSandAct2
+	WriteData((intptr_t*)0x4F752B, 0); // BeachTexAnimWtAct2
+	WriteData((intptr_t*)0x4F759B, 0); // BeachTexAnimWaveAct3
+	WriteData((intptr_t*)0x4F761B, 0); // BeachTexAnimSandAct3
+	WriteData((intptr_t*)0x4F768B, 0); // BeachTexAnimWtAct3
+	WriteData((intptr_t*)0x61E3DB, 0); // TwinkleTexAnim
+	WriteData((intptr_t*)0x5E20DB, 0); // RuinTexAnimAct1
+	WriteData((intptr_t*)0x5E214B, 0); // RuinTexAnimAct2
+	WriteData((intptr_t*)0x5E229B, 0); // RuinTexAnimAct3
+	WriteData((intptr_t*)0x63179A, 0); // SSTexAnim
+
 	// Remove landtable collision chunk optimisation
 	WriteData((uint8_t*)0x4E91C0, 0xC3ui8); // Ice Cap
 	
