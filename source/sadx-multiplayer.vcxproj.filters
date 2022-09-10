@@ -436,6 +436,9 @@
     <ClCompile Include="objects\egg-walker.cpp">
       <Filter>Source Files\objects\bosses</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_icecap_icicle.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

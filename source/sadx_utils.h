@@ -282,6 +282,7 @@ DataPointer(CCL_INFO, camera_sphere_info, 0x9BE8A8);
 FunctionPointer(Bool, IsThisTaskPlayer, (task* tp), 0x441AD0);
 VoidFunc(SetPlayer, 0x4157C0);
 FunctionPointer(void, EV_Load2, (int num), 0x42FA30);
+FunctionPointer(void, HoldOnIcicleP, (Uint8 pno, task* ttp), 0x441210);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);

@@ -23,7 +23,6 @@ General patches to allow compatibility for 4+ players
 static Trampoline* PGetRotation_t                 = nullptr;
 static Trampoline* PGetAcceleration_t             = nullptr;
 static Trampoline* PGetAccelerationSnowBoard_t    = nullptr;
-static Trampoline* PInitialize_t                  = nullptr;
 static Trampoline* NpcMilesSet_t                  = nullptr;
 static Trampoline* Ring_t                         = nullptr;
 static Trampoline* Tobitiri_t                     = nullptr;
@@ -789,6 +788,19 @@ task* __cdecl SetCircleLimit_r(NJS_POINT3* pPos, NJS_POINT3* a2, float radius)
 	return SetCircleLimit_t.Original(pPos, a2, radius);
 }
 
+void __cdecl HoldOnIcicleP_r(Uint8 pno, task* ttp)
+{
+	auto ptwp = playertwp[pno];
+
+	if (!(ptwp->flag & Status_HoldObject))
+	{
+		SetFreeCameraMode_m(pno, FALSE);
+		ptwp->flag |= Status_DoNextAction;
+		ptwp->smode = PL_OP_HOLDONICICLE;
+		playerpwp[pno]->htp = ttp;
+	}
+}
+
 void initBossesPatches()
 {
 	InitE103Patches();
@@ -809,6 +821,8 @@ void InitPatches()
 	PlayerVacumedRing_t            = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
 	savepointCollision_t           = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
+
+	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r);
 
 	// Score patches
 	EnemyCheckDamage_t = new Trampoline(0x4CE030, 0x4CE036, EnemyCheckDamage_r);
