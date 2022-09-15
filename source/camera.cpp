@@ -2043,7 +2043,7 @@ void InitCamera()
     WriteCall((void*)0x48FADD, CameraReleaseEventCamera_PlayerHack);
     WriteCall((void*)0x49289E, CameraReleaseEventCamera_PlayerHack);
     WriteCall((void*)0x492EE0, CameraReleaseEventCamera_PlayerHack);
-    WriteCall((void*)0x4987C0, CameraReleaseEventCamera_PlayerHack);
+    WriteJump((void*)0x4987C0, CameraReleaseEventCamera_PlayerHack);
     WriteCall((void*)0x478962, CameraSetEventCamera_PlayerHack);
     WriteCall((void*)0x45EE82, CameraSetEventCameraFunc_PlayerHack);
     WriteCall((void*)0x460591, CameraSetEventCameraFunc_PlayerHack);
