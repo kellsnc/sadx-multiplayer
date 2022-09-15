@@ -2,13 +2,13 @@
 #include "bosses.h"
 
 static FunctionHook<void, task*> eggHornet_t(0x572010);
-
 static FunctionHook<int> EH_PosPlayerCheck_t(0x573310);
 static FunctionHook<int, taskwk*> EH_GetVsPlayerAng_t(0x573160);
-static UsercallFuncVoid(SetEgm1MoveRoute_t, (task* tp, taskwk* data, bossextwk* egm), (tp, data, egm), 0x5733E0, rECX, rEAX, rESI);
-static UsercallFuncVoid(SetEgm1Ud_t, (task* tp), (tp), 0x5736D0, rEAX);
-static UsercallFuncVoid(setEgm1Missile_t, (taskwk* data), (data), 0x573730, rEAX);
-static UsercallFuncVoid(SetEgm1AtkRoute_t, (bossextwk* egm, taskwk* data), (egm, data), 0x5735B0, rECX, rEAX);
+
+UsercallFuncVoid(SetEgm1MoveRoute_t, (task* tp, taskwk* data, bossextwk* egm), (tp, data, egm), 0x5733E0, rECX, rEAX, rESI);
+UsercallFuncVoid(SetEgm1Ud_t, (task* tp), (tp), 0x5736D0, rEAX);
+UsercallFuncVoid(setEgm1Missile_t, (taskwk* data), (data), 0x573730, rEAX);
+UsercallFuncVoid(SetEgm1AtkRoute_t, (bossextwk* egm, taskwk* data), (egm, data), 0x5735B0, rECX, rEAX);
 
 static const int timeLimit = 400;
 

@@ -687,9 +687,9 @@ static void setCameraReturn_m(taskwk* twp, int pnum)
 		NJS_VECTOR v = { twp->pos.x - ptwp->pos.x, 0.0f, twp->pos.z - ptwp->pos.z };
 		njUnitVector(&v);
 
-		param->camAnyParamPos.x = v.x * 30.0 + ptwp->pos.x;
+		param->camAnyParamPos.x = v.x * 30.0f + ptwp->pos.x;
 		param->camAnyParamPos.y = ptwp->pos.y;
-		param->camAnyParamPos.z = v.z * 30.0 + ptwp->pos.z;
+		param->camAnyParamPos.z = v.z * 30.0f + ptwp->pos.z;
 	}
 }
 

@@ -12,10 +12,11 @@ static const int timeLimit = 300;
 static FunctionHook<void, taskwk*, chaoswk*> turnToPlayer_t(0x7AE660);
 static FunctionHook<void, task*> chaos0_t(0x548640);
 static FunctionHook<void, task*> Bg_Chaos0_t(0x545DF0);
-static UsercallFuncVoid(SetChaos0LandFlags, (BOOL flag), (flag), 0x5485E0, rEDX);
-static UsercallFunc(Angle, setApartTargetPos_t, (chaoswk* cwk), (cwk), 0x546460, rEAX, rEDI);
-static UsercallFuncVoid(chaos0Pole_t, (chaoswk* cwk, taskwk* data), (cwk, data), 0x547260, rECX, rESI);
-static UsercallFuncVoid(chaos0Punch_t, (chaoswk* cwk, taskwk* data, bosswk* bwk), (cwk, data, bwk), 0x546790, rEDI, rESI, stack4);
+
+UsercallFuncVoid(SetChaos0LandFlags, (BOOL flag), (flag), 0x5485E0, rEDX);
+UsercallFunc(Angle, setApartTargetPos_t, (chaoswk* cwk), (cwk), 0x546460, rEAX, rEDI);
+UsercallFuncVoid(chaos0Pole_t, (chaoswk* cwk, taskwk* data), (cwk, data), 0x547260, rECX, rESI);
+UsercallFuncVoid(chaos0Punch_t, (chaoswk* cwk, taskwk* data, bosswk* bwk), (cwk, data, bwk), 0x546790, rEDI, rESI, stack4);
 
 //Patches Chaos effects to make them display on other player screens, it is done by manually setting a disp function that is lacking in vanilla.
 
@@ -43,7 +44,7 @@ void __cdecl drawEffectChaos0EffectBDisplay(task* tp)
             njRotateY_(camera_twp->ang.y);
             njRotateX_(camera_twp->ang.x);
             njScale(0, ctwp->scl.x, ctwp->scl.x, ctwp->scl.x);
-            late_DrawSprite3D((NJS_SPRITE*)0x3D0D714, ctwp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+            late_DrawSprite3D((NJS_SPRITE*)0x3D0D714, (Sint32)ctwp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
             njPopMatrixEx();
         }
 
@@ -103,7 +104,7 @@ void __cdecl drawEffectChaos0LightParticleDisplay(task* tp)
             njRotateY_(camera_twp->ang.y);
             njRotateX_(camera_twp->ang.x);
             njScale(0, ctwp->scl.x, ctwp->scl.x, ctwp->scl.x);
-            late_DrawSprite3D((NJS_SPRITE*)0x3D0D73C, ctwp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+            late_DrawSprite3D((NJS_SPRITE*)0x3D0D73C, (Sint32)ctwp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
             njPopMatrixEx();
         }
 
@@ -151,7 +152,7 @@ void __cdecl dispEffectChaos0AttackADisplay(task* tp)
             njRotateX_(camera_twp->ang.x);
             auto scl = twp->scl.x + 0.5f;
             njScale(0, scl, scl, scl);
-            late_DrawSprite3D((NJS_SPRITE*)0x3D0D56C, twp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
+            late_DrawSprite3D((NJS_SPRITE*)0x3D0D56C, (Sint32)twp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
             njPopMatrixEx();
 
             ResetMaterial();
@@ -334,7 +335,7 @@ void chaos0Punch_r(chaoswk* cwk, taskwk* data, bosswk* bwk)
 
             if (data->pos.y > 60.0f)
             {
-                flt_3C63CEC = flt_3C63CEC * 1.5;
+                flt_3C63CEC = flt_3C63CEC * 1.5f;
             }
         }
     }

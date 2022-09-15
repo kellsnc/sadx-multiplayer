@@ -771,7 +771,7 @@ task* __cdecl SetCircleLimit_r(NJS_POINT3* pPos, NJS_POINT3* a2, float radius)
 {
 	if (multiplayer::IsActive()) {
 
-		for (int i = 1; i < multiplayer::GetPlayerCount(); i++)
+		for (unsigned int i = 1; i < multiplayer::GetPlayerCount(); i++)
 		{
 			task* obj = CreateElementalTask((LoadObj_Data1), 0, CircleLimit);
 

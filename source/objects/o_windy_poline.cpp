@@ -75,7 +75,7 @@ static void BounceTaskExec(task* tp)
         }
         else
         {
-            height -= 1.2;
+            height -= 1.2f;
         }
 
         player->pos.y = height;
@@ -99,7 +99,7 @@ static void BounceTaskExec(task* tp)
 }
 
 // Create bounce task for a specific player, also sets the ON mode
-static void CreateBounceTask(task* tp, Sint8 pnum, Sint16 progress, Float height)
+static void CreateBounceTask(task* tp, Sint8 pnum, Sint8 time, Float height)
 {
     // Only run once
     if (BYTEn(tp->twp->timer.l, pnum) == 1)
@@ -107,14 +107,14 @@ static void CreateBounceTask(task* tp, Sint8 pnum, Sint16 progress, Float height
         auto ctp = CreateChildTask(LoadObj_UnknownB, BounceTaskExec, tp);
         ctp->dest = BounceTaskFree;
         ctp->awp->work.sb[0] = pnum;
-        ctp->awp->work.sb[1] = progress;
+        ctp->awp->work.sb[1] = time;
         ctp->awp->work.sw[1] = 0;
         ctp->awp->work.f[1] = 0;
 
         tp->twp->mode = MODE_ON;
         tp->twp->counter.w[0] = 0;
         playertwp[pnum]->pos.y = tp->twp->value.f = ctp->awp->work.f[1] = tp->twp->pos.y + height;
-        ChangeModePlaceWithTrampolineP(pnum, progress);
+        ChangeModePlaceWithTrampolineP(pnum, time);
 
         BYTEn(tp->twp->timer.l, pnum) = 2;
     }
