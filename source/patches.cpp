@@ -795,8 +795,7 @@ void __cdecl HoldOnIcicleP_r(Uint8 pno, task* ttp)
 	if (!(ptwp->flag & Status_HoldObject))
 	{
 		SetFreeCameraMode_m(pno, FALSE);
-		ptwp->flag |= Status_DoNextAction;
-		ptwp->smode = PL_OP_HOLDONICICLE;
+		SetInputP(pno, PL_OP_HOLDONICICLE);
 		playerpwp[pno]->htp = ttp;
 	}
 }
@@ -822,7 +821,9 @@ void InitPatches()
 	savepointCollision_t           = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
 
-	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r);
+	// Misc
+	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
+	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
 
 	// Score patches
 	EnemyCheckDamage_t = new Trampoline(0x4CE030, 0x4CE036, EnemyCheckDamage_r);
