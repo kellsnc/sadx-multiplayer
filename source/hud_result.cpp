@@ -107,68 +107,59 @@ static void __cdecl CalcTotalScoreM_dest(task* tp)
 	njReleaseTexture(&ava_csr_TEXLIST);
 }
 
-int16_t GetDefeatAnim(uint8_t pNum, uint16_t curAnim)
-{
-
-	uint8_t curChar = playertwp[pNum]->counter.b[1];
-
-	switch (curChar)
-	{
-	default:
-	case Characters_Sonic:
-		if (curAnim != 87)
-			return 87;
-		break;
-	case Characters_Tails:
-		if (curAnim != 56 && curAnim != 57)
-			return 56;
-		break;
-	case Characters_Knuckles:
-		if (curAnim != 27 && curAnim != 28)
-			return 27;
-		break;
-	case Characters_Amy:
-		if (curAnim != 26 && curAnim != 27)
-			return 26;
-		break;
-	case Characters_Big:
-		if (curAnim != 63 && curAnim != 64)
-			return 63;
-		break;
-	case Characters_Gamma:
-		if (curAnim != 69 && curAnim != 70)
-			return 69;
-		break;
-	}
-
-	return -1;
-}
-
 void PlayDefeatAnimation()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		if (playertwp[i]) {
+		auto twp = playertwp[i];
+		auto pwp = playerpwp[i];
 
+		if (twp && pwp)
+		{
 			if (GetWinnerMulti() == i)
 			{
-				if (playertwp[i]->counter.b[1] == Characters_Tails)
+				if (TASKWK_PLAYERID(twp) == Characters_Tails)
 				{
-					playerpwp[i]->mj.reqaction = 54;
+					pwp->mj.reqaction = 54;
 				}
-
-				continue;
 			}
+			else
+			{
+				auto curChar = TASKWK_CHARID(twp);
+				auto curAnim = pwp->mj.reqaction;
 
-			uint16_t curAnim = playerpwp[i]->mj.reqaction;
-			int16_t NewAnim = GetDefeatAnim(i, curAnim);
-
-			if (NewAnim != -1)
-				playerpwp[i]->mj.reqaction = NewAnim;
+				switch (curChar)
+				{
+				default:
+				case Characters_Sonic:
+					if (curAnim != 87)
+						pwp->mj.reqaction = 87;
+					break;
+				case Characters_Tails:
+					if (curAnim != 56 && curAnim != 57)
+						pwp->mj.reqaction = 56;
+					break;
+				case Characters_Knuckles:
+					if (curAnim != 27 && curAnim != 28)
+						pwp->mj.reqaction = 27;
+					break;
+				case Characters_Amy:
+					if (curAnim != 26 && curAnim != 27)
+						pwp->mj.reqaction = 26;
+					break;
+				case Characters_Big:
+					if (curAnim != 63 && curAnim != 64)
+						pwp->mj.reqaction = 63;
+					break;
+				case Characters_Gamma:
+					if (curAnim != 69 && curAnim != 70)
+						pwp->mj.reqaction = 69;
+					break;
+				}
+			}
 		}
 	}
 }
-
 
 static void __cdecl CalcTotalScoreM(task* tp)
 {
