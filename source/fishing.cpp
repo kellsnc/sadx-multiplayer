@@ -143,7 +143,7 @@ void __cdecl CameraLureAndFish_m(_OBJ_CAMERAPARAM* pParam)
 	any_pos = param->camAnyParamPos;
 	any_tgt = param->camAnyParamTgt;
 
-	camcont_wp->tgtxpos = (any_tgt.x + any_tgt.x) * 0.5f;
+	camcont_wp->tgtxpos = (any_tgt.x + any_pos.x) * 0.5f;
 	camcont_wp->tgtypos = (any_tgt.y + any_pos.y) * 0.5f;
 	camcont_wp->tgtzpos = (any_tgt.z + any_pos.z) * 0.5f;
 
@@ -167,15 +167,15 @@ void __cdecl CameraLureAndFish_m(_OBJ_CAMERAPARAM* pParam)
 	if (njScalor(&spd) >= 20.0f)
 	{
 		njUnitVector(&spd);
-		camcont_wp->camxpos = spd.x * 20.0f + camcont_wp->camxpos;
-		camcont_wp->camypos = spd.y * 20.0f + camcont_wp->camypos;
-		camcont_wp->camzpos = spd.z * 20.0f + camcont_wp->camzpos;
+		camcont_wp->camxpos += spd.x * 20.0f;
+		camcont_wp->camypos += spd.y * 20.0f;
+		camcont_wp->camzpos += spd.z * 20.0f;
 	}
 	else
 	{
-		camcont_wp->camxpos = spd.x + camcont_wp->camxpos;
-		camcont_wp->camypos = spd.y + camcont_wp->camypos;
-		camcont_wp->camzpos = spd.z + camcont_wp->camzpos;
+		camcont_wp->camxpos += spd.x;
+		camcont_wp->camypos += spd.y;
+		camcont_wp->camzpos += spd.z;
 	}
 
 	if (camcont_wp->camypos < camcont_wp->tgtypos)
@@ -639,18 +639,18 @@ static void setLureCameraPos_m(taskwk* twp, BIGETC* etc, int pnum)
 		NJS_VECTOR v;
 		Float dist;
 
-		if (!etc->Big_Fish_Ptr || (etc->Big_Fish_Flag & LUREFLAG_HIT))
+		if (etc->Big_Fish_Flag & LUREFLAG_HIT)
+		{
+			v = etc->Big_Fish_Ptr->twp->pos;
+			njSubVector(&v, &twp->pos);
+			dist = 10.0f;
+		}
+		else
 		{
 			v = playertwp[pnum]->pos;
 			njSubVector(&v, &twp->pos);
 			dist = -10.0f;
 			v.y = twp->pos.y;
-		}
-		else
-		{
-			v = etc->Big_Fish_Ptr->twp->pos;
-			njSubVector(&v, &twp->pos);
-			dist = 10.0f;
 		}
 
 		njUnitVector(&v);
