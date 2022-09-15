@@ -7,6 +7,18 @@
 Trampoline* ObjectItemboxNormal_t = nullptr;
 Trampoline* itembox_airCollisitonBefore_t = nullptr;
 
+static bool CheckHitByPlayerOrBullet(taskwk* twp)
+{
+	auto cwp = twp->cwp;
+	return cwp && cwp->flag & 1 && (cwp->hit_cwp->id == 0 || cwp->hit_cwp->id == 1);
+}
+
+static bool CheckHitKindPlayer(taskwk* twp)
+{
+	auto pltwp = twp->cwp->hit_cwp->mytask->twp;
+	return pltwp && pltwp->cwp && pltwp->cwp->id == 0;
+}
+
 static int itembox_getpnum(taskwk* twp)
 {
 	auto pltwp = twp->cwp->hit_cwp->mytask->twp;
@@ -17,7 +29,7 @@ static int itembox_getpnum(taskwk* twp)
 	}
 	else
 	{
-		return pltwp->cwp->id == 1 ? pltwp->btimer : TASKWK_PLAYERID(pltwp);
+		return pltwp->cwp && pltwp->cwp->id == 1 ? pltwp->btimer : TASKWK_PLAYERID(pltwp);
 	}
 }
 
@@ -161,14 +173,19 @@ static void ObjectItemboxNormal_m(task* tp)
 	auto twp = tp->twp;
 	auto cwp = twp->cwp;
 
-	if ((cwp->flag & 1) && (cwp->hit_cwp->id == 0 || cwp->hit_cwp->id == 1))
+	if (CheckHitByPlayerOrBullet(twp))
 	{
 		auto pnum = itembox_getpnum(twp);
 
 		if (cwp->my_num == 1)
 		{
 			twp->mode = 3i8;
-			SetVelocityP(pnum, 0.0f, 2.0f, 0.0f);
+
+			// If it's a player that hit, bounce
+			if (CheckHitKindPlayer(twp))
+			{
+				SetVelocityP(pnum, 0.0f, 2.0f, 0.0f);
+			}
 		}
 		else if (twp->flag & Status_Hurt)
 		{
@@ -240,9 +257,7 @@ static void itembox_airCollisitonBefore_m(task* tp)
 	{
 		itembox_air_data->timer = 1.0f;
 
-		auto cwp = twp->cwp;
-
-		if ((cwp->flag & 1) && (cwp->hit_cwp->id == 0 || cwp->hit_cwp->id == 1))
+		if (CheckHitByPlayerOrBullet(twp))
 		{
 			auto pnum = itembox_getpnum(twp);
 			twp->mode = 2i8;
