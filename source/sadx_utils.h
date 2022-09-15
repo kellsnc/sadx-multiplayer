@@ -283,6 +283,8 @@ FunctionPointer(Bool, IsThisTaskPlayer, (task* tp), 0x441AD0);
 VoidFunc(SetPlayer, 0x4157C0);
 FunctionPointer(void, EV_Load2, (int num), 0x42FA30);
 FunctionPointer(void, HoldOnIcicleP, (Uint8 pno, task* ttp), 0x441210);
+FunctionPointer(void, ChangeModePlaceWithTrampolineP, (Uint8 pno, Sint8 time), 0x4417F0);
+FunctionPointer(void, SetTrampolineVelocityP, (Uint8 pno, Sint8 time, Float x, Float y, Float z), 0x441390);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
