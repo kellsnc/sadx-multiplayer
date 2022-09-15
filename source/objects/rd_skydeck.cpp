@@ -37,7 +37,7 @@ static void Skydeck_EggcarrierCtrl_m(__int16 act)
 			KillHimByFallingDownP(i);
 		}
 
-		if (CurrentCharacter != Characters_Sonic)
+		if (CurrentCharacter == Characters_Knuckles)
 		{
 			continue;
 		}
@@ -107,6 +107,11 @@ static void Skydeck_EggcarrierCtrl_m(__int16 act)
 			EC_mode = 0;
 			break;
 		}
+	}
+
+	if (CurrentCharacter == Characters_Knuckles)
+	{
+		return;
 	}
 
 	if (GetSwitchOnOff(0))
