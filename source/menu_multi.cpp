@@ -368,7 +368,7 @@ int eme_level_link[]{
 int egrob_level_link[]{
 	LevelAndActIDs_TwinklePark2,
 	LevelAndActIDs_HotShelter1,
-	LevelAndActIDs_FinalEgg2
+	LevelAndActIDs_FinalEgg1
 };
 
 int fish_level_link[]{
