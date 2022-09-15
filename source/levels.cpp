@@ -283,7 +283,7 @@ void __cdecl Rd_Windy_r(task* tp)
 {
 	if (ssActNumber == 1 && multiplayer::IsActive())
 	{
-		for (int i = 1; i < PLAYER_MAX; ++i)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
 			if (playertwp[i] && playertwp[i]->pos.y > 2250.0f)
 			{
