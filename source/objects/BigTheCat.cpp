@@ -3,6 +3,36 @@
 #include "camera.h"
 #include "fishing.h"
 
+static void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp);
+Trampoline bigActMissSet_t(0x48CD50, 0x48CD55, bigActMissSet_r);
+void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (multiplayer::IsActive())
+	{
+		auto pnum = TASKWK_PLAYERID(twp);
+
+		CameraReleaseCollisionCamera_m(pnum);
+
+		auto cam_pos = GetCameraPosition(pnum);
+		if (cam_pos)
+		{
+			cam_pos->y = twp->pos.y + 10.0f;
+			cam_pos->x = (cam_pos->x - twp->pos.x) * 0.01f + twp->pos.x;
+			cam_pos->z = (cam_pos->z - twp->pos.z) * 0.01f + twp->pos.z;
+		}
+
+		pwp->mj.reqaction = 63;
+		twp->mode = MD_BIG_MISS;
+
+		dsPlay_oneshot(848, 0, 0, 0);
+		dsPlay_oneshot(1322, 0, 0, 0);
+	}
+	else
+	{
+		TARGET_STATIC(bigActMissSet)(twp, mwp, pwp);
+	}
+}
+
 static void __cdecl sub_48CDE0_r();
 Trampoline sub_48CDE0_t(0x48CDE0, 0x48CDE5, sub_48CDE0_r);
 void __cdecl sub_48CDE0_r()
@@ -24,8 +54,6 @@ void __cdecl sub_48CDE0_r()
 	{
 		TARGET_STATIC(sub_48CDE0)();
 	}
-
-	
 }
 
 static void __cdecl sub_48CE10_r();

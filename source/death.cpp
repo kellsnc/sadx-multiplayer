@@ -61,7 +61,7 @@ void __cdecl KillHimP_r(unsigned __int8 pNum)
 {
 	if (multiplayer::IsActive())
 	{
-		if (!CheckEditMode())
+		if (playerpwp[pNum] && !(playerpwp[pNum]->item & Powerups_Dead))
 		{
 			playertwp[pNum]->flag |= 0x1000;
 			playerpwp[pNum]->item |= Powerups_Dead;
