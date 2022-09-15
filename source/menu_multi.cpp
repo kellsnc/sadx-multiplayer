@@ -857,7 +857,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 				}
 			}
 
-			if (press & Buttons_Start)
+			if (MenuSelectButtonsPressedM(i))
 			{
 				chara_ready[i] = true;
 				PlayVoice(charsel_voicelist[menu_multi_getplayerno(sel)]);
