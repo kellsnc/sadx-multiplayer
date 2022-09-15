@@ -364,11 +364,15 @@ static inline void PondDraw(taskwk* twp, enemywk* ewp)
 }
 
 static const void* const HeliPathPtr = (void*)0x6134A0;
-static inline void HeliPath(taskwk* twp, pathtag* tag, pathinfo* info)
+static inline void HeliPath(taskwk* twp, pathtag* tag, pathinfo info)
 {
 	__asm
 	{
-		push[info]
+		sub esp, 50h
+		mov ecx, 14h
+		lea esi, [info];
+		mov edi, esp
+		rep movsd
 		mov edx, [tag]
 		mov esi, [twp]
 		call HeliPathPtr

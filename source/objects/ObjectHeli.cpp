@@ -355,8 +355,8 @@ static void ObjectHeliExec_m(task* tp)
 	EntryColliList(twp);
 	ObjectSetupInput(twp, 0);
 
-	pathinfo info;
-	HeliPath(twp, &pathtag_hw1_heli0807, &info);
+	pathinfo info{};
+	HeliPath(twp, &pathtag_hw1_heli0807, info);
 	HeliWriteSub_m(tp, twp);
 
 	twp->pos = heli_pos;
