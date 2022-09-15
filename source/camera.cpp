@@ -1836,9 +1836,6 @@ void __cdecl Camera_r(task* tp)
         ++eventReleaseTimer_m[i];
     }
 
-    camera_twp->pos = cameraLocations[0].pos;
-    camera_twp->ang = cameraLocations[0].ang;
-
     tp->disp(tp);
 }
 
