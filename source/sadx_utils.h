@@ -286,7 +286,6 @@ FunctionPointer(void, HoldOnIcicleP, (Uint8 pno, task* ttp), 0x441210);
 FunctionPointer(void, ChangeModePlaceWithTrampolineP, (Uint8 pno, Sint8 time), 0x4417F0);
 FunctionPointer(void, SetTrampolineVelocityP, (Uint8 pno, Sint8 time, Float x, Float y, Float z), 0x441390);
 DataArray(PL_ACTION, big_action, 0x3C556A0, 105);
-VoidFunc(LoadPlayerMotionData, 0x422680);
 VoidFunc(_advertise_prolog, 0x5034A0);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
