@@ -6,14 +6,16 @@
 static FunctionHook<void> SetFinishAction_t(SetFinishAction);
 static FunctionHook<void, task*> CalcTotalScore_t((intptr_t)0x42BCC0);
 
+static int gBattleResult = 0;
+
 int GetWinnerMulti()
 {
-	return MRaceResult;
+	return gBattleResult;
 }
 
 void SetWinnerMulti(int pnum)
 {
-	MRaceResult = pnum;
+	gBattleResult = pnum;
 }
 
 static void PlayCharaWinSound()
