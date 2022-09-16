@@ -28,7 +28,8 @@ VariableHook<Float, 0x3C4ABCC> adjust_point_m;
 VariableHook<NJS_POINT3, 0x3C4AB98> cart_save_pos_m; /* guessed name*/
 VariableHook<NJS_POINT3, 0x3C4ACB0> cart_save_tgt_m;
 VariableHook<Float, 0x3C4ABEC> air_pos_m;
-VariableHook<Float, 0x3C4ACC0> demo_count_m;
+
+DataPointer(Sint32, demo_count, 0x3C4ACC0);
 
 CAM_ANYPARAM* GetCamAnyParam(int pnum)
 {
@@ -256,6 +257,70 @@ void calcCartCamAdjForFollow_m(int pnum)
     camcont_wp->tgtzpos = (camcont_wp->tgtzpos - cart_save_tgt.z) * 0.2f + cart_save_tgt.z;
 }
 
+void cartCameraDemo_m(int pnum)
+{
+    auto& cart_save_pos = cart_save_pos_m[pnum];
+    auto& cart_save_tgt = cart_save_tgt_m[pnum];
+    auto CamAnyParam = GetCamAnyParam(pnum);
+
+    if (demo_count == CamAnyParam->camAnyTmpSint32[1] + 70)
+    {
+        if (pnum == 0)
+        {
+            Cart_demo_flag = 0;
+
+            if (RaceManageTask_p)
+            {
+                *(int*)RaceManageTask_p->mwp = 2;
+            }
+        }
+
+        camcont_wp->cammode = 1;
+        camcont_wp->camxpos = (camcont_wp->camxpos - cart_save_pos.x) * 0.05f + cart_save_pos.x;
+        camcont_wp->camypos = (camcont_wp->camypos - cart_save_pos.y) * 0.05f + cart_save_pos.y;
+        camcont_wp->camzpos = (camcont_wp->camzpos - cart_save_pos.z) * 0.05f + cart_save_pos.z;
+        camcont_wp->tgtxpos = (camcont_wp->tgtxpos - cart_save_tgt.x) * 0.05f + cart_save_tgt.x;
+        camcont_wp->tgtypos = (camcont_wp->tgtypos - cart_save_tgt.y) * 0.05f + cart_save_tgt.y;
+        camcont_wp->tgtzpos = (camcont_wp->tgtzpos - cart_save_tgt.z) * 0.05f + cart_save_tgt.z;
+    }
+    else if (demo_count <= CamAnyParam->camAnyTmpSint32[1] + 10)
+    {
+        if (demo_count <= CamAnyParam->camAnyTmpSint32[1])
+        {
+            Float* v3 = (float*)(CamAnyParam->camAnyTmpSint32[0] + 24 * demo_count);
+            camcont_wp->camxpos = *v3;
+            camcont_wp->camypos = v3[1];
+            camcont_wp->camzpos = v3[2];
+            camcont_wp->tgtxpos = v3[3];
+            camcont_wp->tgtypos = v3[4];
+            camcont_wp->tgtzpos = v3[5];
+        }
+    }
+    else
+    {
+        auto save = camcont_wp->cammode;
+        camcont_wp->cammode = 1;
+        sub_466420_m(playerpwp[pnum]->p.eyes_height, pnum);
+        calcCartCamPos_m(pnum);
+        calcCartCamTgt_m(pnum);
+        camcont_wp->cammode = save;
+        camcont_wp->camxpos = (camcont_wp->camxpos - cart_save_pos.x) * 0.05f + cart_save_pos.x;
+        camcont_wp->camypos = (camcont_wp->camypos - cart_save_pos.y) * 0.05f + cart_save_pos.y;
+        camcont_wp->camzpos = (camcont_wp->camzpos - cart_save_pos.z) * 0.05f + cart_save_pos.z;
+        camcont_wp->tgtxpos = (camcont_wp->tgtxpos - cart_save_tgt.x) * 0.05f + cart_save_tgt.x;
+        camcont_wp->tgtypos = (camcont_wp->tgtypos - cart_save_tgt.y) * 0.05f + cart_save_tgt.y;
+        camcont_wp->tgtzpos = (camcont_wp->tgtzpos - cart_save_tgt.z) * 0.05f + cart_save_tgt.z;
+    }
+
+    if (pnum == 0)
+    {
+        demo_count += 1;
+    }
+
+    cart_save_pos = *(NJS_POINT3*)&camcont_wp->camxpos;
+    cart_save_tgt = *(NJS_POINT3*)&camcont_wp->tgtxpos;
+}
+
 void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 {
     auto pnum = TASKWK_PLAYERID(playertwp[0]);
@@ -265,7 +330,6 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
     auto& cart_save_pos = cart_save_pos_m[pnum];
     auto& cart_save_tgt = cart_save_tgt_m[pnum];
     auto& air_pos = air_pos_m[pnum];
-    auto& demo_count = demo_count_m[pnum];
 
     auto save = camera_twp->pos;
 
@@ -282,8 +346,13 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
     {
         SetAdjustMode(0);
         ChangeCamsetMode(2);
-        //cartCameraDemo();
+        cartCameraDemo_m(pnum);
         return;
+    }
+
+    if (pnum == 0)
+    {
+        demo_count = 0;
     }
 
     if (Cart_demo_flag == 2)
@@ -291,11 +360,8 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
         SetAdjustMode(0);
         //cameraDebugMake(CamAnyParam.camAnyTmpSint32[1], CamAnyParam.camAnyTmpSint32[0]);
         ChangeCamsetMode(1);
-        demo_count = 0;
         return;
     }
-
-    demo_count = 0;
 
     ChangeCamsetMode(2);
 
