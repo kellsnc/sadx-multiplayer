@@ -11,15 +11,23 @@
 static SONIC_INPUT net_analogs[PLAYER_MAX]{};
 static PDS_PERIPHERAL net_pers[PLAYER_MAX]{};
 
-Trampoline* GetPlayersInputData_t = nullptr;
+FunctionHook<void, Sint8> PadReadOnP_hook(0x40EF70);
+FunctionHook<void, Sint8> PadReadOffP_hook(0x40EFA0);
+FunctionHook<void>        GetPlayersInputData_hook(0x40F170);
 
 static void __cdecl PadReadOnP_r(int8_t pnum)
 {
+	if (!multiplayer::IsActive())
+	{
+		PadReadOnP_hook.Original(pnum);
+		return;
+	}
+
 	if (pnum == -1)
 	{
-		for (size_t i = 0ui32; i < ucInputStatusForEachPlayer.size(); ++i)
+		for (auto& status : ucInputStatusForEachPlayer)
 		{
-			ucInputStatusForEachPlayer[i] = TRUE;
+			status = TRUE;
 		}
 	}
 	else
@@ -30,11 +38,17 @@ static void __cdecl PadReadOnP_r(int8_t pnum)
 
 static void __cdecl PadReadOffP_r(int8_t pnum)
 {
+	if (!multiplayer::IsActive())
+	{
+		PadReadOffP_hook.Original(pnum);
+		return;
+	}
+
 	if (pnum < 0)
 	{
-		for (size_t i = 0ui32; i < ucInputStatusForEachPlayer.size(); ++i)
+		for (auto& status : ucInputStatusForEachPlayer)
 		{
-			ucInputStatusForEachPlayer[i] = FALSE;
+			status = FALSE;
 		}
 	}
 	else
@@ -48,12 +62,17 @@ static void __cdecl GetPlayersInputData_r()
 {
 	if (!SplitScreen::IsActive())
 	{
-		TARGET_DYNAMIC(GetPlayersInputData)();
+		GetPlayersInputData_hook.Original();
 		return;
 	}
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
+		if (!ucInputStatusForEachPlayer[i])
+		{
+			continue;
+		}
+
 		auto controller = per[i];
 		float lx = static_cast<float>(controller->x1 << 8); // left stick x
 		float ly = static_cast<float>(controller->y1 << 8); // left stick y
@@ -182,12 +201,10 @@ static bool InputSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM
 
 void InitInputPatches()
 {
-	GetPlayersInputData_t = new Trampoline(0x40F170, 0x40F175, GetPlayersInputData_r);
+	PadReadOnP_hook.Hook(PadReadOnP_r);
+	PadReadOffP_hook.Hook(PadReadOffP_r);
+	GetPlayersInputData_hook.Hook(GetPlayersInputData_r);
 
-	// Patch controller toggles for 4 players
-	WriteJump(PadReadOnP, PadReadOnP_r);
-	WriteJump(PadReadOffP, PadReadOffP_r);
-	
 	network.RegisterListener(Network::PACKET_INPUT_BUTTONS, InputListener);
 	network.RegisterListener(Network::PACKET_INPUT_STICK_X, InputListener);
 	network.RegisterListener(Network::PACKET_INPUT_STICK_Y, InputListener);
