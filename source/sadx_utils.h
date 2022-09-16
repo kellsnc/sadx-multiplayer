@@ -125,6 +125,12 @@ struct NES_LIB_PARAM
 	Uint32 Height;
 };
 
+struct strCamCartData
+{
+	NJS_POINT3 transCam;
+	NJS_POINT3 transTgt;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -287,6 +293,7 @@ FunctionPointer(void, ChangeModePlaceWithTrampolineP, (Uint8 pno, Sint8 time), 0
 FunctionPointer(void, SetTrampolineVelocityP, (Uint8 pno, Sint8 time, Float x, Float y, Float z), 0x441390);
 DataArray(PL_ACTION, big_action, 0x3C556A0, 105);
 VoidFunc(_advertise_prolog, 0x5034A0);
+DataArray(strCamCartData, camCartData, 0x91B670, 3);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);

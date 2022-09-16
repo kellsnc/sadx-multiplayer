@@ -24,6 +24,12 @@ VariableHook<Sint32, 0x3C4ABD8> param_inertia_m;
 VariableHook<Angle3, 0x3C4AC64> screen_in_ang_m;
 VariableHook<Float, 0x3C4ABCC> adjust_point_m;
 
+/* CAMERA CART */
+VariableHook<NJS_POINT3, 0x3C4AB98> cart_save_pos_m; /* guessed name*/
+VariableHook<NJS_POINT3, 0x3C4ACB0> cart_save_tgt_m;
+VariableHook<Float, 0x3C4ABEC> air_pos_m;
+VariableHook<Float, 0x3C4ACC0> demo_count_m;
+
 CAM_ANYPARAM* GetCamAnyParam(int pnum)
 {
     return &CamAnyParam_m[pnum];
@@ -86,7 +92,7 @@ void gravDispose3_m(int pnum)
     }
 }
 
-void CameraKlamath_m(_OBJ_CAMERAPARAM* pParam)
+void __cdecl CameraKlamath_m(_OBJ_CAMERAPARAM* pParam)
 {
     auto pnum = TASKWK_PLAYERID(playertwp[0]);
     auto ptwp = playertwp[pnum];
@@ -173,8 +179,201 @@ void CameraKlamath_m(_OBJ_CAMERAPARAM* pParam)
     gravDispose3_m(pnum);
 }
 
+void sub_466790_m(int pnum)
+{
+    if (GetCamAnyParam(pnum)->camAnyParamTgt.x == 0.0f)
+    {
+        air_pos_m[pnum] = 0.0f;
+    }
+    else
+    {
+        air_pos_m[pnum] += 0.5f;
+    }
+}
+
+void sub_466420_m(Float height, int pnum)
+{
+    auto CamAnyParam = GetCamAnyParam(pnum);
+    camcont_wp->camxpos = CamAnyParam->camAnyParamPos.x;
+    camcont_wp->camypos = CamAnyParam->camAnyParamPos.y + air_pos_m[pnum] + height;
+    camcont_wp->camzpos = CamAnyParam->camAnyParamPos.z;
+    camcont_wp->tgtxpos = CamAnyParam->camAnyParamPos.x;
+    camcont_wp->tgtypos = CamAnyParam->camAnyParamPos.y;
+    camcont_wp->tgtzpos = CamAnyParam->camAnyParamPos.z;
+}
+
+void calcCartCamPos_m(int pnum)
+{
+    auto CamAnyParam = GetCamAnyParam(pnum);
+    NJS_POINT3 v;
+
+    if (camcont_wp->cammode || GetPlayerNumber() != Characters_Big)
+    {
+        v = camCartData[camcont_wp->cammode].transCam;
+    }
+    else
+    {
+        v = { 0.0f, 20.0f, 15.0f };
+    }
+
+    calcModerateVector(&v, (Angle3*)&CamAnyParam->camAnyParamAng);
+    camcont_wp->camxpos = v.x + camcont_wp->camxpos;
+    camcont_wp->camypos = v.y + camcont_wp->camypos;
+    camcont_wp->camzpos = v.z + camcont_wp->camzpos;
+}
+
+void calcCartCamTgt_m(int pnum)
+{
+    auto CamAnyParam = GetCamAnyParam(pnum);
+
+    NJS_POINT3 v;
+    v.x = camCartData[camcont_wp->cammode].transTgt.x;
+    v.y = camCartData[camcont_wp->cammode].transTgt.y;
+    v.z = camCartData[camcont_wp->cammode].transTgt.z;
+
+    njPushMatrix(nj_unit_matrix_);
+    njRotateZ_(CamAnyParam->camAnyParamAng.z);
+    njRotateX_(CamAnyParam->camAnyParamAng.x);
+    njRotateY_(CamAnyParam->camAnyParamAng.y);
+    njCalcVector(0, &v, &v);
+    njPopMatrixEx();
+
+    camcont_wp->tgtxpos = v.x + camcont_wp->tgtxpos;
+    camcont_wp->tgtypos = v.y + camcont_wp->tgtypos;
+    camcont_wp->tgtzpos = v.z + camcont_wp->tgtzpos;
+}
+
+void calcCartCamAdjForFollow_m(int pnum)
+{
+    auto& cart_save_pos = cart_save_pos_m[pnum];
+    auto& cart_save_tgt = cart_save_tgt_m[pnum];
+
+    camcont_wp->camxpos = (camcont_wp->camxpos - cart_save_pos.x) * 0.2f + cart_save_pos.x;
+    camcont_wp->camypos = (camcont_wp->camypos - cart_save_pos.y) * 0.2f + cart_save_pos.y;
+    camcont_wp->camzpos = (camcont_wp->camzpos - cart_save_pos.z) * 0.2f + cart_save_pos.z;
+    camcont_wp->tgtxpos = (camcont_wp->tgtxpos - cart_save_tgt.x) * 0.2f + cart_save_tgt.x;
+    camcont_wp->tgtypos = (camcont_wp->tgtypos - cart_save_tgt.y) * 0.2f + cart_save_tgt.y;
+    camcont_wp->tgtzpos = (camcont_wp->tgtzpos - cart_save_tgt.z) * 0.2f + cart_save_tgt.z;
+}
+
+void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
+{
+    auto pnum = TASKWK_PLAYERID(playertwp[0]);
+    auto ptwp = playertwp[pnum];
+    auto ppwp = playerpwp[pnum];
+
+    auto& cart_save_pos = cart_save_pos_m[pnum];
+    auto& cart_save_tgt = cart_save_tgt_m[pnum];
+    auto& air_pos = air_pos_m[pnum];
+    auto& demo_count = demo_count_m[pnum];
+
+    auto save = camera_twp->pos;
+
+    if (pParam->ulTimer == 0)
+    {
+        camcont_wp->cammode = 1;
+        cart_save_pos = ptwp->pos;
+        cart_save_tgt = ptwp->pos;
+        cart_save_pos.y += ppwp->p.eyes_height;
+        air_pos = 0.0f;
+    }
+
+    if (Cart_demo_flag == 1)
+    {
+        SetAdjustMode(0);
+        ChangeCamsetMode(2);
+        //cartCameraDemo();
+        return;
+    }
+
+    if (Cart_demo_flag == 2)
+    {
+        SetAdjustMode(0);
+        //cameraDebugMake(CamAnyParam.camAnyTmpSint32[1], CamAnyParam.camAnyTmpSint32[0]);
+        ChangeCamsetMode(1);
+        demo_count = 0;
+        return;
+    }
+
+    demo_count = 0;
+
+    ChangeCamsetMode(2);
+
+    switch (camcont_wp->cammode)
+    {
+    case 0:
+        sub_466420_m(ppwp->p.eyes_height * 0.25f, pnum);
+        calcCartCamPos_m(pnum);
+        calcCartCamTgt_m(pnum);
+
+        camcont_wp->tgtxpos = (camcont_wp->tgtxpos - cart_save_tgt.x) * 0.2f + cart_save_tgt.x;
+        camcont_wp->tgtypos = (camcont_wp->tgtypos - cart_save_tgt.y) * 0.2f + cart_save_tgt.y;
+        camcont_wp->tgtzpos = (camcont_wp->tgtzpos - cart_save_tgt.z) * 0.2f + cart_save_tgt.z;
+
+        break;
+    case 1:
+        sub_466790_m(pnum);
+        sub_466420_m(ppwp->p.eyes_height, pnum);
+        calcCartCamPos_m(pnum);
+        calcCartCamTgt_m(pnum);
+        calcCartCamAdjForFollow_m(pnum);
+        break;
+    case 2:
+        sub_466420_m(ppwp->p.eyes_height, pnum);
+        calcCartCamPos_m(pnum);
+        calcCartCamTgt_m(pnum);
+        calcCartCamAdjForFollow_m(pnum);
+        break;
+    default:
+        camcont_wp->cammode = 1;
+        break;
+    }
+
+    camcont_wp->angz = 0;
+
+    if (camcont_wp->cammode == 1)
+    {
+        auto x = ptwp->pos.x - camcont_wp->camxpos;
+        auto z = ptwp->pos.z - camcont_wp->camzpos;
+
+        CameraCollisitonCheck(&save, (NJS_POINT3*)&camcont_wp->camxpos);
+        
+        auto x2 = ptwp->pos.x - camcont_wp->camxpos;
+        auto y2 = ptwp->pos.z - camcont_wp->camzpos;
+
+        if ((x2 * x2 + y2 * y2) - (x * x + z * z) > 0.0f)
+        {
+            camcont_wp->camxpos = x;
+            camcont_wp->camzpos = z;
+        }
+    }
+    else
+    {
+        CameraCollisitonCheck(&save, (NJS_POINT3*)&camcont_wp->camxpos);
+    }
+
+    cart_save_pos = *(NJS_POINT3*)&camcont_wp->camxpos;
+    cart_save_tgt = *(NJS_POINT3*)&camcont_wp->tgtxpos;
+
+    auto press = per[pnum]->press;
+
+    if (press & Buttons_Up)
+    {
+        ++camcont_wp->cammode;
+
+        if (camcont_wp->cammode >= 3u)
+        {
+            camcont_wp->cammode = 0;
+        }
+    }
+    else if (press & Buttons_Down)
+    {
+        --camcont_wp->cammode;
+    }
+}
+
 // Make this use CamAnyParam as it should have...
-void CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
+void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 {
     auto param = GetCamAnyParam(TASKWK_PLAYERID(playertwp[0]));
     camcont_wp->camxpos = param->camAnyParamPos.x;
@@ -186,7 +385,7 @@ void CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
     camcont_wp->angz = 0;
 }
 
-void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
+void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
     auto pnum = TASKWK_PLAYERID(playertwp[0]);
     auto ptwp = playertwp[pnum];
@@ -319,7 +518,7 @@ void AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* p
     CamcontSetCameraTGTOFST(pTaskWork);
 }
 
-void AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
+void __cdecl AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
     auto pnum = TASKWK_PLAYERID(playertwp[0]);
     auto ptwp = playertwp[pnum];
@@ -523,7 +722,7 @@ void sub_468790_m(int pnum, taskwk* twp, taskwk* ptwp, _OBJ_ADJUSTPARAM* adjwp)
     }
 }
 
-void AdjustThreePoint_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
+void __cdecl AdjustThreePoint_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
     int pnum = TASKWK_PLAYERID(playertwp[0]);
 

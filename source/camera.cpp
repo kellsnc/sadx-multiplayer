@@ -2060,6 +2060,7 @@ void InitCamera()
     CameraMode[CAMMD_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_A_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_C_KLAMATH].fnCamera = CameraKlamath_m;
+    CameraMode[CAMMD_CART].fnCamera = CameraCart_m;
     CameraMode[CAMMD_RuinWaka1].fnCamera = CameraRuinWaka1_m;
     CameraAdjust[CAMADJ_NORMAL].fnAdjust = AdjustNormal_m;
     CameraAdjust[CAMADJ_NORMAL_S].fnAdjust = AdjustNormal_m;
