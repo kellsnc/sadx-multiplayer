@@ -294,6 +294,7 @@ FunctionPointer(void, SetTrampolineVelocityP, (Uint8 pno, Sint8 time, Float x, F
 DataArray(PL_ACTION, big_action, 0x3C556A0, 105);
 VoidFunc(_advertise_prolog, 0x5034A0);
 DataArray(strCamCartData, camCartData, 0x91B670, 3);
+VoidFunc(SetCartCameraDemo, 0x4DB4E0);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);

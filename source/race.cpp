@@ -2,6 +2,7 @@
 #include "splitscreen.h"
 #include "utils.h"
 #include "result.h"
+#include "camera.h"
 #include "race.h"
 
 /*
@@ -172,10 +173,7 @@ static void __cdecl execRaceM(task* tp)
 	{
 	case RACEMD_WAIT0:
 	case RACEMD_WAIT1:
-		if (!Cart_demo_flag)
-		{
-			wk->mode = RACEMD_INTRO;
-		}
+		PadReadOff();
 		break;
 	case RACEMD_INTRO:
 		if (--wk->timer <= 0)
@@ -191,6 +189,7 @@ static void __cdecl execRaceM(task* tp)
 			{
 				dsPlay_oneshot(702, 0, 0, 0);
 				wk->mode = RACEMD_GAME;
+				PadReadOn();
 				PadReadOnP(-1);
 			}
 		}
@@ -274,16 +273,16 @@ static void __cdecl initRaceM(task* tp, void* param_p)
 
 static const TaskInfo infoM = { sizeof(RaceWkM), 1, initRaceM, execRaceM, dispRaceM, nullptr };
 
+static void CartRaceSetManageTask_m()
+{
+	MirenSetTask(LEV_2, &infoM, 0);
+}
+
 // ROUND TASK:
 
 static void __cdecl deadRoundM(task* tp)
 {
 	ResetMleriRangeRad();
-}
-
-static void __cdecl execRoundM(task* tp)
-{
-	
 }
 
 static void LoadAdditionalCarts()
@@ -306,16 +305,55 @@ static void LoadAdditionalCarts()
 	}
 }
 
-static void __cdecl initRoundM(task* tp, void* param_p)
+static void SetCartCameraDemo_m()
 {
-	InitFreeCamera();
-	LoadAdditionalCarts();
-	EnableControl();
-	PadReadOffP(-1);
-	MirenSetTask(LEV_2, &infoM, 0);
-	SetFrameRateMode(1, 1);
-	EnablePause();
-	PlayMusic(MusicIDs_TwinkleCircuit);
+	SetCartCameraDemo(); // too messy to rewrite lol
+
+	for (int i = 1; i < PLAYER_MAX; ++i)
+	{
+		CameraSetEventCamera_m(i, CAMMD_CART, CAMADJ_NONE);
+
+		auto param = GetCamAnyParam(i);
+		*param = *GetCamAnyParam(0);
+	}
+}
+
+static void __cdecl execRoundM(task* task_p)
+{
+	auto twp = task_p->twp;
+
+	if (twp->mode == 0)
+	{
+		LoadAdditionalCarts();
+		CartRaceSetManageTask_m();
+		SetCartCameraDemo_m();
+		PadReadOff();
+		PadReadOffP(-1);
+		EnablePause();
+		//CartActInitActDiff();
+		SetFrameRateMode(1, 1);
+		twp->mode = 1;
+	}
+	else
+	{
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			SetFreeCameraMode_m(i, FALSE);
+		}
+	}
+}
+
+static void __cdecl initRoundM(task* task_p, void* param_p)
+{
+	task_p->mwp->work.b[0] = 0;
+	auto bgm_tp = CreateElementalTask(2u, LEV_0, (TaskFuncPtr)0x4DAA40);
+	bgm_tp->twp->mode = MusicIDs_circuit;
+	bgm_tp->twp->wtimer = 10;
+
+	//InitSnatchPlayerInfo(v3);
+	SetMleriRangeRad(2000.0f);
+	//InitStartDushCheck();
+	execRoundM(task_p);
 }
 
 static const TaskInfo RdTaskInfoM = { 1, 2, initRoundM, execRoundM, 0, deadRoundM };
