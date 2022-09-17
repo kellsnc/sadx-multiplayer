@@ -34,7 +34,7 @@ const DialogPrmType DialogAskContinue{ DLG_PNLSTYLE_MARU, DialogContinueProc, &a
 
 static bool CanShowDialog()
 {
-	return CurrentLevel == LevelIDs_TwinkleCircuit || (AvaCmnPrm.Stg == CurrentLevel && AvaCmnPrm.Act == CurrentAct);
+	return ulGlobalMode == MD_TRIAL;
 }
 
 static void DisplayMultiResultScreeen(taskwk* twp, int pnum)
@@ -197,13 +197,14 @@ static void __cdecl CalcTotalScoreM(task* tp)
 	case RESULT_DIAL:
 		switch (GetDialogStat())
 		{
-		case 0:
-			Lives += 1;
-			continue_data.continue_flag = FALSE;
-			SetChangeGameMode(2);
+		case 0: // Continue
+			GameState = MD_GAME_END;
+			ssNextStageNumber = *(Sint16*)0x3B22DC4;
+			ssNextActNumber = *(Sint16*)0x3B22DDC;
+
 			twp->mode = RESULT_DEAD;
 			break;
-		case 1:
+		case 1: // Back to menu
 			twp->mode = RESULT_OUT;
 			break;
 		}
