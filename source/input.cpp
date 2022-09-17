@@ -8,6 +8,8 @@
 // Everything related to inputs
 // Networking part of the code originally by @michael-fadely
 
+DataPointer(bool*, pInputStatusForEachPlayer, 0x40F30C); // we get a pointer to `ucInputStatusForEachPlayer` since the input mod replaces the array
+
 static SONIC_INPUT net_analogs[PLAYER_MAX]{};
 static PDS_PERIPHERAL net_pers[PLAYER_MAX]{};
 
@@ -25,14 +27,14 @@ static void __cdecl PadReadOnP_r(int8_t pnum)
 
 	if (pnum == -1)
 	{
-		for (auto& status : ucInputStatusForEachPlayer)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			status = TRUE;
+			pInputStatusForEachPlayer[i] = TRUE;
 		}
 	}
 	else
 	{
-		ucInputStatusForEachPlayer[pnum] = TRUE;
+		pInputStatusForEachPlayer[pnum] = TRUE;
 	}
 }
 
@@ -46,14 +48,14 @@ static void __cdecl PadReadOffP_r(int8_t pnum)
 
 	if (pnum < 0)
 	{
-		for (auto& status : ucInputStatusForEachPlayer)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			status = FALSE;
+			pInputStatusForEachPlayer[i] = FALSE;
 		}
 	}
 	else
 	{
-		ucInputStatusForEachPlayer[pnum] = FALSE;
+		pInputStatusForEachPlayer[pnum] = FALSE;
 	}
 }
 
@@ -68,11 +70,6 @@ static void __cdecl GetPlayersInputData_r()
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		if (!ucInputStatusForEachPlayer[i])
-		{
-			continue;
-		}
-
 		auto controller = per[i];
 		float lx = static_cast<float>(controller->x1 << 8); // left stick x
 		float ly = static_cast<float>(controller->y1 << 8); // left stick y
@@ -111,7 +108,7 @@ static void __cdecl GetPlayersInputData_r()
 
 		input_data[i] = { ang, strk };
 
-		if (ucInputStatus == 1 && (i >= 4 || ucInputStatusForEachPlayer[i] == 1))
+		if (ucInputStatus == TRUE && pInputStatusForEachPlayer[i])
 		{
 			input_dataG[i] = input_data[i];
 		}
