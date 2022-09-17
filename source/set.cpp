@@ -8,6 +8,8 @@ Trampoline* CheckRangeOutWithR_t   = nullptr;
 Trampoline* SDCheckRangeOutWithR_t = nullptr;
 Trampoline* LoadSetFile_t          = nullptr;
 
+DataPointer(OBJ_CONDITION*, pObjStatusEntry, 0x46B817); // Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
+
 // Function to get a specific SET task, used to sync object state for netplay
 task* GetSetTask(int set_id, const char* name)
 {
@@ -16,8 +18,7 @@ task* GetSetTask(int set_id, const char* name)
 		return nullptr;
 	}
 
-	// Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
-	OBJ_CONDITION* item = &(*(OBJ_CONDITION**)0x46B817)[set_id];
+	OBJ_CONDITION* item = &pObjStatusEntry[set_id];
 
 	if (!item->pTask)
 	{
@@ -42,7 +43,7 @@ int GetSetID(task* tp)
 		for (int i = 0; i < numStatusEntry; ++i)
 		{
 			// Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
-			OBJ_CONDITION* item = &(*(OBJ_CONDITION**)0x46B817)[i];
+			OBJ_CONDITION* item = &pObjStatusEntry[i];
 
 			if (tp->ocp == item)
 			{
@@ -102,8 +103,7 @@ void __cdecl ProcessStatusTable_r()
 	{
 		for (int i = 0; i < numStatusEntry; ++i)
 		{
-			// Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
-			OBJ_CONDITION* item = &(*(OBJ_CONDITION**)0x46B817)[i];
+			OBJ_CONDITION* item = &pObjStatusEntry[i];
 
 			// Object already loaded
 			if (item->ssCondition >= 0 || (item->ssCondition & 1))
