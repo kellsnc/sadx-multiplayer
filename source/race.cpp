@@ -171,10 +171,6 @@ static void __cdecl execRaceM(task* tp)
 
 	switch (wk->mode)
 	{
-	case RACEMD_WAIT0:
-	case RACEMD_WAIT1:
-		PadReadOff();
-		break;
 	case RACEMD_INTRO:
 		if (--wk->timer <= 0)
 		{
@@ -189,7 +185,6 @@ static void __cdecl execRaceM(task* tp)
 			{
 				dsPlay_oneshot(702, 0, 0, 0);
 				wk->mode = RACEMD_GAME;
-				PadReadOn();
 				PadReadOnP(-1);
 			}
 		}
@@ -327,7 +322,7 @@ static void __cdecl execRoundM(task* task_p)
 		LoadAdditionalCarts();
 		CartRaceSetManageTask_m();
 		SetCartCameraDemo_m();
-		PadReadOff();
+		PadReadOn();
 		PadReadOffP(-1);
 		EnablePause();
 		//CartActInitActDiff();

@@ -269,9 +269,11 @@ void cartCameraDemo_m(int pnum)
         {
             Cart_demo_flag = 0;
 
+            // Cause cartCameraDemoCheckrer doesn't work for some reason, let's do it here
             if (RaceManageTask_p)
             {
-                *(int*)RaceManageTask_p->mwp = 2;
+                *(Sint8*)RaceManageTask_p->mwp = 2;
+                *(Sint16*)((int)RaceManageTask_p->mwp + 1) = 60;
             }
         }
 
