@@ -131,6 +131,25 @@ struct strCamCartData
 	NJS_POINT3 transTgt;
 };
 
+struct gachamotionwk
+{
+	NJS_POINT3 spd;
+	NJS_POINT3 acc;
+	Angle3 ang_aim;
+	Angle3 ang_spd;
+	float rad;
+	float height;
+	float weight;
+	float frame;
+	float framespd;
+	float thrust;
+	int etimer;
+	int playerang;
+	int playerangdiff;
+	float playerdist;
+	int prio;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -295,6 +314,8 @@ DataArray(PL_ACTION, big_action, 0x3C556A0, 105);
 VoidFunc(_advertise_prolog, 0x5034A0);
 DataArray(strCamCartData, camCartData, 0x91B670, 3);
 VoidFunc(SetCartCameraDemo, 0x4DB4E0);
+FunctionPointer(taskwk*, CCL_IsHitPlayerWithNum, (taskwk* twp, Sint32 info_num), 0x41CC60);
+FunctionPointer(void, CreateHitmark, (NJS_POINT3* pos, Float scl), 0x4CAB40);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
@@ -312,7 +333,6 @@ FunctionPointer(void, setShakeHeadParam, (float param), 0x549BB0);
 DataPointer(float, flt_3C63CEC, 0x3C63CEC);
 FunctionPointer(int, EH_PosPlayerCheck, (), 0x573310); //inlined in symbols
 FunctionPointer(void, sub_575190, (Egm1MissilesPrm* a1), 0x575190); 
-
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

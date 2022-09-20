@@ -13,6 +13,7 @@
 #include "objects/ObjShelterKaitenKey.h"
 #include "objects/mirror.h"
 #include "objects/e_pondskater.h"
+#include "objects/e_gachapon.h"
 
 /*
 
@@ -905,4 +906,5 @@ void InitPatches()
 	PatchAmyHandles();
 	PatchTwinkleMirrors();
 	PatchPondSkater();
+	PatchGachapon();
 }
