@@ -64,10 +64,16 @@ bool AvaGetMultiEnable()
 
 void title_menu_sub_exec_r(TitleMenuWk* wkp)
 {
-	// Failsafe just in case
+	// Make sure netplay got disconnected
 	if (network.IsConnected())
 	{
 		network.Exit();
+	}
+
+	// Make sure multiplayer got disabled
+	if (multiplayer::IsEnabled())
+	{
+		multiplayer::Disable();
 	}
 
 	if (wkp->SubMode == TITLEMENU_SMD_STAY || wkp->SubMode == TITLEMENU_SMD_TO_MAINMENU)
