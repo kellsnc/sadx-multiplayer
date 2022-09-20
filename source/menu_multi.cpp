@@ -1607,6 +1607,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		}
 		else
 		{
+			multiplayer::Disable();
 			gNextDialogStat = 0;
 			menu_multi_change(wk, saved_mode);
 			wk->Stat = ADVA_STAT_KEEP;
