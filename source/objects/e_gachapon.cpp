@@ -5,10 +5,10 @@
 
 // Crabs in Final Egg 3
 
-UsercallFuncVoid(chk_mode_Hook, (task* tp, taskwk* twp, gachamotionwk* mwp), (tp, twp, mwp), 0x5B00A0, stack4, rECX, rEAX);
+UsercallFuncVoid(chk_mode_Hook, (taskwk* twp, gachamotionwk* mwp, task* tp), (twp, mwp, tp), 0x5B00A0, rECX, rEAX, stack4);
 UsercallFuncVoid(GachaCheckColli_Hook, (taskwk* twp, gachamotionwk* mwp), (twp, mwp), 0x5AFA20, rESI, rEDI);
 
-void chk_mode_r(task* tp, taskwk* twp, gachamotionwk* mwp)
+void chk_mode_r(taskwk* twp, gachamotionwk* mwp, task* tp)
 {
     if ((twp->flag & 4) && twp->mode != 11 && twp->mode != 7)
     {
@@ -28,7 +28,7 @@ void chk_mode_r(task* tp, taskwk* twp, gachamotionwk* mwp)
         }
     }
 
-    chk_mode_Hook.Original(tp, twp, mwp);
+    chk_mode_Hook.Original(twp, mwp, tp);
 }
 
 void GachaCheckColli_r(taskwk* twp, gachamotionwk* mwp)
