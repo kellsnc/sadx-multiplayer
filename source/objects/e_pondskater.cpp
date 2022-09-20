@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FunctionHook.h"
 
 static FunctionHook<void, task*> PondExecutor_hook(0x7AA870);
 static FunctionHook<void, task*> PondDisplayer_hook(0x7AA3D0);
