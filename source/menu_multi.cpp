@@ -439,6 +439,7 @@ const char* press_start_texts[] {
 };
 
 static constexpr size_t address_limit = 32;
+static bool g_MenuLoaded = false;
 task* MultiMenuTp = nullptr;
 int stgacttexid = 0;
 int selected_characters[PLAYER_MAX];
@@ -1583,6 +1584,11 @@ void __cdecl MultiMenuExec_Main(task* tp)
 {
 	auto wk = (MultiMenuWK*)tp->awp;
 
+	if (g_MenuLoaded)
+	{
+		g_MenuLoaded = false;
+	}
+
 	// Check if our menu is ready
 	if (SeqTp->awp->work.ul[1] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
 	{
@@ -1676,10 +1682,13 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 void __cdecl LoadMultiMenu(ModeSelPrmType* prmp)
 {
-	if (MultiMenuTp)
+	// Temporary check until I figure out why the menu loads twice after level completion
+	if (g_MenuLoaded)
 	{
 		return;
 	}
+
+	g_MenuLoaded = true;
 
 	auto tp = MultiMenuTp = CreateElementalTask(0, LEV_4, MultiMenuExec_Main);
 
