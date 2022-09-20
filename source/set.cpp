@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "set.h"
 #include "camera.h"
+#include "splitscreen.h"
+
+#define SQUARE(x)((x) * (x))
 
 Trampoline* ProcessStatusTable_t   = nullptr;
 Trampoline* CheckRangeWithR_t      = nullptr;
@@ -96,6 +99,50 @@ void CreateSetTask(OBJ_CONDITION* item, _OBJ_EDITENTRY* objentry, _OBJ_ITEMENTRY
 	item->pTask = tp;
 }
 
+Bool CheckRangeXYZRP(NJS_POINT3* pf, Float rx0, Float ry0, Float rz0, Float R)
+{
+	float r1 = SQUARE(rx0 - pf->x);
+	if (r1 <= R)
+	{
+		float r2 = r1 + SQUARE(ry0 - pf->y);
+		if (r2 <= R)
+		{
+			float r3 = r2 + SQUARE(rz0 - pf->z);
+			if (r3 <= R)
+			{
+				return 1;
+			}
+		}
+	}
+	return 0;
+}
+
+bool CheckRangeM(Float rx0, Float ry0, Float rz0, Float R)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (playertwp[i])
+		{
+			if (CheckRangeXYZRP(&playertwp[i]->pos, rx0, ry0, rz0, R))
+			{
+				return true;
+			}
+		}
+
+		if (SplitScreen::IsScreenEnabled(i))
+		{
+			auto cam_pos = GetCameraPosition(i);
+
+				if (cam_pos && CheckRangeXYZRP(cam_pos, rx0, ry0, rz0, R))
+				{
+					return true;
+				}
+		}
+	}
+
+	return false;
+}
+
 // Load objects around every players
 void __cdecl ProcessStatusTable_r()
 {
@@ -147,25 +194,10 @@ void __cdecl ProcessStatusTable_r()
 			{
 				float dist = (objinfo.ssAttribute & 1) ? objinfo.fRange : 160000.0f;
 
-				if (boolOneShot == FALSE && objinfo.ssAttribute & 4)
+				if ((boolOneShot == FALSE && objinfo.ssAttribute & 4) ||
+					CheckRangeM(objentry->xpos, objentry->ypos, objentry->zpos, dist))
 				{
 					CreateSetTask(item, objentry, &objinfo, dist);
-					continue;
-				}
-
-				for (int i = 0; i < PLAYER_MAX; ++i)
-				{
-					if (!playertwp[i]) continue;
-
-					auto cam_pos = GetCameraPosition(i);
-					NJS_POINT3 pos = cam_pos ? *cam_pos : playertwp[i]->pos;
-					njSubVector(&pos, (NJS_POINT3*)&objentry->xpos);
-
-					if (njScalor2(&pos) < dist)
-					{
-						CreateSetTask(item, objentry, &objinfo, dist);
-						break;
-					}
 				}
 			}
 		}
@@ -185,21 +217,9 @@ BOOL CheckRangeWithR_m(task* tp, float fRange)
 		return FALSE;
 	}
 
-	for (int i = 0; i < PLAYER_MAX; ++i)
+	if (CheckRangeM(tp->twp->pos.x, tp->twp->pos.y, tp->twp->pos.z, fRange))
 	{
-		if (playertwp[i])
-		{
-			auto cam_pos = GetCameraPosition(i);
-			NJS_POINT3 pos = cam_pos ? *cam_pos : playertwp[i]->pos;
-			pos.x -= tp->twp->pos.x;
-			pos.y -= tp->twp->pos.y;
-			pos.z -= tp->twp->pos.z;
-			
-			if (njScalor2(&pos) < fRange)
-			{
-				return FALSE;
-			}
-		}
+		return FALSE;
 	}
 
 	return TRUE;
