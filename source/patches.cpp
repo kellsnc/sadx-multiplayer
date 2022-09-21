@@ -413,10 +413,6 @@ void TikalDisplay_r(task* tp)
 
 void QueueMobileLandColl() // guessed inline function
 {
-	// Temporary because somehow this decomp doesn't work:
-	MakeLandCollLandEntryALL();
-	return;
-
 	ri_landcoll_nmb = 0;
 
 	njPushMatrixEx();
@@ -434,7 +430,7 @@ void QueueMobileLandColl() // guessed inline function
 		NJS_VECTOR p;
 
 		// Task disabled collision
-		if (tp && tp->twp && tp->twp->flag & 0x100)
+		if (tp && tp->twp && !(tp->twp->flag & 0x100))
 		{
 			continue;
 		}
@@ -473,7 +469,7 @@ void QueueMobileLandColl() // guessed inline function
 				srctwp->pos.z - p.z
 			};
 
-			if (njScalor(&cv) - mleriRangeRad < obj->basicdxmodel->r)
+			if (njScalor2(&cv) < (obj->basicdxmodel->r + mleriRangeRad) * (obj->basicdxmodel->r + mleriRangeRad))
 			{
 				ri_landcoll[ri_landcoll_nmb++] = entry;
 				LandCollList[numLandCollList++] = entry; // add entry to active list
