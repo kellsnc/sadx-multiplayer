@@ -1204,6 +1204,7 @@ void menu_multi_localcon(MultiMenuWK* wk)
 			{
 				player_ready[i] = true;
 				PlayMenuEnterSound();
+				PressedButtons[i] = 0;
 			}
 		}
 		else // player is ready
@@ -1212,6 +1213,7 @@ void menu_multi_localcon(MultiMenuWK* wk)
 			{
 				player_ready[i] = false;
 				PlayMenuBackSound();
+				PressedButtons[i] = 0;
 			}
 			else
 			{
