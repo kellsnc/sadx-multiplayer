@@ -253,6 +253,7 @@
     <ClCompile Include="objects\o_finalegg_ukishima.cpp" />
     <ClCompile Include="objects\o_hebigate.cpp" />
     <ClCompile Include="objects\o_icecap_icicle.cpp" />
+    <ClCompile Include="objects\o_mountain_yougan.cpp" />
     <ClCompile Include="objects\o_rockroll.cpp" />
     <ClCompile Include="objects\o_ruin_mirror.cpp" />
     <ClCompile Include="objects\o_ruin_reverse.cpp" />

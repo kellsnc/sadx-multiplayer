@@ -319,7 +319,7 @@ void __cdecl Rd_Mountain_r(task* tp)
 			if (IsPlayerInSphere(-380.0f, 440.0f, 1446.0f, 200.0f))
 			{
 				rd_mountain_twp->scl.x = 130.0f;
-				rd_mountain_twp->scl.y = 0.25f;
+				rd_mountain_twp->scl.y = -0.5f;
 			}
 		}
 	}

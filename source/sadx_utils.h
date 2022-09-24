@@ -316,6 +316,7 @@ DataArray(strCamCartData, camCartData, 0x91B670, 3);
 VoidFunc(SetCartCameraDemo, 0x4DB4E0);
 FunctionPointer(taskwk*, CCL_IsHitPlayerWithNum, (taskwk* twp, Sint32 info_num), 0x41CC60);
 FunctionPointer(void, CreateHitmark, (NJS_POINT3* pos, Float scl), 0x4CAB40);
+DataPointer(NJS_OBJECT, object_youUP_yogun_yogun, 0x2484D5C);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
