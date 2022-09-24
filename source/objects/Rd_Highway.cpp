@@ -1,5 +1,8 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "Trampoline.h"
 #include "multiplayer.h"
+#include "result.h"
 
 // Mess to make Speed Highway playable (especially the second act)
 
@@ -104,7 +107,37 @@ static void __cdecl subRd_Highway_r(task* tp)
 			RdHighwayInit(tp);
 			tp->disp = RdHighwayDisp;
 		case 1:
-			RdHighwayCheckArriveAtTheBuilding_m(twp);
+
+			// End point is hardcoded in Tails' Speed Highway so we must check it here
+			if (CurrentCharacter == Characters_Tails)
+			{
+				if (twp->smode == 0)
+				{
+					for (int i = 0; i < PLAYER_MAX; ++i)
+					{
+						auto ptwp = playertwp[i];
+
+						if (ptwp)
+						{
+							VecTemp0.x = 10335.0f - ptwp->pos.x;
+							VecTemp0.y = -1974.0f - ptwp->pos.y;
+							VecTemp0.z = 10177.0f - ptwp->pos.z;
+
+							if (njScalor2(&VecTemp0) < 22500.0f)
+							{
+								SetWinnerMulti(i);
+								SetFinishAction();
+								twp->smode = 1;
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				RdHighwayCheckArriveAtTheBuilding_m(twp);
+			}
+			
 			break;
 		case 2:
 		case 3:
