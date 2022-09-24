@@ -299,15 +299,28 @@ void __cdecl Rd_Windy_r(task* tp)
 
 void __cdecl Rd_Mountain_r(task* tp)
 {
-	if (ssActNumber == 0 && multiplayer::IsActive())
+	if (multiplayer::IsActive())
 	{
-		if (IsPlayerInSphere(-3667.0f, -400.0f, -2319.0f, 400.0f))
+		if (ssActNumber == 0)
 		{
-			ChangeActM(1);
-			dsEditLightInit();
-			FreeTaskC(tp);
-			RdMountainInit(tp);
-			return;
+			if (IsPlayerInSphere(-3667.0f, -400.0f, -2319.0f, 400.0f))
+			{
+				ChangeActM(1);
+				dsEditLightInit();
+				FreeTaskC(tp);
+				RdMountainInit(tp);
+				return;
+			}
+		}
+		else if (ssActNumber == 1)
+		{
+			// Reset lava at the beginning
+			// TODO: patch lava manager to allow smooth transition down
+			if (IsPlayerInSphere(-380.0f, 440.0f, 1446.0f, 200.0f))
+			{
+				rd_mountain_twp->scl.x = 130.0f;
+				rd_mountain_twp->scl.y = 0.25f;
+			}
 		}
 	}
 
