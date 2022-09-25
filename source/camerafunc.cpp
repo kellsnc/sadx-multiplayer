@@ -29,6 +29,15 @@ VariableHook<NJS_POINT3, 0x3C4AB98> cart_save_pos_m; /* guessed name*/
 VariableHook<NJS_POINT3, 0x3C4ACB0> cart_save_tgt_m;
 VariableHook<Float, 0x3C4ABEC> air_pos_m;
 
+/* PATHCAMERA1 */
+VariableHook<pathtag*, 0x3C4AD88> pnowpathtag_m;
+VariableHook<NJS_POINT3, 0x3C4AD7C> vecnearsonic_m;
+VariableHook<NJS_POINT3, 0x3C4AD70> posSonic_m;
+VariableHook<NJS_POINT3, 0x3C4AD64> vecCameraSpeed_m;
+VariableHook<Sint32, 0x3C4AD60> nSonicFrame_m;
+VariableHook<Sint32, 0x3C4AD5C> nCameraFramef_m;
+VariableHook<Sint32, 0x3C4AD58> nCameraFrame_m;
+
 DataPointer(Sint32, demo_count, 0x3C4ACC0);
 
 CAM_ANYPARAM* GetCamAnyParam(int pnum)
@@ -451,6 +460,252 @@ void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
     camcont_wp->tgtypos = param->camAnyParamTgt.y;
     camcont_wp->tgtzpos = param->camAnyParamTgt.z;
     camcont_wp->angz = 0;
+}
+
+void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)
+{
+    auto pnum = TASKWK_PLAYERID(playertwp[0]);
+    auto ptwp = playertwp[pnum];
+    auto pathwk = pnum == 0 ? (PATHCAMERA1WORK*)camera_twp->counter.ptr : (PATHCAMERA1WORK*)GetCamAnyParam(pnum)->camAnyTmpSint32[0];
+    
+    auto& pnowpathtag = pnowpathtag_m[pnum];
+    auto& vecnearsonic = vecnearsonic_m[pnum];
+    auto& posSonic = posSonic_m[pnum];
+    auto& vecCameraSpeed = vecCameraSpeed_m[pnum];
+    auto& nSonicFrame = nSonicFrame_m[pnum];
+    auto& nCameraFramef = nCameraFramef_m[pnum];
+    auto& nCameraFrame = nCameraFrame_m[pnum];
+
+    Bool initialize;
+
+    if (pathwk->pPathTag != pnowpathtag || pParam->ulTimer == 0
+        || vecnearsonic.x == 0.0f && vecnearsonic.y == 0.0f && vecnearsonic.z == 0.0f)
+    {
+        initialize = 1;
+        pParam->ulTimer = 1;
+        camcont_wp->camxpos = camera_twp->pos.x;
+        camcont_wp->camypos = camera_twp->pos.y;
+        camcont_wp->camzpos = camera_twp->pos.z;
+        pnowpathtag = pathwk->pPathTag;
+    }
+    else
+    {
+        initialize = 0;
+    }
+
+    camcont_wp->angx = camera_twp->ang.x;
+    camcont_wp->angy = camera_twp->ang.y;
+    camcont_wp->angz = camera_twp->ang.z;
+
+    NJS_POINT3 v, orig;
+    v.x = 0.0f;
+    v.y = pathwk->fSonicSize;
+    v.z = 0.0f;
+    njPushMatrix(_nj_unit_matrix_);
+    njTranslateEx(&ptwp->pos);
+    njRotateZ_(ptwp->ang.z);
+    njRotateX_(ptwp->ang.x);
+    njRotateY_(ptwp->ang.y);
+    njCalcPoint(0, &v, &orig);
+    njPopMatrixEx();
+
+    if (initialize)
+    {
+        posSonic = orig;
+        camera_twp->smode = 0;
+        vecCameraSpeed.x = 16.0f;
+        vecCameraSpeed.y = 16.0f;
+        vecCameraSpeed.z = 16.0f;
+        nSonicFrame = PC1_SearchNearPath(&posSonic, pathwk);
+        nCameraFramef = nSonicFrame;
+        nCameraFrame = nSonicFrame;
+    }
+
+    posSonic.x = (orig.x - posSonic.x) * 0.98f + posSonic.x;
+    posSonic.y = (orig.y - posSonic.y) * 0.98f + posSonic.y;
+    posSonic.z = (orig.z - posSonic.z) * 0.98f + posSonic.z;
+
+    NJS_POINT3 posonpath, vecnear;
+    PC1_PathMoveScan(&nSonicFrame, &posonpath, &posSonic, &vecnear, pathwk);
+
+    if (pathwk->modeflag & 0x8)
+    {
+        if (GetDistance(&posSonic, &posonpath) <= pathwk->fPathCameraRangeOut)
+        {
+            camera_twp->smode &= ~0x1;
+        }
+        else
+        {
+            camera_twp->smode |= 0x1;
+        }
+    }
+
+    njUnitVector(&vecnear);
+    if (initialize)
+    {
+        vecnearsonic = vecnear;
+    }
+    else
+    {
+        vecnearsonic.x = (vecnear.x - vecnearsonic.x) * 0.3f + vecnearsonic.x;
+        vecnearsonic.y = (vecnear.y - vecnearsonic.y) * 0.3f + vecnearsonic.y;
+        vecnearsonic.z = (vecnear.z - vecnearsonic.z) * 0.3f + vecnearsonic.z;
+        njUnitVector(&vecnearsonic);
+    }
+
+    camera_twp->smode &= ~0x4;
+
+    // Check if the path ends behind player
+    NJS_POINT3 postgt_behind, posonpath_behind;
+    postgt_behind.x = vecnearsonic.x * pathwk->fBackPathDist + posSonic.x;
+    postgt_behind.y = vecnearsonic.y * pathwk->fBackPathDist + posSonic.y;
+    postgt_behind.z = vecnearsonic.z * pathwk->fBackPathDist + posSonic.z;
+    PC1_PathMoveScan(&nCameraFrame, &posonpath_behind, &postgt_behind, 0, pathwk);
+    if (nCameraFrame >= pathwk->pPathTag->points - 3 || !nCameraFrame)
+    {
+        camera_twp->smode |= 0x4;
+    }
+
+    // Check if if the path ends past player
+    NJS_POINT3 postgt_forward, posonpath_forward;
+    postgt_forward.x = posSonic.x - vecnearsonic.x * pathwk->fForwardPathDist;
+    postgt_forward.y = posSonic.y - vecnearsonic.y * pathwk->fForwardPathDist;
+    postgt_forward.z = posSonic.z - vecnearsonic.z * pathwk->fForwardPathDist;
+    PC1_PathMoveScan(&nCameraFramef, &posonpath_forward, &postgt_forward, 0, pathwk);
+    if (nCameraFramef >= pathwk->pPathTag->points - 3 || !nCameraFramef)
+    {
+        camera_twp->smode |= 0x4;
+    }
+
+    NJS_POINT3 offset;
+    offset.x = posSonic.x - posonpath.x;
+    offset.y = posSonic.y - posonpath.y;
+    offset.z = posSonic.z - posonpath.z;
+
+    NJS_POINT3 offset_behind, offset_forward;
+    offset_behind = offset;
+    offset_forward = offset;
+
+    if (pathwk->modeflag & 0x1)
+    {
+        camera_twp->smode &= ~0x2;
+
+        Float dist1 = njScalor(&offset_behind);
+
+        beamhitstr bhs1;
+        bhs1.reach = dist1;
+        bhs1.pos = posonpath_behind;
+        bhs1.vec = offset_behind;
+
+        if (CL_ColPolBeamHit(&bhs1) == TRUE && bhs1.dist <= dist1)
+        {
+            if (pathwk->modeflag & 0x4)
+            {
+                Float dist2 = njScalor(&offset);
+
+                beamhitstr bhs2;
+                bhs2.reach = dist2;
+                bhs2.pos = posonpath;
+                bhs2.vec = offset;
+
+                if (CL_ColPolBeamHit(&bhs2) == TRUE && bhs2.dist <= dist2)
+                {
+                    camera_twp->smode |= 0x2;
+                }
+            }
+
+            offset_behind.x = bhs1.hitpos.x - bhs1.pos.x;
+            offset_behind.y = bhs1.hitpos.y - bhs1.pos.y;
+            offset_behind.z = bhs1.hitpos.z - bhs1.pos.z;
+        }
+
+        Float scalor = njScalor(&offset_behind) / dist1;
+        offset_forward.x *= scalor;
+        offset_forward.y *= scalor;
+        offset_forward.z *= scalor;
+    }
+
+    if (pathwk->fCameraSize != 0.0)
+    {
+        Float dist = njScalor(&offset_behind);
+        Float scalor = (dist - pathwk->fCameraSize) / dist;
+        if (scalor < 0.0f)
+        {
+            scalor = 0.0f;
+        }
+        offset_behind.x *= scalor;
+        offset_behind.y *= scalor;
+        offset_behind.z *= scalor;
+        offset_forward.x *= scalor;
+        offset_forward.y *= scalor;
+        offset_forward.z *= scalor;
+    }
+
+    NJS_POINT3 vec_behind;
+    vec_behind.x = offset_behind.x * pathwk->fBackPathMul + pathwk->vecCamOfs.x + posonpath_behind.x;
+    vec_behind.y = offset_behind.y * pathwk->fBackPathMul + pathwk->vecCamOfs.y + posonpath_behind.y;
+    vec_behind.z = offset_behind.z * pathwk->fBackPathMul + pathwk->vecCamOfs.z + posonpath_behind.z;
+    
+    NJS_POINT3 vec_forward;
+    vec_forward.x = offset_forward.x * pathwk->fForwardPathMul + posonpath_forward.x;
+    vec_forward.y = offset_forward.y * pathwk->fForwardPathMul + posonpath_forward.y;
+    vec_forward.z = offset_forward.z * pathwk->fForwardPathMul + posonpath_forward.z;
+
+    if (pathwk->modeflag & 0x2)
+    {
+        NJS_POINT3 diff;
+        diff.x = vec_behind.x - camcont_wp->camxpos;
+        diff.y = vec_behind.y - camcont_wp->camypos;
+        diff.z = vec_behind.z - camcont_wp->camzpos;
+
+        offset_forward.x = diff.x - vecCameraSpeed.x;
+        offset_forward.y = diff.y - vecCameraSpeed.y;
+        offset_forward.z = diff.z - vecCameraSpeed.z;
+
+        Float dist1 = njScalor(&offset_forward);
+        Float dist2 = njSqrt((vec_behind.x - posSonic.x) * (vec_behind.x - posSonic.x)
+            + (vec_behind.y - posSonic.y) * (vec_behind.y - posSonic.y)
+            + (vec_behind.z - posSonic.z) * (vec_behind.z - posSonic.z));
+        
+        if (vecCameraSpeed.z * vecCameraSpeed.z + vecCameraSpeed.y * vecCameraSpeed.y + vecCameraSpeed.x * vecCameraSpeed.x > diff.z * diff.z + diff.y * diff.y + diff.x * diff.x)
+        {
+            dist2 = dist1;
+        }
+
+        if (dist1 > dist2)
+        {
+            Float scalor = dist2 / dist1;
+            offset_forward.x = offset_forward.x * scalor;
+            offset_forward.y = offset_forward.y * scalor;
+            offset_forward.z = offset_forward.z * scalor;
+        }
+
+        vecCameraSpeed.x = offset_forward.x + vecCameraSpeed.x;
+        vecCameraSpeed.y = offset_forward.y + vecCameraSpeed.y;
+        vecCameraSpeed.z = offset_forward.z + vecCameraSpeed.z;
+
+        vec_behind.x = vecCameraSpeed.x + camcont_wp->camxpos;
+        vec_behind.y = vecCameraSpeed.y + camcont_wp->camypos;
+        vec_behind.z = vecCameraSpeed.z + camcont_wp->camzpos;
+    }
+
+    if (pathwk->modeflag & 0x10)
+    {
+        vec_behind.x = pathwk->fCameraAccMul * (vec_behind.x - camcont_wp->camxpos) + camcont_wp->camxpos;
+        vec_behind.y = pathwk->fCameraAccMul * (vec_behind.y - camcont_wp->camypos) + camcont_wp->camypos;
+        vec_behind.z = pathwk->fCameraAccMul * (vec_behind.z - camcont_wp->camzpos) + camcont_wp->camzpos;
+    }
+
+    Float xdist = vec_behind.x - vec_forward.x;
+    Float zdist = vec_behind.z - vec_forward.z;
+
+    camcont_wp->camxpos = vec_behind.x;
+    camcont_wp->camypos = vec_behind.y;
+    camcont_wp->camzpos = vec_behind.z;
+    camcont_wp->angx = (njArcTan2(vec_forward.y - vec_behind.y, njSqrt(xdist * xdist + zdist * zdist)) - camcont_wp->angx) * pathwk->angCamSpdMul + camcont_wp->angx;
+    camcont_wp->angy = (njArcTan2(xdist, zdist) - camcont_wp->angy) * pathwk->angCamSpdMul + camcont_wp->angy;
+    
+    CamcontSetCameraCAMSTATUS(camera_twp);
 }
 
 void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)

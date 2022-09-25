@@ -150,6 +150,42 @@ struct gachamotionwk
 	int prio;
 };
 
+struct PATHCAMERA1WORK
+{
+	int modeflag;
+	pathtag* pPathTag;
+	float fForwardPathDist;
+	float fBackPathDist;
+	float fForwardPathMul;
+	float fBackPathMul;
+	float fMaxSonicDist;
+	float fMinSonicDist;
+	float fSonicSize;
+	float fCameraSize;
+	float fMaxCameraAcc;
+	float fCameraAccMul;
+	float fPathCameraRangeOut;
+	int nPlayer;
+	int nTopPathGap;
+	int nBottomPathGap;
+	int nChangeFrame;
+	NJS_POINT3 vecCamOfs;
+	NJS_POINT3 vecPathOfs;
+	Angle3 angCamRot;
+	int angMaxCamSpd;
+	float angCamSpdMul;
+};
+
+struct beamhitstr
+{
+	float reach;
+	NJS_POINT3 pos;
+	NJS_POINT3 vec;
+	float dist;
+	NJS_POINT3 hitpos;
+	xssunit hitinfo;
+};
+
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
@@ -317,6 +353,11 @@ VoidFunc(SetCartCameraDemo, 0x4DB4E0);
 FunctionPointer(taskwk*, CCL_IsHitPlayerWithNum, (taskwk* twp, Sint32 info_num), 0x41CC60);
 FunctionPointer(void, CreateHitmark, (NJS_POINT3* pos, Float scl), 0x4CAB40);
 DataPointer(NJS_OBJECT, object_youUP_yogun_yogun, 0x2484D5C);
+DataArray(PATHCAMERA1WORK*, pathcamera1works, 0x97EC40, 11);
+CamFunc(PathCamera1, 0x4653E0);
+FunctionPointer(Sint32, PC1_SearchNearPath, (NJS_POINT3* posttgt, PATHCAMERA1WORK* pPathCamera1Work), 0x465190);
+FunctionPointer(Bool, PC1_PathMoveScan, (int* nowframe, NJS_POINT3* posonpath, NJS_POINT3* postgt, NJS_POINT3* vecnear, PATHCAMERA1WORK* pPathCamera1Work), 0x464F70);
+FunctionPointer(Bool, CL_ColPolBeamHit, (beamhitstr* bhsp), 0x4546E0);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);

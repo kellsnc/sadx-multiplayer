@@ -28,7 +28,10 @@ void CameraReleaseEventCamera_m(int pnum);
 void CameraSetEventCamera_m(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType);
 void CameraSetEventCameraFunc_m(int pnum, void(__cdecl* fnCamera)(_OBJ_CAMERAPARAM*), Uint8 ucAdjustType, Sint8 scCameraDirect);
 Bool CameraCameraAction(int pnum, NJS_CACTION* caction, Float frame);
+
 void ResetCameraTimer_m(int pnum);
+Bool IsEventCamera_m(int pnum);
+Bool IsCompulsionCamera_m(int pnum);
 
 Angle ds_GetPerspective_m(int pnum);
 void njSetPerspective_m(int pnum, Angle ang);

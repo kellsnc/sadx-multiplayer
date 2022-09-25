@@ -486,6 +486,16 @@ void ResetCameraTimer_m(int pnum)
     cameraTimer_m[pnum] = 0;
 }
 
+Bool IsEventCamera_m(int pnum)
+{
+    return cameraSystemWork_m[pnum].G_scCameraLevel == CLEVEL_EVENT;
+}
+
+Bool IsCompulsionCamera_m(int pnum)
+{
+    return cameraSystemWork_m[pnum].G_scCameraLevel == CLEVEL_COMPULSION;
+}
+
 void CameraViewSet_m(int pnum)
 {
     if (camera_mode_m[pnum])
@@ -2056,7 +2066,8 @@ void InitCamera()
     WriteCall((void*)0x469065, CameraSetEventCameraFunc_Hack);
     WriteCall((void*)0x469225, CameraSetEventCameraFunc_Hack);
     WriteCall((void*)0x548017, CameraSetEventCamera_AllPlayers);
-
+    
+    WriteJump(PathCamera1, PathCamera1_m);
     CameraMode[CAMMD_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_A_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_C_KLAMATH].fnCamera = CameraKlamath_m;
