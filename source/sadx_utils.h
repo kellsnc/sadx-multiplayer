@@ -355,6 +355,7 @@ FunctionPointer(void, CreateHitmark, (NJS_POINT3* pos, Float scl), 0x4CAB40);
 DataPointer(NJS_OBJECT, object_youUP_yogun_yogun, 0x2484D5C);
 DataArray(PATHCAMERA1WORK*, pathcamera1works, 0x97EC40, 11);
 CamFunc(PathCamera1, 0x4653E0);
+CamFunc(PathCamera2Core, 0x465E20);
 FunctionPointer(Sint32, PC1_SearchNearPath, (NJS_POINT3* posttgt, PATHCAMERA1WORK* pPathCamera1Work), 0x465190);
 FunctionPointer(Bool, PC1_PathMoveScan, (int* nowframe, NJS_POINT3* posonpath, NJS_POINT3* postgt, NJS_POINT3* vecnear, PATHCAMERA1WORK* pPathCamera1Work), 0x464F70);
 FunctionPointer(Bool, CL_ColPolBeamHit, (beamhitstr* bhsp), 0x4546E0);

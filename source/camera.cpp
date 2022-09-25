@@ -2068,6 +2068,7 @@ void InitCamera()
     WriteCall((void*)0x548017, CameraSetEventCamera_AllPlayers);
     
     WriteJump(PathCamera1, PathCamera1_m);
+    WriteJump(PathCamera2Core, PathCamera2Core_m);
     CameraMode[CAMMD_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_A_KLAMATH].fnCamera = CameraKlamath_m;
     CameraMode[CAMMD_C_KLAMATH].fnCamera = CameraKlamath_m;

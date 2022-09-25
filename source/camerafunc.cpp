@@ -38,6 +38,11 @@ VariableHook<Sint32, 0x3C4AD60> nSonicFrame_m;
 VariableHook<Sint32, 0x3C4AD5C> nCameraFramef_m;
 VariableHook<Sint32, 0x3C4AD58> nCameraFrame_m;
 
+/* PATHCAMERA2CORE */
+VariableHook<NJS_POINT3, 0x3C4ABFC> CamPathCam2Core_Pos_m;
+VariableHook<Angle3, 0x3C4ACDC> CamPathCam2Core_Angle_m;
+VariableHook<Bool, 0x3C4AC98> CamPathCam2Core_AliveFlag_m;
+
 DataPointer(Sint32, demo_count, 0x3C4ACC0);
 
 CAM_ANYPARAM* GetCamAnyParam(int pnum)
@@ -705,6 +710,22 @@ void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)
     camcont_wp->angx = (njArcTan2(vec_forward.y - vec_behind.y, njSqrt(xdist * xdist + zdist * zdist)) - camcont_wp->angx) * pathwk->angCamSpdMul + camcont_wp->angx;
     camcont_wp->angy = (njArcTan2(xdist, zdist) - camcont_wp->angy) * pathwk->angCamSpdMul + camcont_wp->angy;
     
+    CamcontSetCameraCAMSTATUS(camera_twp);
+}
+
+void __cdecl PathCamera2Core_m(_OBJ_CAMERAPARAM* pParam)
+{
+    auto pnum = TASKWK_PLAYERID(playertwp[0]);
+    auto CamPathCam2Core_Pos = CamPathCam2Core_Pos_m[pnum];
+    auto CamPathCam2Core_Angle = CamPathCam2Core_Angle_m[pnum];
+
+    camcont_wp->camxpos = CamPathCam2Core_Pos.x;
+    camcont_wp->camypos = CamPathCam2Core_Pos.y;
+    camcont_wp->camzpos = CamPathCam2Core_Pos.z;
+    camcont_wp->angx = CamPathCam2Core_Angle.x;
+    camcont_wp->angy = CamPathCam2Core_Angle.y;
+    camcont_wp->angz = CamPathCam2Core_Angle.z;
+    CamPathCam2Core_AliveFlag_m[pnum] = TRUE;
     CamcontSetCameraCAMSTATUS(camera_twp);
 }
 
