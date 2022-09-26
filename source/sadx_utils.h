@@ -451,7 +451,7 @@ static inline void HeliPath(taskwk* twp, pathtag* tag, pathinfo info)
 		mov edx, [tag]
 		mov esi, [twp]
 		call HeliPathPtr
-		add esp, 4
+		add esp, 50h
 	}
 }
 
