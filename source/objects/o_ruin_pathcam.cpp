@@ -2,20 +2,23 @@
 #include "SADXModLoader.h"
 #include "Trampoline.h"
 #include "multiplayer.h"
+#include "camera.h"
+#include "camerafunc.h"
 
-// Fix camera paths
-// TODO: find the courage to do this
+// Fix Lost World camera paths
 
-static void __cdecl SetupCamPathCam_Ruin_r(task* tp);
-Trampoline SetupCamPathCam_Ruin_t(0x5E5D10, 0x5E5D16, SetupCamPathCam_Ruin_r);
-static void __cdecl SetupCamPathCam_Ruin_r(task* tp)
+static void __cdecl ObjectCamPathCam_Ruin_Exec_r(task* tp);
+Trampoline ObjectCamPathCam_Ruin_Exec_t(0x5E5A90, 0x5E5A9A, ObjectCamPathCam_Ruin_Exec_r);
+static void __cdecl ObjectCamPathCam_Ruin_Exec_r(task* tp)
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsEnabled())
 	{
-
+		// Use the general path camera instead until I find the courage to rewrite this
+		tp->twp->smode = 1;
+		InitPathworkCamera(tp);
 	}
 	else
 	{
-		TARGET_STATIC(SetupCamPathCam_Ruin)(tp);
+		TARGET_STATIC(ObjectCamPathCam_Ruin_Exec)(tp);
 	}
 }

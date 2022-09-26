@@ -3,19 +3,20 @@
 #include "Trampoline.h"
 #include "multiplayer.h"
 
-// Fix camera paths
-// TODO: find the courage to do this
+// Fix Speed Highway camera paths
 
-static void __cdecl SetupCamPathCam_Highway_r(task* tp);
-Trampoline SetupCamPathCam_Highway_t(0x613370, 0x613377, SetupCamPathCam_Highway_r);
-static void __cdecl SetupCamPathCam_Highway_r(task* tp)
+static void __cdecl ObjectCamPathCam_Highway_Exec_r(task* tp);
+Trampoline ObjectCamPathCam_Highway_Exec_t(0x613100, 0x61310A, ObjectCamPathCam_Highway_Exec_r);
+static void __cdecl ObjectCamPathCam_Highway_Exec_r(task* tp)
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsEnabled())
 	{
-
+		// Use the general path camera instead until I find the courage to rewrite this
+		tp->twp->smode = 1;
+		InitPathworkCamera(tp);
 	}
 	else
 	{
-		TARGET_STATIC(SetupCamPathCam_Highway)(tp);
+		TARGET_STATIC(ObjectCamPathCam_Highway_Exec)(tp);
 	}
 }

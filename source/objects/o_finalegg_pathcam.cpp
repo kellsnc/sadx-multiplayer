@@ -3,19 +3,20 @@
 #include "Trampoline.h"
 #include "multiplayer.h"
 
-// Fix camera paths
-// TODO: find the courage to do this
+// Fix Final Egg camera paths
 
-static void __cdecl SetupCamPathCam_FinalEgg_r(task* tp);
-Trampoline SetupCamPathCam_FinalEgg_t(0x5B1960, 0x5B1965, SetupCamPathCam_FinalEgg_r);
-static void __cdecl SetupCamPathCam_FinalEgg_r(task* tp)
+static void __cdecl ObjectCamPathCam_FinalEgg_Exec_r(task* tp);
+Trampoline ObjectCamPathCam_FinalEgg_Exec_t(0x5B1860, 0x5B1867, ObjectCamPathCam_FinalEgg_Exec_r);
+static void __cdecl ObjectCamPathCam_FinalEgg_Exec_r(task* tp)
 {
-	if (multiplayer::IsActive())
+	if (multiplayer::IsEnabled())
 	{
-
+		// Use the general path camera instead until I find the courage to rewrite this
+		tp->twp->smode = 1;
+		InitPathworkCamera(tp);
 	}
 	else
 	{
-		TARGET_STATIC(SetupCamPathCam_FinalEgg)(tp);
+		TARGET_STATIC(ObjectCamPathCam_FinalEgg_Exec)(tp);
 	}
 }
