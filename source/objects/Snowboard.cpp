@@ -1,8 +1,9 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
 #include "multiplayer.h"
 
-Trampoline* SetPlayerSnowBoard_t = nullptr;
-Trampoline* SetPlayerSnowBoardSand_t = nullptr;
+FunctionHook<void, task*> SetPlayerSnowBoard_Hook(0x4E9660);
 
 static void SetPlayerSnowBoard_m()
 {
@@ -38,27 +39,11 @@ static void __cdecl SetPlayerSnowBoard_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(SetPlayerSnowBoard)(tp);
-	}
-}
-
-static void __cdecl SetPlayerSnowBoardSand_r()
-{
-	if (multiplayer::IsActive())
-	{
-		SetPlayerSnowBoard_m();
-	}
-	else
-	{
-		TARGET_DYNAMIC(SetPlayerSnowBoardSand)();
+		SetPlayerSnowBoard_Hook.Original(tp);
 	}
 }
 
 void InitSnowBoardPatches()
 {
-	SetPlayerSnowBoard_t = new Trampoline(0x4E9660, 0x4E9669, SetPlayerSnowBoard_r);
-	WriteCall((void*)((int)SetPlayerSnowBoard_t->Target() + 4), SetInputP); // Patch trampoline
-
-	SetPlayerSnowBoardSand_t = new Trampoline(0x597B10, 0x597B19, SetPlayerSnowBoardSand_r);
-	WriteCall((void*)((int)SetPlayerSnowBoardSand_t->Target() + 4), SetInputP); // Patch trampoline
+	SetPlayerSnowBoard_Hook.Hook(SetPlayerSnowBoard_r);
 }
