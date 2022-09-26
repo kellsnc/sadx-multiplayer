@@ -15,6 +15,7 @@ static void __cdecl ObjectCamPathCam_Ruin_Exec_r(task* tp)
 	{
 		// Use the general path camera instead until I find the courage to rewrite this
 		tp->twp->smode = 1;
+		tp->dest = nullptr;
 		InitPathworkCamera(tp);
 	}
 	else
