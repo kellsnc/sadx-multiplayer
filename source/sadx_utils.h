@@ -379,6 +379,9 @@ FunctionPointer(Sint32, PC1_SearchNearPath, (NJS_POINT3* posttgt, PATHCAMERA1WOR
 FunctionPointer(Bool, PC1_PathMoveScan, (int* nowframe, NJS_POINT3* posonpath, NJS_POINT3* postgt, NJS_POINT3* vecnear, PATHCAMERA1WORK* pPathCamera1Work), 0x464F70);
 FunctionPointer(Bool, CL_ColPolBeamHit, (beamhitstr* bhsp), 0x4546E0);
 TaskFunc(InitPathworkCamera, 0x4BBF80);
+FunctionPointer(Bool, MirenSoundSetStartBgmTask, (Sint32 bgmId, Sint32 time), 0x79E180);
+VoidFunc(MirenSoundFinishBgm, 0x79E1C0);
+VoidFunc(SandObjSetManageTask, 0x597E90);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
