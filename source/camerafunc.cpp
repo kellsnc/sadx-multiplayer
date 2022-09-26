@@ -707,9 +707,9 @@ void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)
     camcont_wp->camxpos = vec_behind.x;
     camcont_wp->camypos = vec_behind.y;
     camcont_wp->camzpos = vec_behind.z;
-    camcont_wp->angx = (njArcTan2(vec_forward.y - vec_behind.y, njSqrt(xdist * xdist + zdist * zdist)) - camcont_wp->angx) * pathwk->angCamSpdMul + camcont_wp->angx;
-    camcont_wp->angy = (njArcTan2(xdist, zdist) - camcont_wp->angy) * pathwk->angCamSpdMul + camcont_wp->angy;
-    
+    camcont_wp->angx = SubAngle(camcont_wp->angx, njArcTan2(vec_forward.y - vec_behind.y, njSqrt(xdist * xdist + zdist * zdist))) * pathwk->angCamSpdMul + camcont_wp->angx;
+    camcont_wp->angy = SubAngle(camcont_wp->angy, njArcTan2(xdist, zdist)) * pathwk->angCamSpdMul + camcont_wp->angy;
+
     CamcontSetCameraCAMSTATUS(camera_twp);
 }
 
