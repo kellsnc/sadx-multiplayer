@@ -1534,6 +1534,7 @@ void CameraManagerRegional_m(int pnum, Sint16 ssCameraEntry, _OBJ_CAMERAENTRY* p
             collide = CameraCollisionCube_m(pnum, pCameraEntry);
             break;
         default:
+            CameraCancelCamera_m(pnum);
             return;
         }
 
