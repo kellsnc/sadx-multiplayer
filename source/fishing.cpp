@@ -1749,7 +1749,7 @@ static void fishingLureCtrl_m(task* tp)
 			CalcLineLength(etc, ptwp, &line_pos);
 		}
 
-		if ((per[pnum]->on & Buttons_L) && (per[pnum]->on & Buttons_L) && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
+		if ((per[pnum]->on & Buttons_L) && (per[pnum]->on & Buttons_R) && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
 		{
 			etc->Big_Fish_Flag |= LUREFLAG_CANCEL;
 
