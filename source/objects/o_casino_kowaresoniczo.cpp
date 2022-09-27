@@ -189,8 +189,8 @@ static void Normal_m(task* tp)
                     model->spd.y = (model->pos.y * rad) + ((njRandom() - 0.5f) * SAL_kowarezocrashspd) * 2;
                     model->spd.z = (model->pos.z * rad) + ((njRandom() - 0.5f) * SAL_kowarezocrashspd) * 2;
 
-                    model->pitch_spd = NJM_RAD_ANG(((njRandom() - 0.5f) * SAL_kowarezocrashrotspd) * 2);
-                    model->yaw_spd = NJM_RAD_ANG(((njRandom() - 0.5f) * SAL_kowarezocrashrotspd) * 2);
+                    model->pitch_spd = NJM_DEG_ANG(((njRandom() - 0.5f) * SAL_kowarezocrashrotspd) * 2);
+                    model->yaw_spd = NJM_DEG_ANG(((njRandom() - 0.5f) * SAL_kowarezocrashrotspd) * 2);
 
                     model->pitch = 0;
                     model->yaw = 0;
