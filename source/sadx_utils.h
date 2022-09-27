@@ -382,6 +382,22 @@ TaskFunc(InitPathworkCamera, 0x4BBF80);
 FunctionPointer(Bool, MirenSoundSetStartBgmTask, (Sint32 bgmId, Sint32 time), 0x79E180);
 VoidFunc(MirenSoundFinishBgm, 0x79E1C0);
 VoidFunc(SandObjSetManageTask, 0x597E90);
+FunctionPointer(void, ObjCasino_ExecGColl2, (task* tp, Float _rad2, NJS_MODEL_SADX* pmodel), 0x5DD320);
+TaskFunc(ObjectCasinoTutuAEnd, 0x5D43C0);
+DataPointer(Float, SAL_kowarezofallspeed, 0x1E74F00);
+DataPointer(Float, SAL_kowarezofraction, 0x1E74F04);
+DataPointer(Float, SAL_kowarezocrashspd, 0x1E74F08);
+DataPointer(Float, SAL_kowarezocrashrad, 0x1E74F0C);
+DataPointer(Float, SAL_kowarezocrashradspd, 0x1E74F10);
+DataPointer(Sint32, SAL_kowarezocrashtime, 0x1E74F14);
+DataPointer(Sint32, SAL_kowarezocrashtimecomptime, 0x1E74F18);
+DataPointer(Float, SAL_kowarezocrashrotspd, 0x1E74F1C);
+DataPointer(Sint32, SAL_kowarezocrashrefspd, 0x1E74F20);
+DataPointer(Sint32, SAL_kowarezocrashrefspdmul, 0x1E74F24);
+DataPointer(Float, SAL_kowarezocrashrefbdspd, 0x1E74F28);
+DataPointer(Float, SAL_kowarezohitsmokesclmul, 0x1E74F2C);
+DataPointer(Float, SAL_kowarezocrashsmokescl, 0x1E74F30);
+
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
@@ -658,5 +674,18 @@ static inline void SetRouteDelta_0(bossextwk* egmwk,  float a2)
 		mov esi, [egmwk]
 		call SetRouteDeletaPtr
 		add esp, 4
+	}
+}
+
+static const void* const CreateCrashSmokePtr = (void*)0x5C3360;
+static inline void CreateCrashSmoke(taskwk* twp, NJS_POINT3* point, Float scl)
+{
+	__asm
+	{
+		push[scl]
+		push[point]
+		mov esi, [twp]
+		call CreateCrashSmokePtr
+		add esp, 8
 	}
 }

@@ -244,6 +244,7 @@
     <ClCompile Include="objects\o_cart_stopper.cpp" />
     <ClCompile Include="objects\o_casino_fanfan.cpp" />
     <ClCompile Include="objects\o_casino_hasigo.cpp" />
+    <ClCompile Include="objects\o_casino_kowaresoniczo.cpp" />
     <ClCompile Include="objects\o_casino_pathcam.cpp" />
     <ClCompile Include="objects\o_finalegg_conveyorbelt.cpp" />
     <ClCompile Include="objects\o_finalegg_elevator2.cpp" />
