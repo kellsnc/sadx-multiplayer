@@ -4,6 +4,9 @@
 #include "splitscreen.h"
 #include "objects/bosses.h"
 
+#include "FunctionHook.h"
+#include "UsercallFunctionHandler.h"
+
 #include "objects/ObjectItemBox.h"
 #include "objects/SnowBoard.h"
 #include "objects/EnemyWindyE103.h"
@@ -39,6 +42,7 @@ static Trampoline* SpinnaDisplayer_t              = nullptr;
 static Trampoline* CCL_IsHitPlayer_t              = nullptr;
 static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
+UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
@@ -95,6 +99,58 @@ void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* 
 	}
 
 	TARGET_DYNAMIC(PGetAccelerationSnowBoard)(twp, mwp, pwp, Max_Speed);
+}
+
+void __cdecl SonicMotionCheckEdition_r(taskwk* twp)
+{
+	if (SplitScreen::IsActive())
+	{
+		auto pnum = TASKWK_PLAYERID(twp);
+		auto& per = perG[pnum];
+
+		if (per.press & Buttons_B)
+		{
+			SetPlayerInitialPosition(twp);
+		}
+		
+		Float lx = (per.x1 << 8);
+		Float ly = (per.y1 << 8);
+
+		if (per.on & Buttons_X)
+		{
+			if (lx > 3072.0f || lx < -3072.0f || ly > 3072.0f || ly < -3072.0f)
+			{
+				if (ly == 0.0f)
+				{
+					twp->pos.y = twp->pos.y - 0.0 * 5.0;
+				}
+				else
+				{
+					twp->pos.y = twp->pos.y - ly / njSqrt(ly * ly) * 5.0f;
+				}
+			}
+		}
+		else
+		{
+			if (lx > 3072.0 || lx < -3072.0 || ly > 3072.0f || ly < -3072.0f)
+			{
+				auto camera_ang = GetCameraAngle(pnum);
+
+				if (!camera_ang)
+				{
+					camera_ang = &camera_twp->ang;
+				}
+
+				Float ang = -camera_ang->y - -njArcTan2(ly, lx);
+				twp->pos.x = njCos(ang) * 5.0f + twp->pos.x;
+				twp->pos.z = njSin(ang) * 5.0f + twp->pos.z;
+			}
+		}
+	}
+	else
+	{
+		SonicMotionCheckEdition.Original(twp);
+	}
 }
 
 // Patch for other players to collect rings
@@ -809,14 +865,17 @@ void initBossesPatches()
 
 void InitPatches()
 {
-	PGetRotation_t                 = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
-	PGetAcceleration_t             = new Trampoline(0x44C270, 0x44C278, PGetAcceleration_r);
-	PGetAccelerationSnowBoard_t    = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
 	Ring_t                         = new Trampoline(0x450370, 0x450375, Ring_r);
 	Tobitiri_t                     = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);
 	PlayerVacumedRing_t            = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
 	savepointCollision_t           = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
+
+	// Player
+	PGetRotation_t = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
+	PGetAcceleration_t = new Trampoline(0x44C270, 0x44C278, PGetAcceleration_r);
+	PGetAccelerationSnowBoard_t = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
+	SonicMotionCheckEdition.Hook(SonicMotionCheckEdition_r);
 
 	// Misc
 	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
