@@ -1,3 +1,5 @@
+![The Sonic Adventure DX logo with the "Director's Cut" text replaced with "Multiplayer"](/docs/images/logo.png)
+
 # 🏆 Sonic Adventure DX: Multiplayer
 
 *Sonic Adventure DX: Multiplayer* is a heavy modification of Sonic Adventure DX using the [SADX Mod Loader](https://github.com/X-Hax/sadx-mod-loader) that adds local and online multiplayer gameplay. It adds a full-fledged menu, a split-screen mode and netplay capability. A significant amount of objects and systems were patched to work with multiplayer and netplay.
