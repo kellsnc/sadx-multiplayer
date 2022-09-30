@@ -198,6 +198,12 @@ static bool InputSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM
 
 void InitInputPatches()
 {
+	// Enable inputs for the other players
+	for (int i = 2; i < PLAYER_MAX; i++)
+	{
+		pInputStatusForEachPlayer[i] = TRUE;
+	}
+
 	PadReadOnP_hook.Hook(PadReadOnP_r);
 	PadReadOffP_hook.Hook(PadReadOffP_r);
 	GetPlayersInputData_hook.Hook(GetPlayersInputData_r);
