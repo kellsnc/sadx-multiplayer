@@ -132,6 +132,14 @@ namespace SplitScreen
         Direct3D_ViewPort.Height = static_cast<DWORD>(ratio->h * static_cast<float>(VerticalResolution));
         Direct3D_Device->SetViewport(&Direct3D_ViewPort);
 
+        _nj_screen_.w = ratio->w * static_cast<float>(HorizontalResolution);
+        _nj_screen_.h = ratio->h * static_cast<float>(VerticalResolution);
+        _nj_screen_.cx = _nj_screen_.w / 2.0f;
+        _nj_screen_.cy = _nj_screen_.h / 2.0f;
+
+        View.ang = 0; // Invalidate FOV to force recalculation of _nj_screen_.dest
+        njSetPerspective(ds_GetPerspective_m(num));
+
         numViewPort = num;
         ___njFogEnable();
 
