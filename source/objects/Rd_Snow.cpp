@@ -7,6 +7,7 @@ DataPointer(NJS_POINT3, pos_7E9634, 0x7E9634);
 DataPointer(NJS_POINT3, pos_7E964C, 0x7E964C);
 static NJS_POINT3 pos_spdman = { 132.0f, 375.0f, -42.0f };
 static NJS_VECTOR vel_spdman = { 4.0f, 0.4f, 0.0f };
+static NJS_VECTOR vel_hardcodedgap = { 14.0f, 0.4f, 0.0f };
 static Angle3 ang_spdman = { 0, 0xB200, 0 };
 
 static void __cdecl Rd_Snow_r(task* tp);
@@ -92,18 +93,27 @@ static void RdSnowBoardingRegular_m(task* tp)
 		{
 			ResetPerspective_m(i);
 			SetInputP(i, PL_OP_LETITGO);
-			CameraReleaseEventCamera();
+			CameraReleaseEventCamera_m(i);
 			continue;
 		}
 
 		done = false;
 
-		// Speed limiter for somewhere, spammed somehow
-		if ((ptwp->flag & Status_Ground) && GetDistance(&pos_spdman, &ptwp->pos) < 30.0f)
+		if ((ptwp->flag & Status_Ground))
 		{
-			SetVelocityAndRotationAndNoconTimeP(0, &vel_spdman, &ang_spdman, 60);
-			auto awp = CreateElementalTask(8u, 2, RdSnowBoardingSpeedManager_m)->awp;
-			awp->work.ul[1] = i;
+			// Controlled speed at the beginning
+			if (GetDistance(&pos_spdman, &ptwp->pos) < 30.0f)
+			{
+				SetVelocityAndRotationAndNoconTimeP(i, &vel_spdman, &ang_spdman, 60);
+				auto awp = CreateElementalTask(8u, 2, RdSnowBoardingSpeedManager_m)->awp;
+				awp->work.ul[1] = i;
+			}
+
+			// Since the avalanch is not there, we hardcode a speed to pass the pit
+			else if (ptwp->pos.x < -5362.0f && ptwp->pos.x > -5462.0f)
+			{
+				SetVelocityAndRotationAndNoconTimeP(i, &vel_hardcodedgap, &ang_spdman, 60);
+			}
 		}
 
 		float deg = fabsf(playerpwp[i]->spd.x);
