@@ -31,28 +31,12 @@ void njSetScreenDist_(Angle bams)
 
 void DrawQueueItem_SetDrawParams(LATE_RQ_T* data)
 {
-    Direct3D_SetZFunc(3u);
+    // Rendering flags
+    _nj_control_3d_flag_ = data->rq.ctrl3dFlg;
+    _nj_constant_attr_and_ = data->rq.atrAnd;
+    _nj_constant_attr_or_ = data->rq.atrOr | NJD_FLAG_DOUBLE_SIDE;
 
-    if ((data->rq.typ & QueuedModelFlags_ZTestWrite) != 0)
-    {
-        njSetZUpdateMode(1u);
-    }
-    else
-    {
-        njSetZUpdateMode(0);
-    }
-
-    njSetConstantMaterial(&data->rq.argb);
-    njColorBlendingMode_(NJD_SOURCE_COLOR, (data->rq.alpMd & 0xF));
-    njColorBlendingMode_(NJD_DESTINATION_COLOR, (data->rq.alpMd >> 4));
-
-    CurrentTexList = data->rq.texLst;
-
-    if (!VerifyTexList(data->rq.texLst))
-    {
-        njSetTexture(data->rq.texLst);
-    }
-
+    // Fog
     if ((data->rq.typ & QueuedModelFlags_FogEnabled))
     {
         if (gu8FogEnbale == FALSE)
@@ -68,12 +52,46 @@ void DrawQueueItem_SetDrawParams(LATE_RQ_T* data)
         }
     }
 
+    // Light
     auto light_type = data->rq.typ >> 6;
-
-    if (light_type != lig_curGjPaletteNo___)
+    if (light_type != -1)
     {
-        ___dsSetPalette(light_type);
+        if (data->rq.no & 0x8000)
+        {
+            _nj_constant_attr_or_ |= NJD_FLAG_IGNORE_LIGHT | NJD_FLAG_IGNORE_SPECULAR;
+            light_type = 0;
+        }
+
+        if (light_type != lig_curGjPaletteNo___)
+        {
+            ___dsSetPalette(light_type);
+        }
+
+        ScaleVectorThing_Restore();
     }
+    
+    // Texture
+    CurrentTexList = data->rq.texLst;
+    if (!VerifyTexList(data->rq.texLst))
+    {
+        Direct3D_SetTexList(data->rq.texLst);
+    }
+
+    // Depth
+    Direct3D_SetZFunc(3u);
+    if ((data->rq.typ & QueuedModelFlags_ZTestWrite) != 0)
+    {
+        njSetZUpdateMode(1u);
+    }
+    else
+    {
+        njSetZUpdateMode(0);
+    }
+
+    // Material
+    njSetConstantMaterial(&data->rq.argb);
+    njColorBlendingMode_(NJD_SOURCE_COLOR, (data->rq.alpMd & 0xF));
+    njColorBlendingMode_(NJD_DESTINATION_COLOR, (data->rq.alpMd >> 4));
 }
 
 void DrawQueueItem_SetViewPort(LATE_RQ_T* data)
