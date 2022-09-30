@@ -230,6 +230,7 @@ void __cdecl LoopTask_r()
             DrawScreen(i);
         }
 
+        SplitScreen::numScreen = 0;
         SplitScreen::ChangeViewPort(-1);
     }
     else
