@@ -39,6 +39,7 @@ static Trampoline* savepointCollision_t           = nullptr;
 static Trampoline* TikalDisplay_t                 = nullptr;
 static Trampoline* ObjectSpringB_t                = nullptr;
 static Trampoline* SpinnaDisplayer_t              = nullptr;
+static Trampoline* ListGroundForDrawing_t         = nullptr;
 static Trampoline* CCL_IsHitPlayer_t              = nullptr;
 static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
@@ -771,7 +772,7 @@ void __cdecl SpinnaDisplayer_r(task* tp)
 	}
 }
 
-BOOL dsCheckViewV_r(NJS_POINT3* ft, float radius)
+BOOL __cdecl dsCheckViewV_r(NJS_POINT3* ft, float radius)
 {
 	if (multiplayer::IsActive())
 	{
@@ -780,6 +781,54 @@ BOOL dsCheckViewV_r(NJS_POINT3* ft, float radius)
 	else
 	{
 		return dsCheckViewV(ft, radius);
+	}
+}
+
+void __cdecl ListGroundForDrawing_r()
+{
+	if (SplitScreen::IsActive())
+	{
+		auto cam_pos = GetCameraPosition(SplitScreen::GetCurrentScreenNum());
+		auto cam_ang = GetCameraAngle(SplitScreen::GetCurrentScreenNum());
+
+		if (!cam_pos || ! cam_ang)
+		{
+			return;
+		}
+
+		numDisplayEntry = 0;
+
+		NJS_POINT3 center = {0.0f, 0.0f, MaxDrawDistance * -0.5f};
+
+		njPushMatrix(_nj_unit_matrix_);
+		njRotateY_(cam_ang->y);
+		njRotateX_(cam_ang->x);
+		njCalcPoint(0, &center, &center);
+		njPopMatrixEx();
+
+		center.x += cam_pos->x;
+		center.y += cam_pos->y;
+		center.z += cam_pos->z;
+
+		for (int i = 0; i < pObjLandTable->ssCount; ++i)
+		{
+			auto col = &pObjLandTable->pLandEntry[i];
+
+			if (!col->blockbit || col->blockbit & MaskBlock)
+			{
+				if (col->slAttribute & ColFlags_Visible)
+				{
+					if (col->slAttribute & ColFlags_UseSkyDrawDist || GetDistance(&center, (NJS_POINT3*)&col->xCenter) < col->xWidth + MaxDrawDistance)
+					{
+						pDisplayEntry[numDisplayEntry++] = col;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(ListGroundForDrawing)();
 	}
 }
 
@@ -870,6 +919,7 @@ void InitPatches()
 	PlayerVacumedRing_t            = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
 	savepointCollision_t           = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
+	ListGroundForDrawing_t         = new Trampoline(0x43A900, 0x43A905, ListGroundForDrawing_r);
 
 	// Player
 	PGetRotation_t = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -900,7 +950,7 @@ void InitPatches()
 	// Enemies
 	SpinnaDisplayer_t = new Trampoline(0x4AFD80, 0x4AFD85, SpinnaDisplayer_r);
 
-	//bosses
+	// Bosses
 	SetCircleLimit_t.Hook(SetCircleLimit_r);
 
 	// Character shadows:
