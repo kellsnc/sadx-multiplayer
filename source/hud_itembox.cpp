@@ -235,7 +235,7 @@ static void itemBoxManager_m(task* tp)
 
 static void __cdecl itemBoxManager_r(task* tp)
 {
-	if (multiplayer::IsBattleMode())
+	if (multiplayer::IsActive())
 	{
 		itemBoxManager_m(tp);
 	}
