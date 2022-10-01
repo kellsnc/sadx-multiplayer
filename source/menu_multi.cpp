@@ -559,11 +559,11 @@ void OpenModeDialog(const DialogPrmType* dial, int csr)
 
 		if (i < 6)
 		{
-			allowed = enabled_characters[i];
+			allowed = GetEachCharEnableForTrial(i);
 		}
 		else if (i == 6)
 		{
-			allowed = SaveData[0].flgCompletedActionStage[0][STAGE_MG_CART];
+			allowed = true;
 		}
 
 		if (!allowed)
@@ -584,7 +584,7 @@ void OpenModeDialog(const DialogPrmType* dial, int csr)
 	}
 }
 
-void OpenLevelDialog(const DialogPrmType* dial, const int* list, int csr)
+void OpenLevelDialog(const DialogPrmType* dial, const int* list, int character, int csr)
 {
 	Sint8 dis_csr[12];
 
@@ -592,10 +592,7 @@ void OpenLevelDialog(const DialogPrmType* dial, const int* list, int csr)
 
 	for (int i = 0; i < dial->CsrMax; ++i)
 	{
-		int stg = tolevelnum(list[i]);
-		int act = toactnum(list[i]);
-
-		if (SaveData[0].flgCompletedActionStage[act][stg] == FALSE)
+		if (flgCompletedActionStage[character][tolevelnum(list[i])] == FALSE)
 		{
 			dis_csr[dis_cnt] = i;
 			++dis_cnt;
@@ -666,6 +663,7 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 		OpenModeDialog(&MultiMenuBattleSelDialog, nextdial);
 		break;
 	case MD_MULTI_CHARSEL: // Open character select
+		menu_multi_getcharaenable();
 		menu_multi_charsel_unready();
 
 		if (gNextMultiMode == multiplayer::mode::coop)
@@ -676,32 +674,32 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	case MD_MULTI_STGSEL_SPD:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_SPD;
-		OpenLevelDialog(&MultiMenuStageSelSonicDialog, spd_level_link, nextdial);
+		OpenLevelDialog(&MultiMenuStageSelSonicDialog, spd_level_link, Characters_Sonic, nextdial);
 		break;
 	case MD_MULTI_STGSEL_FLY:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_FLY;
-		OpenLevelDialog(&MultiMenuStageSelFlyDialog, fly_level_link, nextdial);
+		OpenLevelDialog(&MultiMenuStageSelFlyDialog, fly_level_link, Characters_Tails, nextdial);
 		break;
 	case MD_MULTI_STGSEL_EME:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_EME;
-		OpenLevelDialog(&MultiMenuStageSelEmeDialog, eme_level_link, nextdial);
+		OpenLevelDialog(&MultiMenuStageSelEmeDialog, eme_level_link, Characters_Knuckles, nextdial);
 		break;
 	case MD_MULTI_STGSEL_EGROB:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_EGROB;
-		OpenLevelDialog(&MultiMenuStageSelEgRobDialog, egrob_level_link, nextdial);
+		OpenLevelDialog(&MultiMenuStageSelEgRobDialog, egrob_level_link, Characters_Amy, nextdial);
 		break;
 	case MD_MULTI_STGSEL_FISH:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_FISH;
-		OpenLevelDialog(&MultiMenuStageSelBigDialog, fish_level_link, nextdial);
+		OpenLevelDialog(&MultiMenuStageSelBigDialog, fish_level_link, Characters_Big, nextdial);
 		break;
 	case MD_MULTI_STGSEL_SHOOT:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_SHOOT;
-		OpenLevelDialog(&MultiMenuStageSelShootDialog, shoot_level_link, nextdial);
+		OpenLevelDialog(&MultiMenuStageSelShootDialog, shoot_level_link, Characters_Gamma, nextdial);
 		break;
 	case MD_MULTI_STGSEL_TC:
 		menu_multi_setsqrcursor();
@@ -711,7 +709,7 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	case MD_MULTI_STGSEL_VS:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_VS;
-		OpenLevelDialog(&MultiMenuStageSelVsDialog, vs_level_link, nextdial);
+		OpenDialogCsrLet(&MultiMenuStageSelVsDialog, nextdial, 0);
 		break;
 	case MD_MULTI_STGASK: // Open prompt to ask level confirmation
 		menu_multi_setrndcursor();
@@ -1652,7 +1650,6 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		// Initialize menu or reset previous state
 		if (saved_mode <= MD_MULTI_BATTLESEL)
 		{
-			menu_multi_getcharaenable();
 			menu_multi_charsel_unready();
 			menu_multi_unready();
 			menu_multi_change(wk, MD_MULTI_CONNECT);
