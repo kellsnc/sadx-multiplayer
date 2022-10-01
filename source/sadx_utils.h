@@ -205,6 +205,94 @@ struct beamhitstr
 	xssunit hitinfo;
 };
 
+struct CLEAR_TIME
+{
+	char m;
+	char s;
+	char f;
+};
+
+struct BEST3_WEIGHT
+{
+	__int16 weight[3];
+};
+
+struct BEST3_SCORE
+{
+	int score[3];
+};
+
+struct BEST3_CART
+{
+	CLEAR_TIME time[3];
+	CLEAR_TIME lap[2];
+};
+
+struct BEST3_TIME
+{
+	CLEAR_TIME time[3];
+};
+
+struct SEQ_DATA
+{
+	char time;
+	char s8pad;
+	__int16 seqno;
+	__int16 sec;
+	__int16 nextsec;
+	unsigned __int16 stage;
+	unsigned __int16 destination;
+};
+
+struct BIGGEST_WEIGHT
+{
+	__int16 weight;
+	__int16 type;
+};
+
+struct SAVE_DATA
+{
+	int code;
+	int totalTime;
+	int bestScore[32];
+	CLEAR_TIME bestTime[28];
+	BEST3_WEIGHT bestWeight[4];
+	BIGGEST_WEIGHT biggestWeight[4];
+	__int16 bestRing[32];
+	BEST3_SCORE miniShooting[2];
+	BEST3_SCORE miniShooting2[2];
+	BEST3_SCORE miniSnowBoard[2];
+	BEST3_SCORE miniSandBoard[2];
+	BEST3_SCORE miniMole;
+	BEST3_CART miniCart[6];
+	BEST3_TIME bossGame[6];
+	char emblem[17];
+	char option;
+	char charenge[7];
+	unsigned __int8 lastPlayer;
+	unsigned __int8 vibration;
+	char dummy;
+	unsigned __int16 lastStage;
+	unsigned __int16 lastAction;
+	char seqVars[64];
+	char evExecFlag[64];
+	char scPlayableFlag[8];
+	SEQ_DATA seqTable[8];
+	char flgCompletedActionStage[8][43];
+	unsigned __int8 MissionData[60];
+	unsigned int u32TotalRing;
+	int M_bestScore[10];
+	CLEAR_TIME M_bestTime[10];
+	__int16 M_bestRing[10];
+	char Align[2];
+	BEST3_SCORE M_miniSnowBoard;
+	BEST3_SCORE M_miniSandBoard;
+	BEST3_CART M_miniCart;
+	BEST3_TIME M_bossGame;
+	int M_emblem;
+};
+
+DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);

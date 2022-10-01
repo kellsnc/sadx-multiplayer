@@ -321,21 +321,7 @@ const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullp
 const DialogPrmType MultiMenuStageSelVsDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelVs, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelVs), 8i8 };
 DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, menu_multi_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 4i8, 3i8 };
 
-std::pair<int, int> spd_level_link_btl[] = {
-	{ LevelAndActIDs_EmeraldCoast1, 2 },
-	{ LevelAndActIDs_WindyValley1, 3 },
-	{ LevelAndActIDs_Casinopolis2, 1 },
-	{ LevelAndActIDs_IceCap2, 2 },
-	{ LevelAndActIDs_TwinklePark1, 3 },
-	{ LevelAndActIDs_SpeedHighway1, 3 },
-	{ LevelAndActIDs_RedMountain1, 2 },
-	{ LevelAndActIDs_SkyDeck1, 3 },
-	{ LevelAndActIDs_LostWorld1, 2 },
-	{ LevelAndActIDs_FinalEgg1, 3 },
-	{ LevelAndActIDs_SandHill, 1 }
-};
-
-int spd_level_link[]{
+const int spd_level_link[]{
 	LevelAndActIDs_EmeraldCoast1,
 	LevelAndActIDs_WindyValley1,
 	LevelAndActIDs_Casinopolis2,
@@ -349,7 +335,7 @@ int spd_level_link[]{
 	LevelAndActIDs_SandHill
 };
 
-int fly_level_link[]{
+const int fly_level_link[]{
 	LevelAndActIDs_WindyValley3,
 	LevelAndActIDs_Casinopolis2,
 	LevelAndActIDs_IceCap3,
@@ -357,7 +343,7 @@ int fly_level_link[]{
 	LevelAndActIDs_SpeedHighway1
 };
 
-int eme_level_link[]{
+const int eme_level_link[]{
 	LevelAndActIDs_SpeedHighway3,
 	LevelAndActIDs_Casinopolis1,
 	LevelAndActIDs_RedMountain3,
@@ -365,20 +351,20 @@ int eme_level_link[]{
 	LevelAndActIDs_SkyDeck3
 };
 
-int egrob_level_link[]{
+const int egrob_level_link[]{
 	LevelAndActIDs_TwinklePark2,
 	LevelAndActIDs_HotShelter1,
 	LevelAndActIDs_FinalEgg1
 };
 
-int fish_level_link[]{
+const int fish_level_link[]{
 	LevelAndActIDs_TwinklePark2,
 	LevelAndActIDs_IceCap2,
 	LevelAndActIDs_EmeraldCoast3,
 	LevelAndActIDs_HotShelter1
 };
 
-int shoot_level_link[]{
+const int shoot_level_link[]{
 	LevelAndActIDs_FinalEgg3,
 	LevelAndActIDs_EmeraldCoast1,
 	LevelAndActIDs_WindyValley1,
@@ -386,7 +372,7 @@ int shoot_level_link[]{
 	LevelAndActIDs_HotShelter3
 };
 
-int twinkle_level_link[]{
+const int twinkle_level_link[]{
 	LevelAndActIDs_TwinkleCircuit1,
 	LevelAndActIDs_TwinkleCircuit2,
 	LevelAndActIDs_TwinkleCircuit3,
@@ -395,7 +381,18 @@ int twinkle_level_link[]{
 	LevelAndActIDs_TwinkleCircuit6
 };
 
-int charsel_voicelist[] {
+const int vs_level_link[]{
+	LevelAndActIDs_Chaos0,
+	LevelAndActIDs_Chaos2,
+	LevelAndActIDs_Chaos4,
+	LevelAndActIDs_Chaos6Knuckles,
+	LevelAndActIDs_EggHornet,
+	LevelAndActIDs_EggWalker,
+	LevelAndActIDs_E101,
+	LevelAndActIDs_E101R
+};
+
+const int charsel_voicelist[] {
 	1098,
 	569,
 	528,
@@ -405,17 +402,6 @@ int charsel_voicelist[] {
 	394,
 	1346,
 	2047
-};
-
-int vs_level_link[]{
-	LevelAndActIDs_Chaos0,
-	LevelAndActIDs_Chaos2,
-	LevelAndActIDs_Chaos4,
-	LevelAndActIDs_Chaos6Knuckles,
-	LevelAndActIDs_EggHornet,
-	LevelAndActIDs_EggWalker,
-	LevelAndActIDs_E101,
-	LevelAndActIDs_E101R
 };
 
 const AvaTexLdEnum AvaTexLdListForMulti[]{
@@ -561,6 +547,72 @@ void menu_multi_getcharaenable()
 	}
 }
 
+void OpenModeDialog(const DialogPrmType* dial, int csr)
+{
+	Sint8 dis_csr[9];
+
+	int dis_cnt = 0;
+
+	for (int i = 0; i < dial->CsrMax; ++i)
+	{
+		bool allowed = false;
+
+		if (i < 6)
+		{
+			allowed = enabled_characters[i];
+		}
+		else if (i == 6)
+		{
+			allowed = SaveData[0].flgCompletedActionStage[0][STAGE_MG_CART];
+		}
+
+		if (!allowed)
+		{
+			dis_csr[dis_cnt] = i;
+			++dis_cnt;
+		}
+	}
+
+	if (dis_cnt == 0)
+	{
+		OpenDialogCsrLet(dial, csr, NULL);
+	}
+	else
+	{
+		dis_csr[dis_cnt] = -1;
+		OpenDialogCsrLet(dial, csr, (char*)dis_csr);
+	}
+}
+
+void OpenLevelDialog(const DialogPrmType* dial, const int* list, int csr)
+{
+	Sint8 dis_csr[12];
+
+	int dis_cnt = 0;
+
+	for (int i = 0; i < dial->CsrMax; ++i)
+	{
+		int stg = tolevelnum(list[i]);
+		int act = toactnum(list[i]);
+
+		if (SaveData[0].flgCompletedActionStage[act][stg] == FALSE)
+		{
+			dis_csr[dis_cnt] = i;
+			++dis_cnt;
+		}
+	}
+
+	if (dis_cnt == 0)
+	{
+		OpenDialogCsrLet(dial, csr, NULL);
+	}
+	else
+	{
+		dis_csr[dis_cnt] = -1;
+		OpenDialogCsrLet(dial, csr, (char*)dis_csr);
+	}
+}
+
 void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 {
 	int nextdial = wk->SubMode < id ? 0 : gNextDialogStat;
@@ -606,15 +658,14 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	case MD_MULTI_COOPSEL:
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_COOPSEL;
-		OpenDialogCsrLet(&MultiMenuCoopSelDialog, nextdial, 0);
+		OpenModeDialog(&MultiMenuCoopSelDialog, nextdial);
 		break;
 	case MD_MULTI_BATTLESEL:
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_BATTLESEL;
-		OpenDialogCsrLet(&MultiMenuBattleSelDialog, nextdial, 0);
+		OpenModeDialog(&MultiMenuBattleSelDialog, nextdial);
 		break;
 	case MD_MULTI_CHARSEL: // Open character select
-		menu_multi_getcharaenable();
 		menu_multi_charsel_unready();
 
 		if (gNextMultiMode == multiplayer::mode::coop)
@@ -625,32 +676,32 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	case MD_MULTI_STGSEL_SPD:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_SPD;
-		OpenDialogCsrLet(&MultiMenuStageSelSonicDialog, nextdial, 0);
+		OpenLevelDialog(&MultiMenuStageSelSonicDialog, spd_level_link, nextdial);
 		break;
 	case MD_MULTI_STGSEL_FLY:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_FLY;
-		OpenDialogCsrLet(&MultiMenuStageSelFlyDialog, nextdial, 0);
+		OpenLevelDialog(&MultiMenuStageSelFlyDialog, fly_level_link, nextdial);
 		break;
 	case MD_MULTI_STGSEL_EME:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_EME;
-		OpenDialogCsrLet(&MultiMenuStageSelEmeDialog, nextdial, 0);
+		OpenLevelDialog(&MultiMenuStageSelEmeDialog, eme_level_link, nextdial);
 		break;
 	case MD_MULTI_STGSEL_EGROB:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_EGROB;
-		OpenDialogCsrLet(&MultiMenuStageSelEgRobDialog, nextdial, 0);
+		OpenLevelDialog(&MultiMenuStageSelEgRobDialog, egrob_level_link, nextdial);
 		break;
 	case MD_MULTI_STGSEL_FISH:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_FISH;
-		OpenDialogCsrLet(&MultiMenuStageSelBigDialog, nextdial, 0);
+		OpenLevelDialog(&MultiMenuStageSelBigDialog, fish_level_link, nextdial);
 		break;
 	case MD_MULTI_STGSEL_SHOOT:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_SHOOT;
-		OpenDialogCsrLet(&MultiMenuStageSelShootDialog, nextdial, 0);
+		OpenLevelDialog(&MultiMenuStageSelShootDialog, shoot_level_link, nextdial);
 		break;
 	case MD_MULTI_STGSEL_TC:
 		menu_multi_setsqrcursor();
@@ -660,7 +711,7 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	case MD_MULTI_STGSEL_VS:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_VS;
-		OpenDialogCsrLet(&MultiMenuStageSelVsDialog, nextdial, 0);
+		OpenLevelDialog(&MultiMenuStageSelVsDialog, vs_level_link, nextdial);
 		break;
 	case MD_MULTI_STGASK: // Open prompt to ask level confirmation
 		menu_multi_setrndcursor();
@@ -785,7 +836,7 @@ void menu_multi_stg_confirm(MultiMenuWK* wk)
 	}
 }
 
-void menu_multi_stgsel(MultiMenuWK* wk, const DialogPrmType* dialog, int* list, int back)
+void menu_multi_stgsel(MultiMenuWK* wk, const DialogPrmType* dialog, const int* list, int back)
 {
 	auto stat = GetDialogStat();
 
@@ -1601,6 +1652,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		// Initialize menu or reset previous state
 		if (saved_mode <= MD_MULTI_BATTLESEL)
 		{
+			menu_multi_getcharaenable();
 			menu_multi_charsel_unready();
 			menu_multi_unready();
 			menu_multi_change(wk, MD_MULTI_CONNECT);
