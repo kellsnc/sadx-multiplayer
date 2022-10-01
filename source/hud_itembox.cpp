@@ -125,16 +125,9 @@ static void manager_Disp_m(task* tp)
 
 static void __cdecl manager_Disp_r(task* tp)
 {
-	if (multiplayer::IsBattleMode())
+	if (multiplayer::IsActive())
 	{
 		manager_Disp_m(tp);
-	}
-	else if (SplitScreen::IsActive())
-	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
-		TARGET_DYNAMIC(manager_Disp)(tp);
-		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
