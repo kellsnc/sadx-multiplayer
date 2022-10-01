@@ -398,6 +398,7 @@ DataPointer(Float, SAL_kowarezocrashrefbdspd, 0x1E74F28);
 DataPointer(Float, SAL_kowarezohitsmokesclmul, 0x1E74F2C);
 DataPointer(Float, SAL_kowarezocrashsmokescl, 0x1E74F30);
 DataPointer(Uint16, numDisplayEntry, 0x3B32D2C);
+VoidFunc(InitScore, 0x427EE0);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);

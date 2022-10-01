@@ -71,8 +71,11 @@ void LoadCharObj(int pnum, int character)
 
 void ResetEnemyScoreM()
 {
-    InitActionScore();
-    ssNumRing_m.clear();
+    Score = 0;
+    EnemyScore_m.clear();
+    ComboScore = 0;
+    ComboTimer = 0;
+    *(int*)0x3B0F138 = 0;
 }
 
 int GetEnemyScoreM(int pNum)
@@ -618,7 +621,13 @@ void SetOtherPlayers()
     }
 }
 
-int GetRaceWinnerPlayer_r() {
+void __cdecl InitScore_r()
+{
+    ResetNumRingM();
+    slJudge = 0;
+}
+
+int __cdecl GetRaceWinnerPlayer_r() {
 
     if (multiplayer::IsCoopMode()) {
         for (int i = 1; i < PLAYER_MAX; i++) {
@@ -632,7 +641,6 @@ int GetRaceWinnerPlayer_r() {
     return RaceWinnerPlayer;
 }
 
-
 void InitPlayerPatches()
 {
     isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
@@ -643,6 +651,8 @@ void InitPlayerPatches()
 
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteJump(ResetNumRing, ResetNumRingM);
+    WriteJump(InitActionScore, ResetEnemyScoreM);
+    WriteJump(InitScore, InitScore_r);
     WriteJump(GetRaceWinnerPlayer, GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
 
     network.RegisterListener(Network::PACKET_PLAYER_LOCATION, PlayerListener);
