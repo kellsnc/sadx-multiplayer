@@ -66,23 +66,25 @@ static void __cdecl SetFinishAction_r()
 			ForcePlayerAction(i, 19);
 		}
 
-		if (CurrentLevel == LevelIDs_TwinkleCircuit)
-		{
-			ADX_Close();
-		}
-		else
-		{
-			Load_DelayedSound_BGM(75);
-			PlayCharaWinSound();
-		}
-
+		// Battle result screen
 		if (multiplayer::IsBattleMode())
+		{
+			if (CurrentLevel == LevelIDs_TwinkleCircuit)
+			{
+				ADX_Close();
+			}
+			else
+			{
+				Load_DelayedSound_BGM(75);
+				PlayCharaWinSound();
+			}
+
 			LoadMultiplayerResult();
+			return;
+		}
 	}
-	else
-	{
-		SetFinishAction_t.Original();
-	}
+
+	SetFinishAction_t.Original();
 }
 
 static void __cdecl CalcTotalScore_r(task* tp)
