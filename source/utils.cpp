@@ -2,15 +2,6 @@
 #include "camera.h"
 #include "splitscreen.h"
 
-void DrawSADXText(const char* text, __int16 y)
-{
-	NH_MSG_Close(&jimakumsgc);
-	DialogJimakuInit();
-	NH_MSG_Open(&jimakumsgc, 0, y, 0, 0, 0xFF000020, jimakubuf);
-	DoSomethingRelatedToText_(text);
-	MSG_LoadTexture(&jimakumsgc);
-}
-
 short tolevelnum(short num)
 {
 	return num >> 8;

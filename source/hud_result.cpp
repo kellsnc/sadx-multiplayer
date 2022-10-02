@@ -25,9 +25,11 @@ const PanelPrmType PanelContinueSet[]{
 	{ 114.0f, 22.5f, 4 }
 };
 
+static MSGC msgc_continue;
+
 static void DialogContinueProc(DDlgType* ddltype)
 {
-	DrawSADXText(continue_texts[TextLanguage], 335);
+	MSG_Disp(&msgc_continue);
 }
 
 const DialogPrmType DialogAskContinue{ DLG_PNLSTYLE_MARU, DialogContinueProc, &ava_dlg_e_TEXLIST, (PanelPrmType*)PanelContinueSet, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 379.0f, 10.0f, 568.0f, 120.0f, 1.625f, 0.8f, 2, 1 };
@@ -105,6 +107,8 @@ static void __cdecl CalcTotalScoreM_dest(task* tp)
 	njReleaseTexture(&ava_dlg_e_TEXLIST);
 	njReleaseTexture(&adv_window_TEXLIST);
 	njReleaseTexture(&ava_csr_TEXLIST);
+
+	MSG_Close(&msgc_continue);
 }
 
 void PlayDefeatAnimation()
@@ -184,6 +188,11 @@ static void __cdecl CalcTotalScoreM(task* tp)
 		{
 			if (CanShowDialog())
 			{
+				MSG_Open(&msgc_continue, 0, 335, 0, 0, 0xD0000020);
+				MSG_Cls(&msgc_continue);
+				MSG_Puts(&msgc_continue, continue_texts[TextLanguage]);
+				MSG_LoadTexture(&msgc_continue);
+
 				*(task**)0x3B22E28 = SetDialogTask();
 				OpenDialogCsrLet(&DialogAskContinue, 1, nullptr);
 				twp->mode = RESULT_DIAL;

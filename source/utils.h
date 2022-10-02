@@ -1,6 +1,5 @@
 #pragma once
 
-void DrawSADXText(const char* text, __int16 y);
 short tolevelnum(short num);
 short toactnum(short num);
 void SetAllPlayersInitialPosition();

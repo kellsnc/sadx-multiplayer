@@ -443,6 +443,34 @@ std::string address_text;
 
 static MSGC msgc_address;
 static MSGC msgc_connect;
+static MSGC msgc_confirm;
+static MSGC msgc_press_start;
+
+static void FreePressStartText()
+{
+	MSG_Close(&msgc_press_start);
+}
+
+static void LoadPressStartText()
+{
+	MSG_Open(&msgc_press_start, 0, 210, 0, 0, 0xD0000020);
+	MSG_Cls(&msgc_press_start);
+	MSG_Puts(&msgc_press_start, press_start_texts[TextLanguage]);
+	MSG_LoadTexture(&msgc_press_start);
+}
+
+static void FreeConfirmText()
+{
+	MSG_Close(&msgc_confirm);
+}
+
+static void LoadConfirmText()
+{
+	MSG_Open(&msgc_confirm, 0, 315, 0, 0, 0xD0000020);
+	MSG_Cls(&msgc_confirm);
+	MSG_Puts(&msgc_confirm, stg_confirm_texts[TextLanguage]);
+	MSG_LoadTexture(&msgc_confirm);
+}
 
 static void FreeAddressText()
 {
@@ -798,7 +826,7 @@ void menu_multi_tomodesel(MultiMenuWK* wk)
 
 void menu_multi_confirmdialog_proc(DDlgType* ddltype)
 {
-	DrawSADXText(stg_confirm_texts[TextLanguage], 315);
+	MSG_Disp(&msgc_confirm);
 	
 	AVA_MULTI_SPRITE.p.x = 320;
 	AVA_MULTI_SPRITE.p.y = 200;
@@ -1439,7 +1467,7 @@ void menu_multi_disp_localcon(MultiMenuWK* wk)
 
 	SetMaterial(wk->alphaConnect, 1.0f, 1.0f, 1.0f);
 
-	DrawSADXText(press_start_texts[TextLanguage], 210i16);
+	MSG_Disp(&msgc_press_start);
 
 	AVA_MULTI_SPRITE.p.x = 220.0f;
 	AVA_MULTI_SPRITE.p.y = 270.0f;
@@ -1647,6 +1675,9 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		AvaLoadTexForEachMode(ADVA_MODE_MULTI);
 
+		LoadConfirmText();
+		LoadPressStartText();
+
 		// Initialize menu or reset previous state
 		if (saved_mode <= MD_MULTI_BATTLESEL)
 		{
@@ -1716,6 +1747,8 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 			AvaReleaseTexForEachMode();
 
+			FreePressStartText();
+			FreeConfirmText();
 			FreeAddressText();
 			MSG_Close(&msgc_connect);
 
