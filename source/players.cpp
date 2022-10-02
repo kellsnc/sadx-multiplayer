@@ -47,7 +47,7 @@ VariableHook<int32_t, 0x3B0F104> EnemyScore_m;
 
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
-static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack;
+static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack | Status_LightDash;
 
 TaskFuncPtr charfuncs[] = {
     SonicTheHedgehog,
@@ -593,7 +593,6 @@ void SetPlayer_r()
     }
     else
     {
-        //TARGET_DYNAMIC(SetPlayer)();
         return SetPlayer_t.Original();
     }
 }
