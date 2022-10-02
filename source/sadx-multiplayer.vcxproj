@@ -107,6 +107,7 @@
     <ClInclude Include="fog.h" />
     <ClInclude Include="forcewk.h" />
     <ClInclude Include="framework.h" />
+    <ClInclude Include="GameText.hpp" />
     <ClInclude Include="gravity.h" />
     <ClInclude Include="hud_emerald.h" />
     <ClInclude Include="hud_fishing.h" />

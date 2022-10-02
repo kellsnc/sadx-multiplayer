@@ -639,6 +639,9 @@
     <ClInclude Include="objects\e_gachapon.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
+    <ClInclude Include="GameText.hpp">
+      <Filter>Header FIles\classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">

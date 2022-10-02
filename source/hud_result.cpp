@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "GameText.hpp"
 #include "hud_result.h"
 #include "result.h"
 #include "splitscreen.h"
@@ -13,11 +15,11 @@ enum MD_RESULT
 };
 
 const char* continue_texts[]{
-	"Continue?",
-	"Continue?",
-	"Continuer ?",
-	"¿Continuar?",
-	"Continue?"
+	"\aContinue?",
+	"\aContinue?",
+	"\aContinuer ?",
+	"\a¿Continuar?",
+	"\aContinue?"
 };
 
 const PanelPrmType PanelContinueSet[]{
@@ -25,11 +27,11 @@ const PanelPrmType PanelContinueSet[]{
 	{ 114.0f, 22.5f, 4 }
 };
 
-static MSGC msgc_continue;
+static GameText msgc_continue;
 
 static void DialogContinueProc(DDlgType* ddltype)
 {
-	MSG_Disp(&msgc_continue);
+	msgc_continue.Draw();
 }
 
 const DialogPrmType DialogAskContinue{ DLG_PNLSTYLE_MARU, DialogContinueProc, &ava_dlg_e_TEXLIST, (PanelPrmType*)PanelContinueSet, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 379.0f, 10.0f, 568.0f, 120.0f, 1.625f, 0.8f, 2, 1 };
@@ -108,7 +110,7 @@ static void __cdecl CalcTotalScoreM_dest(task* tp)
 	njReleaseTexture(&adv_window_TEXLIST);
 	njReleaseTexture(&ava_csr_TEXLIST);
 
-	MSG_Close(&msgc_continue);
+	msgc_continue.Free();
 }
 
 void PlayDefeatAnimation()
@@ -188,10 +190,7 @@ static void __cdecl CalcTotalScoreM(task* tp)
 		{
 			if (CanShowDialog())
 			{
-				MSG_Open(&msgc_continue, 0, 335, 0, 0, 0xD0000020);
-				MSG_Cls(&msgc_continue);
-				MSG_Puts(&msgc_continue, continue_texts[TextLanguage]);
-				MSG_LoadTexture(&msgc_continue);
+				msgc_continue.Initialize(continue_texts[TextLanguage], 0, 335);
 
 				*(task**)0x3B22E28 = SetDialogTask();
 				OpenDialogCsrLet(&DialogAskContinue, 1, nullptr);

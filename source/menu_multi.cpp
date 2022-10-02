@@ -1,6 +1,7 @@
 #include "pch.h"
 #include <utility>
 #include "SADXModLoader.h"
+#include "GameText.hpp"
 #include "menu.h"
 #include "network.h"
 #include "config.h"
@@ -409,19 +410,19 @@ const AvaTexLdEnum AvaTexLdListForMulti[]{
 };
 
 const char* stg_confirm_texts[] {
-	"Do you want to play this stage?",
-	"Do you want to play this stage?",
-	"Voulez-vous jouer à ce niveau ?",
-	"¿Quieres jugar este nivel?",
-	"Do you want to play this stage?"
+	"\aDo you want to play this stage?",
+	"\aDo you want to play this stage?",
+	"\aVoulez-vous jouer à ce niveau ?",
+	"\a¿Quieres jugar este nivel?",
+	"\aDo you want to play this stage?"
 };
 
 const char* press_start_texts[] {
-	"Press start to join",
-	"Press start to join",
-	"Appuyez sur entrer pour joindre",
-	"Presiona start para unirte",
-	"Press start to join"
+	"\aPress start to join",
+	"\aPress start to join",
+	"\aAppuyez sur entrer pour joindre",
+	"\aPresiona start para unirte",
+	"\aPress start to join"
 };
 
 static constexpr size_t address_limit = 32;
@@ -441,49 +442,11 @@ ConnectMenuMode gConnectMenuMode;
 multiplayer::mode gNextMultiMode;
 std::string address_text;
 
-static MSGC msgc_address;
-static MSGC msgc_connect;
-static MSGC msgc_confirm;
-static MSGC msgc_press_start;
-
-static void FreePressStartText()
-{
-	MSG_Close(&msgc_press_start);
-}
-
-static void LoadPressStartText()
-{
-	MSG_Open(&msgc_press_start, 0, 210, 0, 0, 0xD0000020);
-	MSG_Cls(&msgc_press_start);
-	MSG_Puts(&msgc_press_start, press_start_texts[TextLanguage]);
-	MSG_LoadTexture(&msgc_press_start);
-}
-
-static void FreeConfirmText()
-{
-	MSG_Close(&msgc_confirm);
-}
-
-static void LoadConfirmText()
-{
-	MSG_Open(&msgc_confirm, 0, 315, 0, 0, 0xD0000020);
-	MSG_Cls(&msgc_confirm);
-	MSG_Puts(&msgc_confirm, stg_confirm_texts[TextLanguage]);
-	MSG_LoadTexture(&msgc_confirm);
-}
-
-static void FreeAddressText()
-{
-	MSG_Close(&msgc_address);
-}
-
-static void LoadAddressText()
-{
-	MSG_Open(&msgc_address, 0, 230, 0, 0, 0xD0000020);
-	MSG_Cls(&msgc_address);
-	MSG_Puts(&msgc_address, address_text.c_str());
-	MSG_LoadTexture(&msgc_address);
-}
+static GameText msgc_address;
+static GameText msgc_waiting;
+static GameText msgc_connect;
+static GameText msgc_confirm;
+static GameText msgc_press_start;
 
 void menu_multi_charsel_unready()
 {
@@ -663,12 +626,15 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 			{
 				gConnectSelection = ConnectMenuSelection::Client;
 				gConnectMenuMode = ConnectMenuMode::Select;
-				if (address_text.empty()) address_text = config::network::default_ip + ":" + std::to_string(config::network::default_port);
+
+				if (address_text.empty()) address_text = "\a" + config::network::default_ip + ":" + std::to_string(config::network::default_port);
+				
 				if (address_text.size() > address_limit)
 				{
 					address_text.resize(address_limit);
 				}
-				LoadAddressText();
+
+				msgc_address.Initialize(address_text, 0, 230);
 			}
 		}
 
@@ -826,7 +792,7 @@ void menu_multi_tomodesel(MultiMenuWK* wk)
 
 void menu_multi_confirmdialog_proc(DDlgType* ddltype)
 {
-	MSG_Disp(&msgc_confirm);
+	msgc_confirm.Draw();
 	
 	AVA_MULTI_SPRITE.p.x = 320;
 	AVA_MULTI_SPRITE.p.y = 200;
@@ -1073,11 +1039,17 @@ void menu_multi_online_serverselect(MultiMenuWK* wk)
 {
 	if (gConnectSelection == ConnectMenuSelection::AddressBar)
 	{
-		if (!address_text.empty() && address_text.size() < address_limit)
+		if (address_text.size() < address_limit)
 		{
 			bool modified = false;
 
-			if (KeyboardKeyPressed(42))
+			if (address_text.empty() || address_text.at(0) != '\a')
+			{
+				address_text.insert(0, "\a");
+				modified = true;
+			}
+
+			if (address_text.size() > 0 && KeyboardKeyPressed(42))
 			{
 				address_text.pop_back();
 				modified = true;
@@ -1133,8 +1105,7 @@ void menu_multi_online_serverselect(MultiMenuWK* wk)
 
 			if (modified)
 			{
-				FreeAddressText();
-				LoadAddressText();
+				msgc_address.SetText(address_text);
 			}
 			else
 			{
@@ -1159,12 +1130,6 @@ void menu_multi_online_serverselect(MultiMenuWK* wk)
 
 		if (MenuSelectButtonsPressedM(0))
 		{
-			MSG_Close(&msgc_connect);
-			MSG_Open(&msgc_connect, 0, 200, 0, 0, 0xD0000020);
-			MSG_Cls(&msgc_connect);
-			MSG_Puts(&msgc_connect, gConnectSelection == ConnectMenuSelection::Host ? "Waiting for players..." : "Connecting to server...");
-			MSG_LoadTexture(&msgc_connect);
-
 			PlayMenuEnterSound();
 			gConnectMenuMode = ConnectMenuMode::Hub;
 		}
@@ -1234,7 +1199,6 @@ void menu_multi_online_hub(MultiMenuWK* wk)
 	{
 		network.Exit();
 		gConnectMenuMode = ConnectMenuMode::Select;
-		LoadAddressText();
 	}
 
 	// If at least one player is there
@@ -1467,7 +1431,7 @@ void menu_multi_disp_localcon(MultiMenuWK* wk)
 
 	SetMaterial(wk->alphaConnect, 1.0f, 1.0f, 1.0f);
 
-	MSG_Disp(&msgc_press_start);
+	msgc_press_start.Draw();
 
 	AVA_MULTI_SPRITE.p.x = 220.0f;
 	AVA_MULTI_SPRITE.p.y = 270.0f;
@@ -1531,7 +1495,7 @@ void menu_multi_disp_onlinecon(MultiMenuWK* wk)
 		DrawSquareC(0xFF303030u, 320.0f, 240.0f, wk->BaseZ + 100.0f, 1.480f, 0.551f);
 		if (gConnectSelection == ConnectMenuSelection::AddressBar) DrawDlgCsrSqr(0xFFu, 320.0f, 240.0f, wk->BaseZ + 200.0f, 1.480f, 0.551f);
 
-		MSG_Disp(&msgc_address);
+		msgc_address.Draw();
 
 		const float buttons_pos[] = { 220.0f, 420.0f };
 		const float text_pos[] = { 155.0f, 355.0f };
@@ -1556,7 +1520,10 @@ void menu_multi_disp_onlinecon(MultiMenuWK* wk)
 	}
 	else
 	{
-		MSG_Disp(&msgc_connect);
+		if (gConnectSelection == ConnectMenuSelection::Client)
+			msgc_connect.Draw();
+		else
+			msgc_waiting.Draw();
 
 		AVA_MULTI_SPRITE.p.x = 220.0f;
 		AVA_MULTI_SPRITE.p.y = 260.0f;
@@ -1675,8 +1642,10 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		AvaLoadTexForEachMode(ADVA_MODE_MULTI);
 
-		LoadConfirmText();
-		LoadPressStartText();
+		msgc_press_start.Initialize(press_start_texts[TextLanguage], 0, 210);
+		msgc_confirm.Initialize(stg_confirm_texts[TextLanguage], 0, 315);
+		msgc_connect.Initialize("\aConnecting to server...", 0, 200);
+		msgc_waiting.Initialize("\aWaiting for players...", 0, 200);
 
 		// Initialize menu or reset previous state
 		if (saved_mode <= MD_MULTI_BATTLESEL)
@@ -1747,10 +1716,11 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 			AvaReleaseTexForEachMode();
 
-			FreePressStartText();
-			FreeConfirmText();
-			FreeAddressText();
-			MSG_Close(&msgc_connect);
+			msgc_press_start.Free();
+			msgc_confirm.Free();
+			msgc_address.Free();
+			msgc_connect.Free();
+			msgc_waiting.Free();
 
 			// Force stage mode:
 			if (wk->SelStg >= 0)
