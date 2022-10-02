@@ -160,6 +160,7 @@ static bool InputListener(Packet& packet, Network::PACKET_TYPE type, Network::PN
 	{
 	case Network::PACKET_INPUT_BUTTONS:
 		packet >> net_pers[pnum].on;
+		net_pers[pnum].on &= ~Buttons_Start;
 		return true;
 	case Network::PACKET_INPUT_STICK_X:
 		packet >> net_pers[pnum].x1 >> net_pers[pnum].x2;
@@ -221,9 +222,17 @@ extern "C"
 		if (!network.IsConnected())
 			return;
 
+		// Move first controller inputs to proper player
+		if (network.GetPlayerNum() != 0)
+		{
+			*per[network.GetPlayerNum()] = *per[0];
+			*per[0] = {};
+		}
+
 		// Update local/online controller data
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
+			auto orig = *per[0];
 			auto local_per = per[i];
 			auto& net_per = net_pers[i];
 
@@ -289,6 +298,13 @@ extern "C"
 		// Update network analog data
 		if (network.IsConnected())
 		{
+			// Move first controller analog to proper player
+			if (network.GetPlayerNum() != 0)
+			{
+				input_data[network.GetPlayerNum()] = input_data[0];
+				input_data[0] = {};
+			}
+
 			for (auto i = 0; i < PLAYER_MAX; i++)
 			{
 				auto& current = input_dataG[i];
