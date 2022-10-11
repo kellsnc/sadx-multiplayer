@@ -30,7 +30,7 @@ void __cdecl relbox_switch_exec_r(task* task_p);
 Trampoline relbox_switch_exec_t(0x46AE60, 0x46AE66, relbox_switch_exec_r);
 void __cdecl relbox_switch_exec_r(task* task_p)
 {
-	if (multiplayer::IsBattleMode())
+	if (multiplayer::IsActive())
 	{
 		auto twp = task_p->twp;
 		auto parent_twp = task_p->ptp->twp;

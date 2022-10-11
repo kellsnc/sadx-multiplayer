@@ -670,7 +670,6 @@ void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
                      pos.z += 5.0f;
                  }
              }
-
          }
      }
 }
