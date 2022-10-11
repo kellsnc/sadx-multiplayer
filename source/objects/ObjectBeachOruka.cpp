@@ -8,7 +8,7 @@ Trampoline ObjectBeachPathOrukaSummon_t(0x4FBBE0, 0x4FBBE7, ObjectBeachPathOruka
 
 void __cdecl ObjectBeachAttackOrukaSummon_r(task* tp)
 {
-	if (!multiplayer::IsBattleMode())
+	if (!multiplayer::IsEnabled())
 	{
 		TARGET_STATIC(ObjectBeachAttackOrukaSummon)(tp);
 	}
@@ -16,7 +16,7 @@ void __cdecl ObjectBeachAttackOrukaSummon_r(task* tp)
 
 void __cdecl ObjectBeachPathOrukaSummon_r(task* tp)
 {
-	if (!multiplayer::IsBattleMode())
+	if (!multiplayer::IsEnabled())
 	{
 		TARGET_STATIC(ObjectBeachPathOrukaSummon)(tp);
 	}
