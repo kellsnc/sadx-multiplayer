@@ -44,8 +44,27 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 
 				for (int i = 0; i < PLAYER_MAX; ++i)
 				{
-					PClearSpeed(playermwp[i], playerpwp[i]);
+					if (playertwp[i]) {
+
+						PClearSpeed(playermwp[i], playerpwp[i]);
+
+						if (multiplayer::IsCoopMode())
+						{
+							auto objpos = twp->pos;
+							auto pPos = playertwp[i]->pos;
+							char p = GetTheNearestPlayerNumber(&objpos); //get the player who reached the goal
+							float dist = GetDistance(&objpos, &pPos);
+
+							if (dist > 20.0f)
+							{
+								playertwp[i]->pos = playertwp[p]->pos;
+								playertwp[i]->pos.x += 2.5f;
+								playertwp[i]->pos.z += 1.5f;
+							}
+						}
+					}
 				}
+
 
 				twp->mode = 1;
 				dsPlay_oneshot(13, 0, 0, 0);
