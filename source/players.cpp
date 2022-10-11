@@ -643,7 +643,7 @@ int __cdecl GetRaceWinnerPlayer_r() {
 
 int isInDeathZone_r(taskwk* a1)
 {
-    if (multiplayer::IsCoopMode())
+    if (multiplayer::IsCoopMode() && CurrentCharacter != Characters_Knuckles)
     {
         return 0;
     }
