@@ -81,7 +81,7 @@ static void __cdecl sub_48CE10_r()
 }
 
 static void __cdecl BigTheCat_r(task* tp);
-Trampoline BigTheCat_t(0x490A00, 0x490A05, BigTheCat_r);
+TaskHook BigTheCat_t((intptr_t)Big_Main, BigTheCat_r);
 static void __cdecl BigTheCat_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -97,7 +97,7 @@ static void __cdecl BigTheCat_r(task* tp)
 			Big_Lure_Ptr = etc->Big_Lure_Ptr;
 			Big_Fish_Flag = etc->Big_Fish_Flag;
 			Big_Fish_Ptr = etc->Big_Fish_Ptr;
-			TARGET_STATIC(BigTheCat)(tp);
+			BigTheCat_t.Original(tp);
 			etc->Big_Lure_Ptr = Big_Lure_Ptr;
 			etc->Big_Fish_Flag = Big_Fish_Flag;
 			Big_Lure_Ptr = backup_ptr;
@@ -106,11 +106,11 @@ static void __cdecl BigTheCat_r(task* tp)
 		}
 		else
 		{
-			TARGET_STATIC(BigTheCat)(tp);
+			BigTheCat_t.Original(tp);
 		}
 	}
 	else
 	{
-		TARGET_STATIC(BigTheCat)(tp);
+		BigTheCat_t.Original(tp);
 	}
 }

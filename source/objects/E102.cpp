@@ -61,7 +61,7 @@ static void __cdecl E102Display_r(task* tp)
 }
 
 static void __cdecl E102_r(task* tp);
-Trampoline E102_t(0x483430, 0x483437, E102_r);
+TaskHook E102_t(0x483430, E102_r);
 static void __cdecl E102_r(task* tp)
 {
     if (multiplayer::IsActive())
@@ -75,7 +75,7 @@ static void __cdecl E102_r(task* tp)
             auto backup_p = e102_hover_flag_p;
             e102_hover_flag = e102_hover_flag_m[pnum];
             e102_hover_flag_p = e102_hover_flag_p_m[pnum];
-            TARGET_STATIC(E102)(tp);
+            E102_t.Original(tp);
             e102_hover_flag_m[pnum] = e102_hover_flag;
             e102_hover_flag_p_m[pnum] = e102_hover_flag_p;
             e102_hover_flag = backup;
@@ -84,7 +84,7 @@ static void __cdecl E102_r(task* tp)
         }
     }
 
-    TARGET_STATIC(E102)(tp);
+    E102_t.Original(tp);
 }
 
 static void __cdecl E102LockOnCursor_r(task* tp);

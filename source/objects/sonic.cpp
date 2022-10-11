@@ -2,7 +2,7 @@
 #include "gravity.h"
 
 static void __cdecl SonicTheHedgehog_r(task* tp);
-Trampoline SonicTheHedgehog_t(0x49A9B0, 0x49A9B7, SonicTheHedgehog_r);
+TaskHook SonicTheHedgehog_t(0x49A9B0, SonicTheHedgehog_r);
 static void __cdecl SonicTheHedgehog_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -10,11 +10,11 @@ static void __cdecl SonicTheHedgehog_r(task* tp)
 		auto pnum = TASKWK_PLAYERID(tp->twp);
 		gravity::SaveGlobalGravity();
 		gravity::SwapGlobalToUserGravity(pnum);
-		TARGET_STATIC(SonicTheHedgehog)(tp);
+		SonicTheHedgehog_t.Original(tp);
 		gravity::RestoreGlobalGravity();
 	}
 	else
 	{
-		TARGET_STATIC(SonicTheHedgehog)(tp);
+		SonicTheHedgehog_t.Original(tp);
 	}
 }
