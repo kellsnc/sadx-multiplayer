@@ -17,6 +17,7 @@
 #include "objects/mirror.h"
 #include "objects/e_pondskater.h"
 #include "objects/e_gachapon.h"
+#include "objects/ladder.h"
 
 /*
 
@@ -1012,4 +1013,5 @@ void InitPatches()
 	PatchTwinkleMirrors();
 	PatchPondSkater();
 	PatchGachapon();
+	initLadderPatches();
 }

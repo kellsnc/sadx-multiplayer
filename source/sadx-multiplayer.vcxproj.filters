@@ -475,6 +475,9 @@
     <ClCompile Include="ObjectRocket.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\ladder.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -644,6 +647,9 @@
     </ClInclude>
     <ClInclude Include="GameText.hpp">
       <Filter>Header FIles\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\ladder.h">
+      <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

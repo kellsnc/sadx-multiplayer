@@ -133,6 +133,7 @@
     <ClInclude Include="objects\e_cart.h" />
     <ClInclude Include="objects\e_gachapon.h" />
     <ClInclude Include="objects\e_pondskater.h" />
+    <ClInclude Include="objects\ladder.h" />
     <ClInclude Include="objects\mirror.h" />
     <ClInclude Include="objects\ObjectItemBox.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
@@ -208,6 +209,7 @@
     <ClCompile Include="objects\e_robo.cpp" />
     <ClCompile Include="objects\e_sai.cpp" />
     <ClCompile Include="objects\FragmEmeraldDigDisplay.cpp" />
+    <ClCompile Include="objects\ladder.cpp" />
     <ClCompile Include="objects\mirror.cpp" />
     <ClCompile Include="objects\ObjectBaloon.cpp" />
     <ClCompile Include="objects\ObjectEmeraldPRegular.cpp" />

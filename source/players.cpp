@@ -634,7 +634,7 @@ int __cdecl GetRaceWinnerPlayer_r() {
 
             if (playertwp[i] && (TASKWK_CHARID(playertwp[i]) == Characters_Tails))
                 return 1;
-            
+       
         }
     }
 
