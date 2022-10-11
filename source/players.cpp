@@ -39,6 +39,7 @@ Trampoline* SetPlayerInitialPosition_t = nullptr;
 static FunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
 static FunctionHook<void> SetPlayer_t(SetPlayer);
 static FunctionHook<int, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
+static FunctionHook<void, uint8_t, float, float, float> SetPositionP_t(SetPositionP);
 
 static bool isCharSel = false;
 
@@ -651,6 +652,29 @@ int isInDeathZone_r(taskwk* a1)
     return isInDeathZone_t.Original(a1);
 }
 
+void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
+{
+     SetPositionP_t.Original(charIndex, x, y, z);
+
+     if (multiplayer::IsActive())
+     {
+         if (!charIndex && CurrentLevel >= LevelIDs_StationSquare && CurrentLevel <= LevelIDs_Past)
+         {
+             NJS_VECTOR pos = { x, y, z };
+
+             for (int i = 1; i < multiplayer::GetPlayerCount(); i++)
+             {
+                 if (playertwp[i])
+                 {
+                     playertwp[i]->pos = pos;
+                     pos.z += 5.0f;
+                 }
+             }
+
+         }
+     }
+}
+
 void InitPlayerPatches()
 {
     isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
@@ -659,6 +683,7 @@ void InitPlayerPatches()
     DamegeRingScatter_t.Hook(DamegeRingScatter_r);
     SetPlayer_t.Hook(SetPlayer_r);
     isInDeathZone_t.Hook(isInDeathZone_r);
+    SetPositionP_t.Hook(SetPositionP_r);
 
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteJump(ResetNumRing, ResetNumRingM);
