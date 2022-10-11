@@ -32,7 +32,6 @@ static Trampoline* NpcMilesSet_t                  = nullptr;
 static Trampoline* Ring_t                         = nullptr;
 static Trampoline* Tobitiri_t                     = nullptr;
 static Trampoline* PlayerVacumedRing_t            = nullptr;
-static Trampoline* EnemyCheckDamage_t             = nullptr;
 static Trampoline* EnemyDist2FromPlayer_t         = nullptr;
 static Trampoline* EnemyCalcPlayerAngle_t         = nullptr;
 static Trampoline* EnemyTurnToPlayer_t            = nullptr;
@@ -43,6 +42,7 @@ static Trampoline* SpinnaDisplayer_t              = nullptr;
 static Trampoline* ListGroundForDrawing_t         = nullptr;
 static Trampoline* CCL_IsHitPlayer_t              = nullptr;
 static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
+static FunctionHook<int, taskwk*, enemywk*> EnemyCheckDamage_t((intptr_t)OhNoImDead);
 static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
 UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
 
@@ -227,7 +227,7 @@ BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return TARGET_DYNAMIC(EnemyCheckDamage)(twp, ewp);
+		return EnemyCheckDamage_t.Original(twp, ewp);
 	}
 
 	if (twp->flag & 4)
@@ -933,7 +933,7 @@ void InitPatches()
 	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
 
 	// Score patches
-	EnemyCheckDamage_t = new Trampoline(0x4CE030, 0x4CE036, EnemyCheckDamage_r);
+	EnemyCheckDamage_t.Hook(EnemyCheckDamage_r);
 	WriteCall((void*)0x7B3273, EBuyon_ScorePatch); // EBuyon: add 100 points to proper player
 	WriteData<5>((void*)0x7B326D, 0x90); // EBuyon: remove original 100 points for player 0
 
