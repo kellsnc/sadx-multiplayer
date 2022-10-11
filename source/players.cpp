@@ -38,6 +38,7 @@ DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
 Trampoline* SetPlayerInitialPosition_t = nullptr;
 static FunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
 static FunctionHook<void> SetPlayer_t(SetPlayer);
+static FunctionHook<int, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
 
 static bool isCharSel = false;
 
@@ -640,6 +641,16 @@ int __cdecl GetRaceWinnerPlayer_r() {
     return RaceWinnerPlayer;
 }
 
+int isInDeathZone_r(taskwk* a1)
+{
+    if (multiplayer::IsCoopMode())
+    {
+        return 0;
+    }
+
+    return isInDeathZone_t.Original(a1);
+}
+
 void InitPlayerPatches()
 {
     isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
@@ -647,6 +658,7 @@ void InitPlayerPatches()
     SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
     DamegeRingScatter_t.Hook(DamegeRingScatter_r);
     SetPlayer_t.Hook(SetPlayer_r);
+    isInDeathZone_t.Hook(isInDeathZone_r);
 
     WriteJump(ResetNumPlayer, ResetNumPlayerM);
     WriteJump(ResetNumRing, ResetNumRingM);
