@@ -60,8 +60,7 @@ static void __cdecl E102Display_r(task* tp)
     TARGET_STATIC(E102Display)(tp);
 }
 
-static void __cdecl E102_r(task* tp);
-TaskHook E102_t(0x483430, E102_r);
+TaskHook E102_t((intptr_t)0x483430);
 static void __cdecl E102_r(task* tp)
 {
     if (multiplayer::IsActive())
@@ -139,4 +138,9 @@ static void __cdecl E102AddSecTotalNew_r(task* tp)
     {
         TARGET_STATIC(E102AddSecTotalNew)(tp);
     }
+}
+
+void initGammaPatch()
+{
+    E102_t.Hook(E102_r);
 }
