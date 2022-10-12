@@ -432,6 +432,7 @@ int stgacttexid = 0;
 int selected_characters[PLAYER_MAX];
 bool chara_ready[PLAYER_MAX];
 bool player_ready[PLAYER_MAX];
+char backupCoopCharacter = 0;
 int pcount;
 bool enabled_characters[8];
 MD_MULTI saved_mode;
@@ -500,6 +501,26 @@ int menu_multi_getplayerno(int num)
 		return Characters_Tikal;
 	case CharSelChara_Eggman:
 		return Characters_Eggman;
+	}
+}
+
+int menu_multiCoop_getCurCharType(int num)
+{
+	switch (num)
+	{
+	case MD_MULTI_STGSEL_SPD:
+	default:
+		return Characters_Sonic;
+	case MD_MULTI_STGSEL_FLY:
+		return Characters_Tails;
+	case MD_MULTI_STGSEL_EME:
+		return Characters_Knuckles;
+	case MD_MULTI_STGSEL_EGROB:
+		return Characters_Amy;
+	case MD_MULTI_STGSEL_FISH:
+		return Characters_Big;
+	case MD_MULTI_STGSEL_SHOOT:
+		return Characters_Gamma;
 	}
 }
 
@@ -659,11 +680,6 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	case MD_MULTI_CHARSEL: // Open character select
 		menu_multi_getcharaenable();
 		menu_multi_charsel_unready();
-
-		if (gNextMultiMode == multiplayer::mode::coop)
-		{
-			chara_ready[0] = true;
-		}
 		break;
 	case MD_MULTI_STGSEL_SPD:
 		menu_multi_setsqrcursor();
@@ -733,7 +749,7 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 
 	LastLevel = CurrentLevel;
 	LastAct = CurrentAct;
-	CurrentCharacter = menu_multi_getplayerno(selected_characters[0]);
+	CurrentCharacter = gNextMultiMode == multiplayer::mode::coop ? menu_multiCoop_getCurCharType(backupCoopCharacter) : menu_multi_getplayerno(selected_characters[0]);
 	CurrentLevel = level;
 	CurrentAct = act;
 	SeqTp->awp[1].work.ul[0] = 100;
@@ -859,7 +875,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 	}
 
 	// Manage input
-	for (int i = gNextMultiMode == multiplayer::mode::coop ? 1 : 0; i < PLAYER_MAX; ++i)
+	for (uint8_t i = 0; i < PLAYER_MAX; ++i)
 	{
 		auto& sel = selected_characters[i];
 		auto press = GetPressedButtons(i);
@@ -964,6 +980,7 @@ void menu_multi_coopsel(MultiMenuWK* wk)
 			menu_multi_change(wk, MD_MULTI_CHARSEL);
 			selected_characters[0] = stat;
 			gNextDialogStat = stat;
+			backupCoopCharacter = next_mode;
 		}
 	}
 }
