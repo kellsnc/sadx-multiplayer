@@ -507,6 +507,7 @@ DataPointer(float, flt_3C63CEC, 0x3C63CEC);
 FunctionPointer(int, EH_PosPlayerCheck, (), 0x573310); //inlined in symbols
 FunctionPointer(void, sub_575190, (Egm1MissilesPrm* a1), 0x575190); 
 FunctionPointer(signed int, ChkPlayerCanHold, (task* a1, unsigned __int8 PlayerNumber), 0x4C9FE0);
+TaskFunc(CalcTotalScore, 0x42BEE0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

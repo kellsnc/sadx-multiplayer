@@ -30,6 +30,10 @@ static void Normal_m(taskwk* twp)
         twp->counter.f = -1.5f;
         SleepTimer();
         SetWinnerMulti(pnum);
+
+        for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+            MovePlayersToWinnerPos(i, twp);
+
         SetFinishAction();
     }
 

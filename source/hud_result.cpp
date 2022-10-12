@@ -253,3 +253,9 @@ void LoadMultiplayerResult()
 		LoadPVM("ava_csr", &ava_csr_TEXLIST);
 	}
 }
+
+void LoadMultiplayerCoopResult()
+{
+	auto tp = CreateElementalTask(LoadObj_Data1, LEV_5, CalcTotalScore);
+	tp->dest = CalcTotalScoreM_dest;
+}

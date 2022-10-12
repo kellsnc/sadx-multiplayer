@@ -67,7 +67,7 @@ static void __cdecl SetFinishAction_r()
 		}
 
 		// Battle result screen
-		if (multiplayer::IsBattleMode())
+		if (multiplayer::IsActive())
 		{
 			if (CurrentLevel == LevelIDs_TwinkleCircuit)
 			{
@@ -79,7 +79,7 @@ static void __cdecl SetFinishAction_r()
 				PlayCharaWinSound();
 			}
 
-			LoadMultiplayerResult();
+			multiplayer::IsBattleMode() ? LoadMultiplayerResult() : LoadMultiplayerCoopResult();
 			return;
 		}
 	}
