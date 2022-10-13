@@ -139,24 +139,20 @@ static void __cdecl Knuckles_KakeraGame_r(task* tp)
 		if (is_enabled)
 		{
 			FreeTask(tp);
-			return;
 		}
 		else
 		{
 			tp->dest = Knuckles_KaheraGame_Dest;
 			is_enabled = true;
-		}
-	}
 
-	if (multiplayer::IsBattleMode())
-	{
-		for (int i = 0; i < 5; ++i)
-		{
-			if (fragmnmb_tbl[i].stgnmb == GetStageNumber())
+			for (int i = 0; i < 5; ++i)
 			{
-				tp->exec = Knuckles_KakeraGame_MultiExec;
-				tp->disp = Knuckles_KakeraGame_MultiDisp;
-				return;
+				if (fragmnmb_tbl[i].stgnmb == GetStageNumber())
+				{
+					tp->exec = Knuckles_KakeraGame_MultiExec;
+					tp->disp = Knuckles_KakeraGame_MultiDisp;
+					return;
+				}
 			}
 		}
 	}
@@ -187,7 +183,7 @@ static void __cdecl Knuckles_KakeraGameFinish_m(task* tp)
 static void __cdecl Knuckles_KakeraGame_Set_PutEme_r(int emeid, NJS_POINT3* emepos);
 void Knuckles_KakeraGame_Set_PutEme_m(int pnum, unsigned __int8 emeid, NJS_POINT3* emepos)
 {
-	if (multiplayer::IsCoopMode())
+	if (!multiplayer::IsActive())
 	{
 		TARGET_DYNAMIC(Knuckles_KakeraGame_Set_PutEme)(emeid, emepos);
 		return;
@@ -260,7 +256,7 @@ void Knuckles_KakeraGame_Set_PutEme_m(int pnum, unsigned __int8 emeid, NJS_POINT
 
 static void __cdecl Knuckles_KakeraGame_Set_PutEme_r(int emeid, NJS_POINT3* emepos)
 {
-	if (multiplayer::IsBattleMode())
+	if (multiplayer::IsActive())
 	{
 		Knuckles_KakeraGame_Set_PutEme_m(GetClosestPlayerNum(emepos), emeid, emepos);
 	}
