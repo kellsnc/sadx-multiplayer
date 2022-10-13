@@ -1594,7 +1594,7 @@ void __cdecl MultiMenuExec_Display(task* tp)
 	
 	if (wk->Stat != ADVA_STAT_REQWAIT)
 	{
-		gHelperFunctions->PushScaleUI(uiscale::Align_Center, true, 1.0f, 1.0f);
+		gHelperFunctions->PushScaleUI(uiscale::Align_Center, false, 1.0f, 1.0f);
 
 		ghDefaultBlendingMode();
 		ghSetPvrTexBaseColor(wk->BaseCol);
