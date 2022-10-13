@@ -231,6 +231,7 @@
     <ClCompile Include="objects\ObjectKaosEme.cpp" />
     <ClCompile Include="objects\ObjectMountainAsiba.cpp" />
     <ClCompile Include="objects\ObjectReleaseBox.cpp" />
+    <ClCompile Include="objects\ObjectSkydeck_cannon_s.cpp" />
     <ClCompile Include="objects\ObjectSkyLever.cpp" />
     <ClCompile Include="objects\ObjectTogedai.cpp" />
     <ClCompile Include="objects\ObjectTPCatapult.cpp" />
