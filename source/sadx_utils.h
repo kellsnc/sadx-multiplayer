@@ -511,6 +511,9 @@ FunctionPointer(signed int, ChkPlayerCanHold, (task* a1, unsigned __int8 PlayerN
 TaskFunc(CalcTotalScore, 0x42BEE0);
 FunctionPointer(void, SetAutoPilotForBreak, (uint8_t pNum), 0x440F70);
 FunctionPointer(void, SetLookingAngleP, (uint8_t pnum, Angle3* a2), 0x441040);
+FunctionPointer(void, PResetPosition, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x43EE70);
+
+FunctionPointer(void, Knux_RunsActions, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x478020);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

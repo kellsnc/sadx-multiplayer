@@ -1016,6 +1016,8 @@ void InitPatches()
 	PatchGachapon();
 	initLadderPatches();
 	initGammaPatch();
+	Init_KnuxPatches();
+	initSonicPatch();
 	PatchRocket();
 
 	WriteData<1>((int*)0x500017, 8); //patch launch ramp EC for 8 players

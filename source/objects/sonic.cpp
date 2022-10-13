@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "gravity.h"
 
-static void __cdecl SonicTheHedgehog_r(task* tp);
-TaskHook SonicTheHedgehog_t(0x49A9B0, SonicTheHedgehog_r);
+
+TaskHook SonicTheHedgehog_t(0x49A9B0);
 static void __cdecl SonicTheHedgehog_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -17,4 +17,10 @@ static void __cdecl SonicTheHedgehog_r(task* tp)
 	{
 		SonicTheHedgehog_t.Original(tp);
 	}
+}
+
+
+void initSonicPatch()
+{
+	SonicTheHedgehog_t.Hook(SonicTheHedgehog_r);
 }

@@ -173,6 +173,7 @@
     <ClCompile Include="hud_itembox.cpp" />
     <ClCompile Include="hud_result.cpp" />
     <ClCompile Include="input.cpp" />
+    <ClCompile Include="knux.cpp" />
     <ClCompile Include="logic.cpp" />
     <ClCompile Include="milesrace.cpp" />
     <ClCompile Include="multiapi.cpp" />

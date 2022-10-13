@@ -481,6 +481,9 @@
     <ClCompile Include="objects\ObjectSkydeck_cannon_s.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="knux.cpp">
+      <Filter>Source Files\objects\figure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
