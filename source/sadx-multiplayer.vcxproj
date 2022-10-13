@@ -136,6 +136,7 @@
     <ClInclude Include="objects\ladder.h" />
     <ClInclude Include="objects\mirror.h" />
     <ClInclude Include="objects\ObjectItemBox.h" />
+    <ClInclude Include="objects\ObjectRocket.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
     <ClInclude Include="objects\SnowBoard.h" />
     <ClInclude Include="packet.h" />

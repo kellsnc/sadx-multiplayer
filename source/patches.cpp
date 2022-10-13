@@ -8,6 +8,7 @@
 #include "UsercallFunctionHandler.h"
 
 #include "objects/ObjectItemBox.h"
+#include "objects/ObjectRocket.h"
 #include "objects/SnowBoard.h"
 #include "objects/EnemyWindyE103.h"
 #include "objects/EnemyMountainE104.h"
@@ -1015,6 +1016,7 @@ void InitPatches()
 	PatchGachapon();
 	initLadderPatches();
 	initGammaPatch();
+	PatchRocket();
 
 	WriteData<1>((int*)0x500017, 8); //patch launch ramp EC for 8 players
 }
