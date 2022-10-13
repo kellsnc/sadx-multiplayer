@@ -1,12 +1,11 @@
 #include "pch.h"
 
 void ObjectSkydeck_cannon_s_Exec_r(task* a1);
-//TaskHook ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0, ObjectSkydeck_cannon_s_Exec_r);
-TaskHook ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0);
+TaskHook ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0, ObjectSkydeck_cannon_s_Exec_r);
 
 static void SDSetPlayerPos(taskwk* data)
 {
-	for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 	{
 		if (playertwp[i])
 		{
@@ -20,10 +19,14 @@ static void SDSetPlayerPosDiff(taskwk* data)
 	NJS_VECTOR pos = data->pos;
 	pos.z += 90.0f;
 
-	for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 	{
+		if (i > 0)
+		{
+			pos.z -= 10 * i;
+		}
+
 		PositionPlayer(i, pos.x, pos.y, pos.z);
-		pos.z += 80.0f;
 	}
 }
 
@@ -39,12 +42,13 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 	NJS_VECTOR vector = { 0.0f, 2.5f, 5.0f };
 	auto data = a1->twp;
 
+
 	switch (data->mode)
 	{
 	case 0:
 	case 1:
-		SDSetPlayerPos(data);
 		ObjectSkydeck_cannon_s_Exec_t.Original(a1);
+		SDSetPlayerPos(data);
 		return;
 	case 2:
 		data->mode++;
@@ -53,16 +57,14 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		SDSetPlayerPosDiff(data);
 		break;
 	case 3:
-		timer = 10 * data->wtimer;
-		ang.y = njSin(timer) * 65536.0f
-			* 0.002777777777777778f
-			* 70.0f
-			* 65536.0f
-			* 0.002777777777777778f;
+		timer = 10 * 1;
+		ang.x = 0;
+		ang.z = 0;
+		ang.y = NJM_DEG_ANG(njSin(NJM_DEG_ANG(timer)) * 70.0f);
 		PadReadOffP(-1);
 		if (data->wtimer <= 0x36u)
 		{
-			for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 			{
 				SetAutoPilotForBreak(i);
 				SetLookingAngleP(i, &ang);
@@ -87,17 +89,26 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		}
 		break;
 	case 4:
+
 		PadReadOffP(-1);
 
 		if (data->wtimer == 1)
 		{
-			vector = { 0.0f, 2.5f, 5.0f };
-
-			for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 			{
+				vector = { 0.0f, 2.5f, 5.0f };
+
+				if (i & 1)
+				{
+					vector.x += 0.5;
+				}
+				else
+				{
+					vector.x = 0.0f;
+				}
+
 				njUnitVector(&vector);
-				SetParabolicMotionP(i, 6.0f, &vector);
-				vector.x += 0.5;
+				SetParabolicMotionP(i, 6.0f, &vector);	
 			}
 
 			data->value.f = 40.0f;
@@ -106,7 +117,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		{
 			data->mode++;
 			data->wtimer = 0;
-			EnableController(0xFFu);
+			PadReadOnP(0xFFu);
 		}
 		break;
 	case 5:
@@ -117,24 +128,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		break;
 	}
 
-	auto timeA = (data->timer.f - data->value.f * 0.30000001f) * 0.94999999f;
-	data->timer.f = timeA;
-	auto resultTime = timeA + data->value.f;
-	if (resultTime > 0.0f)
-	{
-		data->value.f = resultTime;
-	}
-	else
-	{
-		data->value.f = 0;
-		data->timer.f *= -0.64999998f;
-	}
-	EntryColliList(data);
-	if (data->counter.l)
-	{
 
-	}
-
-
+	ObjectSkydeck_cannon_s_Exec_t.Original(a1);
 }
 
