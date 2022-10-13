@@ -60,7 +60,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		timer = 10 * 1;
 		ang.x = 0;
 		ang.z = 0;
-		ang.y = NJM_DEG_ANG(njSin(NJM_DEG_ANG(timer)) * 70.0f);
+		ang.y = (unsigned __int64)NJM_DEG_ANG(njSin((unsigned __int64)NJM_DEG_ANG(timer)) * 70.0f);
 		PadReadOffP(-1);
 		if (data->wtimer <= 0x36u)
 		{
@@ -100,7 +100,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 
 				if (i & 1)
 				{
-					vector.x += 0.5;
+					vector.x = 0.5;
 				}
 				else
 				{
@@ -119,12 +119,6 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 			data->wtimer = 0;
 			PadReadOnP(0xFFu);
 		}
-		break;
-	case 5:
-		SetFreeCameraMode(1);
-		break;
-	default:
-		data->wtimer = 0;
 		break;
 	}
 
