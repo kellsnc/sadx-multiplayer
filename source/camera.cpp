@@ -37,6 +37,7 @@ VariableHook<NJS_CACTION*, 0x3B2C950> pCameraAction_m;
 VariableHook<Float, 0x3B2CA6C> fActionFrame_m;
 VariableHook<Bool, 0x3B2CAC0> dword_3B2CAC0_m;
 VariableHook<Bool, 0x3B2C6C0> flagCameraNoUnderWater_m;
+VariableHook<_OBJ_CAMERAPARAM, 0x3B2C6CC> externCameraParam_m;
 
 static taskwk* backup_pl;
 static motionwk2* backup_mtn;
@@ -47,6 +48,14 @@ static CAM_ANYPARAM backup_any;
 
 static CameraLocation cameraLocations[PLAYER_MAX];
 static Angle ds_perspective_value_m[PLAYER_MAX];
+
+_OBJ_CAMERAPARAM* GetExternCameraParam(int pnum)
+{
+    if (pnum >= 0 && pnum < PLAYER_MAX)
+        return &externCameraParam_m[pnum];
+    else
+        return nullptr;
+}
 
 NJS_POINT3* GetCameraPosition(int pnum)
 {
@@ -1279,7 +1288,7 @@ void CameraCameraMode_m(int pnum)
 
             if (system.G_scCameraAttribute & 2)
             {
-                //cameraParam = externCameraParam;
+                cameraParam = externCameraParam_m[pnum]; // used for manually-loaded camera
             }
             else
             {
