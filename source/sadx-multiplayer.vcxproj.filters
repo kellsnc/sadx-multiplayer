@@ -651,6 +651,9 @@
     <ClInclude Include="objects\ladder.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
+    <ClInclude Include="objects\ObjectRocket.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">

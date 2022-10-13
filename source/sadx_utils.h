@@ -489,6 +489,7 @@ DataPointer(Uint16, numDisplayEntry, 0x3B32D2C);
 VoidFunc(InitScore, 0x427EE0);
 FunctionPointer(BOOL, GetEachCharEnableForTrial, (Sint32 chnum), 0x506700);
 DataArray(Sint8[STAGE_NUMBER], flgCompletedActionStage, 0x3B18250, 8);
+CamFunc(CameraEventPoint, 0x464A00);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
