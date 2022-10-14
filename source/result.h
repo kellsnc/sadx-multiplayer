@@ -4,4 +4,4 @@ int GetWinnerMulti();
 void SetWinnerMulti(int pnum);
 
 void InitResult();
-void MovePlayersToWinnerPos(char i, taskwk* twp);
+void MovePlayerToWinnerPos(int pnum, taskwk* twp);

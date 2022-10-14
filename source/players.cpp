@@ -292,11 +292,8 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
             SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
         }
 
-        static const float dists[]{ -5.0f, 5.0f, -10.0f, 10.0f };
         twp->ang = ang;
-        twp->pos.x = pos.x + njCos(ang.y + 0x4000) * dists[pnum];
-        twp->pos.y = pos.y;
-        twp->pos.z = pos.z + njSin(ang.y + 0x4000) * dists[pnum];
+        SetPlayerPositionAroundPoint(twp, &pos, 5.0f);
     }
     else
     {
@@ -666,8 +663,7 @@ void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
              {
                  if (playertwp[i])
                  {
-                     playertwp[i]->pos = pos;
-                     pos.z += 5.0f;
+                     SetPlayerPositionAroundPoint(playertwp[i], &pos, 5.0f);
                  }
              }
          }
