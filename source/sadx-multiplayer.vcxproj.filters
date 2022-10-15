@@ -472,17 +472,14 @@
     <ClCompile Include="objects\o_casino_kowaresoniczo.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectRocket.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ladder.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\ObjectSkydeck_cannon_s.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="knux.cpp">
-      <Filter>Source Files\objects\figure</Filter>
+    <ClCompile Include="objects\ObjectRocket.cpp">
+      <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
