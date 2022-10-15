@@ -517,6 +517,11 @@ FunctionPointer(void, SetLookingAngleP, (uint8_t pnum, Angle3* a2), 0x441040);
 FunctionPointer(void, PResetPosition, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x43EE70);
 
 FunctionPointer(void, Knux_RunsActions, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x478020);
+TaskFunc(dispKnuEffectChargeUpStay, 0x4C0FC0);
+FunctionPointer(void, KnuEffectDrawTsubu, (NJS_POINT3* v, float r), 0x4C0F20);
+TaskFunc(KnuEffectChargeUpStay, 0x4C0FF0);
+FunctionPointer(void, KnuEffectPutChargeComp, (NJS_VECTOR* position, float alpha), 0x4C1330);
+
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
