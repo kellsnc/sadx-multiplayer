@@ -16,7 +16,7 @@ signed int Knux_CheckNAct_r(playerwk* co2, taskwk* data, motionwk2* data2)
     switch (data->smode)
     {
     case 5:
-       data->mode = 101;
+       data->mode = SDCannonMode;
        co2->mj.reqaction = 19;
        return 1;
     }
@@ -28,7 +28,7 @@ void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 
     switch (data1->mode)
     {
-    case 101:
+    case SDCannonMode:
         if (!KnucklesCheckInput(data1, data2, co2) && (data1->flag & 3) != 0)
         {
             if (PCheckBreak(data1) && co2->spd.x > 0.0f)
@@ -55,15 +55,11 @@ void KnuxExec_r(task* obj)
     auto data = obj->twp;
     motionwk2* data2 = (motionwk2*)obj->mwp;
     playerwk* co2 = (playerwk*)obj->mwp->work.l;
-    chaoswk* cwk = (chaoswk*)obj->awp;
 
     switch (data->mode)
     {
-    case 101:
-        PGetGravity(data, data2, co2);
-        PGetSpeed(data, data2, co2);
-        PSetPosition(data, data2, co2);
-        PResetPosition(data, data2, co2);
+    case SDCannonMode:
+        CannonModePhysics(data, data2, co2);
         break;
     }
 

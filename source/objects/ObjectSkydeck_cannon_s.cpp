@@ -23,7 +23,8 @@ static void SDSetPlayerPosDiff(taskwk* data)
 	{
 		if (i > 0)
 		{
-			pos.z -= 10 * i;
+			if (playertwp[i] && playertwp[i]->counter.b[1] < Characters_Gamma)
+				pos.z -= 10 * i;
 		}
 
 		PositionPlayer(i, pos.x, pos.y, pos.z);
@@ -126,3 +127,11 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 	ObjectSkydeck_cannon_s_Exec_t.Original(a1);
 }
 
+
+void CannonModePhysics(taskwk* data, motionwk2* data2, playerwk* co2)
+{
+	PGetGravity(data, data2, co2);
+	PGetSpeed(data, data2, co2);
+	PSetPosition(data, data2, co2);
+	PResetPosition(data, data2, co2);
+}

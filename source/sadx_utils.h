@@ -788,3 +788,33 @@ static inline void CreateCrashSmoke(taskwk* twp, NJS_POINT3* point, Float scl)
 		add esp, 8
 	}
 }
+
+static const void* const E102CheckInputPtr = (void*)0x480870;
+static inline int E102CheckInput(playerwk* pwp, taskwk* data, motionwk2* data2)
+{
+	int result;
+	__asm
+	{
+		push[data2]
+		mov esi, [data]
+		mov edi, [pwp]
+		call E102CheckInputPtr
+		add esp, 4
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const E102CheckStopPtr = (void*)0x480EE0;
+static inline int E102CheckStop(taskwk* a1, playerwk* a2)
+{
+	int result;
+	__asm
+	{
+		mov eax, [a2]
+		mov ecx, [a1]
+		call E102CheckStopPtr
+		mov result, eax
+	}
+	return result;
+}
