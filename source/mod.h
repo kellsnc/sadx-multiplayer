@@ -5,7 +5,16 @@
 #define PLAYER_MAX 4
 #define BYTEn(x, n)   (*((uint8_t*)&(x)+n))
 #define TaskHook static FunctionHook<void, task*>
-#define SDCannonMode 110
+
+
+enum customAction
+{
+	SDCannonMode = 110,
+	SDCylStd,
+	SDCylDown,
+	SDCyldLeft,
+	SDCylRight
+};
 
 extern const HelperFunctions* gHelperFunctions;
 extern bool DreamcastConversionEnabled;

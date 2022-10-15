@@ -136,6 +136,7 @@
     <ClInclude Include="objects\e_pondskater.h" />
     <ClInclude Include="objects\ladder.h" />
     <ClInclude Include="objects\mirror.h" />
+    <ClInclude Include="objects\ObjCylinderCmn.h" />
     <ClInclude Include="objects\ObjectItemBox.h" />
     <ClInclude Include="objects\ObjectRocket.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
@@ -282,6 +283,7 @@
     <ClCompile Include="objects\o_shelter_haguruma.cpp" />
     <ClCompile Include="objects\o_shelter_kaitenashiba.cpp" />
     <ClCompile Include="objects\o_sky_crane.cpp" />
+    <ClCompile Include="objects\o_sky_cyl_cmn.cpp" />
     <ClCompile Include="objects\o_sky_elevator.cpp" />
     <ClCompile Include="objects\o_sky_sinkrane.cpp" />
     <ClCompile Include="objects\o_windy_broobj.cpp" />

@@ -491,6 +491,9 @@
     <ClCompile Include="objects\o_sky_cannon_cmn.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_sky_cyl_cmn.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -668,6 +671,9 @@
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="menu_adventure.h" />
+    <ClInclude Include="objects\ObjCylinderCmn.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">

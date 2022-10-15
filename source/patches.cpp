@@ -19,6 +19,7 @@
 #include "objects/e_pondskater.h"
 #include "objects/e_gachapon.h"
 #include "objects/ladder.h"
+#include "objects//ObjCylinderCmn.h"
 
 /*
 
@@ -1015,6 +1016,7 @@ void InitPatches()
 	PatchPondSkater();
 	PatchGachapon();
 	initLadderPatches();
+	init_SDCylinderPatches();
 	initSonicPatch();
 	Init_KnuxPatches();
 	Init_AmyPatches();

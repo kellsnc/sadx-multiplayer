@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "ObjCylinderCmn.h"
 
 UsercallFunc(signed int, Amy_CheckInput_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x487810, rEAX, rECX, rEDI, rESI);
 TaskHook AmyExec_t((intptr_t)Amy_Main);
@@ -19,6 +20,12 @@ signed int Amy_CheckInput_r(playerwk* co2, motionwk2* data2, taskwk* data)
         data->mode = SDCannonMode;
         co2->mj.reqaction = 18; //falling
         return 1;
+    case 32:
+
+        if (SetCylinderNextAction(data, data2, co2))
+            return 1;
+
+        break;
     }
 
     return Amy_CheckInput_t.Original(co2, data2, data);

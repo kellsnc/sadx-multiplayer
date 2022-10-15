@@ -1,10 +1,10 @@
 #include "pch.h"
 
 //patch multiple cannon in SD to make every player bounce on them
-void EffHodaiBombReflectPlayer_r(taskwk* a1);
-static FunctionHook<void, taskwk*> EffHodaiBombReflectPlayer_t((intptr_t)0x5FE570, EffHodaiBombReflectPlayer_r);
+void dsHangPoleCom_r(taskwk* a1);
+static FunctionHook<void, taskwk*> dsHangPoleCom_t((intptr_t)0x5FE570, dsHangPoleCom_r);
 
-void EffHodaiBombReflectPlayer_r(taskwk* a1)
+void dsHangPoleCom_r(taskwk* a1)
 {
 	if (multiplayer::IsActive())
 	{
@@ -28,5 +28,5 @@ void EffHodaiBombReflectPlayer_r(taskwk* a1)
 		}
 	}
 
-	EffHodaiBombReflectPlayer_t.Original(a1);
+	dsHangPoleCom_t.Original(a1);
 }
