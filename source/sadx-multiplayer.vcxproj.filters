@@ -487,12 +487,6 @@
     <ClCompile Include="objects\o_sky_cannon_cmn.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="menu_adventure.cpp">
-      <Filter>Source Files\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\knuckles.cpp">
-      <Filter>Source Files\objects\figure</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -669,9 +663,7 @@
     <ClInclude Include="objects\ObjectRocket.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
-    <ClInclude Include="menu_adventure.h">
-      <Filter>Header FIles\gui</Filter>
-    </ClInclude>
+    <ClInclude Include="menu_adventure.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
