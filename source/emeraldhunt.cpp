@@ -194,7 +194,9 @@ void Knuckles_KakeraGame_Set_PutEme_m(int pnum, unsigned __int8 emeid, NJS_POINT
 		return;
 	}
 
-	for (int i = 2; i >= 0; --i)
+	char piece = multiplayer::IsBattleMode() ? 2 : 3;
+
+	for (int i = piece; i >= 0; --i)
 	{
 		auto& fragm = fragmset_tbl[i];
 
@@ -208,7 +210,7 @@ void Knuckles_KakeraGame_Set_PutEme_m(int pnum, unsigned __int8 emeid, NJS_POINT
 			dsPlay_oneshot(787, 0, 0, 0);
 
 			bool win = false;
-			if (found_feme_nmb_m[pnum] >= 2)
+			if (found_feme_nmb_m[pnum] >= piece)
 			{
 				PadReadOff();
 				DisablePause();
