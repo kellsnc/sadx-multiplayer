@@ -9,6 +9,20 @@ Trampoline TBarrier_t (0x4BA2A0, 0x4BA2A5, TBarrier_r);
 Trampoline NBarrier_t (0x4BA380, 0x4BA385, NBarrier_r);
 Trampoline Muteki_t   (0x4BA440, 0x4BA446, Muteki_r);
 
+static void EffBarrierPosSet_m(taskwk* twp, taskwk* ptwp)
+{
+	twp->scl.x = ptwp->scl.x;
+	twp->scl.y = (playerpwp[TASKWK_PLAYERID(ptwp)]->p.height * twp->scl.x) * 0.6f;
+
+	njPushMatrix(_nj_unit_matrix_);
+	njTranslateV(0, &ptwp->pos);
+	njRotateZ_(ptwp->ang.z);
+	njRotateX_(ptwp->ang.x);
+	njTranslate(0, 0.0f, twp->scl.y, 0.0f);
+	njGetTranslation(0, &twp->pos);
+	njPopMatrixEx();
+}
+
 static void __cdecl TBarrier_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -20,7 +34,7 @@ static void __cdecl TBarrier_r(task* tp)
 
 		if (pltwp && plpwp && (plpwp->item & Powerups_MagneticBarrier) != 0)
 		{
-			EffBarrierPosSet(twp, pltwp);
+			EffBarrierPosSet_m(twp, pltwp);
 
 			if (njRandom() > 0.70)
 			{
@@ -29,8 +43,8 @@ static void __cdecl TBarrier_r(task* tp)
 
 				if (ctwp)
 				{
-					ctwp->ang.x = (Angle)(njRandom() * 65536.0);
-					ctwp->ang.y = (Angle)(njRandom() * 65536.0);
+					ctwp->ang.x = (Angle)(njRandom() * 65536.0f);
+					ctwp->ang.y = (Angle)(njRandom() * 65536.0f);
 					ctwp->value.f = 1.0f;
 					ctp->disp = TBarrierDisp;
 				}
@@ -59,15 +73,15 @@ static void __cdecl NBarrier_r(task* tp)
 
 		if (pltwp && plpwp && (plpwp->item & Powerups_Barrier) != 0)
 		{
-			EffBarrierPosSet(twp, pltwp);
+			EffBarrierPosSet_m(twp, pltwp);
 
 			auto ctp = CreateChildTask(LoadObj_Data1, (TaskFuncPtr)0x4BA1E0, tp);
 			auto ctwp = ctp->twp;
 
 			if (ctwp)
 			{
-				ctwp->ang.x = (Angle)(njRandom() * 65536.0);
-				ctwp->ang.y = (Angle)(njRandom() * 65536.0);
+				ctwp->ang.x = (Angle)(njRandom() * 65536.0f);
+				ctwp->ang.y = (Angle)(njRandom() * 65536.0f);
 				ctp->disp = (TaskFuncPtr)0x4B9F40;
 			}
 
@@ -99,7 +113,7 @@ static void __cdecl Muteki_r(task* tp)
 		if (pltwp && plpwp && ++twp->timer.l <= 1260)
 		{
 			plpwp->item |= Powerups_Invincibility;
-			EffBarrierPosSet(twp, pltwp);
+			EffBarrierPosSet_m(twp, pltwp);
 
 			for (int i = 0; i < 3; ++i)
 			{
@@ -110,8 +124,8 @@ static void __cdecl Muteki_r(task* tp)
 
 					if (ctwp)
 					{
-						ctwp->ang.x = (Angle)(njRandom() * 65536.0);
-						ctwp->ang.y = (Angle)(njRandom() * 65536.0);
+						ctwp->ang.x = (Angle)(njRandom() * 65536.0f);
+						ctwp->ang.y = (Angle)(njRandom() * 65536.0f);
 						ctp->disp = (TaskFuncPtr)0x4BA070;
 					}
 				}
