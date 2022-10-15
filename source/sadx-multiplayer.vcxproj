@@ -175,7 +175,6 @@
     <ClCompile Include="hud_itembox.cpp" />
     <ClCompile Include="hud_result.cpp" />
     <ClCompile Include="input.cpp" />
-    <ClCompile Include="knux.cpp" />
     <ClCompile Include="logic.cpp" />
     <ClCompile Include="menu_adventure.cpp" />
     <ClCompile Include="milesrace.cpp" />
@@ -213,6 +212,7 @@
     <ClCompile Include="objects\e_robo.cpp" />
     <ClCompile Include="objects\e_sai.cpp" />
     <ClCompile Include="objects\FragmEmeraldDigDisplay.cpp" />
+    <ClCompile Include="objects\knuckles.cpp" />
     <ClCompile Include="objects\ladder.cpp" />
     <ClCompile Include="objects\mirror.cpp" />
     <ClCompile Include="objects\ObjectBaloon.cpp" />
