@@ -33,6 +33,7 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 {
 	if (multiplayer::IsActive())
 	{
+		char pmax = multiplayer::GetPlayerCount();
 		auto twp = task_p->twp;
 		auto parent_twp = task_p->ptp->twp;
 
@@ -43,7 +44,7 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 				PadReadOff();
 				PadReadOffP(-1);
 
-				for (uint8_t i = 0; i < PLAYER_MAX; ++i)
+				for (uint8_t i = 0; i < pmax; ++i)
 				{
 					if (playertwp[i]) {
 
@@ -51,7 +52,6 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 						MovePlayerToWinnerPos(i, twp);
 					}
 				}
-
 
 				twp->mode = 1;
 				dsPlay_oneshot(13, 0, 0, 0);
@@ -68,6 +68,11 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 					if (parent_twp->mode < 1)
 					{
 						parent_twp->mode = 1;
+					}
+
+					for (int i = 0; i < pmax; i++) {
+						auto ptwp = playertwp[i];
+						CharColliOn(ptwp); //restore col to stand on the capsule
 					}
 
 					twp->mode = 2;

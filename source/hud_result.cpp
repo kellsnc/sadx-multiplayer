@@ -126,6 +126,7 @@ void PlayDefeatAnimation()
 			{
 				if (TASKWK_PLAYERID(twp) == Characters_Tails)
 				{
+					SetTailsRaceVictory();
 					pwp->mj.reqaction = 54;
 				}
 			}
@@ -256,6 +257,7 @@ void LoadMultiplayerResult()
 
 void LoadMultiplayerCoopResult()
 {
+	SetTailsRaceVictory();
 	auto tp = CreateElementalTask(LoadObj_Data1, LEV_5, CalcTotalScore);
 	tp->dest = CalcTotalScoreM_dest;
 }
