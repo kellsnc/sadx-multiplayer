@@ -118,6 +118,7 @@
     <ClInclude Include="levels.h" />
     <ClInclude Include="logic.h" />
     <ClInclude Include="menu.h" />
+    <ClInclude Include="menu_adventure.h" />
     <ClInclude Include="milesrace.h" />
     <ClInclude Include="mod.h" />
     <ClInclude Include="menu_multi.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="knux.cpp" />
     <ClCompile Include="logic.cpp" />
+    <ClCompile Include="menu_adventure.cpp" />
     <ClCompile Include="milesrace.cpp" />
     <ClCompile Include="multiapi.cpp" />
     <ClCompile Include="levels.cpp" />

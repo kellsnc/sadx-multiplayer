@@ -1,25 +1,7 @@
 #include "pch.h"
 #include "multiplayer.h"
 #include "result.h"
-
-void MovePlayersToWinnerPos(char i, taskwk* twp)
-{
-	if (multiplayer::IsCoopMode())
-	{
-		auto objpos = twp->pos;
-		auto pPos = playertwp[i]->pos;
-		char p = GetTheNearestPlayerNumber(&objpos); //get the player who reached the goal
-		float dist = GetDistance(&objpos, &pPos);
-
-		if (dist > 40.0f)
-		{
-			playertwp[i]->cwp->colli_range /= 2.0f;
-			playertwp[i]->pos = playertwp[p]->pos;
-			playertwp[i]->pos.x += 2.5f;
-			playertwp[i]->pos.z += 1.5f;
-		}
-	}
-}
+#include "utils.h"
 
 bool relbox_switch_test_riding_m(taskwk* twp, taskwk* parent_twp)
 {
@@ -66,7 +48,7 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 					if (playertwp[i]) {
 
 						PClearSpeed(playermwp[i], playerpwp[i]);
-						MovePlayersToWinnerPos(i, twp);
+						MovePlayerToWinnerPos(i, twp);
 					}
 				}
 

@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "menu.h"
 #include "menu_multi.h"
+#include "menu_adventure.h"
 #include "splitscreen.h"
 #include "network.h"
 
@@ -216,4 +217,5 @@ void __cdecl InitMenu()
 	DialogPrm[3].SzY = 280.0f;
 
 	InitMultiMenu();
+	InitAdventureMenu();
 }

@@ -18,6 +18,20 @@ void SetWinnerMulti(int pnum)
 	gBattleResult = pnum;
 }
 
+void MovePlayerToWinnerPos(int pnum, taskwk* twp)
+{
+	if (multiplayer::IsCoopMode() && playertwp[pnum])
+	{
+		auto winner = playertwp[GetTheNearestPlayerNumber(&twp->pos)]; //get the player who reached the goal
+
+		if (GetDistance(&twp->pos, &playertwp[pnum]->pos) > 40.0f)
+		{
+			CharColliOff(playertwp[pnum]);
+			SetAllPlayersPosition(winner->pos.x, winner->pos.y, winner->pos.z, winner->ang.y);
+		}
+	}
+}
+
 static void PlayCharaWinSound()
 {
 	auto pnum = GetWinnerMulti();

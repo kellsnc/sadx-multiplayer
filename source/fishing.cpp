@@ -259,10 +259,10 @@ static void __cdecl dispFishingLure_m(task* tp)
 	auto pnum = twp->btimer;
 	auto ptwp = playertwp[pnum];
 
-	if (!MissedFrames && ptwp && TASKWK_CHARID(ptwp) == Characters_Big && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
+	if (GameMode != GameModes_Menu && !MissedFrames && ptwp && TASKWK_CHARID(ptwp) == Characters_Big && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
 	{
 		auto etc = GetBigEtc(pnum);
-
+		
 		njSetTexture(&FISHING_TEXLIST);
 		njControl3D_Backup();
 		njControl3D_Remove(NJD_CONTROL_3D_CONSTANT_MATERIAL);
