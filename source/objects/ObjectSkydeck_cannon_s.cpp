@@ -43,7 +43,6 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 	NJS_VECTOR vector = { 0.0f, 2.5f, 5.0f };
 	auto data = a1->twp;
 
-
 	switch (data->mode)
 	{
 	case 0:
@@ -109,7 +108,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 				}
 
 				njUnitVector(&vector);
-				SetParabolicMotionP(i, 6.0f, &vector);	
+				SetParabolicMotionP(i, 6.0f, &vector);
 			}
 
 			data->value.f = 40.0f;
@@ -119,6 +118,13 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 			data->mode++;
 			data->wtimer = 0;
 			PadReadOnP(0xFFu);
+		}
+		break;
+	case 5:
+	default:
+		if ((data->cwp && data->cwp->flag & 1) != 0 && !data->cwp->hit_cwp->id)
+		{
+			data->mode = 2;
 		}
 		break;
 	}
