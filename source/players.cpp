@@ -507,9 +507,12 @@ void UpdatePlayersInfo()
     }
     
 #ifdef _DEBUG
-    if (PressedButtons[1] & Buttons_L)
+    if ( (PressedButtons[1] & Buttons_L) && (PressedButtons[1] & Buttons_R))
     {
-        playertwp[1]->pos = playertwp[0]->pos;
+        if (IsIngame() && playertwp[1] && playertwp[0])
+        {
+            playertwp[1]->pos = playertwp[0]->pos;
+        }
     }
 #endif
 
