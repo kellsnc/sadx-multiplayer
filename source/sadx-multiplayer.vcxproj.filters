@@ -481,9 +481,6 @@
     <ClCompile Include="objects\ObjectRocket.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="knux.cpp">
-      <Filter>Source Files\objects\figure</Filter>
-    </ClCompile>
     <ClCompile Include="objects\AmyRose.cpp">
       <Filter>Source Files\objects\figure</Filter>
     </ClCompile>
@@ -492,6 +489,9 @@
     </ClCompile>
     <ClCompile Include="menu_adventure.cpp">
       <Filter>Source Files\gui</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\knuckles.cpp">
+      <Filter>Source Files\objects\figure</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
