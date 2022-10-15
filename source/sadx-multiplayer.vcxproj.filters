@@ -484,6 +484,10 @@
     <ClCompile Include="knux.cpp">
       <Filter>Source Files\objects\figure</Filter>
     </ClCompile>
+    <ClCompile Include="menu_adventure.cpp" />
+    <ClCompile Include="object\AmyRose.cpp">
+      <Filter>Source Files\objects\figure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -660,6 +664,7 @@
     <ClInclude Include="objects\ObjectRocket.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
+    <ClInclude Include="menu_adventure.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">

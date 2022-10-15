@@ -13,4 +13,6 @@ extern bool DreamcastConversionEnabled;
 void initEvents();
 void initGammaPatch();
 void Init_KnuxPatches();
+void Init_BigPatches();
 void initSonicPatch();
+void Init_AmyPatches();

@@ -306,6 +306,7 @@
     <ClCompile Include="objects\Sakana.cpp" />
     <ClCompile Include="objects\SnowBoard.cpp" />
     <ClCompile Include="objects\sonic.cpp" />
+    <ClCompile Include="object\AmyRose.cpp" />
     <ClCompile Include="packet.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">

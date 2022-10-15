@@ -80,8 +80,9 @@ static void __cdecl sub_48CE10_r()
 	}
 }
 
-static void __cdecl BigTheCat_r(task* tp);
-TaskHook BigTheCat_t((intptr_t)Big_Main, BigTheCat_r);
+
+TaskHook BigTheCat_t((intptr_t)Big_Main);
+
 static void __cdecl BigTheCat_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -113,4 +114,10 @@ static void __cdecl BigTheCat_r(task* tp)
 	{
 		BigTheCat_t.Original(tp);
 	}
+}
+
+void Init_BigPatches()
+{
+	BigTheCat_t.Hook(BigTheCat_r);
+
 }
