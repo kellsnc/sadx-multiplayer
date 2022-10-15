@@ -124,7 +124,7 @@ void PlayDefeatAnimation()
 		{
 			if (GetWinnerMulti() == i)
 			{
-				if (TASKWK_PLAYERID(twp) == Characters_Tails)
+				if (TASKWK_CHARID(twp) == Characters_Tails)
 				{
 					SetTailsRaceVictory();
 					pwp->mj.reqaction = 54;

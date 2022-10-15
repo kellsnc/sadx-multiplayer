@@ -80,7 +80,6 @@ static void __cdecl SetFinishAction_r()
 			ForcePlayerAction(i, 19);
 		}
 
-		// Battle result screen
 
 		if (CurrentLevel == LevelIDs_TwinkleCircuit)
 		{
@@ -90,8 +89,10 @@ static void __cdecl SetFinishAction_r()
 		{
 			Load_DelayedSound_BGM(75);
 			PlayCharaWinSound();
+			SetLocalPathCamera(&pathtag_s_camera, 3, 720);
 		}
 
+		pdVibMxStop(0);
 		multiplayer::IsBattleMode() ? LoadMultiplayerResult() : LoadMultiplayerCoopResult();
 		return;
 

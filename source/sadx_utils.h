@@ -521,6 +521,8 @@ TaskFunc(dispKnuEffectChargeUpStay, 0x4C0FC0);
 FunctionPointer(void, KnuEffectDrawTsubu, (NJS_POINT3* v, float r), 0x4C0F20);
 TaskFunc(KnuEffectChargeUpStay, 0x4C0FF0);
 FunctionPointer(void, KnuEffectPutChargeComp, (NJS_VECTOR* position, float alpha), 0x4C1330);
+FunctionPointer(void, SetLocalPathCamera, (pathtag* path, Sint8 mode, int timer), 0x469300);
+DataPointer(pathtag, pathtag_s_camera, 0x919BF4);
 
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
