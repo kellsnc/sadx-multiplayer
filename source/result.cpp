@@ -75,27 +75,26 @@ static void __cdecl SetFinishAction_r()
 		PauseEnabled = FALSE;
 		SleepTimer();
 
-		for (int i = 0; i < PLAYER_MAX; ++i)
+		for (uint8_t i = 0; i < PLAYER_MAX; ++i)
 		{
 			ForcePlayerAction(i, 19);
 		}
 
 		// Battle result screen
-		if (multiplayer::IsActive())
-		{
-			if (CurrentLevel == LevelIDs_TwinkleCircuit)
-			{
-				ADX_Close();
-			}
-			else
-			{
-				Load_DelayedSound_BGM(75);
-				PlayCharaWinSound();
-			}
 
-			multiplayer::IsBattleMode() ? LoadMultiplayerResult() : LoadMultiplayerCoopResult();
-			return;
+		if (CurrentLevel == LevelIDs_TwinkleCircuit)
+		{
+			ADX_Close();
 		}
+		else
+		{
+			Load_DelayedSound_BGM(75);
+			PlayCharaWinSound();
+		}
+
+		multiplayer::IsBattleMode() ? LoadMultiplayerResult() : LoadMultiplayerCoopResult();
+		return;
+
 	}
 
 	SetFinishAction_t.Original();
@@ -111,6 +110,6 @@ static void __cdecl CalcTotalScore_r(task* tp)
 
 void InitResult()
 {
-	SetFinishAction_t.Hook(SetFinishAction_r); 
+	SetFinishAction_t.Hook(SetFinishAction_r);
 	CalcTotalScore_t.Hook(CalcTotalScore_r);
 }

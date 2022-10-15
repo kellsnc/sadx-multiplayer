@@ -43,7 +43,7 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 				PadReadOff();
 				PadReadOffP(-1);
 
-				for (int i = 0; i < PLAYER_MAX; ++i)
+				for (uint8_t i = 0; i < PLAYER_MAX; ++i)
 				{
 					if (playertwp[i]) {
 
