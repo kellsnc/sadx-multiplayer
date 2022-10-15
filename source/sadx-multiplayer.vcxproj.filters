@@ -475,7 +475,7 @@
     <ClCompile Include="objects\ladder.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectSkydeck_cannon_s.cpp">
+    <ClCompile Include="objects\o_sky_cannon_s.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\ObjectRocket.cpp">
@@ -485,8 +485,11 @@
       <Filter>Source Files\objects\figure</Filter>
     </ClCompile>
     <ClCompile Include="menu_adventure.cpp" />
-    <ClCompile Include="object\AmyRose.cpp">
+    <ClCompile Include="objects\AmyRose.cpp">
       <Filter>Source Files\objects\figure</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_cannon_cmn.cpp">
+      <Filter>Source Files\objects</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
