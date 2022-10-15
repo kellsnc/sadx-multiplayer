@@ -1,47 +1,41 @@
 #include "pch.h"
 
-UsercallFunc(signed int, Knux_CheckNact_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
+UsercallFunc(Bool, Knux_CheckNact_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
 TaskHook KnuxExec_t((intptr_t)Knuckles_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
 TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
 
-void __cdecl KnuEffectChargeUp_r(task* a1)
+void __cdecl KnuEffectChargeUp_r(task* tp)
 {
-	Angle result = 0;
-	float cos = 0.0f;
-	task* ChargeUpTask = nullptr;
-	NJS_VECTOR* chargeUpPos = nullptr;
+	auto twp = tp->twp;
+	twp->timer.f += 0.055555552f;
+	auto pData = playertwp[TASKWK_PLAYERID(twp)];
 
-	auto data = a1->twp;
-	auto timer = data->timer.f + 0.055555552f;
-	data->timer.f = *(double*)&timer;
-	auto pData = playertwp[data->counter.b[0]];
-
-	if (timer < 1.0f && pData)
+	if (twp->timer.f < 1.0f && pData)
 	{
-		result = data->ang.y + data->ang.x;
-		data->ang.x = result;
-		cos = njCos(result);
-		data->pos.x = cos * data->scl.y + pData->pos.x;
-		data->pos.y = pData->pos.y + data->scl.x;
-		data->pos.z = njSin(data->ang.x) * data->scl.y + pData->pos.z;
-		auto idk = (1.0f - data->timer.f) * data->value.f;
-		KnuEffectDrawTsubu(&data->pos, idk);
-		ChargeUpTask = CreateElementalTask(LoadObj_Data1, 6, KnuEffectChargeUpStay);
+		twp->ang.x += twp->ang.y;
+		twp->pos.x = njCos(twp->ang.x) * twp->scl.y + pData->pos.x;
+		twp->pos.y = pData->pos.y + twp->scl.x;
+		twp->pos.z = njSin(twp->ang.x) * twp->scl.y + pData->pos.z;
+
+		auto scl = (1.0f - twp->timer.f) * twp->value.f;
+		KnuEffectDrawTsubu(&twp->pos, scl);
+
+		task* ChargeUpTask = CreateElementalTask(LoadObj_Data1, 6, KnuEffectChargeUpStay);
 		if (ChargeUpTask)
 		{
-			chargeUpPos = &data->pos;
-			ChargeUpTask->twp->value.f = idk;
+			ChargeUpTask->twp->pos = twp->pos;
+			ChargeUpTask->twp->value.f = scl;
 			ChargeUpTask->disp = dispKnuEffectChargeUpStay;
 		}
 	}
 	else
 	{
-		FreeTask(a1);
+		FreeTask(tp);
 	}
 }
 
-void __cdecl KnuEffectPutChargeUp_r(float alpha, taskwk* pData)
+void __cdecl KnuEffectPutChargeUp_r(Float alpha, taskwk* pData)
 {
 	if (pData)
 	{
@@ -49,85 +43,91 @@ void __cdecl KnuEffectPutChargeUp_r(float alpha, taskwk* pData)
 
 		if (task)
 		{
-			float calcAlpha = 16.0f - (alpha * -4096.0f);
-			if ((float)rand() * 0.000030517578f < 0.5f)
+			Float calcAlpha = 16.0f - (alpha * -4096.0f);
+			if (njRandom() < 0.5f)
 			{
 				calcAlpha = (alpha * -4096.0f) - 16.0f;
 			}
-			task->twp->scl.x = rand() * 0.000030517578f * 8.0f + 1.0f;
-			task->twp->scl.y = (rand() * 0.000030517578f + 1.0f) * 2.5f;
-			task->twp->ang.x = (unsigned __int64)(rand() * 0.000030517578f * 65536.0f);
+			task->twp->scl.x = njRandom() * 8.0f + 1.0f;
+			task->twp->scl.y = (njRandom() + 1.0f) * 2.5f;
+			task->twp->ang.x = njRandom() * 0x10000;
 			task->twp->ang.y = calcAlpha;
 			task->twp->value.f = alpha;
-			task->twp->counter.b[0] = pData->counter.b[0]; //store pNum
+			TASKWK_PLAYERID(task->twp) = TASKWK_PLAYERID(pData);
 			task->disp = dispKnuEffectChargeUpStay;
 		}
 	}
 }
 
-void __cdecl KnucklesChargeEffectExe_r(task* a1)
+void __cdecl KnucklesChargeEffectDisp(task* tp)
 {
-	if (!multiplayer::IsActive())
+	auto twp = tp->twp;
+	auto wk = (int*)twp->value.ptr;
+	auto timer = *wk;
+	auto ptwp = playertwp[TASKWK_PLAYERID(twp)];
+
+	if (ptwp && timer == 120)
 	{
-		return KnucklesChargeEffectExe_t.Original(a1);
-	}
-
-	_BOOL1 v5 = false;
-	float alph = 0.0f;
-	float alpha = 0.0f;
-
-	auto data = a1->twp;
-	auto PlayerData = playertwp[(unsigned __int8)data->counter.b[0]];
-
-	if (!PlayerData)
-	{
-		DestroyTask(a1);
-		return;
-	}
-
-	auto timer = data->btimer + 1;
-	data->btimer = timer;
-	auto v4 = data->value.l; //????????????????????????????????????????
-
-	if (v4 > 0)
-	{
-		v5 = v4 == 120;
-		if (v4 >= 120)
-		{
-			if (v5) //never reached
-			{
-				alpha = (njSin(timer << 10) + 1.0f) * 0.5f;
-				KnuEffectPutChargeComp(&PlayerData->cwp->info->center, alpha);
-			}
-		}
-
-		if ((v4 & 3) == 0) //never reached
-		{
-			alph = v4 * 0.0083333338f;
-			KnuEffectPutChargeUp_r(alph, PlayerData);
-			return;
-		}
+		tp->disp = KnucklesChargeEffectDisp;
+		KnuEffectPutChargeComp(&ptwp->cwp->info->center, (njSin(twp->btimer << 10) + 1.0f) * 0.5f);
 	}
 }
 
-signed int Knux_CheckNAct_r(playerwk* co2, taskwk* data, motionwk2* data2)
+void __cdecl KnucklesChargeEffectExe_r(task* tp)
 {
-	auto even = data->ewp;
-
-	if (even->move.mode || even->path.list || ((data->flag & Status_DoNextAction) == 0))
+	if (!multiplayer::IsActive())
 	{
-		return Knux_CheckNact_t.Original(co2, data, data2);
+		return KnucklesChargeEffectExe_t.Original(tp);
 	}
 
-	switch (data->smode)
+	auto twp = tp->twp;
+	auto PlayerData = playertwp[TASKWK_PLAYERID(twp)];
+
+	if (!PlayerData)
+	{
+		DestroyTask(tp);
+		return;
+	}
+
+	twp->btimer += 1;
+
+	auto wk = (int*)twp->value.ptr;
+	auto timer = *wk;
+
+	if (timer > 0 && timer < 120.)
+	{
+		if ((timer & 3) == 0)
+		{
+			KnuEffectPutChargeUp_r(timer / 120.0f, PlayerData);
+			return;
+		}
+	}
+
+	if (timer == 120)
+	{
+		tp->disp = KnucklesChargeEffectDisp;
+		KnuEffectPutChargeComp(&PlayerData->cwp->info->center, (njSin(twp->btimer << 10) + 1.0f) * 0.5f);
+	}
+}
+
+Bool Knux_CheckNAct_r(playerwk* co2, taskwk* twp, motionwk2* data2)
+{
+	auto even = twp->ewp;
+
+	if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
+	{
+		return Knux_CheckNact_t.Original(co2, twp, data2);
+	}
+
+	switch (twp->smode)
 	{
 	case 5:
-		data->mode = SDCannonMode;
+		twp->mode = SDCannonMode;
 		co2->mj.reqaction = 19;
 		return 1;
 	}
 
-	return Knux_CheckNact_t.Original(co2, data, data2);
+	return Knux_CheckNact_t.Original(co2, twp, data2);
 }
 
 void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
@@ -158,14 +158,14 @@ void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 
 void KnuxExec_r(task* obj)
 {
-	auto data = obj->twp;
+	auto twp = obj->twp;
 	motionwk2* data2 = (motionwk2*)obj->mwp;
 	playerwk* co2 = (playerwk*)obj->mwp->work.l;
 
-	switch (data->mode)
+	switch (twp->mode)
 	{
 	case SDCannonMode:
-		CannonModePhysics(data, data2, co2);
+		CannonModePhysics(twp, data2, co2);
 		break;
 	}
 
