@@ -496,6 +496,9 @@
     <ClCompile Include="menu_adventure.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
+    <ClCompile Include="collision.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -677,6 +680,9 @@
     </ClInclude>
     <ClInclude Include="menu_adventure.h">
       <Filter>Header FIles\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="collision.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
