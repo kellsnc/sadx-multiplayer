@@ -53,15 +53,63 @@ void Amy_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 		}
 		return;
 	case SDCylStd:
-		Mode_SDCylinderStd(data1, co2);
-		break;
+		if (AmyCheckInput(co2, data2, data1) || AmyCheckJump(co2, data1, data2))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		Mode_SDCylStdChanges(data1, co2);
+		return;
 	case SDCylDown:
-		Mode_SDCylinderDown(data1, co2);
-		break;
+
+		if (AmyCheckInput(co2, data2, data1) || AmyCheckJump(co2, data1, data2))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+
+		Mode_SDCylDownChanges(data1, co2);
+
+		return;
 	case SDCylLeft:
+		if (AmyCheckInput(co2, data2, data1) || AmyCheckJump(co2, data1, data2))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 <= -3072)
+		{
+			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+			{
+				co2->htp = 0;
+			}
+
+			return;	
+		}
+		data1->mode = SDCylStd;
+
+		return;
 	case SDCylRight:
-		Mode_SDCylinderLeftRight(data1, co2);
-		break;
+		if (AmyCheckInput(co2, data2, data1) || AmyCheckJump(co2, data1, data2))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 >= 3072)
+		{
+			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+			{
+				co2->htp = 0;
+			}
+			return;
+		}
+
+		data1->mode = SDCylStd;
+		return;
 	}
 
 	Amy_RunsActions_t.Original(data1, data2, co2);
@@ -73,10 +121,27 @@ void AmyExec_r(task* obj)
 	motionwk2* data2 = (motionwk2*)obj->mwp;
 	playerwk* co2 = (playerwk*)obj->mwp->work.l;
 
+	if (co2)
+	{
+		co2 = co2;
+	}
+
 	switch (data->mode)
 	{
 	case SDCannonMode:
 		CannonModePhysics(data, data2, co2);
+		break;
+	case SDCylStd:
+		Mode_SDCylinderStd(data, co2);
+		break;
+	case SDCylDown:
+		Mode_SDCylinderDown(data, co2);
+		break;
+	case SDCylLeft:
+		Mode_SDCylinderLeft(data, co2);
+		break;
+	case SDCylRight:
+		Mode_SDCylinderRight(data, co2);
 		break;
 	}
 
