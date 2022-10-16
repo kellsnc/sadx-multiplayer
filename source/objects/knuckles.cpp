@@ -4,6 +4,7 @@ UsercallFunc(Bool, Knux_CheckNact_t, (playerwk* a1, taskwk* a2, motionwk2* a3), 
 TaskHook KnuxExec_t((intptr_t)Knuckles_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
 TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
+static FunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
 
 void __cdecl KnuEffectChargeUp_r(task* tp)
 {
@@ -172,10 +173,45 @@ void KnuxExec_r(task* obj)
 	KnuxExec_t.Original(obj);
 }
 
+void __cdecl KnuEffectPutChargeComp_r(NJS_VECTOR* position, float alpha)
+{
+	if (!multiplayer::IsActive())
+	{
+		return KnuEffectPutChargeComp_t.Original(position, alpha);
+	}
+
+	auto y = 0.0f;
+	auto a = 0.0f;
+	auto s = 0.0f;
+
+	if (!MissedFrames)
+	{
+		a = alpha * -0.60000002;
+		auto obj = (NJS_MODEL_SADX *)KNUCKLES_OBJECTS[47]->model;
+		obj->mats->attr_texId = 1;
+		SetMaterialAndSpriteColor_Float(a, 1.0, 1.0, 1.0);
+		njPushMatrix(0);
+		njTranslateV(0, position);
+		s = 2.0f - alpha * alpha;
+		njScale(0, s, s, s);
+		y = alpha * 262144.0f;
+		if ((unsigned int)(unsigned __int64)y)
+		{
+			njRotateY(0, (unsigned __int16)(unsigned __int64)y);
+		}
+		njSetTexture(&KNU_EFF_TEXLIST);
+		ProcessModelNode_A_WrapperB(KNUCKLES_OBJECTS[47], QueuedModelFlagsB_SomeTextureThing);
+		njPopMatrix(1u);
+		ResetMaterial();
+	}
+}
+
 void Init_KnuxPatches()
 {
 	KnuxExec_t.Hook(KnuxExec_r);
 	Knux_CheckNact_t.Hook(Knux_CheckNAct_r);
 	Knux_RunsActions_t.Hook(Knux_RunsActions_r);
 	KnucklesChargeEffectExe_t.Hook(KnucklesChargeEffectExe_r);
+
+	KnuEffectPutChargeComp_t.Hook(KnuEffectPutChargeComp_r); //add support DC Conv
 }
