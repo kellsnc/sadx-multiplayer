@@ -61,6 +61,25 @@ enum TGT_MODE : __int32
 	MODE_MAX = 0x8,
 };
 
+enum : __int32
+{
+	ID_NO_DEFINE = 0x0,
+	ID_P_PLAYABLE = 0x1,
+	ID_P_NOPLAYABLE = 0x2,
+	ID_P_BOSS = 0x3,
+	ID_O_MOVE_S = 0x4,
+	ID_O_MOVE_M = 0x5,
+	ID_O_MOVE_L = 0x6,
+	ID_O_SWING = 0x7,
+	ID_O_JUMPPANEL = 0x8,
+	ID_O_SNOWJUMP = 0x9,
+	ID_E_CART = 0xA,
+	ID_I_RING = 0xB,
+	ID_C_OTTOTTO = 0xC,
+	ID_C_BIGWJUMP = 0xD,
+	ID_END = 0xE,
+};
+
 struct Mass
 {
 	NJS_POINT3 trans[12];
@@ -292,6 +311,12 @@ struct SAVE_DATA
 	int M_emblem;
 };
 
+struct colaround
+{
+	taskwk* twp;
+	float dist;
+};
+
 DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -493,6 +518,14 @@ CamFunc(CameraEventPoint, 0x464A00);
 VoidFunc(calcvsyncsyoriochi, 0x413920);
 DataPointer(Uint32, gu32loop_count, 0x3B1118C);
 DataPointer(Uint32, adva_loop_count, 0x3B11184);
+DataArray(colaround, around_ring_list_p0, 0x3B27470, 257);
+DataArray(colaround, around_enemy_list_p0, 0x3B259C0, 657);
+DataArray(colaround, around_ring_list_p1, 0x3B23298, 257);
+DataArray(colaround, around_enemy_list_p1, 0x3B242F8, 657);
+DataPointer(Uint16, arl_num0, 0x3B27048);
+DataPointer(Uint16, ael_num0, 0x3B23288);
+DataPointer(Uint16, arl_num1, 0x3B27C7C);
+DataPointer(Uint16, ael_num1, 0x3B240A8);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
