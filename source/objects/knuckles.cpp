@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ObjCylinderCmn.h"
 
-UsercallFunc(Bool, Knux_CheckNact_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
+UsercallFunc(Bool, Knux_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
 TaskHook KnuxExec_t((intptr_t)Knuckles_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
 TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
@@ -145,13 +145,13 @@ void __cdecl KnucklesChargeEffectExe_r(task* tp)
 	}
 }
 
-Bool Knux_CheckNAct_r(playerwk* co2, taskwk* twp, motionwk2* data2)
+Bool Knux_CheckInput_r(playerwk* co2, taskwk* twp, motionwk2* data2)
 {
 	auto even = twp->ewp;
 
 	if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 	{
-		return Knux_CheckNact_t.Original(co2, twp, data2);
+		return Knux_CheckInput_t.Original(co2, twp, data2);
 	}
 
 	switch (twp->smode)
@@ -165,9 +165,11 @@ Bool Knux_CheckNAct_r(playerwk* co2, taskwk* twp, motionwk2* data2)
 		if (SetCylinderNextAction(twp, data2, co2))
 			return 1;
 
+		break;
+
 	}
 
-	return Knux_CheckNact_t.Original(co2, twp, data2);
+	return Knux_CheckInput_t.Original(co2, twp, data2);
 }
 
 void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
@@ -287,7 +289,7 @@ void KnuxExec_r(task* obj)
 void Init_KnuxPatches()
 {
 	KnuxExec_t.Hook(KnuxExec_r);
-	Knux_CheckNact_t.Hook(Knux_CheckNAct_r);
+	Knux_CheckInput_t.Hook(Knux_CheckInput_r);
 	Knux_RunsActions_t.Hook(Knux_RunsActions_r);
 	KnucklesChargeEffectExe_t.Hook(KnucklesChargeEffectExe_r);
 

@@ -862,6 +862,20 @@ static inline int E102CheckStop(taskwk* a1, playerwk* a2)
 	return result;
 }
 
+static const void* const E102CheckJumpPtr = (void*)0x480730;
+static inline int E102CheckJump(playerwk* a1, taskwk* a2)
+{
+	int result;
+	__asm
+	{
+		mov ebx, [a2]
+		mov eax, [a1]
+		call E102CheckJumpPtr
+		mov result, eax
+	}
+	return result;
+}
+
 static const void* const AmyCheckInputPtr = (void*)0x487810;
 static inline int AmyCheckInput(playerwk* pwp, motionwk2* data2, taskwk* data)
 {
