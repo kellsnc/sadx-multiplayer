@@ -857,3 +857,27 @@ static inline int AmyCheckStop(taskwk* a1, playerwk* a2)
 	}
 	return result;
 }
+
+static const void* const SonicHoldOnPillarPtr = (void*)0x493460;
+static inline void SonicHoldOnPillar(playerwk* a1, taskwk* a2)
+{
+	__asm
+	{
+		mov edi, [a2]
+		mov eax, [a1]
+		call SonicHoldOnPillarPtr
+	}
+}
+
+static const void* const SonicGetPillarRotSpeedPtr = (void*)0x45AB70;
+static inline int SonicGetPillarRotSpeed(playerwk* a1)
+{
+	int result;
+	__asm
+	{
+		mov eax, [a1]
+		call SonicGetPillarRotSpeedPtr
+		mov result, eax
+	}
+	return result;
+}
