@@ -2,6 +2,13 @@
 #include "multiplayer.h"
 #include "camera.h"
 #include "fishing.h"
+#include "ObjCylinderCmn.h"
+
+
+TaskHook BigTheCat_t((intptr_t)Big_Main);
+
+Trampoline* BigChkMode_t = nullptr; //doesn't want to work with FuncHook for some weird reason
+UsercallFunc(Bool, Big_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x48D400, rEAX, rEAX, rEDI, stack4);
 
 static void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp);
 Trampoline bigActMissSet_t(0x48CD50, 0x48CD55, bigActMissSet_r);
@@ -80,11 +87,159 @@ static void __cdecl sub_48CE10_r()
 	}
 }
 
+Bool Big_CheckInput_r(playerwk* co2, taskwk* data, motionwk2* data2)
+{
+	auto even = data->ewp;
 
-TaskHook BigTheCat_t((intptr_t)Big_Main);
+	if (even->move.mode || even->path.list || ((data->flag & Status_DoNextAction) == 0))
+	{
+		return Big_CheckInput_t.Original(co2, data, data2);
+	}
+
+
+	switch (data->smode)
+	{
+
+	case 32:
+
+		if (SetCylinderNextAction(data, data2, co2))
+			return 1;
+
+		break;
+
+	}
+
+	return Big_CheckInput_t.Original(co2, data, data2);
+}
+
+#define NAKED __declspec(naked)
+#pragma region CHK MODE
+
+BOOL BigChkMode_o(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	auto target = BigChkMode_t->Target();
+	signed int result;
+	__asm
+	{
+		push[mwp]
+		push[twp]
+		mov eax, [pwp]
+		call target
+		add esp, 8
+		mov result, eax
+	}
+	return result;
+}
+
+static void __cdecl BigChkMode_r(playerwk* co2, taskwk* data1, motionwk2* data2)
+{
+	switch (data1->mode)
+	{
+	case SDCylStd:
+		if (BigCheckInput(co2, data1, data2) || BigCheckJump(co2, data1))
+		{
+			co2->htp = 0;
+			break;
+		}
+
+		Mode_SDCylStdChanges(data1, co2);
+		return;
+	case SDCylDown:
+
+		if (BigCheckInput(co2, data1, data2) || BigCheckJump(co2, data1))
+		{
+			co2->htp = 0;
+			break;
+		}
+
+
+		Mode_SDCylDownChanges(data1, co2);
+
+		return;
+	case SDCylLeft:
+		if (BigCheckInput(co2, data1, data2) || BigCheckJump(co2, data1))
+		{
+			co2->htp = 0;
+			break;
+		}
+
+		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 <= -3072)
+		{
+			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+			{
+				co2->htp = 0;
+			}
+
+			return;
+		}
+		data1->mode = SDCylStd;
+
+		return;
+	case SDCylRight:
+		if (BigCheckInput(co2, data1, data2) || BigCheckJump(co2, data1))
+		{
+			co2->htp = 0;
+			break;
+		}
+
+		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 >= 3072)
+		{
+			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+			{
+				co2->htp = 0;
+			}
+			return;
+		}
+
+		data1->mode = SDCylStd;
+		return;
+	}
+
+
+	BigChkMode_o(data1, data2, co2);
+}
+
+static void NAKED BigChkMode_jmp()
+{
+	__asm
+	{
+		push[esp + 08h] // mwp
+		push[esp + 08h] // twp
+		push eax // pwp
+		call BigChkMode_r
+		pop eax
+		add esp, 8
+		retn
+	}
+}
+
+#pragma endregion
 
 static void __cdecl BigTheCat_r(task* tp)
 {
+	auto data = tp->twp;
+	auto data2 = (motionwk2*)tp->mwp;
+	auto co2 = (playerwk*)tp->mwp->work.l;
+
+	switch (data->mode)
+	{
+	case SDCannonMode:
+		CannonModePhysics(data, data2, co2);
+		break;
+	case SDCylStd:
+		Mode_SDCylinderStd(data, co2);
+		break;
+	case SDCylDown:
+		Mode_SDCylinderDown(data, co2);
+		break;
+	case SDCylLeft:
+		Mode_SDCylinderLeft(data, co2);
+		break;
+	case SDCylRight:
+		Mode_SDCylinderRight(data, co2);
+		break;
+	}
+
 	if (multiplayer::IsActive())
 	{
 		auto pnum = TASKWK_PLAYERID(tp->twp);
@@ -119,5 +274,6 @@ static void __cdecl BigTheCat_r(task* tp)
 void Init_BigPatches()
 {
 	BigTheCat_t.Hook(BigTheCat_r);
-
+	Big_CheckInput_t.Hook(Big_CheckInput_r);
+	BigChkMode_t = new Trampoline(0x48E640, 0x48E645, BigChkMode_jmp);
 }

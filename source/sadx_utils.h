@@ -933,3 +933,34 @@ static inline signed int AmyCheckJump(playerwk* a1, taskwk* a2, motionwk2* a3)
 	}
 	return result;
 }
+
+
+static const void* const BigCheckJumpPtr = (void*)0x48D2A0;
+static inline signed int BigCheckJump(playerwk* a1, taskwk* a2)
+{
+	int result;
+	__asm
+	{
+		mov ecx, [a2]
+		mov eax, [a1]
+		call BigCheckJumpPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const BigCheckInputPtr = (void*)0x48D400;
+static inline signed int BigCheckInput(playerwk* a1, taskwk* a2, motionwk2* a3)
+{
+	int result;
+	__asm
+	{
+		push[a3]
+		mov edi, [a2]
+		mov eax, [a1]
+		call BigCheckInputPtr
+		mov result, eax
+		add esp, 4
+	}
+	return result;
+}
