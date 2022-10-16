@@ -8,6 +8,7 @@
 UsercallFuncVoid(CCL_CheckHoming_h, (taskwk* twp1, taskwk* twp2, float dist2), (twp1, twp2, dist2), 0x418BE0, rECX, rEDX, stack4);
 UsercallFuncVoid(pLockingOnTargetEnemy2_h, (taskwk* twp, motionwk2* mwp, playerwk* pwp), (twp, mwp, pwp), 0x7984B0, rEDI, rEBX, stack4);
 UsercallFuncVoid(SonicHomingOnTarget_h, (taskwk* twp, playerwk* pwp, motionwk2* mwp), (twp, pwp, mwp), 0x492300, rESI, rEDI, stack4);
+UsercallFuncVoid(SonicHomeOnTarget_h, (taskwk* twp, playerwk* pwp, motionwk2* mwp), (twp, pwp, mwp), 0x494B80, rECX, rEAX, stack4);
 FunctionHook<taskwk*, taskwk*> CCL_IsHitPlayer_h(0x41CBC0);
 FunctionHook<void> CCL_ClearAll_h(0x41C680);
 FunctionHook<void> CCL_Analyze_h(0x420700);
@@ -256,8 +257,8 @@ void __cdecl CCL_CheckHoming_r(taskwk* twp1, taskwk* twp2, Float dist2)
 				{
 					if (ael_num < 656)
 					{
-						around_enemy_list[arl_num] = { twp2, dist2 };
-						around_enemy_list[arl_num + 1].twp = nullptr;
+						around_enemy_list[ael_num] = { twp2, dist2 };
+						around_enemy_list[ael_num + 1].twp = nullptr;
 						++ael_num;
 					}
 				}
@@ -272,7 +273,10 @@ void __cdecl CCL_CheckHoming_r(taskwk* twp1, taskwk* twp2, Float dist2)
 
 void ClearExtraHomingLists()
 {
-	arl_num2, arl_num3, ael_num2, ael_num3 = 0;
+	arl_num2 = 0;
+	arl_num3 = 0;
+	ael_num2 = 0;
+	ael_num3 = 0;
 	around_ring_list_p2[0].twp = nullptr;
 	around_ring_list_p3[0].twp = nullptr;
 	around_enemy_list_p2[0].twp = nullptr;
@@ -460,7 +464,7 @@ void __cdecl SonicHomingOnTarget_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 	auto ael = around_enemy_list_p[pnum];
 	auto rival = GetRivalPlayerNumber_r(pnum);
 
-	if (pwp->free.sw[2] <= 0 && ael->twp || rival != -1)
+	if (pwp->free.sw[2] <= 0 && (ael->twp || rival != -1))
 	{
 		taskwk* closest_tgt = nullptr;
 		auto closest_dist = 10000.0;
@@ -584,6 +588,47 @@ void __cdecl SonicHomingOnTarget_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 	}
 }
 
+void __cdecl SonicHomeOnTarget_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
+{
+	if (!multiplayer::IsActive())
+	{
+		SonicHomeOnTarget_h.Original(twp, pwp, mwp);
+		return;
+	}
+
+	auto pnum = TASKWK_PLAYERID(twp);
+
+	task* effect = CreateElementalTask(2, LEV_5, (pwp->equipment & Upgrades_SuperSonic) ? (TaskFuncPtr)0x55FB50 : (TaskFuncPtr)0x4A2A70);
+	if (effect)
+	{
+		TASKWK_PLAYERID(effect->twp) = pnum;
+	}
+
+	pwp->free.sw[2] = -1; // if -1 or 0 the homing attack search in SonicHomingOnTarget will run
+	pwp->free.sw[3] = 0; // additional timer
+	dsPlay_oneshot(762, 0, 0, 0);
+
+	if (pnum >= PLAYER_MAX)
+		return;
+
+	auto ael = around_enemy_list_p[pnum];
+
+	if (ael->twp || GetRivalPlayerNumber_r(pnum) != -1)
+	{
+		SonicHomingOnTarget_r(twp, pwp, mwp);
+
+		if (pwp->free.sw[2])
+		{
+			pwp->spd.x = 5.0f;
+		}
+	}
+	else
+	{
+		pwp->spd.x = (pwp->equipment & Upgrades_SuperSonic) ? 10.0f : 5.0f;
+		pwp->free.sw[2] = 1;
+	}
+}
+
 void InitCollisionPatches()
 {
 	// Dyncol lookup rewrite
@@ -605,5 +650,6 @@ void InitCollisionPatches()
 	BigCheckTargetEnemy_h.Hook(BigCheckTargetEnemy_r);
 	GetRivalPlayerNumber_h.Hook(GetRivalPlayerNumber_r);
 	SonicHomingOnTarget_h.Hook(SonicHomingOnTarget_r);
+	SonicHomeOnTarget_h.Hook(SonicHomeOnTarget_r);
 	WriteJump((void*)0x43C110, PCheckTargetEnemy_r);
 }
