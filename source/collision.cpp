@@ -149,12 +149,12 @@ void __cdecl CCL_IsHitPlayer_r(taskwk* twp)
 	TARGET_DYNAMIC(CCL_IsHitPlayer)(twp);
 }
 
-int __cdecl CheckCollisionP_r(NJS_POINT3* vp, float d)
+int __cdecl CheckCollisionP_r(NJS_POINT3* vp, Float d)
 {
 	return IsPlayerInSphere(vp, d);
 }
 
-int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, float r, float h)
+int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, Float r, Float h)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
@@ -176,7 +176,7 @@ int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, float r, float h)
 	}
 
 	return 0;
-//}
+}
 
 void InitCollisionPatches()
 {

@@ -24,6 +24,7 @@
 #include "input.h"
 #include "logic.h"
 #include "collision.h"
+#include "event.h"
 
 const HelperFunctions* gHelperFunctions;
 

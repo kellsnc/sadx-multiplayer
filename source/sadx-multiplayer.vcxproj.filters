@@ -684,6 +684,24 @@
     <ClInclude Include="collision.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
+    <ClInclude Include="objects\sonic.h">
+      <Filter>Header FIles\objects\figure</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\knuckles.h">
+      <Filter>Header FIles\objects\figure</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\amy.h">
+      <Filter>Header FIles\objects\figure</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\gamma.h">
+      <Filter>Header FIles\objects\figure</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\big.h">
+      <Filter>Header FIles\objects\figure</Filter>
+    </ClInclude>
+    <ClInclude Include="event.h">
+      <Filter>Header FIles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -721,6 +739,9 @@
     </Filter>
     <Filter Include="Source Files\objects\bosses">
       <UniqueIdentifier>{7d85d775-a2ac-429b-9e63-1731455402c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\figure">
+      <UniqueIdentifier>{8c180e99-72c3-4944-be96-09e009ff6f0b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -19,7 +19,13 @@
 #include "objects/e_pondskater.h"
 #include "objects/e_gachapon.h"
 #include "objects/ladder.h"
-#include "objects//ObjCylinderCmn.h"
+#include "objects/ObjCylinderCmn.h"
+
+#include "objects/sonic.h"
+#include "objects/knuckles.h"
+#include "objects/amy.h"
+#include "objects/gamma.h"
+#include "objects/big.h"
 
 /*
 
