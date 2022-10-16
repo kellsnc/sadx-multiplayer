@@ -1,10 +1,44 @@
 #include "pch.h"
+#include "ObjCylinderCmn.h"
 
 UsercallFunc(Bool, Knux_CheckNact_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
 TaskHook KnuxExec_t((intptr_t)Knuckles_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
 TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
 static FunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
+
+void __cdecl KnuEffectPutChargeComp_r(NJS_VECTOR* position, float alpha)
+{
+	if (!multiplayer::IsActive())
+	{
+		return KnuEffectPutChargeComp_t.Original(position, alpha);
+	}
+
+	auto y = 0.0f;
+	auto a = 0.0f;
+	auto s = 0.0f;
+
+	if (!MissedFrames)
+	{
+		a = alpha * -0.60000002;
+		auto obj = (NJS_MODEL_SADX*)KNUCKLES_OBJECTS[47]->model;
+		obj->mats->attr_texId = 1;
+		SetMaterialAndSpriteColor_Float(a, 1.0, 1.0, 1.0);
+		njPushMatrix(0);
+		njTranslateV(0, position);
+		s = 2.0f - alpha * alpha;
+		njScale(0, s, s, s);
+		y = alpha * 262144.0f;
+		if ((unsigned int)(unsigned __int64)y)
+		{
+			njRotateY(0, (unsigned __int16)(unsigned __int64)y);
+		}
+		njSetTexture(&KNU_EFF_TEXLIST);
+		ProcessModelNode_A_WrapperB(KNUCKLES_OBJECTS[47], QueuedModelFlagsB_SomeTextureThing);
+		njPopMatrix(1u);
+		ResetMaterial();
+	}
+}
 
 void __cdecl KnuEffectChargeUp_r(task* tp)
 {
@@ -126,6 +160,11 @@ Bool Knux_CheckNAct_r(playerwk* co2, taskwk* twp, motionwk2* data2)
 		twp->mode = SDCannonMode;
 		co2->mj.reqaction = 19;
 		return 1;
+	case 32:
+
+		if (SetCylinderNextAction(twp, data2, co2))
+			return 1;
+
 	}
 
 	return Knux_CheckNact_t.Original(co2, twp, data2);
@@ -152,6 +191,64 @@ void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 			co2->mj.reqaction = 2;
 		}
 		return;
+	case SDCylStd:
+		if (KnucklesCheckInput(data1, data2, co2) || KnucklesCheckJump(data1, co2))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		Mode_SDCylStdChanges(data1, co2);
+		return;
+	case SDCylDown:
+
+		if (KnucklesCheckInput(data1, data2, co2) || KnucklesCheckJump(data1, co2))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+
+		Mode_SDCylDownChanges(data1, co2);
+
+		return;
+	case SDCylLeft:
+		if (KnucklesCheckInput(data1, data2, co2) || KnucklesCheckJump(data1, co2))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 <= -3072)
+		{
+			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+			{
+				co2->htp = 0;
+			}
+
+			return;
+		}
+		data1->mode = SDCylStd;
+
+		return;
+	case SDCylRight:
+		if (KnucklesCheckInput(data1, data2, co2) || KnucklesCheckJump(data1, co2))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 >= 3072)
+		{
+			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+			{
+				co2->htp = 0;
+			}
+			return;
+		}
+
+		data1->mode = SDCylStd;
+		return;
 	}
 
 	Knux_RunsActions_t.Original(data1, data2, co2);
@@ -160,6 +257,7 @@ void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 void KnuxExec_r(task* obj)
 {
 	auto twp = obj->twp;
+	auto data = twp;
 	motionwk2* data2 = (motionwk2*)obj->mwp;
 	playerwk* co2 = (playerwk*)obj->mwp->work.l;
 
@@ -168,43 +266,23 @@ void KnuxExec_r(task* obj)
 	case SDCannonMode:
 		CannonModePhysics(twp, data2, co2);
 		break;
+	case SDCylStd:
+		Mode_SDCylinderStd(data, co2);
+		break;
+	case SDCylDown:
+		Mode_SDCylinderDown(data, co2);
+		break;
+	case SDCylLeft:
+		Mode_SDCylinderLeft(data, co2);
+		break;
+	case SDCylRight:
+		Mode_SDCylinderRight(data, co2);
+		break;
 	}
 
 	KnuxExec_t.Original(obj);
 }
 
-void __cdecl KnuEffectPutChargeComp_r(NJS_VECTOR* position, float alpha)
-{
-	if (!multiplayer::IsActive())
-	{
-		return KnuEffectPutChargeComp_t.Original(position, alpha);
-	}
-
-	auto y = 0.0f;
-	auto a = 0.0f;
-	auto s = 0.0f;
-
-	if (!MissedFrames)
-	{
-		a = alpha * -0.60000002;
-		auto obj = (NJS_MODEL_SADX *)KNUCKLES_OBJECTS[47]->model;
-		obj->mats->attr_texId = 1;
-		SetMaterialAndSpriteColor_Float(a, 1.0, 1.0, 1.0);
-		njPushMatrix(0);
-		njTranslateV(0, position);
-		s = 2.0f - alpha * alpha;
-		njScale(0, s, s, s);
-		y = alpha * 262144.0f;
-		if ((unsigned int)(unsigned __int64)y)
-		{
-			njRotateY(0, (unsigned __int16)(unsigned __int64)y);
-		}
-		njSetTexture(&KNU_EFF_TEXLIST);
-		ProcessModelNode_A_WrapperB(KNUCKLES_OBJECTS[47], QueuedModelFlagsB_SomeTextureThing);
-		njPopMatrix(1u);
-		ResetMaterial();
-	}
-}
 
 void Init_KnuxPatches()
 {
