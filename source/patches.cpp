@@ -19,7 +19,13 @@
 #include "objects/e_pondskater.h"
 #include "objects/e_gachapon.h"
 #include "objects/ladder.h"
-#include "objects//ObjCylinderCmn.h"
+#include "objects/ObjCylinderCmn.h"
+
+#include "objects/sonic.h"
+#include "objects/knuckles.h"
+#include "objects/amy.h"
+#include "objects/gamma.h"
+#include "objects/big.h"
 
 /*
 
@@ -42,8 +48,6 @@ static Trampoline* TikalDisplay_t                 = nullptr;
 static Trampoline* ObjectSpringB_t                = nullptr;
 static Trampoline* SpinnaDisplayer_t              = nullptr;
 static Trampoline* ListGroundForDrawing_t         = nullptr;
-static Trampoline* CCL_IsHitPlayer_t              = nullptr;
-static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
 static FunctionHook<int, taskwk*, enemywk*> EnemyCheckDamage_t((intptr_t)OhNoImDead);
 static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
 UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
@@ -304,41 +308,6 @@ void __cdecl EBuyon_ScorePatch(task* tp)
 	}
 }
 
-void __cdecl CCL_IsHitPlayer_r(taskwk* twp)
-{
-	CCL_ClearSearch(); // <- needed when called by the same task twice, which actually happens vanilla
-	TARGET_DYNAMIC(CCL_IsHitPlayer)(twp);
-}
-
-int __cdecl CheckCollisionP_r(NJS_POINT3* vp, float d)
-{
-	return IsPlayerInSphere(vp, d);
-}
-
-int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, float r, float h)
-{
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		auto twp = playertwp[i];
-
-		if (twp)
-		{
-			NJS_VECTOR v = twp->pos;
-			njSubVector(&v, vp);
-
-			if (v.x * v.x + v.z * v.z - r * r <= 0.0f)
-			{
-				if (fabsf(v.y) <= h)
-				{
-					return i + 1;
-				}
-			}
-		}
-	}
-
-	return 0;
-}
-
 // Despite taking player id, it always gets 0 so let's check closest player
 float __cdecl EnemyDist2FromPlayer_r(taskwk* twp, int num)
 {
@@ -468,144 +437,6 @@ void TikalDisplay_r(task* tp)
 	if (IsGamePausedOrNot1stScreen())
 	{
 		DrawCharacterShadow(tp->twp, &((playerwk*)tp->mwp->work.ptr)->shadow);
-	}
-}
-
-void QueueMobileLandColl() // guessed inline function
-{
-	ri_landcoll_nmb = 0;
-
-	njPushMatrixEx();
-
-	for (int i = 0; i < numMobileEntry; ++i)
-	{
-		if (numLandCollList >= 1024 || ri_landcoll_nmb >= 128)
-		{
-			break;
-		}
-
-		auto& entry = MobileEntry[i];
-		auto& tp = entry.pTask;
-		auto& obj = entry.pObject;
-		NJS_VECTOR p;
-
-		// Task disabled collision
-		if (tp && tp->twp && !(tp->twp->flag & 0x100))
-		{
-			continue;
-		}
-
-		if (entry.slAttribute & ColFlags_UseRotation)
-		{
-			njUnitMatrix(0);
-			if (obj->ang[2]) njRotateZ(0, obj->ang[2]);
-			if (obj->ang[1]) njRotateX(0, obj->ang[1]);
-			if (obj->ang[0]) njRotateY(0, obj->ang[0]);
-			njCalcPoint(0, &obj->basicdxmodel->center, &p);
-			p.x += obj->pos[0];
-			p.y += obj->pos[1];
-			p.z += obj->pos[2];
-		}
-		else
-		{
-			p.x = obj->basicdxmodel->center.x + obj->pos[0];
-			p.y = obj->basicdxmodel->center.y + obj->pos[1];
-			p.z = obj->basicdxmodel->center.z + obj->pos[2];
-		}
-
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			taskwk* srctwp = i == 0 ? playertp[0] == nullptr ? camera_twp : playertwp[0] : playertwp[i];
-
-			if (!srctwp)
-			{
-				continue;
-			}
-
-			NJS_VECTOR cv
-			{
-				srctwp->pos.x - p.x,
-				srctwp->pos.y - p.y,
-				srctwp->pos.z - p.z
-			};
-
-			if (njScalor2(&cv) < (obj->basicdxmodel->r + mleriRangeRad) * (obj->basicdxmodel->r + mleriRangeRad))
-			{
-				ri_landcoll[ri_landcoll_nmb++] = entry;
-				LandCollList[numLandCollList++] = entry; // add entry to active list
-
-				break;
-			}
-		}
-	}
-
-	njPopMatrixEx();
-}
-
-void QueueLandCollLand() // guessed inline function
-{
-	ri_landentry_nmb = 0;
-
-	if (boolLandCollision == TRUE && pObjLandTable)
-	{
-		for (int i = 0; i < pObjLandTable->ssCount; ++i)
-		{
-			if (numLandCollList >= 1024 || ri_landentry_nmb >= 128)
-			{
-				break;
-			}
-
-			auto& lnd = pObjLandTable->pLandEntry[i];
-
-			if ((lnd.slAttribute & 0x400003) == 0)
-			{
-				continue;
-			}
-
-			for (int i = 0; i < PLAYER_MAX; ++i)
-			{
-				taskwk* srctwp = i == 0 ? playertp[0] == nullptr ? camera_twp : playertwp[0] : playertwp[i];
-
-				if (srctwp == nullptr)
-				{
-					continue;
-				}
-
-				NJS_VECTOR cv
-				{
-					lnd.xCenter - srctwp->pos.x,
-					lnd.yCenter - srctwp->pos.y,
-					lnd.zCenter - srctwp->pos.z
-				};
-
-				if (njScalor(&cv) - mleriRangeRad < lnd.xWidth)
-				{
-					ri_landentry_buf[ri_landentry_nmb++] = lnd;
-					LandCollList[numLandCollList++] = { lnd.slAttribute, lnd.pObject, nullptr };
-					break;
-				}
-			}
-		}
-	}
-}
-
-void __cdecl MakeLandCollLandEntryRangeInM()
-{
-	numLandCollList = 0;
-	QueueMobileLandColl();
-	QueueLandCollLand();
-}
-
-// Geometry collision lookup is hardcoded around P1 and P2, patching it for more
-void __cdecl MakeLandCollLandEntryRangeIn_r()
-{
-	if (multiplayer::IsActive() && multiplayer::GetPlayerCount() > 2 )
-	{
-		MakeLandCollLandEntryRangeInM();
-	}
-	else
-	{
-		TARGET_DYNAMIC(MakeLandCollLandEntryRangeIn)();
 	}
 }
 
@@ -921,7 +752,6 @@ void InitPatches()
 	Tobitiri_t                     = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);
 	PlayerVacumedRing_t            = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
 	savepointCollision_t           = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
-	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
 	ListGroundForDrawing_t         = new Trampoline(0x43A900, 0x43A905, ListGroundForDrawing_r);
 
 	// Player
@@ -938,11 +768,6 @@ void InitPatches()
 	EnemyCheckDamage_t.Hook(EnemyCheckDamage_r);
 	WriteCall((void*)0x7B3273, EBuyon_ScorePatch); // EBuyon: add 100 points to proper player
 	WriteData<5>((void*)0x7B326D, 0x90); // EBuyon: remove original 100 points for player 0
-
-	// Collision checks:
-	CCL_IsHitPlayer_t = new Trampoline(0x41CBC0, 0x41CBC5, CCL_IsHitPlayer_r);
-	WriteJump(CheckCollisionP, CheckCollisionP_r);
-	WriteJump(CheckCollisionCylinderP, CheckCollisionCylinderP_r);
 
 	// Enemy player checks
 	EnemyDist2FromPlayer_t = new Trampoline(0x4CD610, 0x4CD61B, EnemyDist2FromPlayer_r);

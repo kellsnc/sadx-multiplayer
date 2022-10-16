@@ -6,7 +6,6 @@
 #define BYTEn(x, n)   (*((uint8_t*)&(x)+n))
 #define TaskHook static FunctionHook<void, task*>
 
-
 enum customAction
 {
 	SDCannonMode = 110,
@@ -18,10 +17,3 @@ enum customAction
 
 extern const HelperFunctions* gHelperFunctions;
 extern bool DreamcastConversionEnabled;
-
-void initEvents();
-void initGammaPatch();
-void Init_KnuxPatches();
-void Init_BigPatches();
-void initSonicPatch();
-void Init_AmyPatches();

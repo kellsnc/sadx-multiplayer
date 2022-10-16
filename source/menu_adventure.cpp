@@ -19,11 +19,11 @@ PanelPrmType PanelPrmCharsel1_m[]
 // Game, instruction, ending, cancel (Finished stories)
 PanelPrmType PanelPrmCharsel2_m[]
 {
-	{ -220.0f, 0.0f, 2 },
-	{ -110.0f, 0.0f, 14 }, // Coop
+	{ -230.0f, 0.0f, 2 },
+	{ -115.0f, 0.0f, 14 }, // Coop
 	{ 0.0f, 0.0f, 5 },
-	{ 110.0f, 0.0f, 1 },
-	{ 220.0f, 0.0f, 0 }
+	{ 115.0f, 0.0f, 1 },
+	{ 230.0f, 0.0f, 0 }
 };
 
 // Game, cancel (Super Sonic story unfinished)
@@ -131,6 +131,8 @@ void InitAdventureMenu()
 	DialogPrm[DIA_TYPE_CHARSEL2].PnlPrmPtr = PanelPrmCharsel2_m;
 	DialogPrm[DIA_TYPE_CHARSEL2].CsrMax = LengthOfArray(PanelPrmCharsel2_m);
 	DialogPrm[DIA_TYPE_CHARSEL2].CsrCancel = DialogPrm[DIA_TYPE_CHARSEL2].CsrMax - 1;
+	DialogPrm[DIA_TYPE_CHARSEL2].SzX = 580.0f;
+	DialogPrm[DIA_TYPE_CHARSEL2].CntrX = 320.0f;
 	//DialogPrm[DIA_TYPE_CHARSEL3].PnlPrmPtr = PanelPrmCharsel3_m;
 	//DialogPrm[DIA_TYPE_CHARSEL3].CsrMax = LengthOfArray(PanelPrmCharsel3_m);
 	//DialogPrm[DIA_TYPE_CHARSEL3].CsrCancel = DialogPrm[DIA_TYPE_CHARSEL3].CsrMax - 1;

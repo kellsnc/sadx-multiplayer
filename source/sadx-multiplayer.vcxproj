@@ -98,11 +98,13 @@
     <ClInclude Include="..\include\multiapi.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="camerafunc.h" />
+    <ClInclude Include="collision.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="d3d8vars.h" />
     <ClInclude Include="death.h" />
     <ClInclude Include="drawqueue.h" />
     <ClInclude Include="emeraldhunt.h" />
+    <ClInclude Include="event.h" />
     <ClInclude Include="fishing.h" />
     <ClInclude Include="fog.h" />
     <ClInclude Include="forcewk.h" />
@@ -125,6 +127,8 @@
     <ClInclude Include="hud_multi.h" />
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="network.h" />
+    <ClInclude Include="objects\amy.h" />
+    <ClInclude Include="objects\big.h" />
     <ClInclude Include="objects\BigKaeru.h" />
     <ClInclude Include="objects\bosses.h" />
     <ClInclude Include="objects\ef_spark.h" />
@@ -134,6 +138,8 @@
     <ClInclude Include="objects\e_cart.h" />
     <ClInclude Include="objects\e_gachapon.h" />
     <ClInclude Include="objects\e_pondskater.h" />
+    <ClInclude Include="objects\gamma.h" />
+    <ClInclude Include="objects\knuckles.h" />
     <ClInclude Include="objects\ladder.h" />
     <ClInclude Include="objects\mirror.h" />
     <ClInclude Include="objects\ObjCylinderCmn.h" />
@@ -141,6 +147,7 @@
     <ClInclude Include="objects\ObjectRocket.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
     <ClInclude Include="objects\SnowBoard.h" />
+    <ClInclude Include="objects\sonic.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="patches.h" />
     <ClInclude Include="pch.h" />
@@ -159,6 +166,7 @@
   <ItemGroup>
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="camerafunc.cpp" />
+    <ClCompile Include="collision.cpp" />
     <ClCompile Include="config.cpp" />
     <ClCompile Include="death.cpp" />
     <ClCompile Include="dllmain.cpp" />

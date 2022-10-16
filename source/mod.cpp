@@ -23,6 +23,8 @@
 #include "network.h"
 #include "input.h"
 #include "logic.h"
+#include "collision.h"
+#include "event.h"
 
 const HelperFunctions* gHelperFunctions;
 
@@ -61,6 +63,7 @@ extern "C"
 		InitGravityPatches();
 		InitFogPatches();
 		initEvents();
+		InitCollisionPatches();
 	}
 
 	__declspec(dllexport) void __cdecl OnExit()
