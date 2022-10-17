@@ -102,7 +102,7 @@ void __cdecl ResetNumPlayerM()
 
 int GetNumPlayerM(int pNum)
 {
-    return scNumPlayer_m[pNum];
+    return (multiplayer::IsCoopMode()) ? scNumPlayer_m[0] : scNumPlayer_m[pNum];
 }
 
 void AddNumPlayerM(int pNum, int Number)
@@ -113,6 +113,9 @@ void AddNumPlayerM(int pNum, int Number)
         {
             PlaySound(743, 0, 0, 0);
         }
+
+        if (pNum > 0 && multiplayer::IsCoopMode())
+            pNum = 0;
 
         auto& counter = scNumPlayer_m[pNum];
 
@@ -136,7 +139,7 @@ void AddNumPlayerM(int pNum, int Number)
 
 void SetNumPlayerM(int pNum, int Number)
 {
-    scNumPlayer_m[pNum] = Number;
+    scNumPlayer_m[pNum] = (multiplayer::IsCoopMode() && pNum > 0) ? scNumPlayer_m[0] : Number;
 }
 
 int GetNumRingM(int pNum)
