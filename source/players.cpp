@@ -205,7 +205,7 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
             *ang = { 0, FieldStartPos->YRot, 0 };
             FieldStartPos = nullptr;
         }
-        else if (ssStageNumber >= LevelIDs_StationSquare && ssStageNumber <= LevelIDs_Past)
+        else if (isInHubWorld())
         {
             ADVPOS** adpos;
 
@@ -661,7 +661,7 @@ void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
 
      if (multiplayer::IsActive())
      {
-         if (!charIndex && CurrentLevel >= LevelIDs_StationSquare && CurrentLevel <= LevelIDs_Past)
+         if (!charIndex && (isInHubWorld() || CurrentLevel == LevelIDs_Casinopolis))
          {
              NJS_VECTOR pos = { x, y, z };
 
@@ -669,7 +669,7 @@ void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
              {
                  if (playertwp[i])
                  {
-                     SetPlayerPositionAroundPoint(playertwp[i], &pos, 5.0f);
+                     SetPlayerPositionAroundPoint(playertwp[i], &pos, 6.0f);
                  }
              }
          }

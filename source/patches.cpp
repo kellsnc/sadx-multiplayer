@@ -36,7 +36,6 @@ General patches to allow compatibility for 4+ players
 static Trampoline* PGetRotation_t                 = nullptr;
 static Trampoline* PGetAcceleration_t             = nullptr;
 static Trampoline* PGetAccelerationSnowBoard_t    = nullptr;
-static Trampoline* NpcMilesSet_t                  = nullptr;
 static Trampoline* Ring_t                         = nullptr;
 static Trampoline* Tobitiri_t                     = nullptr;
 static Trampoline* PlayerVacumedRing_t            = nullptr;
