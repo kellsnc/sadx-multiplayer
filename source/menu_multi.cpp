@@ -360,7 +360,7 @@ const int egrob_level_link[]{
 
 const int fish_level_link[]{
 	LevelAndActIDs_TwinklePark2,
-	LevelAndActIDs_IceCap2,
+	LevelAndActIDs_IceCap4,
 	LevelAndActIDs_EmeraldCoast3,
 	LevelAndActIDs_HotShelter1
 };
