@@ -102,7 +102,7 @@ void __cdecl ResetNumPlayerM()
 
 int GetNumPlayerM(int pNum)
 {
-    return scNumPlayer_m[pNum];
+    return (multiplayer::IsCoopMode()) ? scNumPlayer_m[0] : scNumPlayer_m[pNum];
 }
 
 void AddNumPlayerM(int pNum, int Number)
@@ -113,6 +113,9 @@ void AddNumPlayerM(int pNum, int Number)
         {
             PlaySound(743, 0, 0, 0);
         }
+
+        if (pNum > 0 && multiplayer::IsCoopMode())
+            pNum = 0;
 
         auto& counter = scNumPlayer_m[pNum];
 
@@ -136,7 +139,7 @@ void AddNumPlayerM(int pNum, int Number)
 
 void SetNumPlayerM(int pNum, int Number)
 {
-    scNumPlayer_m[pNum] = Number;
+    scNumPlayer_m[pNum] = (multiplayer::IsCoopMode() && pNum > 0) ? scNumPlayer_m[0] : Number;
 }
 
 int GetNumRingM(int pNum)
@@ -202,7 +205,7 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
             *ang = { 0, FieldStartPos->YRot, 0 };
             FieldStartPos = nullptr;
         }
-        else if (ssStageNumber >= LevelIDs_StationSquare && ssStageNumber <= LevelIDs_Past)
+        else if (isInHubWorld())
         {
             ADVPOS** adpos;
 
@@ -658,7 +661,7 @@ void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
 
      if (multiplayer::IsActive())
      {
-         if (!charIndex && CurrentLevel >= LevelIDs_StationSquare && CurrentLevel <= LevelIDs_Past)
+         if (!charIndex && (isInHubWorld() || CurrentLevel == LevelIDs_Casinopolis))
          {
              NJS_VECTOR pos = { x, y, z };
 
@@ -666,7 +669,7 @@ void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
              {
                  if (playertwp[i])
                  {
-                     SetPlayerPositionAroundPoint(playertwp[i], &pos, 5.0f);
+                     SetPlayerPositionAroundPoint(playertwp[i], &pos, 6.0f);
                  }
              }
          }

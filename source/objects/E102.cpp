@@ -4,6 +4,7 @@
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
+#include "ObjCylinderCmn.h"
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 
@@ -37,6 +38,64 @@ void E102_RunActions_r(task* tsk, motionwk2* data2, playerwk* co2) {
 			co2->mj.reqaction = 2;
 		}
 		return;
+	case SDCylStd:
+		if (E102CheckInput(co2, data1, data2) || E102CheckJump(co2, data1))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		Mode_SDCylStdChanges(data1, co2);
+		return;
+	case SDCylDown:
+
+		if (E102CheckInput(co2, data1, data2) || E102CheckJump(co2, data1))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+
+		Mode_SDCylDownChanges(data1, co2);
+
+		return;
+	case SDCylLeft:
+		if (E102CheckInput(co2, data1, data2) || E102CheckJump(co2, data1))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 <= -3072)
+		{
+			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+			{
+				co2->htp = 0;
+			}
+
+			return;
+		}
+
+		data1->mode = SDCylStd;
+		return;
+	case SDCylRight:
+		if (E102CheckInput(co2, data1, data2) || E102CheckJump(co2, data1))
+		{
+			co2->htp = 0;
+			return;
+		}
+
+		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 >= 3072)
+		{
+			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+			{
+				co2->htp = 0;
+			}
+			return;
+		}
+
+		data1->mode = SDCylStd;
+		return;
 	}
 
 	E102_RunsActions_t.Original(tsk, data2, co2);
@@ -57,6 +116,13 @@ signed int E102_CheckInput_r(playerwk* co2, taskwk* data, motionwk2* data2)
 		data->mode = SDCannonMode;
 		co2->mj.reqaction = 7;
 		return 1;
+	case 32:
+
+		if (SetCylinderNextAction(data, data2, co2))
+			return 1;
+
+		break;
+
 	}
 
 	return E102_CheckInput_t.Original(co2, data, data2);
@@ -143,6 +209,18 @@ static void __cdecl E102_r(task* tp)
 	{
 	case SDCannonMode:
 		CannonModePhysics(data, data2, co2);
+		break;
+	case SDCylStd:
+		Mode_SDCylinderStd(data, co2);
+		break;
+	case SDCylDown:
+		Mode_SDCylinderDown(data, co2);
+		break;
+	case SDCylLeft:
+		Mode_SDCylinderLeft(data, co2);
+		break;
+	case SDCylRight:
+		Mode_SDCylinderRight(data, co2);
 		break;
 	}
 

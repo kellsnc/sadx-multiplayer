@@ -11,7 +11,7 @@ enum customAction
 	SDCannonMode = 110,
 	SDCylStd,
 	SDCylDown,
-	SDCyldLeft,
+	SDCylLeft,
 	SDCylRight
 };
 

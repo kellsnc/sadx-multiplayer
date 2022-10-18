@@ -5,6 +5,13 @@
 TaskHook SonicTheHedgehog_t(0x49A9B0);
 static void __cdecl SonicTheHedgehog_r(task* tp)
 {
+	auto co2 = (playerwk*)tp->mwp->work.l;
+
+	if (co2)
+	{
+		co2 = co2;
+	}
+
 	if (multiplayer::IsActive())
 	{
 		auto pnum = TASKWK_PLAYERID(tp->twp);

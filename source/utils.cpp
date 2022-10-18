@@ -254,3 +254,8 @@ void __cdecl SetAndDisp(task* obj, TaskFuncPtr disp)
 
 	obj->disp(obj);
 }
+
+bool isInHubWorld()
+{
+	return CurrentLevel >= LevelIDs_StationSquare && CurrentLevel <= LevelIDs_Past;
+}

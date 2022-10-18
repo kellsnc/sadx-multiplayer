@@ -360,7 +360,7 @@ const int egrob_level_link[]{
 
 const int fish_level_link[]{
 	LevelAndActIDs_TwinklePark2,
-	LevelAndActIDs_IceCap2,
+	LevelAndActIDs_IceCap4,
 	LevelAndActIDs_EmeraldCoast3,
 	LevelAndActIDs_HotShelter1
 };
@@ -398,8 +398,8 @@ const int charsel_voicelist[] {
 	569,
 	528,
 	392,
-	510,
 	921,
+	510,
 	394,
 	1346,
 	2047
