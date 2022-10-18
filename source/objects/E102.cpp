@@ -14,6 +14,18 @@ VariableHook<char, 0x3C53C41> e102_hover_flag_p_m;
 static FunctionHook<void, task*, motionwk2*, playerwk*> E102_RunsActions_t((intptr_t)0x481460);
 UsercallFunc(signed int, E102_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x480870, rEAX, rEDI, rESI, stack4);
 TaskHook E102_t((intptr_t)0x483430);
+TaskHook E102DispTimeUpWarning_t(0x4C51D0);
+
+static void E102DispTimeUpWarning_r(task* tp)
+{
+	if (multiplayer::IsActive() && CurrentCharacter != Characters_Gamma)
+	{
+		FreeTask(tp);
+		return;
+	}
+
+	E102DispTimeUpWarning_t.Original(tp);
+}
 
 void E102_RunActions_r(task* tsk, motionwk2* data2, playerwk* co2) {
 
@@ -286,4 +298,5 @@ void initGammaPatch()
 	E102_t.Hook(E102_r);
 	E102_CheckInput_t.Hook(E102_CheckInput_r);
 	E102_RunsActions_t.Hook(E102_RunActions_r);
+	E102DispTimeUpWarning_t.Hook(E102DispTimeUpWarning_r);
 }
