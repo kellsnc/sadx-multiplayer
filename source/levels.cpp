@@ -323,7 +323,11 @@ void __cdecl Rd_Mountain_r(task* tp)
 		}
 	}
 
-	TARGET_DYNAMIC(Rd_Mountain)(tp);
+	//patch an issue where the original function was taking priority for act swap
+	if (tp->twp->mode != 1)
+		TARGET_DYNAMIC(Rd_Mountain)(tp); 
+	else
+		LoopTaskC(tp);
 }
 
 void __cdecl Rd_Twinkle_r(task* tp)
