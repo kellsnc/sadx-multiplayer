@@ -9,6 +9,9 @@ UsercallFuncVoid(CCL_CheckHoming_h, (taskwk* twp1, taskwk* twp2, float dist2), (
 UsercallFuncVoid(pLockingOnTargetEnemy2_h, (taskwk* twp, motionwk2* mwp, playerwk* pwp), (twp, mwp, pwp), 0x7984B0, rEDI, rEBX, stack4);
 UsercallFuncVoid(SonicHomingOnTarget_h, (taskwk* twp, playerwk* pwp, motionwk2* mwp), (twp, pwp, mwp), 0x492300, rESI, rEDI, stack4);
 UsercallFuncVoid(SonicHomeOnTarget_h, (taskwk* twp, playerwk* pwp, motionwk2* mwp), (twp, pwp, mwp), 0x494B80, rECX, rEAX, stack4);
+UsercallFuncVoid(miles_oneshot, (taskwk* twp, Sint32 tone), (twp, tone), 0x45BDF0, rEAX, stack4);
+UsercallFunc(Bool, MilesCheckFinishThrowObject_h, (taskwk* twp, playerwk* pwp), (twp, pwp), 0x45D0F0, rEAX, rESI, stack4);
+UsercallFunc(Bool, KnucklesCheckFinishThrowObject_h, (taskwk* twp, motionwk2* mwp, playerwk* pwp), (twp, mwp, pwp), 0x4738A0, rEAX, rESI, stack4, stack4);
 FunctionHook<taskwk*, taskwk*> CCL_IsHitPlayer_h(0x41CBC0);
 FunctionHook<void> CCL_ClearAll_h(0x41C680);
 FunctionHook<void> CCL_Analyze_h(0x420700);
@@ -295,6 +298,11 @@ void __cdecl CCL_Analyze_r()
 	CCL_Analyze_h.Original();
 }
 
+colaround* GetTargetEnemyList(Uint8 pno)
+{
+	return pno < PLAYER_MAX ? around_enemy_list_p[pno] : nullptr;
+}
+
 Bool __cdecl PCheckTargetEnemy_r(Uint8 pno)
 {
 	return pno < PLAYER_MAX && around_enemy_list_p[pno]->twp != nullptr;
@@ -345,10 +353,9 @@ void __cdecl pLockingOnTargetEnemy2_r(taskwk* twp, motionwk2* mwp, playerwk* pwp
 	}
 
 	auto pnum = TASKWK_PLAYERID(twp);
-	if (PCheckTargetEnemy_r(pnum))
+	auto ael = GetTargetEnemyList(pnum);
+	if (ael)
 	{
-		auto ael = around_enemy_list_p[pnum];
-
 		auto closest_tgt = ael->twp;
 		auto closest_dist = ael->dist;
 
@@ -387,10 +394,9 @@ Bool __cdecl BigCheckTargetEnemy_r(taskwk* twp)
 	}
 
 	auto pnum = TASKWK_PLAYERID(twp);
-	if (PCheckTargetEnemy_r(pnum))
+	auto ael = GetTargetEnemyList(pnum);
+	if (ael)
 	{
-		auto ael = around_enemy_list_p[pnum];
-
 		auto closest_dist = ael->dist;
 		do
 		{
@@ -461,10 +467,10 @@ void __cdecl SonicHomingOnTarget_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 	if (pnum >= PLAYER_MAX)
 		return;
 
-	auto ael = around_enemy_list_p[pnum];
+	auto ael = GetTargetEnemyList(pnum);
 	auto rival = GetRivalPlayerNumber_r(pnum);
 
-	if (pwp->free.sw[2] <= 0 && (ael->twp || rival != -1))
+	if (pwp->free.sw[2] <= 0 && ((ael && ael->twp) || rival != -1))
 	{
 		taskwk* closest_tgt = nullptr;
 		auto closest_dist = 10000.0;
@@ -611,9 +617,9 @@ void __cdecl SonicHomeOnTarget_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 	if (pnum >= PLAYER_MAX)
 		return;
 
-	auto ael = around_enemy_list_p[pnum];
+	auto ael = GetTargetEnemyList(pnum);
 
-	if (ael->twp || GetRivalPlayerNumber_r(pnum) != -1)
+	if ((ael && ael->twp) || GetRivalPlayerNumber_r(pnum) != -1)
 	{
 		SonicHomingOnTarget_r(twp, pwp, mwp);
 
@@ -627,6 +633,190 @@ void __cdecl SonicHomeOnTarget_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 		pwp->spd.x = (pwp->equipment & Upgrades_SuperSonic) ? 10.0f : 5.0f;
 		pwp->free.sw[2] = 1;
 	}
+}
+
+Bool MilesCheckFinishThrowObject_r(taskwk* twp, playerwk* pwp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return MilesCheckFinishThrowObject_h.Original(twp, pwp);
+	}
+
+	auto htp = pwp->htp;
+	if (!htp || !htp->twp || !htp->mwp)
+	{
+		if (twp->flag & Status_HoldObject)
+		{
+			pwp->htp = nullptr;
+			twp->flag &= ~Status_HoldObject;
+			return 1;
+		}
+		return 0;
+	}
+
+	auto pnum = TASKWK_PLAYERID(twp);
+	auto ael = GetTargetEnemyList(pnum);
+	auto reqaction = pwp->mj.reqaction;
+
+	if ((reqaction != 84 || pwp->mj.nframe != 20.0f)
+		&& (reqaction != 86 || pwp->mj.nframe != 7.0f)
+		|| !ael->twp)
+	{
+		if (reqaction == 85 && pwp->mj.nframe == 24.0f
+			|| reqaction == 87 && pwp->mj.nframe == 6.0f)
+		{
+			htp->twp->flag &= ~0x1000;
+			NJS_POINT3 vec = { 2.0f, 0.8f, 0.0f };
+			PConvertVector_P2G(twp, &vec);
+			pwp->htp->mwp->spd = vec;
+			twp->flag &= ~Status_HoldObject;
+			pwp->htp = 0;
+			miles_oneshot(twp, 1241);
+			return 1;
+		}
+
+		if (reqaction == 88 && pwp->mj.nframe == 12.0f)
+		{
+			htp->twp->flag &= ~0x1000;
+			PPutHeldObject(twp, htp->twp, pwp);
+			twp->flag &= ~Status_HoldObject;
+			pwp->htp = 0;
+			return 1;
+		}
+
+		return 0;
+	}
+
+	// Calculate thrown object velocity
+
+	htp->twp->flag &= ~0x1000;
+
+	auto closest_tgt = ael->twp;
+	auto closest_dist = ael->dist;
+
+	do
+	{
+		if (closest_dist > ael->dist)
+		{
+			closest_tgt = ael->twp;
+			closest_dist = ael->dist;
+		}
+		++ael;
+	} while (ael->twp);
+
+	auto info = closest_tgt->cwp->info;
+
+	NJS_VECTOR vec;
+	vec.x = info->center.x + closest_tgt->pos.x - twp->pos.x;
+	vec.y = info->center.y + closest_tgt->pos.y - twp->pos.y;
+	vec.z = info->center.z + closest_tgt->pos.z - twp->pos.z;
+
+	vec.x = njSqrt(vec.z * vec.z + vec.x * vec.x);
+	vec.z = 0.0f;
+
+	GetUnitVector(&vec);
+
+	vec.x = vec.x * 3.0f;
+	vec.y = vec.y * 3.0f;
+	PConvertVector_P2G(twp, &vec);
+
+	pwp->htp->mwp->spd = vec;
+	twp->flag &= ~Status_HoldObject;
+	pwp->htp = nullptr;
+	miles_oneshot(twp, 1241);
+	return 1;
+}
+
+Bool KnucklesCheckFinishThrowObject_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return KnucklesCheckFinishThrowObject_h.Original(twp, mwp, pwp);
+	}
+
+	auto htp = pwp->htp;
+	if (!htp || !htp->twp || !htp->mwp)
+	{
+		if (twp->flag & Status_HoldObject)
+		{
+			pwp->htp = nullptr;
+			twp->flag &= ~Status_HoldObject;
+			return 1;
+		}
+		return 0;
+	}
+
+	auto pnum = TASKWK_PLAYERID(twp);
+	auto ael = GetTargetEnemyList(pnum);
+	auto reqaction = pwp->mj.reqaction;
+
+	if ((reqaction != 96 || pwp->mj.nframe != 20.0f)
+		&& (reqaction != 98 || pwp->mj.nframe != 7.0f)
+		|| !ael->twp)
+	{
+		if (reqaction == 97 && pwp->mj.nframe == 24.0f
+			|| reqaction == 99 && pwp->mj.nframe == 6.0f)
+		{
+			htp->twp->flag &= ~0x1000;
+			NJS_POINT3 vec = { 2.0f, 0.8f, 0.0f };
+			PConvertVector_P2G(twp, &vec);
+			pwp->htp->mwp->spd = vec;
+			twp->flag &= ~Status_HoldObject;
+			pwp->htp = 0;
+			dsPlay_oneshot(1258, 0, 0, 0);
+			return 1;
+		}
+
+		if (reqaction == 100 && pwp->mj.nframe == 12.0f)
+		{
+			htp->twp->flag &= ~0x1000;
+			PPutHeldObject(twp, htp->twp, pwp);
+			twp->flag &= ~Status_HoldObject;
+			pwp->htp = 0;
+			return 1;
+		}
+
+		return 0;
+	}
+
+	// Calculate thrown object velocity
+
+	htp->twp->flag &= ~0x1000;
+
+	auto closest_tgt = ael->twp;
+	auto closest_dist = ael->dist;
+
+	do
+	{
+		if (closest_dist > ael->dist)
+		{
+			closest_tgt = ael->twp;
+			closest_dist = ael->dist;
+		}
+		++ael;
+	} while (ael->twp);
+
+	auto info = closest_tgt->cwp->info;
+
+	NJS_VECTOR vec;
+	vec.x = info->center.x + closest_tgt->pos.x - twp->pos.x;
+	vec.y = info->center.y + closest_tgt->pos.y - twp->pos.y;
+	vec.z = info->center.z + closest_tgt->pos.z - twp->pos.z;
+
+	vec.x = njSqrt(vec.z * vec.z + vec.x * vec.x);
+	vec.z = 0.0f;
+
+	GetUnitVector(&vec);
+
+	vec.x = vec.x * 3.0f;
+	vec.y = vec.y * 3.0f;
+	PConvertVector_P2G(twp, &vec);
+
+	pwp->htp->mwp->spd = vec;
+	twp->flag &= ~Status_HoldObject;
+	pwp->htp = nullptr;
+	dsPlay_oneshot(1258, 0, 0, 0);
+	return 1;
 }
 
 void InitCollisionPatches()
@@ -651,5 +841,7 @@ void InitCollisionPatches()
 	GetRivalPlayerNumber_h.Hook(GetRivalPlayerNumber_r);
 	SonicHomingOnTarget_h.Hook(SonicHomingOnTarget_r);
 	SonicHomeOnTarget_h.Hook(SonicHomeOnTarget_r);
+	MilesCheckFinishThrowObject_h.Hook(MilesCheckFinishThrowObject_r);
+	KnucklesCheckFinishThrowObject_h.Hook(KnucklesCheckFinishThrowObject_r);
 	WriteJump((void*)0x43C110, PCheckTargetEnemy_r);
 }

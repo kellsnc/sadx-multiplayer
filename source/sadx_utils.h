@@ -526,6 +526,8 @@ DataPointer(Uint16, arl_num0, 0x3B27048);
 DataPointer(Uint16, ael_num0, 0x3B23288);
 DataPointer(Uint16, arl_num1, 0x3B27C7C);
 DataPointer(Uint16, ael_num1, 0x3B240A8);
+FunctionPointer(void, PPutHeldObject, (taskwk* twp, taskwk* htwp, playerwk* pwp), 0x4421F0);
+FunctionPointer(Float, GetUnitVector, (NJS_POINT3* vec), 0x459AC0);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
