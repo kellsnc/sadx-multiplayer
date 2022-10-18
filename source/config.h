@@ -4,6 +4,7 @@ namespace config
 {
 	extern bool splitScreenEnabled;
 	extern bool indicatorEnabled;
+	extern bool infiniteLives;
 
 	namespace network
 	{
@@ -12,4 +13,7 @@ namespace config
 	}
 
 	void read(const char* path);
+
 }
+
+void SetInfiniteLives();

@@ -6,6 +6,7 @@ namespace config
 {
 	bool splitScreenEnabled = true;
 	bool indicatorEnabled = false;
+	bool infiniteLives = false;
 
 	namespace network
 	{
@@ -22,6 +23,7 @@ namespace config
 		{
 			splitScreenEnabled = general->getBool("SplitScreen", splitScreenEnabled);
 			indicatorEnabled   = general->getBool("Indicator", indicatorEnabled);
+			infiniteLives = general->getBool("infiniteLives", infiniteLives);
 		}
 
 		const IniGroup* network = config->getGroup("Networking");

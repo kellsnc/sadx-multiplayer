@@ -5,6 +5,7 @@
 #include "timer.h"
 #include "players.h"
 #include "logic.h"
+#include "config.h"
 
 static Timer logic_timer(std::chrono::steady_clock::duration(std::chrono::milliseconds(500)));
 
@@ -149,6 +150,8 @@ extern "C"
 {
     __declspec(dllexport) void __cdecl OnFrame()
     {
+        SetInfiniteLives();
+
         if (network.IsConnected())
         {
             network.Poll();

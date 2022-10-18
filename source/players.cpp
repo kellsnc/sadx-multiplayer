@@ -9,6 +9,7 @@
 #include "milesrace.h"
 #include "hud_indicator.h"
 #include "players.h"
+#include "config.h"
 
 /*
 
@@ -674,6 +675,18 @@ void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
              }
          }
      }
+}
+
+void SetInfiniteLives()
+{
+    if (multiplayer::IsActive())
+    {
+        for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+        {
+            if (config::infiniteLives)
+                scNumPlayer_m[i] = CHAR_MAX;
+        }
+    }
 }
 
 void InitPlayerPatches()

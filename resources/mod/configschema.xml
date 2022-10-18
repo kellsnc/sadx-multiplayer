@@ -8,6 +8,10 @@
       <Property name="Indicator" type="bool" defaultvalue="False" display="Enable Indicators">
         <HelpText>Toggle player position indicators.</HelpText>
       </Property>
+	        <Property name="infiniteLives" type="bool" defaultvalue="False" display="Infinite Lives">
+        <HelpText>Infinite lives in multiplayer.</HelpText>
+      </Property>
+	  
     </Group>
     <Group name="Networking">
       <Property name="DefaultAddress" type="string" defaultvalue="localhost" display="Default Address" />
