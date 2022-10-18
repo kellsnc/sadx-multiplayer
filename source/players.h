@@ -26,4 +26,3 @@ void UpdatePlayersInfo();
 void InitPlayerPatches();
 void SetOtherPlayers();
 void CannonModePhysics(taskwk* data, motionwk2* data2, playerwk* co2);
-bool isInHubWorld();
