@@ -53,665 +53,676 @@ static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack | Status_LightDash;
 
 TaskFuncPtr charfuncs[] = {
-    SonicTheHedgehog,
-    (TaskFuncPtr)Eggman_Main,
-    (TaskFuncPtr)Tails_Main,
-    (TaskFuncPtr)Knuckles_Main,
-    (TaskFuncPtr)Tikal_Main,
-    (TaskFuncPtr)Amy_Main,
-    (TaskFuncPtr)Gamma_Main,
-    (TaskFuncPtr)Big_Main
+	SonicTheHedgehog,
+	(TaskFuncPtr)Eggman_Main,
+	(TaskFuncPtr)Tails_Main,
+	(TaskFuncPtr)Knuckles_Main,
+	(TaskFuncPtr)Tikal_Main,
+	(TaskFuncPtr)Amy_Main,
+	(TaskFuncPtr)Gamma_Main,
+	(TaskFuncPtr)Big_Main
 };
 
 void LoadCharObj(int pnum, int character)
 {
-    task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
-    TASKWK_CHARID(tp->twp) = character;
-    TASKWK_PLAYERID(tp->twp) = pnum;
-    playertwp[pnum] = tp->twp;
-    playermwp[pnum] = (motionwk2*)tp->mwp;
+	task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
+	TASKWK_CHARID(tp->twp) = character;
+	TASKWK_PLAYERID(tp->twp) = pnum;
+	playertwp[pnum] = tp->twp;
+	playermwp[pnum] = (motionwk2*)tp->mwp;
 }
 
 void ResetEnemyScoreM()
 {
-    Score = 0;
-    EnemyScore_m.clear();
-    ComboScore = 0;
-    ComboTimer = 0;
-    *(int*)0x3B0F138 = 0;
+	Score = 0;
+	EnemyScore_m.clear();
+	ComboScore = 0;
+	ComboTimer = 0;
+	*(int*)0x3B0F138 = 0;
 }
 
 int GetEnemyScoreM(int pNum)
 {
-    return EnemyScore_m[pNum];
+	return EnemyScore_m[pNum];
 }
 
 void AddEnemyScoreM(int pNum, int add)
 {
-    EnemyScore_m[pNum] += add;
+	EnemyScore_m[pNum] += add;
 }
 
 void SetEnemyScoreM(int pNum, int Number)
 {
-    EnemyScore_m[pNum] = Number;
+	EnemyScore_m[pNum] = Number;
 }
 
 void __cdecl ResetNumPlayerM()
 {
-    std::fill(scNumPlayer_m.begin(), scNumPlayer_m.end(), 4);
+	std::fill(scNumPlayer_m.begin(), scNumPlayer_m.end(), 4);
 }
 
 int GetNumPlayerM(int pNum)
 {
-    return (multiplayer::IsCoopMode()) ? scNumPlayer_m[0] : scNumPlayer_m[pNum];
+	return (multiplayer::IsCoopMode()) ? scNumPlayer_m[0] : scNumPlayer_m[pNum];
 }
 
 void AddNumPlayerM(int pNum, int Number)
 {
-    if (multiplayer::IsActive())
-    {
-        if (Number > 0)
-        {
-            PlaySound(743, 0, 0, 0);
-        }
+	if (multiplayer::IsActive())
+	{
+		if (Number > 0)
+		{
+			PlaySound(743, 0, 0, 0);
+		}
 
-        if (pNum > 0 && multiplayer::IsCoopMode())
-            pNum = 0;
+		if (pNum > 0 && multiplayer::IsCoopMode())
+			pNum = 0;
 
-        auto& counter = scNumPlayer_m[pNum];
+		auto& counter = scNumPlayer_m[pNum];
 
-        counter += Number;
+		counter += Number;
 
-        if ((counter < 0 && Number > 0) || Number >= CHAR_MAX)
-        {
-            counter = CHAR_MAX;
-        }
+		if ((counter < 0 && Number > 0) || Number >= CHAR_MAX)
+		{
+			counter = CHAR_MAX;
+		}
 
-        if (GetLevelType() == 1)
-        {
-            LoadObject(LoadObj_UnknownB, 6, sub_425B30);
-        }
-    }
-    else
-    {
-        AddNumPlayer(Number);
-    }
+		if (GetLevelType() == 1)
+		{
+			LoadObject(LoadObj_UnknownB, 6, sub_425B30);
+		}
+	}
+	else
+	{
+		AddNumPlayer(Number);
+	}
 }
 
 void SetNumPlayerM(int pNum, int Number)
 {
-    scNumPlayer_m[pNum] = (multiplayer::IsCoopMode() && pNum > 0) ? scNumPlayer_m[0] : Number;
+	scNumPlayer_m[pNum] = (multiplayer::IsCoopMode() && pNum > 0) ? scNumPlayer_m[0] : Number;
 }
 
 int GetNumRingM(int pNum)
 {
-    return ssNumRing_m[pNum];
+	return ssNumRing_m[pNum];
 }
 
 void AddNumRingM(int pNum, int add)
 {
-    if (multiplayer::IsActive())
-    {
-        int origc, newc = 0;
+	if (multiplayer::IsActive())
+	{
+		int origc, newc = 0;
 
-        auto& counter = ssNumRing_m[pNum];
+		auto& counter = ssNumRing_m[pNum];
 
-        origc = counter / 100;
-        counter += add;
-        newc = counter / 100;
+		origc = counter / 100;
+		counter += add;
+		newc = counter / 100;
 
-        if (origc < newc)
-        {
-            AddNumPlayerM(pNum, newc - origc);
-        }
+		if (origc < newc)
+		{
+			AddNumPlayerM(pNum, newc - origc);
+		}
 
-        if (GetLevelType() == 1)
-        {
-            LoadObject(LoadObj_UnknownB, 6, sub_425BB0);
-        }
-    }
-    else
-    {
-        AddNumRing(add);
-    }
+		if (GetLevelType() == 1)
+		{
+			LoadObject(LoadObj_UnknownB, 6, sub_425BB0);
+		}
+	}
+	else
+	{
+		AddNumRing(add);
+	}
 }
 
 void SetNumRingM(int pNum, int Number)
 {
-    ssNumRing_m[pNum] = Number;
+	ssNumRing_m[pNum] = Number;
 }
 
 void ResetNumRingM()
 {
-    ssNumRing_m.clear();
+	ssNumRing_m.clear();
 }
 
 void ResetNumRingP(int pNum)
 {
-    ssNumRing_m[pNum] = 0;
+	ssNumRing_m[pNum] = 0;
 }
 
 void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 {
-    if (CheckContinueData())
-    {
-        *pos = continue_data.pos;
-        *ang = continue_data.ang;
-    }
-    else
-    {
-        if (FieldStartPos)
-        {
-            *pos = FieldStartPos->Position;
-            *ang = { 0, FieldStartPos->YRot, 0 };
-            FieldStartPos = nullptr;
-        }
-        else if (isInHubWorld())
-        {
-            ADVPOS** adpos;
+	if (CheckContinueData())
+	{
+		*pos = continue_data.pos;
+		*ang = continue_data.ang;
+	}
+	else
+	{
+		if (FieldStartPos)
+		{
+			*pos = FieldStartPos->Position;
+			*ang = { 0, FieldStartPos->YRot, 0 };
+			FieldStartPos = nullptr;
+		}
+		else if (isInHubWorld())
+		{
+			ADVPOS** adpos;
 
-            // Adv Field:
-            switch (ssStageNumber)
-            {
-            default:
-            case LevelIDs_StationSquare:
-            case 27:
-            case 28:
-                adpos = vInitialPositionSS_Ptr;
-                break;
-            case LevelIDs_EggCarrierOutside:
-                adpos = vInitialPositionEC_AB_Ptr;
-                break;
-            case LevelIDs_EggCarrierInside:
-                adpos = vInitialPositionEC_C_Ptr;
-                break;
-            case LevelIDs_MysticRuins:
-                adpos = vInitialPositionMR_Ptr;
-                break;
-            case LevelIDs_Past:
-                adpos = vInitialPositionPast_Ptr;
-                break;
-            }
+			// Adv Field:
+			switch (ssStageNumber)
+			{
+			default:
+			case LevelIDs_StationSquare:
+			case 27:
+			case 28:
+				adpos = vInitialPositionSS_Ptr;
+				break;
+			case LevelIDs_EggCarrierOutside:
+				adpos = vInitialPositionEC_AB_Ptr;
+				break;
+			case LevelIDs_EggCarrierInside:
+				adpos = vInitialPositionEC_C_Ptr;
+				break;
+			case LevelIDs_MysticRuins:
+				adpos = vInitialPositionMR_Ptr;
+				break;
+			case LevelIDs_Past:
+				adpos = vInitialPositionPast_Ptr;
+				break;
+			}
 
-            *pos = adpos[ssActNumber]->pos;
-            *ang = { 0, adpos[ssActNumber]->angy, 0 };
-        }
-        else
-        {
-            GM_START_POSANG* stpos;
+			*pos = adpos[ssActNumber]->pos;
+			*ang = { 0, adpos[ssActNumber]->angy, 0 };
+		}
+		else
+		{
+			GM_START_POSANG* stpos;
 
-            switch (CurrentCharacter)
-            {
-            default:
-            case Characters_Sonic:
-                stpos = paSonicIP_Ptr;
-                break;
-            case Characters_Tails:
-                stpos = paMilesIP_Ptr;
-                break;
-            case Characters_Knuckles:
-                stpos = paKnucklesIP_Ptr;
-                break;
-            case Characters_Amy:
-                stpos = paAmyIP_Ptr;
-                break;
-            case Characters_Gamma:
-                stpos = paE102IP_Ptr;
-                break;
-            case Characters_Big:
-                stpos = paBigIP_Ptr;
-                break;
-            }
+			switch (CurrentCharacter)
+			{
+			default:
+			case Characters_Sonic:
+				stpos = paSonicIP_Ptr;
+				break;
+			case Characters_Tails:
+				stpos = paMilesIP_Ptr;
+				break;
+			case Characters_Knuckles:
+				stpos = paKnucklesIP_Ptr;
+				break;
+			case Characters_Amy:
+				stpos = paAmyIP_Ptr;
+				break;
+			case Characters_Gamma:
+				stpos = paE102IP_Ptr;
+				break;
+			case Characters_Big:
+				stpos = paBigIP_Ptr;
+				break;
+			}
 
-            while (stpos->stage != CurrentLevel || stpos->act != CurrentAct)
-            {
-                if (stpos->stage == LevelIDs_Invalid)
-                {
-                    *pos = { 0.0f, 0.0f, 0.0f };
-                    *ang = { 0, 0, 0 };
+			while (stpos->stage != CurrentLevel || stpos->act != CurrentAct)
+			{
+				if (stpos->stage == LevelIDs_Invalid)
+				{
+					*pos = { 0.0f, 0.0f, 0.0f };
+					*ang = { 0, 0, 0 };
 
-                    return;
-                }
-                ++stpos;
-            }
+					return;
+				}
+				++stpos;
+			}
 
-            *pos = continue_data.pos = stpos->p;
-            *ang = continue_data.ang = { 0, stpos->angy, 0 };
-            continue_data.continue_flag = TRUE;
-        }
-    }
+			*pos = continue_data.pos = stpos->p;
+			*ang = continue_data.ang = { 0, stpos->angy, 0 };
+			continue_data.continue_flag = TRUE;
+		}
+	}
 }
 
 void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 {
-    if (multiplayer::IsActive())
-    {
-        auto pnum = TASKWK_PLAYERID(twp);
+	if (multiplayer::IsActive())
+	{
+		auto pnum = TASKWK_PLAYERID(twp);
 
-        NJS_POINT3 pos; Angle3 ang;
-        GetPlayerInitialPositionM(&pos, &ang);
+		NJS_POINT3 pos; Angle3 ang;
+		GetPlayerInitialPositionM(&pos, &ang);
 
-        if (pnum == 0 && multiplayer::IsCoopMode() && continue_data.continue_flag)
-        {
-            SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
-        }
+		if (pnum == 0 && multiplayer::IsCoopMode() && continue_data.continue_flag)
+		{
+			SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
+		}
 
-        twp->ang = ang;
-        SetPlayerPositionAroundPoint(twp, &pos, 5.0f);
-    }
-    else
-    {
-        TARGET_DYNAMIC(SetPlayerInitialPosition)(twp);
-    }
+		twp->ang = ang;
+		SetPlayerPositionAroundPoint(twp, &pos, 5.0f);
+	}
+	else
+	{
+		TARGET_DYNAMIC(SetPlayerInitialPosition)(twp);
+	}
 }
 
 void __cdecl DamegeRingScatter_r(char pno)
 {
-    if (multiplayer::IsActive())
-    {
-        auto rings = GetNumRingM(pno);
+	if (multiplayer::IsActive())
+	{
+		auto rings = GetNumRingM(pno);
 
-        if (rings > 0)
-        {
-            ResetNumRingP(pno);
+		if (rings > 0)
+		{
+			ResetNumRingP(pno);
 
-            for (int i = 0; i < min(20, rings); ++i)
-            {
-                auto tp = CreateElementalTask(LoadObj_UnknownB | LoadObj_Data1, 2, (TaskFuncPtr)0x44FD10);
-                tp->twp->pos = playertwp[pno]->pos;
-                tp->twp->ang.y = NJM_DEG_ANG(((double)(i * 350.0) / (double)rings) + (njRandom() * 360.0));
-            }
+			for (int i = 0; i < min(20, rings); ++i)
+			{
+				auto tp = CreateElementalTask(LoadObj_UnknownB | LoadObj_Data1, 2, (TaskFuncPtr)0x44FD10);
+				tp->twp->pos = playertwp[pno]->pos;
+				tp->twp->ang.y = NJM_DEG_ANG(((double)(i * 350.0) / (double)rings) + (njRandom() * 360.0));
+			}
 
-            dsPlay_oneshot(0, 0, 0, 0);
-        }
-        else
-        {
-            KillHimP(pno);
+			dsPlay_oneshot(0, 0, 0, 0);
+		}
+		else
+		{
+			KillHimP(pno);
 
-            if (TASKWK_CHARID(playertwp[pno]) == Characters_Gamma)
-            {
-                dsPlay_oneshot(1431, 0, 0, 0);
-            }
-            else
-            {
-                dsPlay_oneshot(23, 0, 0, 0);
-            }
-        }
-    }
-    else
-    {
-        return DamegeRingScatter_t.Original(pno);
-    }
+			if (TASKWK_CHARID(playertwp[pno]) == Characters_Gamma)
+			{
+				dsPlay_oneshot(1431, 0, 0, 0);
+			}
+			else
+			{
+				dsPlay_oneshot(23, 0, 0, 0);
+			}
+		}
+	}
+	else
+	{
+		return DamegeRingScatter_t.Original(pno);
+	}
 }
 
 // Remove ability to be hurt by players
 void RemovePlayersDamage(taskwk* twp)
 {
-    if (twp && twp->cwp)
-    {
-        for (int i = 0; i < twp->cwp->nbInfo; i++)
-        {
-            twp->cwp->info[i].damage &= ~0x20u;
-        }
-    }
+	if (twp && twp->cwp)
+	{
+		for (int i = 0; i < twp->cwp->nbInfo; i++)
+		{
+			twp->cwp->info[i].damage &= ~0x20u;
+		}
+	}
 }
 
 void SetPlayerTargetable(taskwk* twp)
 {
-    if (twp->cwp)
-    {
-        twp->cwp->flag |= 0x40;
-        twp->cwp->id = 3;
-    }
+	if (twp->cwp)
+	{
+		twp->cwp->flag |= 0x40;
+		twp->cwp->id = 3;
+	}
 }
 
 static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
 {
-    auto ptwp = playertwp[pnum];
-    auto pmwp = playermwp[pnum];
-    auto ppwp = playerpwp[pnum];
+	auto ptwp = playertwp[pnum];
+	auto pmwp = playermwp[pnum];
+	auto ppwp = playerpwp[pnum];
 
-    if (!ptwp || !ppwp || !pmwp)
-    {
-        return false;
-    }
+	if (!ptwp || !ppwp || !pmwp)
+	{
+		return false;
+	}
 
-    switch (type)
-    {
-    case Network::PACKET_PLAYER_LOCATION:
-        packet >> ptwp->pos >> ptwp->ang >> ppwp->spd >> pmwp->spd;
-        return true;
-    case Network::PACKET_PLAYER_MODE:
-        packet >> ptwp->mode;
-        return true;
-    case Network::PACKET_PLAYER_SMODE:
-        packet >> ptwp->smode;
-        ptwp->flag |= Status_DoNextAction;
-        return true;
-    case Network::PACKET_PLAYER_FLAG:
-    {
-        short flag;
-        packet >> flag;
-        ptwp->flag = (ptwp->flag & ~FLAG_MASK) | (flag & FLAG_MASK);
-        return true;
-    }
-    case Network::PACKET_PLAYER_ANIM:
-        packet >> ppwp->mj.mtnmode >> (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) >> ppwp->mj.nframe;
-        return true;
-    case Network::PACKET_PLAYER_RINGS:
-        packet >> ssNumRing_m[pnum];
-        return true;
-    case Network::PACKET_PLAYER_LIVES:
-        packet >> scNumPlayer_m[pnum];
-        return true;
-    case Network::PACKET_PLAYER_SCORE:
-        packet >> EnemyScore_m[pnum];
-        return true;
-    default:
-        return false;
-    }
+	switch (type)
+	{
+	case Network::PACKET_PLAYER_LOCATION:
+		packet >> ptwp->pos >> ptwp->ang >> ppwp->spd >> pmwp->spd;
+		return true;
+	case Network::PACKET_PLAYER_MODE:
+		packet >> ptwp->mode;
+		return true;
+	case Network::PACKET_PLAYER_SMODE:
+		packet >> ptwp->smode;
+		ptwp->flag |= Status_DoNextAction;
+		return true;
+	case Network::PACKET_PLAYER_FLAG:
+	{
+		short flag;
+		packet >> flag;
+		ptwp->flag = (ptwp->flag & ~FLAG_MASK) | (flag & FLAG_MASK);
+		return true;
+	}
+	case Network::PACKET_PLAYER_ANIM:
+		packet >> ppwp->mj.mtnmode >> (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) >> ppwp->mj.nframe;
+		return true;
+	case Network::PACKET_PLAYER_RINGS:
+		packet >> ssNumRing_m[pnum];
+		return true;
+	case Network::PACKET_PLAYER_LIVES:
+		packet >> scNumPlayer_m[pnum];
+		return true;
+	case Network::PACKET_PLAYER_SCORE:
+		packet >> EnemyScore_m[pnum];
+		return true;
+	default:
+		return false;
+	}
 }
 
 static bool PlayerSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
 {
-    auto ptwp = playertwp[pnum];
-    auto ppwp = playerpwp[pnum];
-    auto pmwp = playermwp[pnum];
-    
-    switch (type)
-    {
-    case Network::PACKET_PLAYER_LOCATION:
-        packet << ptwp->pos << ptwp->ang << ppwp->spd << pmwp->spd;
-        return true;
-    case Network::PACKET_PLAYER_MODE:
-        packet << ptwp->mode;
-        return true;
-    case Network::PACKET_PLAYER_SMODE:
-        packet << ptwp->smode;
-        return true;
-    case Network::PACKET_PLAYER_FLAG:
-        packet << (short)(ptwp->flag & FLAG_MASK);
-        return true;
-    case Network::PACKET_PLAYER_ANIM:
-        packet << ppwp->mj.mtnmode << (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) << ppwp->mj.nframe;
-        return true;
-    case Network::PACKET_PLAYER_RINGS:
-        packet << ssNumRing_m[pnum];
-        return true;
-    case Network::PACKET_PLAYER_LIVES:
-        packet << scNumPlayer_m[pnum];
-        return true;
-    case Network::PACKET_PLAYER_SCORE:
-        packet << EnemyScore_m[pnum];
-        return true;
-    default:
-        return false;
-    }
+	auto ptwp = playertwp[pnum];
+	auto ppwp = playerpwp[pnum];
+	auto pmwp = playermwp[pnum];
+
+	switch (type)
+	{
+	case Network::PACKET_PLAYER_LOCATION:
+		packet << ptwp->pos << ptwp->ang << ppwp->spd << pmwp->spd;
+		return true;
+	case Network::PACKET_PLAYER_MODE:
+		packet << ptwp->mode;
+		return true;
+	case Network::PACKET_PLAYER_SMODE:
+		packet << ptwp->smode;
+		return true;
+	case Network::PACKET_PLAYER_FLAG:
+		packet << (short)(ptwp->flag & FLAG_MASK);
+		return true;
+	case Network::PACKET_PLAYER_ANIM:
+		packet << ppwp->mj.mtnmode << (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) << ppwp->mj.nframe;
+		return true;
+	case Network::PACKET_PLAYER_RINGS:
+		packet << ssNumRing_m[pnum];
+		return true;
+	case Network::PACKET_PLAYER_LIVES:
+		packet << scNumPlayer_m[pnum];
+		return true;
+	case Network::PACKET_PLAYER_SCORE:
+		packet << EnemyScore_m[pnum];
+		return true;
+	default:
+		return false;
+	}
 }
 
 void UpdatePlayersInfo()
 {
-    if (network.IsConnected())
-    {
-        auto pnum = network.GetPlayerNum();
-        auto ptwp = playertwp[pnum];
-        auto ppwp = playerpwp[pnum];
+	if (network.IsConnected())
+	{
+		auto pnum = network.GetPlayerNum();
+		auto ptwp = playertwp[pnum];
+		auto ppwp = playerpwp[pnum];
 
-        if (ptwp && ppwp)
-        {
-            if (update_timer.Finished())
-            {
-                network.Send(Network::PACKET_PLAYER_LOCATION, PlayerSender);
-                network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
-                network.Send(Network::PACKET_PLAYER_FLAG, PlayerSender);
-            }
+		if (ptwp && ppwp)
+		{
+			if (update_timer.Finished())
+			{
+				network.Send(Network::PACKET_PLAYER_LOCATION, PlayerSender);
+				network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
+				network.Send(Network::PACKET_PLAYER_FLAG, PlayerSender);
+			}
 
-            static char last_action = 0;
-            if (last_action != ptwp->mode)
-            {
-                network.Send(Network::PACKET_PLAYER_MODE, PlayerSender);
-                last_action = ptwp->mode;
-            }
+			static char last_action = 0;
+			if (last_action != ptwp->mode)
+			{
+				network.Send(Network::PACKET_PLAYER_MODE, PlayerSender);
+				last_action = ptwp->mode;
+			}
 
-            if (ptwp->flag & Status_DoNextAction)
-            {
-                network.Send(Network::PACKET_PLAYER_SMODE, PlayerSender);
-            }
+			if (ptwp->flag & Status_DoNextAction)
+			{
+				network.Send(Network::PACKET_PLAYER_SMODE, PlayerSender);
+			}
 
-            static short last_mtnmode = 0;
-            static short last_mtnaction = 0;
-            if (last_mtnmode != ppwp->mj.mtnmode || last_mtnaction != (last_mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction))
-            {
-                network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
-                last_mtnaction = (last_mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction);
-                last_mtnmode = ppwp->mj.mtnmode;
-            }
+			static short last_mtnmode = 0;
+			static short last_mtnaction = 0;
+			if (last_mtnmode != ppwp->mj.mtnmode || last_mtnaction != (last_mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction))
+			{
+				network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
+				last_mtnaction = (last_mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction);
+				last_mtnmode = ppwp->mj.mtnmode;
+			}
 
-            static int16_t old_rings = 0;
-            if (old_rings != ssNumRing_m[pnum])
-            {
-                network.Send(Network::PACKET_PLAYER_RINGS, PlayerSender);
-                old_rings = ssNumRing_m[pnum];
-            }
+			static int16_t old_rings = 0;
+			if (old_rings != ssNumRing_m[pnum])
+			{
+				network.Send(Network::PACKET_PLAYER_RINGS, PlayerSender);
+				old_rings = ssNumRing_m[pnum];
+			}
 
-            static int8_t old_lives = 0;
-            if (old_lives != scNumPlayer_m[pnum])
-            {
-                network.Send(Network::PACKET_PLAYER_LIVES, PlayerSender);
-                old_lives = scNumPlayer_m[pnum];
-            }
+			static int8_t old_lives = 0;
+			if (old_lives != scNumPlayer_m[pnum])
+			{
+				network.Send(Network::PACKET_PLAYER_LIVES, PlayerSender);
+				old_lives = scNumPlayer_m[pnum];
+			}
 
-            static int32_t old_score = 0;
-            if (old_score != EnemyScore_m[pnum])
-            {
-                network.Send(Network::PACKET_PLAYER_SCORE, PlayerSender);
-                old_score = EnemyScore_m[pnum];
-            }
-        }
-    }
-    
+			static int32_t old_score = 0;
+			if (old_score != EnemyScore_m[pnum])
+			{
+				network.Send(Network::PACKET_PLAYER_SCORE, PlayerSender);
+				old_score = EnemyScore_m[pnum];
+			}
+		}
+	}
+
 #ifdef _DEBUG
-    if ( (PressedButtons[1] & Buttons_L) && (PressedButtons[1] & Buttons_R))
-    {
-        if (IsIngame() && playertwp[1] && playertwp[0])
-        {
-            playertwp[1]->pos = playertwp[0]->pos;
-        }
-    }
+	if ((PressedButtons[1] & Buttons_L) && (PressedButtons[1] & Buttons_R))
+	{
+		if (IsIngame() && playertwp[1] && playertwp[0])
+		{
+			playertwp[1]->pos = playertwp[0]->pos;
+		}
+	}
 #endif
 
-    if (IsIngame())
-    {
-        bool coop = multiplayer::IsCoopMode();
-        bool vs = multiplayer::IsFightMode();
+	if (IsIngame())
+	{
+		bool coop = multiplayer::IsCoopMode();
+		bool vs = multiplayer::IsFightMode();
 
-        if (coop || vs)
-        {
-            for (int i = 0; i < PLAYER_MAX; ++i)
-            {
-                if (playertwp[i])
-                {
-                    if (coop) RemovePlayersDamage(playertwp[i]);
-                    if (vs) SetPlayerTargetable(playertwp[i]);
-                }
-            }
-        }
-    }
+		if (coop || vs)
+		{
+			for (int i = 0; i < PLAYER_MAX; ++i)
+			{
+				if (playertwp[i])
+				{
+					if (coop) RemovePlayersDamage(playertwp[i]);
+					if (vs) SetPlayerTargetable(playertwp[i]);
+				}
+			}
+		}
+	}
 }
 
 void ResetCharactersArray()
 {
-    for (int i = 0; i < PLAYER_MAX; i++)
-    {
-        characters[i] = -1;
-    }
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		characters[i] = -1;
+	}
 }
 
 void SetCurrentCharacter(int pnum, Characters character)
 {
-    characters[pnum] = character;
+	characters[pnum] = character;
 }
 
 int GetCurrentCharacter(int pnum)
 {
-    return characters[pnum];
+	return characters[pnum];
 }
 
 void SetPlayer_r()
 {
-    if (multiplayer::IsActive())
-    {
-        // Load all characters:
-        for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); i++)
-        {
-            int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
+	if (multiplayer::IsActive())
+	{
+		// Load all characters:
+		for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); i++)
+		{
+			int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
 
-            if (playernum >= 0)
-            {
-                LoadCharObj(i, playernum);
-            }
-        }
+			if (playernum >= 0)
+			{
+				LoadCharObj(i, playernum);
+			}
+		}
 
-        // Load game mechanics:
-        switch (CurrentCharacter)
-        {
-        case Characters_Tails:
-            if (multiplayer::IsCoopMode())
-            {
-                Set_NPC_Sonic_m(7); // load opponent into slot 7
-            }
-            break;
-        case Characters_Knuckles:
-            if (isCharSel && !EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
-            {
-                CreateElementalTask(2u, 6, Knuckles_KakeraGame);
-            }
-            break;
-        case Characters_Big:
-            if (isCharSel)
-                CreateElementalTask(2u, 6, BigDisplayStatus);
-            break;
-        }
+		// Load game mechanics:
+		switch (CurrentCharacter)
+		{
+		case Characters_Tails:
+			if (multiplayer::IsCoopMode())
+			{
+				Set_NPC_Sonic_m(7); // load opponent into slot 7
+			}
+			break;
+		case Characters_Knuckles:
+			if (isCharSel && !EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
+			{
+				CreateElementalTask(2u, 6, Knuckles_KakeraGame);
+			}
+			break;
+		case Characters_Big:
+			if (isCharSel)
+				CreateElementalTask(2u, 6, BigDisplayStatus);
+			break;
+		}
 
-        CreateIndicatorP();
-        SetWinnerMulti(-1);
-        SetAllPlayersInitialPosition();
-    }
-    else
-    {
-        return SetPlayer_t.Original();
-    }
+		CreateIndicatorP();
+		SetWinnerMulti(-1);
+		SetAllPlayersInitialPosition();
+	}
+	else
+	{
+		return SetPlayer_t.Original();
+	}
 }
 
 void SetOtherPlayers()
 {
-    if (multiplayer::IsActive())
-    {
-        for (unsigned int i = 1; i < multiplayer::GetPlayerCount(); i++)
-        {
-            int playernum = characters[i];
+	if (multiplayer::IsActive())
+	{
+		for (unsigned int i = 1; i < multiplayer::GetPlayerCount(); i++)
+		{
+			int playernum = characters[i];
 
-            if (playernum >= 0 && !playertwp[i])
-            {
-                LoadCharObj(i, playernum);
+			if (playernum >= 0 && !playertwp[i])
+			{
+				LoadCharObj(i, playernum);
 
-                if (playertwp[i])
-                {
-                    playertwp[i]->pos = playertwp[i - 1]->pos;
-                    playertwp[i]->pos.z += 5.0f;
-                    playertwp[i]->ang = playertwp[i - 1]->ang;
-                }
-            }
-        }
-    }
+				if (playertwp[i])
+				{
+					playertwp[i]->pos = playertwp[i - 1]->pos;
+					playertwp[i]->pos.z += 5.0f;
+					playertwp[i]->ang = playertwp[i - 1]->ang;
+				}
+			}
+		}
+	}
 }
 
 void __cdecl InitScore_r()
 {
-    ResetNumRingM();
-    slJudge = 0;
+	ResetNumRingM();
+	slJudge = 0;
 }
 
 int __cdecl GetRaceWinnerPlayer_r() {
 
-    if (multiplayer::IsCoopMode()) {
-        for (int i = 1; i < PLAYER_MAX; i++) {
+	if (multiplayer::IsCoopMode()) {
+		for (int i = 1; i < PLAYER_MAX; i++) {
 
-            if (playertwp[i] && (TASKWK_CHARID(playertwp[i]) == Characters_Tails))
-                return 1;
-       
-        }
-    }
+			if (playertwp[i] && (TASKWK_CHARID(playertwp[i]) == Characters_Tails))
+				return 1;
 
-    return RaceWinnerPlayer;
+		}
+	}
+
+	return RaceWinnerPlayer;
 }
 
 int isInDeathZone_r(taskwk* a1)
 {
-    if (multiplayer::IsCoopMode() && CurrentCharacter != Characters_Knuckles)
-    {
-        return 0;
-    }
+	if (multiplayer::IsCoopMode() && CurrentCharacter != Characters_Knuckles)
+	{
+		return 0;
+	}
 
-    return isInDeathZone_t.Original(a1);
+	return isInDeathZone_t.Original(a1);
 }
 
 void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
 {
-     SetPositionP_t.Original(charIndex, x, y, z);
+	SetPositionP_t.Original(charIndex, x, y, z);
 
-     if (multiplayer::IsActive())
-     {
-         if (!charIndex && (isInHubWorld() || CurrentLevel == LevelIDs_Casinopolis))
-         {
-             NJS_VECTOR pos = { x, y, z };
+	if (multiplayer::IsActive())
+	{
+		if (!charIndex && (isInHubWorld() || CurrentLevel == LevelIDs_Casinopolis))
+		{
+			NJS_VECTOR pos = { x, y, z };
 
-             for (int i = 1; i < multiplayer::GetPlayerCount(); i++)
-             {
-                 if (playertwp[i])
-                 {
-                     SetPlayerPositionAroundPoint(playertwp[i], &pos, 6.0f);
-                 }
-             }
-         }
-     }
+			for (int i = 1; i < multiplayer::GetPlayerCount(); i++)
+			{
+				if (playertwp[i])
+				{
+					SetPlayerPositionAroundPoint(playertwp[i], &pos, 6.0f);
+				}
+			}
+		}
+	}
 }
 
 void SetInfiniteLives()
 {
-    if (multiplayer::IsActive())
-    {
-        for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
-        {
-            if (config::infiniteLives)
-                scNumPlayer_m[i] = CHAR_MAX;
-        }
-    }
+	if (multiplayer::IsActive())
+	{
+		for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+		{
+			if (config::infiniteLives)
+				scNumPlayer_m[i] = CHAR_MAX;
+		}
+	}
+}
+
+bool DeleteJiggle(task* tp)
+{
+	if (multiplayer::IsActive() && !EV_MainThread_ptr)
+	{
+		FreeTask(tp);
+		return true;
+	}
+
+	return false;
 }
 
 void InitPlayerPatches()
 {
-    isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
+	isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
 
-    SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
-    DamegeRingScatter_t.Hook(DamegeRingScatter_r);
-    SetPlayer_t.Hook(SetPlayer_r);
-    isInDeathZone_t.Hook(isInDeathZone_r);
-    SetPositionP_t.Hook(SetPositionP_r);
+	SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
+	DamegeRingScatter_t.Hook(DamegeRingScatter_r);
+	SetPlayer_t.Hook(SetPlayer_r);
+	isInDeathZone_t.Hook(isInDeathZone_r);
+	SetPositionP_t.Hook(SetPositionP_r);
 
-    WriteJump(ResetNumPlayer, ResetNumPlayerM);
-    WriteJump(ResetNumRing, ResetNumRingM);
-    WriteJump(InitActionScore, ResetEnemyScoreM);
-    WriteJump(InitScore, InitScore_r);
-    WriteJump(GetRaceWinnerPlayer, GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
+	WriteJump(ResetNumPlayer, ResetNumPlayerM);
+	WriteJump(ResetNumRing, ResetNumRingM);
+	WriteJump(InitActionScore, ResetEnemyScoreM);
+	WriteJump(InitScore, InitScore_r);
+	WriteJump(GetRaceWinnerPlayer, GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
 
-    network.RegisterListener(Network::PACKET_PLAYER_LOCATION, PlayerListener);
-    network.RegisterListener(Network::PACKET_PLAYER_MODE, PlayerListener);
-    network.RegisterListener(Network::PACKET_PLAYER_SMODE, PlayerListener);
-    network.RegisterListener(Network::PACKET_PLAYER_FLAG, PlayerListener);
-    network.RegisterListener(Network::PACKET_PLAYER_ANIM, PlayerListener);
+	network.RegisterListener(Network::PACKET_PLAYER_LOCATION, PlayerListener);
+	network.RegisterListener(Network::PACKET_PLAYER_MODE, PlayerListener);
+	network.RegisterListener(Network::PACKET_PLAYER_SMODE, PlayerListener);
+	network.RegisterListener(Network::PACKET_PLAYER_FLAG, PlayerListener);
+	network.RegisterListener(Network::PACKET_PLAYER_ANIM, PlayerListener);
 
-    network.RegisterListener(Network::PACKET_PLAYER_RINGS, PlayerListener);
-    network.RegisterListener(Network::PACKET_PLAYER_LIVES, PlayerListener);
-    network.RegisterListener(Network::PACKET_PLAYER_SCORE, PlayerListener);
+	network.RegisterListener(Network::PACKET_PLAYER_RINGS, PlayerListener);
+	network.RegisterListener(Network::PACKET_PLAYER_LIVES, PlayerListener);
+	network.RegisterListener(Network::PACKET_PLAYER_SCORE, PlayerListener);
 }

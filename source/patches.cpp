@@ -22,6 +22,7 @@
 #include "objects/ObjCylinderCmn.h"
 
 #include "objects/sonic.h"
+#include "objects//miles.h"
 #include "objects/knuckles.h"
 #include "objects/amy.h"
 #include "objects/gamma.h"
@@ -844,6 +845,7 @@ void InitPatches()
 	initLadderPatches();
 	init_SDCylinderPatches();
 	initSonicPatch();
+	initMilesPatches();
 	Init_KnuxPatches();
 	Init_AmyPatches();
 	Init_BigPatches();

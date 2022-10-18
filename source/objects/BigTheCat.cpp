@@ -9,6 +9,28 @@ TaskHook BigTheCat_t((intptr_t)Big_Main);
 
 Trampoline* BigChkMode_t = nullptr; //doesn't want to work with FuncHook for some weird reason
 UsercallFunc(Bool, Big_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x48D400, rEAX, rEAX, rEDI, stack4);
+TaskHook Big_Jiggle_t((intptr_t)0x48C720);
+TaskHook BigEyeTracker_t(0x48E2E0);
+
+static void __cdecl BigEyeTracker_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	BigEyeTracker_t.Original(tp);
+}
+
+static void __cdecl Big_Jiggle_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	Big_Jiggle_t.Original(tp);
+}
 
 static void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp);
 Trampoline bigActMissSet_t(0x48CD50, 0x48CD55, bigActMissSet_r);
@@ -276,4 +298,6 @@ void Init_BigPatches()
 	BigTheCat_t.Hook(BigTheCat_r);
 	Big_CheckInput_t.Hook(Big_CheckInput_r);
 	BigChkMode_t = new Trampoline(0x48E640, 0x48E645, BigChkMode_jmp);
+	Big_Jiggle_t.Hook(Big_Jiggle_r);
+	BigEyeTracker_t.Hook(BigEyeTracker_r);
 }

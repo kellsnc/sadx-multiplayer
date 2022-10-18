@@ -6,6 +6,28 @@ TaskHook KnuxExec_t((intptr_t)Knuckles_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
 TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
 static FunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
+TaskHook KnucklesJiggle_t(0x473CE0);
+TaskHook KnuxEyeTracker_t(0x475260);
+
+static void __cdecl KnuxEyeTracker_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	KnuxEyeTracker_t.Original(tp);
+}
+
+static void __cdecl KnucklesJiggle_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	KnucklesJiggle_t.Original(tp);
+}
 
 void __cdecl KnuEffectPutChargeComp_r(NJS_VECTOR* position, float alpha)
 {
@@ -294,4 +316,6 @@ void Init_KnuxPatches()
 	KnucklesChargeEffectExe_t.Hook(KnucklesChargeEffectExe_r);
 
 	KnuEffectPutChargeComp_t.Hook(KnuEffectPutChargeComp_r); //add support DC Conv
+	KnucklesJiggle_t.Hook(KnucklesJiggle_r);
+	KnuxEyeTracker_t.Hook(KnuxEyeTracker_r);
 }

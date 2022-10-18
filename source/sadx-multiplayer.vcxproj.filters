@@ -502,6 +502,9 @@
     <ClCompile Include="objects\o_casino_hosin.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\miles.cpp">
+      <Filter>Source Files\objects\figure</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -704,6 +707,9 @@
     </ClInclude>
     <ClInclude Include="event.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\miles.h">
+      <Filter>Header FIles\objects\figure</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

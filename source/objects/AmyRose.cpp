@@ -4,6 +4,40 @@
 UsercallFunc(signed int, Amy_CheckInput_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x487810, rEAX, rECX, rEDI, rESI);
 TaskHook AmyExec_t((intptr_t)Amy_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunsActions_t((intptr_t)0x488880);
+TaskHook AmyJiggle_t((intptr_t)0x485C50);
+TaskHook AmySkirtShape_t(0x485F40);
+TaskHook AmyEyeTracker_t(0x486410);
+
+static void __cdecl AmyEyeTracker_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	AmyEyeTracker_t.Original(tp);
+}
+
+static void __cdecl AmyJiggle_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	AmyJiggle_t.Original(tp);
+}
+
+static void __cdecl AmySkirtShape_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	AmySkirtShape_t.Original(tp);
+}
+
 
 signed int Amy_CheckInput_r(playerwk* co2, motionwk2* data2, taskwk* data)
 {
@@ -153,4 +187,7 @@ void Init_AmyPatches()
 	AmyExec_t.Hook(AmyExec_r);
 	Amy_CheckInput_t.Hook(Amy_CheckInput_r);
 	Amy_RunsActions_t.Hook(Amy_RunsActions_r);
+	AmyJiggle_t.Hook(AmyJiggle_r);
+	AmySkirtShape_t.Hook(AmySkirtShape_r);
+	AmyEyeTracker_t.Hook(AmyEyeTracker_r);
 }
