@@ -27,6 +27,7 @@
 #include "objects/amy.h"
 #include "objects/gamma.h"
 #include "objects/big.h"
+#include "objects/o_sky_cannon_s.h"
 
 /*
 
@@ -843,6 +844,7 @@ void InitPatches()
 	PatchPondSkater();
 	PatchGachapon();
 	initLadderPatches();
+	initSDIntroPatches();
 	init_SDCylinderPatches();
 	initSonicPatch();
 	initMilesPatches();

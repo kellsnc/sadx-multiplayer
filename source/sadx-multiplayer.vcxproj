@@ -147,6 +147,7 @@
     <ClInclude Include="objects\ObjectItemBox.h" />
     <ClInclude Include="objects\ObjectRocket.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
+    <ClInclude Include="objects\o_sky_cannon_s.h" />
     <ClInclude Include="objects\SnowBoard.h" />
     <ClInclude Include="objects\sonic.h" />
     <ClInclude Include="packet.h" />

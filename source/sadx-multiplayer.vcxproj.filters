@@ -714,6 +714,9 @@
     <ClInclude Include="objects\miles.h">
       <Filter>Header FIles\objects\figure</Filter>
     </ClInclude>
+    <ClInclude Include="objects\o_sky_cannon_s.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">

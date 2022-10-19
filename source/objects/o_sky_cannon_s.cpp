@@ -2,12 +2,28 @@
 
 void ObjectSkydeck_cannon_s_Exec_r(task* a1);
 TaskHook ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0, ObjectSkydeck_cannon_s_Exec_r);
+static char PInCannon[PLAYER_MAX];
+
+void isPlayerinCannon(taskwk* data)
+{
+	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++) {
+
+		if (GetDistance(&data->pos, &playertwp[i]->pos) <= 100.0f)
+		{
+			PInCannon[i] = 1;
+		}
+		else
+		{
+			PInCannon[i] = 0;
+		}
+	}
+}
 
 static void SDSetPlayerPos(taskwk* data)
 {
 	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 	{
-		if (playertwp[i])
+		if (PInCannon[i])
 		{
 			PositionPlayer(i, data->pos.x, data->pos.y, data->pos.z);
 		}
@@ -21,13 +37,16 @@ static void SDSetPlayerPosDiff(taskwk* data)
 
 	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 	{
-		if (i > 0)
+		if (PInCannon[i])
 		{
-			if (playertwp[i] && playertwp[i]->counter.b[1] < Characters_Gamma)
-				pos.z -= 10 * i;
-		}
+			if (i > 0)
+			{
+				if (playertwp[i] && playertwp[i]->counter.b[1] < Characters_Gamma)
+					pos.z -= 10 * i;
+			}
 
-		PositionPlayer(i, pos.x, pos.y, pos.z);
+			PositionPlayer(i, pos.x, pos.y, pos.z);
+		}
 	}
 }
 
@@ -42,6 +61,8 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 	Angle3 ang = { 0 };
 	NJS_VECTOR vector = { 0.0f, 2.5f, 5.0f };
 	auto data = a1->twp;
+
+	isPlayerinCannon(data);
 
 	switch (data->mode)
 	{
@@ -66,23 +87,33 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		{
 			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 			{
-				SetAutoPilotForBreak(i);
-				SetLookingAngleP(i, &ang);
+				if (PInCannon[i])
+				{
+					SetAutoPilotForBreak(i);
+					SetLookingAngleP(i, &ang);
+				}
 			}
 		}
 		else
 		{
-			if (!MetalSonicFlag)
+			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 			{
-				if (GetCurrentCharacterID())
-				{
-					PlaySound(1473, 0, 0, 0);
-				}
-				else
-				{
-					PlaySound(1509, 0, 0, 0);
+				if (playertwp[i]->counter.b[1] == Characters_Sonic) {
+
+					if (!MetalSonicFlag)
+					{
+						if (GetCurrentCharacterID())
+						{
+							PlaySound(1473, 0, 0, 0);
+						}
+						else
+						{
+							PlaySound(1509, 0, 0, 0);
+						}
+					}
 				}
 			}
+		
 			data->mode++;
 			data->wtimer = 0;
 			PlaySound(184, 0, 0, 0);
@@ -96,19 +127,22 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		{
 			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 			{
-				vector = { 0.0f, 2.5f, 5.0f };
-
-				if (i & 1)
+				if (PInCannon[i])
 				{
-					vector.x = 0.5;
-				}
-				else
-				{
-					vector.x = 0.0f;
-				}
+					vector = { 0.0f, 2.5f, 5.0f };
 
-				njUnitVector(&vector);
-				SetParabolicMotionP(i, 6.0f, &vector);
+					if (i & 1)
+					{
+						vector.x = 0.5;
+					}
+					else
+					{
+						vector.x = 0.0f;
+					}
+
+					njUnitVector(&vector);
+					SetParabolicMotionP(i, 6.0f, &vector);
+				}
 			}
 
 			data->value.f = 40.0f;
@@ -125,6 +159,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		if ((data->cwp && data->cwp->flag & 1) != 0 && !data->cwp->hit_cwp->id)
 		{
 			data->mode = 2;
+			return;
 		}
 		break;
 	}
@@ -133,6 +168,53 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 	ObjectSkydeck_cannon_s_Exec_t.Original(a1);
 }
 
+void __cdecl SDIntroPatch(Uint8 charIndex, float x, float y, float z)
+{
+	if (multiplayer::IsActive)
+	{
+		if (!PInCannon[charIndex])
+			return;
+	}
+	
+
+	return PositionPlayer(charIndex, x, y, z);
+}
+
+void __cdecl SDIntroPatch2(Uint8 charIndex)
+{
+	if (multiplayer::IsActive)
+	{
+		if (!PInCannon[charIndex])
+			return;
+	}
+
+	return SetAutoPilotForBreak(charIndex);
+}
+
+void __cdecl SDIntroPatch3(Uint8 charIndex, float spd, NJS_VECTOR* a3)
+{
+	if (multiplayer::IsActive)
+	{
+		if (!PInCannon[charIndex])
+			return;
+	}
+
+	return SetParabolicMotionP(charIndex, spd, a3);
+}
+
+void initSDIntroPatches()
+{
+	WriteCall((void*)0x5FC82D, SDIntroPatch);
+	WriteCall((void*)0x5FC84C, SDIntroPatch);
+	WriteCall((void*)0x5FC8C2, SDIntroPatch);
+	WriteCall((void*)0x5FC8E5, SDIntroPatch);
+
+	WriteCall((void*)0x5FC9F6, SDIntroPatch2);
+	WriteCall((void*)0x5FCA18, SDIntroPatch2);
+	
+	WriteCall((void*)0x5FCAB9, SDIntroPatch3);
+	WriteCall((void*)0x5FCA78, SDIntroPatch3);
+}
 
 void CannonModePhysics(taskwk* data, motionwk2* data2, playerwk* co2)
 {
