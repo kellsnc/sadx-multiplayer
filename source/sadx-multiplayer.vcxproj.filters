@@ -508,9 +508,6 @@
     <ClCompile Include="objects\o_Mountain_MagmaCnt.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\O_Sky_c_connect.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

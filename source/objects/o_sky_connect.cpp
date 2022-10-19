@@ -17,5 +17,11 @@ static void __cdecl ObjectSkydeck_c_connect_Exec_r(task* tp)
             ocm->flag |= 1;
         else
             ocm->flag &= ~1;
+
+        if (twp->mode >= 1)
+        {
+            tp->exec = (TaskFuncPtr)0x5FB130;
+            return;
+        }
     }
 }
