@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ObjCylinderCmn.h"
+#include "e_cart.h"
 
 UsercallFunc(Bool, Knux_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
 TaskHook KnuxExec_t((intptr_t)Knuckles_Main);
@@ -198,6 +199,9 @@ void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 
 	switch (data1->mode)
 	{
+	case 52: //cart
+		KillPlayerInKart(data1, co2, 51, 27);
+		break;
 	case SDCannonMode:
 		if (!KnucklesCheckInput(data1, data2, co2) && (data1->flag & 3) != 0)
 		{

@@ -5,6 +5,7 @@
 #include "multiplayer.h"
 #include "splitscreen.h"
 #include "ObjCylinderCmn.h"
+#include "e_cart.h"
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 
@@ -33,6 +34,9 @@ void E102_RunActions_r(task* tsk, motionwk2* data2, playerwk* co2) {
 
 	switch (data1->mode)
 	{
+	case 53: //cart
+		KillPlayerInKart(data1, co2, 51, 69);
+		break;
 	case SDCannonMode:
 		if (!E102CheckInput(co2, data1, data2) && (data1->flag & 3) != 0)
 		{

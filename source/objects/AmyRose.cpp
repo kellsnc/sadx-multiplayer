@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "ObjCylinderCmn.h"
+#include "e_cart.h"
 
 UsercallFunc(signed int, Amy_CheckInput_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x487810, rEAX, rECX, rEDI, rESI);
 TaskHook AmyExec_t((intptr_t)Amy_Main);
@@ -69,6 +70,9 @@ void Amy_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 
 	switch (data1->mode)
 	{
+	case 48: //cart
+		KillPlayerInKart(data1, co2, 47, 26);
+		break;
 	case SDCannonMode:
 		if (!AmyCheckInput(co2, data2, data1) && (data1->flag & 3) != 0)
 		{

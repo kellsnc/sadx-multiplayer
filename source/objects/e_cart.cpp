@@ -890,3 +890,15 @@ void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 		TARGET_STATIC(CartGetOffPlayer)(tp);
 	}
 }
+
+void KillPlayerInKart(taskwk* data, playerwk* co2, char mode, uint16_t anm)
+{
+	if ((data->flag & Status_DoNextAction) != 0)
+	{
+		if (data->smode == 50)
+		{
+			data->mode = mode;
+			co2->mj.reqaction = anm;
+		}
+	}
+}

@@ -3,6 +3,7 @@
 #include "camera.h"
 #include "fishing.h"
 #include "ObjCylinderCmn.h"
+#include "e_cart.h"
 
 
 TaskHook BigTheCat_t((intptr_t)Big_Main);
@@ -157,6 +158,9 @@ static void __cdecl BigChkMode_r(playerwk* co2, taskwk* data1, motionwk2* data2)
 {
 	switch (data1->mode)
 	{
+	case 55: //cart
+		KillPlayerInKart(data1, co2, 58, 99);
+		break;
 	case SDCylStd:
 		if (BigCheckInput(co2, data1, data2) || BigCheckJump(co2, data1))
 		{

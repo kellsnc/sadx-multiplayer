@@ -1,8 +1,10 @@
 #include "pch.h"
+#include "e_cart.h"
 
 TaskHook MilesJiggle_t((intptr_t)Tails_Jiggle_Main);
 TaskHook MilesDirectAhead_t(0x45DAD0);
 TaskHook MilesDirectAhead2_t(0x45DE20);
+UsercallFuncVoid(Miles_RunActions_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x45E5D0, rEAX, rECX, stack4);
 
 static void __cdecl MilesDirectAhead2_r(task* tp)
 {
@@ -35,9 +37,22 @@ static void __cdecl MilesJiggle_r(task* tp)
 	MilesJiggle_t.Original(tp);
 }
 
+void Miles_RunAction_r(playerwk* co2, motionwk2* data2, taskwk* data1)
+{
+	switch (data1->mode)
+	{
+	case 43:
+		KillPlayerInKart(data1, co2, 60, 28);
+		break;
+	}
+
+	Miles_RunActions_t.Original(co2, data2, data1);
+}
+
 void initMilesPatches()
 {
 	MilesJiggle_t.Hook(MilesJiggle_r);
 	MilesDirectAhead_t.Hook(MilesDirectAhead_r);
 	MilesDirectAhead2_t.Hook(MilesDirectAhead2_r);
+	Miles_RunActions_t.Hook(Miles_RunAction_r);
 }
