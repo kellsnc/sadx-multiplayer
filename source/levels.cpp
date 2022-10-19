@@ -10,14 +10,14 @@ Level-related adjustements for multiplayer
 
 */
 
-Trampoline* Rd_Chaos0_t   = nullptr;
-Trampoline* Rd_Chaos2_t   = nullptr;
-Trampoline* Rd_Chaos4_t   = nullptr;
-Trampoline* Rd_Chaos6_t   = nullptr;
+Trampoline* Rd_Chaos0_t = nullptr;
+Trampoline* Rd_Chaos2_t = nullptr;
+Trampoline* Rd_Chaos4_t = nullptr;
+Trampoline* Rd_Chaos6_t = nullptr;
 Trampoline* Rd_Bossegm1_t = nullptr;
 Trampoline* Rd_Bossegm2_t = nullptr;
-Trampoline* Rd_E101_t     = nullptr;
-Trampoline* Rd_E101_R_t   = nullptr;
+Trampoline* Rd_E101_t = nullptr;
+Trampoline* Rd_E101_R_t = nullptr;
 
 Trampoline* Rd_Beach_t = nullptr;
 Trampoline* Rd_Windy_t = nullptr;
@@ -321,13 +321,18 @@ void __cdecl Rd_Mountain_r(task* tp)
 				rd_mountain_twp->scl.y = -0.5f;
 			}
 		}
-	}
 
-	//patch an issue where the original function was taking priority for act swap
-	if (tp->twp->mode != 1)
-		TARGET_DYNAMIC(Rd_Mountain)(tp); 
+
+		//patch an issue where the original function was taking priority for act swap
+		if (tp->twp->mode != 1)
+			TARGET_DYNAMIC(Rd_Mountain)(tp);
+		else
+			LoopTaskC(tp);
+	}
 	else
-		LoopTaskC(tp);
+	{
+		TARGET_DYNAMIC(Rd_Mountain)(tp);
+	}
 }
 
 void __cdecl Rd_Twinkle_r(task* tp)
@@ -429,56 +434,56 @@ void __cdecl Rd_Ruin_r(task* tp)
 			break;
 		case 2i8:
 
-			{
-				auto pnum = IsPlayerInSphere(6441.0f, -2421.0f, 1162.0f, 50.0f) - 1;
+		{
+			auto pnum = IsPlayerInSphere(6441.0f, -2421.0f, 1162.0f, 50.0f) - 1;
 
-				if (pnum >= 0)
-				{
-					SetWinnerMulti(pnum); // Set winner there because act 3 consists of nothing
-					ChangeActM(1);
-					twp->mode = 0i8;
-				}
+			if (pnum >= 0)
+			{
+				SetWinnerMulti(pnum); // Set winner there because act 3 consists of nothing
+				ChangeActM(1);
+				twp->mode = 0i8;
 			}
+		}
 
-			if (byte_3C75126)
+		if (byte_3C75126)
+		{
+			if (byte_3C75126 == 1)
 			{
-				if (byte_3C75126 == 1)
-				{
-					if (playertwp[GetClosestPlayerNum(7740.0f, -2431.0f, 948.0f)]->pos.x >= 7600.0f)
-					{
-						if (++word_3C75124 > 600)
-						{
-							word_3C75124 = 0;
-							ring_kiran = 1;
-							SetSwitchOnOff(3u, 0);
-							byte_3C75126 = 0;
-						}
-					}
-					else
-					{
-						SetSwitchOnOff(3u, 1);
-						ring_kiran = 0;
-						byte_3C75126 = 2;
-					}
-				}
-				else if (byte_3C75126 == 2)
+				if (playertwp[GetClosestPlayerNum(7740.0f, -2431.0f, 948.0f)]->pos.x >= 7600.0f)
 				{
 					if (++word_3C75124 > 600)
 					{
 						word_3C75124 = 0;
 						ring_kiran = 1;
+						SetSwitchOnOff(3u, 0);
 						byte_3C75126 = 0;
 					}
-					SetSwitchOnOff(3u, 0);
+				}
+				else
+				{
+					SetSwitchOnOff(3u, 1);
+					ring_kiran = 0;
+					byte_3C75126 = 2;
 				}
 			}
-			else if (GetSwitchOnOff(2u))
+			else if (byte_3C75126 == 2)
 			{
-				byte_3C75126 = 1;
-				word_3C75124 = 0;
+				if (++word_3C75124 > 600)
+				{
+					word_3C75124 = 0;
+					ring_kiran = 1;
+					byte_3C75126 = 0;
+				}
+				SetSwitchOnOff(3u, 0);
 			}
+		}
+		else if (GetSwitchOnOff(2u))
+		{
+			byte_3C75126 = 1;
+			word_3C75124 = 0;
+		}
 
-			break;
+		break;
 		}
 	}
 	else
@@ -598,7 +603,7 @@ void InitLevels()
 	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPosition); // Sky Deck
 	WriteCall((void*)0x5EDD27, SetAllPlayersInitialPosition); // Sky Deck
 	WriteCall((void*)0x5602F1, SetAllPlayersInitialPosition); // Perfect Chaos
-	
+
 	// Patch Skyboxes (display function managing mode)
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast
 	WriteData((void**)0x4DDBFE, (void*)0x4DDB60); // Windy Valley
@@ -610,17 +615,17 @@ void InitLevels()
 	// Emerald Coast Bridge
 	WriteData<2>((void*)0x501B66, 0x90ui8);
 	WriteData<2>((void*)0x501B12, 0x90ui8);
-	WriteData((uint8_t*)0x501C2F, 0xEBui8);
+	//WriteData((uint8_t*)0x501C2F, 0xEBui8); //crash in act 2 after playing act 1
 
 	// Windy Valley leaves
 	WriteData((uint8_t*)0x4E4344, 0xEBui8);
 
 	// Ice Cap breath generator
 	WriteData((uint8_t*)0x4E91AE, (uint8_t)PLAYER_MAX);
-	
+
 	// Speed Highway Act 2 skybox
 	WriteData((taskwk***)0x610765, &camera_twp);
-	
+
 	// Red Mountain cloud layer
 	WriteCall((void*)0x60147B, Create_Mountain_Cloud);
 	WriteCall((void*)0x601404, Create_Mountain_Cloud);
@@ -636,7 +641,7 @@ void InitLevels()
 	WriteData((intptr_t*)0x4F752B, 0); // BeachTexAnimWtAct2
 	WriteData((intptr_t*)0x4F759B, 0); // BeachTexAnimWaveAct3
 	WriteData((intptr_t*)0x4F761B, 0); // BeachTexAnimSandAct3
-	WriteData((intptr_t*)0x4F768B, 0); // BeachTexAnimWtAct3
+	WriteData((intptr_t*)0x4F768B, 0); // BeachTexAnimWtAct3*/
 	WriteData((intptr_t*)0x61E3DB, 0); // TwinkleTexAnim
 	WriteData((intptr_t*)0x5E20DB, 0); // RuinTexAnimAct1
 	WriteData((intptr_t*)0x5E214B, 0); // RuinTexAnimAct2
@@ -645,16 +650,16 @@ void InitLevels()
 
 	// Remove landtable collision chunk optimisation
 	WriteData((uint8_t*)0x4E91C0, 0xC3ui8); // Ice Cap
-	
+
 	// In battle mode, boss become fighting arenas
-	Rd_Chaos0_t   = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
-	Rd_Chaos2_t   = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
-	Rd_Chaos4_t   = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
-	Rd_Chaos6_t   = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
+	Rd_Chaos0_t = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
+	Rd_Chaos2_t = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
+	Rd_Chaos4_t = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
+	Rd_Chaos6_t = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
 	Rd_Bossegm1_t = new Trampoline(0x571850, 0x571856, Rd_Bossegm1_r);
 	Rd_Bossegm2_t = new Trampoline(0x5758D0, 0x5758D6, Rd_Bossegm2_r);
-	Rd_E101_t     = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
-	Rd_E101_R_t   = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
+	Rd_E101_t = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
+	Rd_E101_R_t = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
 
 	// Act swap fixes
 	Rd_Beach_t = new Trampoline(0x4F6D60, 0x4F6D67, Rd_Beach_r);
