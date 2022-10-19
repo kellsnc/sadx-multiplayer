@@ -170,19 +170,18 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 
 void __cdecl SDIntroPatch(Uint8 charIndex, float x, float y, float z)
 {
-	if (multiplayer::IsActive)
+	if (multiplayer::IsActive())
 	{
 		if (!PInCannon[charIndex])
 			return;
 	}
-	
 
 	return PositionPlayer(charIndex, x, y, z);
 }
 
 void __cdecl SDIntroPatch2(Uint8 charIndex)
 {
-	if (multiplayer::IsActive)
+	if (multiplayer::IsActive())
 	{
 		if (!PInCannon[charIndex])
 			return;
@@ -193,7 +192,7 @@ void __cdecl SDIntroPatch2(Uint8 charIndex)
 
 void __cdecl SDIntroPatch3(Uint8 charIndex, float spd, NJS_VECTOR* a3)
 {
-	if (multiplayer::IsActive)
+	if (multiplayer::IsActive())
 	{
 		if (!PInCannon[charIndex])
 			return;
