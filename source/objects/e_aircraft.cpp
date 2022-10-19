@@ -20,6 +20,7 @@ static void MissleLockOn_o(enemywk* ewp, task* tp)
 		push[tp]
 		mov ebx, [ewp]
 		call target
+        add esp, 4
 	}
 }
 
