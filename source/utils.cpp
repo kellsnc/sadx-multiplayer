@@ -259,3 +259,51 @@ bool isInHubWorld()
 {
 	return CurrentLevel >= LevelIDs_StationSquare && CurrentLevel <= LevelIDs_Past;
 }
+
+bool isPlayerInCart(char pnum)
+{
+	auto p = playertwp[pnum];
+
+	if (p)
+	{
+		auto mde = p->mode;
+		switch (p->counter.b[1])
+		{
+		case Characters_Sonic:
+		default:
+			return mde == 45;
+		case Characters_Tails:
+			return mde == 43;
+		case Characters_Knuckles:
+			return mde == 52;
+		case Characters_Amy:
+			return mde == 48;
+		case Characters_Gamma:
+			return mde == 53;
+		case Characters_Big:
+			return mde == 55;
+		}	
+	}
+
+	return false;
+}
+
+bool isPlayerOnSnowBoard(char pnum)
+{
+	auto p = playertwp[pnum];
+
+	if (p)
+	{
+		auto mde = p->mode;
+		if (p->counter.b[1] == Characters_Sonic)
+		{
+			return mde >= 62 && mde <= 68;
+		}
+		else if (p->counter.b[1] == Characters_Tails)
+		{
+			return mde >= 48 && mde <= 54;
+		}
+	}
+
+	return false;
+}

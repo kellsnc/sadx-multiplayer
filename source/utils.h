@@ -21,3 +21,5 @@ void njRotateZ_(Angle ang);
 void ChangeActM(int amount);
 void __cdecl SetAndDisp(task* obj, TaskFuncPtr disp);
 bool isInHubWorld();
+bool isPlayerInCart(char pnum);
+bool isPlayerOnSnowBoard(char pnum);
