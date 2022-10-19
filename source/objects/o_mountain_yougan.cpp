@@ -9,6 +9,21 @@ static void __cdecl Object_Mountain_Yougan_r(task* tp);
 Trampoline Object_Mountain_Yougan_t(0x602670, 0x602676, Object_Mountain_Yougan_r);
 static void __cdecl Object_Mountain_Yougan_r(task* tp)
 {
+    if (multiplayer::IsEnabled())
+    {
+        for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+        {
+            if (playerpwp[i])
+            {
+                if (playerpwp[i]->item & Powerups_Dead && tp->twp->mode >= 2)
+                {
+                    tp->twp->mode = 0;
+                    break;
+                }
+            }
+        }
+    }
+
 	if (multiplayer::IsEnabled() && tp->twp->mode == 1 && CurrentCharacter != Characters_Gamma)
 	{
         auto twp = tp->twp;
