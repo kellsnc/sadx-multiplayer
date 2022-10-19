@@ -375,8 +375,10 @@ void __cdecl pLockingOnTargetEnemy2_r(taskwk* twp, motionwk2* mwp, playerwk* pwp
 		}
 		else
 		{
-			mwp->ang_aim.y = njArcTan2(closest_tgt->cwp->info->center.z + closest_tgt->pos.z - twp->cwp->info->center.z,
-				closest_tgt->cwp->info->center.x + closest_tgt->pos.x - twp->cwp->info->center.x);
+			if (closest_tgt) {
+				mwp->ang_aim.y = njArcTan2(closest_tgt->cwp->info->center.z + closest_tgt->pos.z - twp->cwp->info->center.z,
+					closest_tgt->cwp->info->center.x + closest_tgt->pos.x - twp->cwp->info->center.x);
+			}
 			twp->ang.y = AdjustAngle(twp->ang.y, mwp->ang_aim.y, 0x1000);
 		}
 	}
