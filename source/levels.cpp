@@ -594,15 +594,15 @@ static void __cdecl Create_Mountain_Cloud()
 void InitLevels()
 {
 	// Patch start positions
-	WriteCall((void*)0x4150FA, SetAllPlayersInitialPosition); // General
-	WriteCall((void*)0x4151B1, SetAllPlayersInitialPosition); // General
-	WriteJump((void*)0x7B0B00, SetAllPlayersInitialPosition); // General
-	WriteCall((void*)0x4DD52D, SetAllPlayersInitialPosition); // Windy Valley
-	WriteCall((void*)0x5E15CA, SetAllPlayersInitialPosition); // Lost World
-	WriteCall((void*)0x5EDC66, SetAllPlayersInitialPosition); // Sky Deck
-	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPosition); // Sky Deck
-	WriteCall((void*)0x5EDD27, SetAllPlayersInitialPosition); // Sky Deck
-	WriteCall((void*)0x5602F1, SetAllPlayersInitialPosition); // Perfect Chaos
+	WriteCall((void*)0x4150FA, SetAllPlayersInitialPositionHook); // General
+	WriteCall((void*)0x4151B1, SetAllPlayersInitialPositionHook); // General
+	WriteJump((void*)0x7B0B00, SetAllPlayersInitialPositionHook); // General
+	WriteCall((void*)0x4DD52D, SetAllPlayersInitialPositionHook); // Windy Valley
+	WriteCall((void*)0x5E15CA, SetAllPlayersInitialPositionHook); // Lost World
+	WriteCall((void*)0x5EDC66, SetAllPlayersInitialPositionHook); // Sky Deck
+	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPositionHook); // Sky Deck
+	WriteCall((void*)0x5EDD27, SetAllPlayersInitialPositionHook); // Sky Deck
+	WriteCall((void*)0x5602F1, SetAllPlayersInitialPositionHook); // Perfect Chaos
 
 	// Patch Skyboxes (display function managing mode)
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast

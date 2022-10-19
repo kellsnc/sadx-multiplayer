@@ -64,6 +64,17 @@ void SetAllPlayersInitialPosition()
 	}
 }
 
+
+void  SetAllPlayersInitialPositionHook(taskwk* data)
+{
+	if (isInHubWorld() || !multiplayer::IsActive())
+	{
+		return SetPlayerInitialPosition(data);
+	}
+
+	SetAllPlayersInitialPosition();
+}
+
 void SetAllPlayersPosition(float x, float y, float z, Angle angy)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
