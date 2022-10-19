@@ -38,7 +38,10 @@ void __cdecl GamePlayerMissed_r(task* tp)
 			else
 			{
 				if (multiplayer::IsActive() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
+				{
+					CharColliOff(playertwp[pNum]);
 					SetPlayerInitialPosition(playertwp[pNum]);
+				}
 
 				CameraReleaseEventCamera_m(pNum);
 
@@ -50,6 +53,7 @@ void __cdecl GamePlayerMissed_r(task* tp)
 				}
 
 				pwp->item &= ~Powerups_Dead;
+				CharColliOn(playertwp[pNum]);
 			}
 		}
 
@@ -66,7 +70,6 @@ void __cdecl KillHimP_r(unsigned __int8 pNum)
 			playertwp[pNum]->flag |= 0x1000;
 			playerpwp[pNum]->item |= Powerups_Dead;
 			SetInputP(pNum, PL_OP_KILLED);
-
 			auto tp = CreateElementalTask(LoadObj_UnknownB, 0, GamePlayerMissed_r);
 			tp->awp->work.ul[1] = pNum;
 		}
