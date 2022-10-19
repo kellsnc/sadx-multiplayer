@@ -40,7 +40,6 @@ static Trampoline* PGetAcceleration_t             = nullptr;
 static Trampoline* PGetAccelerationSnowBoard_t    = nullptr;
 static Trampoline* Ring_t                         = nullptr;
 static Trampoline* Tobitiri_t                     = nullptr;
-static Trampoline* PlayerVacumedRing_t            = nullptr;
 static Trampoline* EnemyDist2FromPlayer_t         = nullptr;
 static Trampoline* EnemyCalcPlayerAngle_t         = nullptr;
 static Trampoline* EnemyTurnToPlayer_t            = nullptr;
@@ -52,6 +51,7 @@ static Trampoline* ListGroundForDrawing_t         = nullptr;
 static FunctionHook<int, taskwk*, enemywk*> EnemyCheckDamage_t((intptr_t)OhNoImDead);
 static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
 UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
+UsercallFunc(signed int, PlayerVacumedRing_t, (taskwk* a1), (a1), 0x44FA90, rEAX, rEDI);
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
@@ -514,26 +514,7 @@ static BOOL PlayerVacumedRing_r(taskwk* twp)
 	}
 	else
 	{
-		auto target = TARGET_DYNAMIC(PlayerVacumedRing);
-		BOOL result;
-		__asm
-		{
-			mov esi, [twp]
-			call target
-			mov result, eax
-		}
-		return result;
-	}
-}
-
-static void __declspec(naked) PlayerVacumedRing_w()
-{
-	__asm
-	{
-		push esi
-		call PlayerVacumedRing_r
-		pop esi
-		retn
+		return PlayerVacumedRing_t.Original(twp);
 	}
 }
 
@@ -750,8 +731,8 @@ void initBossesPatches()
 void InitPatches()
 {
 	Ring_t                         = new Trampoline(0x450370, 0x450375, Ring_r);
-	Tobitiri_t                     = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);
-	PlayerVacumedRing_t            = new Trampoline(0x44FA90, 0x44FA96, PlayerVacumedRing_w);
+	Tobitiri_t                     = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);;
+	PlayerVacumedRing_t.Hook(PlayerVacumedRing_r);
 	savepointCollision_t           = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	ListGroundForDrawing_t         = new Trampoline(0x43A900, 0x43A905, ListGroundForDrawing_r);
 
