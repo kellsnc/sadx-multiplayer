@@ -55,12 +55,12 @@ static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack | Status_Light
 TaskFuncPtr charfuncs[] = {
 	SonicTheHedgehog,
 	(TaskFuncPtr)Eggman_Main,
-	(TaskFuncPtr)Tails_Main,
-	(TaskFuncPtr)Knuckles_Main,
+	MilesTalesPrower,
+	KnucklesTheEchidna,
 	(TaskFuncPtr)Tikal_Main,
-	(TaskFuncPtr)Amy_Main,
-	(TaskFuncPtr)Gamma_Main,
-	(TaskFuncPtr)Big_Main
+	AmyRose,
+	E102,
+	BigTheCat
 };
 
 void LoadCharObj(int pnum, int character)
