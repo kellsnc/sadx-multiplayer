@@ -45,8 +45,8 @@ void __cdecl GamePlayerMissed_r(task* tp)
 
 				CameraReleaseEventCamera_m(pNum);
 
-				// Don't reset mode in levels where the player is riding something
-				if (ssStageNumber != LevelIDs_TwinkleCircuit && ssStageNumber != LevelIDs_SandHill && !(ssStageNumber == LevelIDs_IceCap && ssActNumber == 2))
+				// Don't reset mode if player is riding something
+				if (!isPlayerInCart(pNum) && !isPlayerOnSnowBoard(pNum))
 				{
 					SetInputP(pNum, PL_OP_LETITGO);
 					twp->mode = 1;
