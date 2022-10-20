@@ -7,17 +7,17 @@ static FunctionHook<void, task*> PondDisplayer_hook(0x7AA3D0);
 
 static void __cdecl PondDisplayer_r(task* tp)
 {
-    if (multiplayer::IsActive())
-    {
-        if (tp->twp->mode < 4)
-        {
-            PondDraw(tp->twp, (enemywk*)tp->mwp);
-        }
-    }
-    else
-    {
+	if (multiplayer::IsActive())
+	{
+		if (tp->twp->mode < 4)
+		{
+			PondDraw(tp->twp, (enemywk*)tp->mwp);
+		}
+	}
+	else
+	{
 		PondDisplayer_hook.Original(tp);
-    }
+	}
 }
 
 void PondExecutor_r(task* tp)

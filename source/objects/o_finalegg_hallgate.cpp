@@ -179,6 +179,6 @@ static void __cdecl hallgate_exec_r(task* tp)
 			}
 		}
 	}
-	
+
 	TARGET_STATIC(hallgate_exec)(tp);
 }

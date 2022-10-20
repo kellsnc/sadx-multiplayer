@@ -13,7 +13,6 @@ namespace config
 	}
 
 	void read(const char* path);
-
 }
 
 void SetInfiniteLives();

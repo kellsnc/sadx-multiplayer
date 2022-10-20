@@ -336,7 +336,7 @@ static void SonicControl_m(taskwk* twp, taskwk* stwp, sSonicCtrl* sonic_ctrl)
 	case 8:
 		input_dataG[pnum].angle = MakeDirAngle(stwp, sonic_ctrl, twp);
 		input_dataG[pnum].stroke = MakeStrokeWithDist_m(&sonic_ctrl->vec_snc_tgt, 40.0f, 1.0f);
-		
+
 		if (ChkSonicStack_m(stwp) && stwp->flag & (Status_Ground | Status_OnColli))
 		{
 			InitJumpSonicToPoint_m(stwp, &sonic_ctrl->tgt_path_pos, 60);
@@ -650,8 +650,7 @@ static void Icecap_Init_m(taskwk* twp, taskwk* stwp, taskwk* mtwp)
 	{
 		*++i = 0;
 		--max;
-	}
-	while (max);
+	} while (max);
 
 	auto pathTbl = PathTbl_Sonic;
 	SonicCtrlBuff.now_path_pos = pathTbl->pos;

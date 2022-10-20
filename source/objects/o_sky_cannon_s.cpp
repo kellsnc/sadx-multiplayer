@@ -7,7 +7,6 @@ static char PInCannon[PLAYER_MAX];
 void isPlayerinCannon(taskwk* data)
 {
 	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++) {
-
 		if (GetDistance(&data->pos, &playertwp[i]->pos) <= 100.0f)
 		{
 			PInCannon[i] = 1;
@@ -99,7 +98,6 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
 			{
 				if (playertwp[i]->counter.b[1] == Characters_Sonic) {
-
 					if (!MetalSonicFlag)
 					{
 						if (GetCurrentCharacterID())
@@ -113,7 +111,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 					}
 				}
 			}
-		
+
 			data->mode++;
 			data->wtimer = 0;
 			PlaySound(184, 0, 0, 0);
@@ -164,7 +162,6 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		break;
 	}
 
-
 	ObjectSkydeck_cannon_s_Exec_t.Original(a1);
 }
 
@@ -210,7 +207,7 @@ void initSDIntroPatches()
 
 	WriteCall((void*)0x5FC9F6, SDIntroPatch2);
 	WriteCall((void*)0x5FCA18, SDIntroPatch2);
-	
+
 	WriteCall((void*)0x5FCAB9, SDIntroPatch3);
 	WriteCall((void*)0x5FCA78, SDIntroPatch3);
 }

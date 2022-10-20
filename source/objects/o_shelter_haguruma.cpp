@@ -30,7 +30,7 @@ static void ExecATask_m(task* tp, NJS_OBJECT* object)
 
 	if (GetSwitchOnOff(twp->counter.b[0]))
 		add_ang = -add_ang;
-	
+
 	twp->ang.z += add_ang;
 
 	auto dyncol = (NJS_OBJECT*)twp->value.ptr;

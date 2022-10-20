@@ -233,7 +233,7 @@ void cartInitM(task* tp, taskwk* twp, CART_PLAYER_PARAMETER* cartparam, int pnum
 	}
 
 	cart_data->vitality = cartparam->max_vitality;
-	
+
 	searchAnimationMaterial();
 
 	twp->id = 10; // "I am a cart!"
@@ -469,7 +469,7 @@ void setupCartStageM(task* tp, taskwk* twp, int pnum)
 			twp->mode = CARTMD_WARP;
 			SetInputP(pnum, PL_OP_PLACEWITHCART);
 		}
-	}													 
+	}
 }
 
 void cartRideButtonCheckM(taskwk* twp, CART_PLAYER_PARAMETER* cartparam, int pnum)
@@ -592,7 +592,7 @@ void cartTakeSonicM(taskwk* twp, int pnum)
 	playertwp[pnum]->ang.y = 0x4000 - twp->ang.y;
 	playertwp[pnum]->ang.z = twp->ang.z;
 	pLockingOnTargetEnemy2(playermwp[pnum], playertwp[pnum], playerpwp[pnum]);
-	
+
 	auto param = GetCamAnyParam(pnum);
 	if (param)
 	{
@@ -878,7 +878,7 @@ void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 	{
 		auto twp = tp->twp;
 		auto pnum = CART_PNUM(tp->twp);
-		
+
 		if (twp->mode == CARTMD_8 || twp->mode == CARTMD_9)
 		{
 			twp->pos = *pos;

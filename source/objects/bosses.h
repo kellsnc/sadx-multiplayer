@@ -1,6 +1,5 @@
 #pragma once
 
-
 extern char randomPnum;
 
 void initChaos0Patches();

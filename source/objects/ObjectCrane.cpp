@@ -27,7 +27,7 @@ BOOL __cdecl checkPlayerRideOnTheCage_r(task* tp)
 	if (multiplayer::IsActive())
 	{
 		taskwk* twp = tp->twp;
-		
+
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
 			auto ptwp = playertwp[i];
@@ -53,7 +53,7 @@ BOOL __cdecl checkPlayerRideOnTheCage_r(task* tp)
 				}
 			}
 		}
-		
+
 		return FALSE;
 	}
 	else

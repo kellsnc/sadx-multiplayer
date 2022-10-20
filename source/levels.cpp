@@ -322,7 +322,6 @@ void __cdecl Rd_Mountain_r(task* tp)
 			}
 		}
 
-
 		//patch an issue where the original function was taking priority for act swap
 		if (tp->twp->mode != 1)
 			TARGET_DYNAMIC(Rd_Mountain)(tp);
@@ -615,7 +614,7 @@ void InitLevels()
 	// Emerald Coast Bridge
 	WriteData<2>((void*)0x501B66, 0x90ui8);
 	WriteData<2>((void*)0x501B12, 0x90ui8);
-	//WriteData((uint8_t*)0x501C2F, 0xEBui8); //crash in act 2 after playing act 1
+	WriteData((uint8_t*)0x501C2F, 0xEBui8); //crash in act 2 after playing act 1
 
 	// Windy Valley leaves
 	WriteData((uint8_t*)0x4E4344, 0xEBui8);

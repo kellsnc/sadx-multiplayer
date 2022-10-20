@@ -16,7 +16,6 @@ void Boss_SetNextPlayerToAttack(int timeLimit)
 	}
 	else
 	{
-
 		randomPnum = rand() % multiplayer::GetPlayerCount();
 
 		if (previousPnum == randomPnum)
@@ -30,7 +29,6 @@ void Boss_SetNextPlayerToAttack(int timeLimit)
 			do
 			{
 				randomPnum = rand() % multiplayer::GetPlayerCount();
-
 			} while (randomPnum == previousPnum);
 
 			selectedPNumCount = 0;

@@ -13,50 +13,50 @@ DataPointer(Float, CasHosinSmokeScl, 0x1E759C0);
 
 void ExecHosin_m(task* tp)
 {
-    if (!CheckRangeOutWithR(tp, 62510.0f))
-    {
-        auto twp = tp->twp;
+	if (!CheckRangeOutWithR(tp, 62510.0f))
+	{
+		auto twp = tp->twp;
 
-        if (twp->cwp->flag & 1)
-        {
-            auto ptwp = twp->cwp->hit_cwp->mytask->twp;
-            auto pnum = TASKWK_PLAYERID(ptwp);
-            auto ppwp = playerpwp[pnum];
+		if (twp->cwp->flag & 1)
+		{
+			auto ptwp = twp->cwp->hit_cwp->mytask->twp;
+			auto pnum = TASKWK_PLAYERID(ptwp);
+			auto ppwp = playerpwp[pnum];
 
-            NJS_VECTOR vec, spd, dir;
+			NJS_VECTOR vec, spd, dir;
 
-            vec.x = CasHosinVec.x + twp->scl.y;
-            vec.y = CasHosinVec.y;
-            vec.z = CasHosinVec.z;
-            spd.x = 0.0f;
-            spd.y = CasHosinSmokeSpd;
-            spd.z = 0.0f;
-            dir.x = 0.0f;
-            dir.y = object_c_info_40.b + 5.0f;
-            dir.z = 0.0f;
-            njUnitVector(&vec);
+			vec.x = CasHosinVec.x + twp->scl.y;
+			vec.y = CasHosinVec.y;
+			vec.z = CasHosinVec.z;
+			spd.x = 0.0f;
+			spd.y = CasHosinSmokeSpd;
+			spd.z = 0.0f;
+			dir.x = 0.0f;
+			dir.y = object_c_info_40.b + 5.0f;
+			dir.z = 0.0f;
+			njUnitVector(&vec);
 
-            njPushMatrix(_nj_unit_matrix_);
-            njTranslateEx(&twp->pos);
-            njRotateZ_(twp->ang.z);
-            njRotateX_(twp->ang.x);
-            njRotateY_(twp->ang.y);
-            njCalcVector(0, &vec, &vec);
-            njCalcVector(0, &spd, &spd);
-            njCalcPoint(0, &dir, &dir);
-            njPopMatrixEx();
+			njPushMatrix(_nj_unit_matrix_);
+			njTranslateEx(&twp->pos);
+			njRotateZ_(twp->ang.z);
+			njRotateX_(twp->ang.x);
+			njRotateY_(twp->ang.y);
+			njCalcVector(0, &vec, &vec);
+			njCalcVector(0, &spd, &spd);
+			njCalcPoint(0, &dir, &dir);
+			njPopMatrixEx();
 
-            SetParabolicMotionP(pnum, twp->scl.z + CasHosinY, &vec);
-            CreateSmoke(&dir, &spd, CasHosinSmokeScl);
-            ppwp->nocontimer = 60;
-            EntryColliList(twp);
-        }
-        else
-        {
-            twp->wtimer = 0;
-            EntryColliList(twp);
-        }
-    }
+			SetParabolicMotionP(pnum, twp->scl.z + CasHosinY, &vec);
+			CreateSmoke(&dir, &spd, CasHosinSmokeScl);
+			ppwp->nocontimer = 60;
+			EntryColliList(twp);
+		}
+		else
+		{
+			twp->wtimer = 0;
+			EntryColliList(twp);
+		}
+	}
 }
 
 void __cdecl ExecHosin_r(task* tp);

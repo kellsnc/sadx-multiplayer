@@ -25,7 +25,6 @@ static void __cdecl SonicJiggle_r(task* tp)
 	SonicJiggle_t.Original(tp);
 }
 
-
 static void __cdecl SonicTheHedgehog_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -41,7 +40,6 @@ static void __cdecl SonicTheHedgehog_r(task* tp)
 		SonicTheHedgehog_t.Original(tp);
 	}
 }
-
 
 void initSonicPatch()
 {

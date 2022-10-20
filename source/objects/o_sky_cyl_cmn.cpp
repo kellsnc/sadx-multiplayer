@@ -94,7 +94,6 @@ void Mode_SDCylinderRight(taskwk* data, playerwk* co2)
 	HoldOnPillar(co2, data);
 }
 
-
 //Functions used in character run actions (chk_mode)
 void Mode_SDCylStdChanges(taskwk* data1, playerwk* co2)
 {
@@ -123,7 +122,6 @@ void Mode_SDCylStdChanges(taskwk* data1, playerwk* co2)
 	return;
 }
 
-
 void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2)
 {
 	auto htpTsk = co2->htp;
@@ -143,7 +141,6 @@ void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2)
 
 		if (htpCol)
 		{
-
 			auto math = htpCol->info->center.y + htpData->pos.y - htpCol->info->b;
 
 			if (math < data1->pos.y)
@@ -168,9 +165,6 @@ void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2)
 	return;
 }
 
-
 void init_SDCylinderPatches()
 {
-
 }
-

@@ -5,9 +5,9 @@ static void __cdecl TBarrier_r(task* tp);
 static void __cdecl NBarrier_r(task* tp);
 static void __cdecl Muteki_r(task* tp);
 
-Trampoline TBarrier_t (0x4BA2A0, 0x4BA2A5, TBarrier_r);
-Trampoline NBarrier_t (0x4BA380, 0x4BA385, NBarrier_r);
-Trampoline Muteki_t   (0x4BA440, 0x4BA446, Muteki_r);
+Trampoline TBarrier_t(0x4BA2A0, 0x4BA2A5, TBarrier_r);
+Trampoline NBarrier_t(0x4BA380, 0x4BA385, NBarrier_r);
+Trampoline Muteki_t(0x4BA440, 0x4BA446, Muteki_r);
 
 static void EffBarrierPosSet_m(taskwk* twp, taskwk* ptwp)
 {
@@ -130,7 +130,7 @@ static void __cdecl Muteki_r(task* tp)
 					}
 				}
 			}
-			
+
 			LoopTaskC(tp);
 		}
 		else

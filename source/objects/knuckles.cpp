@@ -189,14 +189,12 @@ Bool Knux_CheckInput_r(playerwk* co2, taskwk* twp, motionwk2* data2)
 			return 1;
 
 		break;
-
 	}
 
 	return Knux_CheckInput_t.Original(co2, twp, data2);
 }
 
 void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
-
 	switch (data1->mode)
 	{
 	case 52: //cart
@@ -235,7 +233,6 @@ void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 			co2->htp = 0;
 			return;
 		}
-
 
 		Mode_SDCylDownChanges(data1, co2);
 
@@ -310,7 +307,6 @@ void KnuxExec_r(task* obj)
 
 	KnuxExec_t.Original(obj);
 }
-
 
 void Init_KnuxPatches()
 {

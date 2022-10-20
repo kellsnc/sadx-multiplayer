@@ -26,7 +26,6 @@ static void __cdecl MilesDirectAhead_r(task* tp)
 	MilesDirectAhead_t.Original(tp);
 }
 
-
 static void __cdecl MilesJiggle_r(task* tp)
 {
 	if (DeleteJiggle(tp))

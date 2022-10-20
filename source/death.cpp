@@ -2,8 +2,8 @@
 #include "death.h"
 #include "camera.h"
 
-Trampoline* KillHimP_t                    = nullptr;
-Trampoline* KillHimByFallingDownP_t       = nullptr;
+Trampoline* KillHimP_t = nullptr;
+Trampoline* KillHimByFallingDownP_t = nullptr;
 Trampoline* KillPlayerFallingDownStageP_t = nullptr;
 
 void __cdecl GamePlayerMissedFree(task* tp)
@@ -213,7 +213,7 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 // Series of hacks to not reset the game if player 1 dies and make every players able to die
 void InitDeathPatches()
 {
-	KillHimP_t                    = new Trampoline(0x440CD0, 0x440CD7, KillHimP_r);
-	KillHimByFallingDownP_t       = new Trampoline(0x446AD0, 0x446AD7, KillHimByFallingDownP_r);
+	KillHimP_t = new Trampoline(0x440CD0, 0x440CD7, KillHimP_r);
+	KillHimByFallingDownP_t = new Trampoline(0x446AD0, 0x446AD7, KillHimByFallingDownP_r);
 	KillPlayerFallingDownStageP_t = new Trampoline(0x44AE80, 0x44AE88, KillPlayerFallingDownStageP_r);
 }

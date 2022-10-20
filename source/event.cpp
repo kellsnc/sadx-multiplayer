@@ -22,8 +22,7 @@ void EV_Load2_r(int no)
 		//multiplayer::TemporaryDisable();
 	}
 
-
-	return EV_Load2_t.Original(no);	
+	return EV_Load2_t.Original(no);
 }
 
 void RecreateMultiPlayer()

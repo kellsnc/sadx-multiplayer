@@ -50,7 +50,7 @@ static void Knuckles_KakeraGame_Timer(int pnum)
 	for (int i = 0; i < 3; ++i)
 	{
 		auto& fragm = fragmset_tbl[i];
-		
+
 		if (fragm.boutflag == 0)
 		{
 			float dist = GetDistance(&ptwp->pos, &fragm.pos);
@@ -123,7 +123,7 @@ static void __cdecl Knuckles_KakeraGame_MultiExec(task* tp)
 			Knuckles_KakeraGame_Timer(i);
 		}
 	}
-	
+
 	tp->disp(tp);
 }
 

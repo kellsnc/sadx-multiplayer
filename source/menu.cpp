@@ -123,7 +123,7 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 		}
 
 		wkp->SelMenu = (TitleMenuEnum)stat;
-		
+
 		AdvertiseWork.MainMenuSelectedMode = GblMenuTbl[stat >= 3 ? stat - 1 : stat];
 
 		if (stat >= 0)

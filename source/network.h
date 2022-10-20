@@ -104,9 +104,9 @@ private:
 	static constexpr int32_t Version = 1;
 
 	Error last_error = Error::None;
-	Type m_Type	     = Type::Client;
-	bool connected   = false;
-	PNUM PlayerNum   = -1;
+	Type m_Type = Type::Client;
+	bool connected = false;
+	PNUM PlayerNum = -1;
 	PNUM PlayerCount = 0;
 
 	void UpdatePeers();

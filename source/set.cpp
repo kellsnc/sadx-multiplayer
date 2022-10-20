@@ -5,11 +5,11 @@
 
 #define SQUARE(x)((x) * (x))
 
-Trampoline* ProcessStatusTable_t   = nullptr;
-Trampoline* CheckRangeWithR_t      = nullptr;
-Trampoline* CheckRangeOutWithR_t   = nullptr;
+Trampoline* ProcessStatusTable_t = nullptr;
+Trampoline* CheckRangeWithR_t = nullptr;
+Trampoline* CheckRangeOutWithR_t = nullptr;
 Trampoline* SDCheckRangeOutWithR_t = nullptr;
-Trampoline* LoadSetFile_t          = nullptr;
+Trampoline* LoadSetFile_t = nullptr;
 
 DataPointer(OBJ_CONDITION*, pObjStatusEntry, 0x46B817); // Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
 
@@ -133,10 +133,10 @@ bool CheckRangeM(Float rx0, Float ry0, Float rz0, Float R)
 		{
 			auto cam_pos = GetCameraPosition(i);
 
-				if (cam_pos && CheckRangeXYZRP(cam_pos, rx0, ry0, rz0, R))
-				{
-					return true;
-				}
+			if (cam_pos && CheckRangeXYZRP(cam_pos, rx0, ry0, rz0, R))
+			{
+				return true;
+			}
 		}
 	}
 
@@ -248,7 +248,7 @@ BOOL __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
 			tp->exec = FreeTask;
 			return TRUE;
 		}
-		
+
 		return FALSE;
 	}
 	else
@@ -267,7 +267,7 @@ BOOL __cdecl SDCheckRangeOutWithR_r(task* tp, float fRange)
 			tp->exec = FreeTask;
 			return TRUE;
 		}
-		
+
 		return FALSE;
 	}
 	else
@@ -305,7 +305,7 @@ void __cdecl LoadSetFile_r(unsigned int u32SetType, const char* pcFileName)
 			return;
 		}
 	}
-	
+
 	LoadSetFile_o(u32SetType, pcFileName);
 }
 
@@ -324,9 +324,9 @@ static void __declspec(naked) LoadSetFile_j()
 
 void InitSET()
 {
-	ProcessStatusTable_t   = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
-	CheckRangeWithR_t      = new Trampoline(0x46BFA0, 0x46BFA7, CheckRangeWithR_r);
-	CheckRangeOutWithR_t   = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
+	ProcessStatusTable_t = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
+	CheckRangeWithR_t = new Trampoline(0x46BFA0, 0x46BFA7, CheckRangeWithR_r);
+	CheckRangeOutWithR_t = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
 	SDCheckRangeOutWithR_t = new Trampoline(0x5EDB10, 0x5EDB18, SDCheckRangeOutWithR_r);
-	LoadSetFile_t          = new Trampoline(0x422930, 0x422938, LoadSetFile_j);
+	LoadSetFile_t = new Trampoline(0x422930, 0x422938, LoadSetFile_j);
 }

@@ -28,8 +28,8 @@ struct stopperwk // custom
 	task* cart_tp;
 };
 
-static auto setCart = GenerateUsercallWrapper<BOOL (*)(task* tp)>(rEAX, 0x7B1240, rEAX);
-static auto slideStopper = GenerateUsercallWrapper<BOOL (*)(task* tp)>(rEAX, 0x7B1040, rEAX);
+static auto setCart = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x7B1240, rEAX);
+static auto slideStopper = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x7B1040, rEAX);
 
 static void execObject_m(task* tp)
 {
@@ -43,21 +43,21 @@ static void execObject_m(task* tp)
 	switch (wk->mode)
 	{
 	case MODE_WAIT:
-		{
-			auto ptwp = CCL_IsHitPlayer(twp);
+	{
+		auto ptwp = CCL_IsHitPlayer(twp);
 
-			if (ptwp)
+		if (ptwp)
+		{
+			auto cart_tp = CartChangeForceMode(TASKWK_PLAYERID(ptwp));
+			if (cart_tp)
 			{
-				auto cart_tp = CartChangeForceMode(TASKWK_PLAYERID(ptwp));
-				if (cart_tp)
-				{
-					wk->cart_tp = cart_tp;
-					wk->mode = MODE_1;
-				}
+				wk->cart_tp = cart_tp;
+				wk->mode = MODE_1;
 			}
-			EntryColliList(twp);
-			break;
 		}
+		EntryColliList(twp);
+		break;
+	}
 	case MODE_1:
 		if (setCart(tp))
 		{

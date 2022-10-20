@@ -35,19 +35,19 @@ General patches to allow compatibility for 4+ players
 
 */
 
-static Trampoline* PGetRotation_t                 = nullptr;
-static Trampoline* PGetAcceleration_t             = nullptr;
-static Trampoline* PGetAccelerationSnowBoard_t    = nullptr;
-static Trampoline* Ring_t                         = nullptr;
-static Trampoline* Tobitiri_t                     = nullptr;
-static Trampoline* EnemyDist2FromPlayer_t         = nullptr;
-static Trampoline* EnemyCalcPlayerAngle_t         = nullptr;
-static Trampoline* EnemyTurnToPlayer_t            = nullptr;
-static Trampoline* savepointCollision_t           = nullptr;
-static Trampoline* TikalDisplay_t                 = nullptr;
-static Trampoline* ObjectSpringB_t                = nullptr;
-static Trampoline* SpinnaDisplayer_t              = nullptr;
-static Trampoline* ListGroundForDrawing_t         = nullptr;
+static Trampoline* PGetRotation_t = nullptr;
+static Trampoline* PGetAcceleration_t = nullptr;
+static Trampoline* PGetAccelerationSnowBoard_t = nullptr;
+static Trampoline* Ring_t = nullptr;
+static Trampoline* Tobitiri_t = nullptr;
+static Trampoline* EnemyDist2FromPlayer_t = nullptr;
+static Trampoline* EnemyCalcPlayerAngle_t = nullptr;
+static Trampoline* EnemyTurnToPlayer_t = nullptr;
+static Trampoline* savepointCollision_t = nullptr;
+static Trampoline* TikalDisplay_t = nullptr;
+static Trampoline* ObjectSpringB_t = nullptr;
+static Trampoline* SpinnaDisplayer_t = nullptr;
+static Trampoline* ListGroundForDrawing_t = nullptr;
 static FunctionHook<int, taskwk*, enemywk*> EnemyCheckDamage_t((intptr_t)OhNoImDead);
 static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
 UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
@@ -121,7 +121,7 @@ void __cdecl SonicMotionCheckEdition_r(taskwk* twp)
 		{
 			SetPlayerInitialPosition(twp);
 		}
-		
+
 		Float lx = (per.x1 << 8);
 		Float ly = (per.y1 << 8);
 
@@ -355,7 +355,7 @@ float savepointGetSpeedM(taskwk* twp, int pID)
 	{
 		return 0.0f;
 	}
-	
+
 	float spd = njScalor(&playerpwp[pID]->spd);
 
 	if (DiffAngle(0x4000 - EntityData1Ptrs[0]->Rotation.y, twp->ang.y) <= 0x4000)
@@ -395,7 +395,7 @@ void __cdecl savepointCollision_r(task* tp, taskwk* twp)
 				dsPlay_oneshot(10, 0, 0, 0);
 			}
 		}
-		
+
 		EntryColliList(twp);
 	}
 	else
@@ -525,7 +525,7 @@ void SpinnaDrawShield(taskwk* twp)
 		Angle mod1 = NJM_DEG_ANG(180.0 * (0.5 - njRandom()));
 		Angle mod2 = NJM_DEG_ANG(360.0 * njRandom());
 		float mod3 = static_cast<float>((njRandom() + 0.5) * 10.0);
-		
+
 		NJS_VECTOR posm;
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
 		posm.y = njSin(mod1) * mod3;
@@ -544,7 +544,7 @@ void SpinnaDrawShield(taskwk* twp)
 		mod1 += NJM_DEG_ANG(120.0 * (0.5 - njRandom()));
 		mod2 += NJM_DEG_ANG(80.0 * (0.5 - njRandom()));
 		mod3 = static_cast<float>((njRandom() + 1.0) * 4.0);
-		
+
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
 		posm.y = njSin(mod1) * mod3;
 		posm.z = njCos(mod1) * njSin(mod2) * mod3;
@@ -556,7 +556,7 @@ void SpinnaDrawShield(taskwk* twp)
 		mod1 += NJM_DEG_ANG(120.0 * (0.5 - njRandom()));
 		mod2 += NJM_DEG_ANG(80.0 * (0.5 - njRandom()));
 		mod3 = static_cast<float>((njRandom() + 1.0) * 2.0);
-		
+
 		posm.x = njCos(mod1) * njCos(mod2) * mod3;
 		posm.y = njSin(mod1) * mod3;
 		posm.z = njCos(mod1) * njSin(mod2) * mod3;
@@ -607,14 +607,14 @@ void __cdecl ListGroundForDrawing_r()
 		auto cam_pos = GetCameraPosition(SplitScreen::GetCurrentScreenNum());
 		auto cam_ang = GetCameraAngle(SplitScreen::GetCurrentScreenNum());
 
-		if (!cam_pos || ! cam_ang)
+		if (!cam_pos || !cam_ang)
 		{
 			return;
 		}
 
 		numDisplayEntry = 0;
 
-		NJS_POINT3 center = {0.0f, 0.0f, MaxDrawDistance * -0.5f};
+		NJS_POINT3 center = { 0.0f, 0.0f, MaxDrawDistance * -0.5f };
 
 		njPushMatrix(_nj_unit_matrix_);
 		njRotateY_(cam_ang->y);
@@ -688,7 +688,6 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 task* __cdecl SetCircleLimit_r(NJS_POINT3* pPos, NJS_POINT3* a2, float radius)
 {
 	if (multiplayer::IsActive()) {
-
 		for (unsigned int i = 1; i < multiplayer::GetPlayerCount(); i++)
 		{
 			task* obj = CreateElementalTask((LoadObj_Data1), 0, CircleLimit);
@@ -730,11 +729,11 @@ void initBossesPatches()
 
 void InitPatches()
 {
-	Ring_t                         = new Trampoline(0x450370, 0x450375, Ring_r);
-	Tobitiri_t                     = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);;
+	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
+	Tobitiri_t = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);;
 	PlayerVacumedRing_t.Hook(PlayerVacumedRing_r);
-	savepointCollision_t           = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
-	ListGroundForDrawing_t         = new Trampoline(0x43A900, 0x43A905, ListGroundForDrawing_r);
+	savepointCollision_t = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
+	ListGroundForDrawing_t = new Trampoline(0x43A900, 0x43A905, ListGroundForDrawing_r);
 
 	// Player
 	PGetRotation_t = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
@@ -756,7 +755,7 @@ void InitPatches()
 	// Enemy player checks
 	EnemyDist2FromPlayer_t = new Trampoline(0x4CD610, 0x4CD61B, EnemyDist2FromPlayer_r);
 	EnemyCalcPlayerAngle_t = new Trampoline(0x4CD670, 0x4CD675, EnemyCalcPlayerAngle_r);
-	EnemyTurnToPlayer_t    = new Trampoline(0x4CD6F0, 0x4CD6F5, EnemyTurnToPlayer_r);
+	EnemyTurnToPlayer_t = new Trampoline(0x4CD6F0, 0x4CD6F5, EnemyTurnToPlayer_r);
 	WriteData((char*)0x4CCB3F, (char)PLAYER_MAX); // EnemySearchPlayer
 
 	// Enemies
@@ -815,7 +814,7 @@ void InitPatches()
 	WriteCall((void*)0x63D940, CheckAnyPlayerRideOnMobileLandObjectP);
 	WriteCall((void*)0x63DFB6, CheckAnyPlayerRideOnMobileLandObjectP);
 	WriteCall((void*)0x63DFED, CheckAnyPlayerRideOnMobileLandObjectP);
-	
+
 	InitItemBoxPatches();
 	InitSnowBoardPatches();
 	initBossesPatches();

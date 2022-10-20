@@ -18,7 +18,6 @@ void __cdecl Magmacnt_Main_r(task* obj)
 		if (data->mode == 1)
 		{
 			for (int i = 0; i < multiplayer::GetPlayerCount(); i++) {
-
 				if ((data->cwp->flag & 1) != 0 && data->cwp->hit_cwp->mytask == (task*)GetCharacterObject(i))
 				{
 					if (rd_mountain_twp)
@@ -46,6 +45,4 @@ void __cdecl Magmacnt_Main_r(task* obj)
 			}
 		}
 	}
-
 }
-

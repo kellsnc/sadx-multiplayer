@@ -24,178 +24,178 @@ Trampoline* RestartStageWithFadeOut_t = nullptr;
 
 static bool LogicListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
 {
-    switch (type)
-    {
-    case Network::PACKET_LOGIC_TIMER:
-        packet >> GameTimer >> ulGlobalTimer >> gu32GameCnt >> gu32LocalCnt;
-        return true;
-    case Network::PACKET_LOGIC_CLOCK:
-        packet >> bWake >> TimeMinutes >> TimeSeconds >> TimeFrames;
-        return true;
-    case Network::PACKET_LOGIC_MODE:
-        packet >> netGlobalMode >> netGameMode >> netStageNumber >> netActNumber;
+	switch (type)
+	{
+	case Network::PACKET_LOGIC_TIMER:
+		packet >> GameTimer >> ulGlobalTimer >> gu32GameCnt >> gu32LocalCnt;
+		return true;
+	case Network::PACKET_LOGIC_CLOCK:
+		packet >> bWake >> TimeMinutes >> TimeSeconds >> TimeFrames;
+		return true;
+	case Network::PACKET_LOGIC_MODE:
+		packet >> netGlobalMode >> netGameMode >> netStageNumber >> netActNumber;
 
-        if (netGameMode == MD_GAME_PAUSE && ssGameMode == MD_GAME_MAIN)
-            ssGameMode = MD_GAME_PAUSE;
-        else if (netGameMode == MD_GAME_MAIN && ssGameMode == MD_GAME_PAUSE)
-            ssGameMode = MD_GAME_MAIN;
-        else if ((netGameMode == MD_GAME_END || netGameMode == MD_GAME_END2) && (ssGameMode != MD_GAME_END || ssGameMode != MD_GAME_END2))
-            ssGameMode = MD_GAME_END;
+		if (netGameMode == MD_GAME_PAUSE && ssGameMode == MD_GAME_MAIN)
+			ssGameMode = MD_GAME_PAUSE;
+		else if (netGameMode == MD_GAME_MAIN && ssGameMode == MD_GAME_PAUSE)
+			ssGameMode = MD_GAME_MAIN;
+		else if ((netGameMode == MD_GAME_END || netGameMode == MD_GAME_END2) && (ssGameMode != MD_GAME_END || ssGameMode != MD_GAME_END2))
+			ssGameMode = MD_GAME_END;
 
-        return true;
-    case Network::PACKET_LOGIC_LEVEL:
-        packet >> ssStageNumber >> ssActNumber;
-        return true;
-    case Network::PACKET_LOGIC_ACTSWAP:
-    {
-        int act;
-        packet >> act;
-        if (act != ssActNumber)
-        {
-            act -= ssActNumber;
-            ChangeActM(act);
-        }
-        return true;
-    }
-    case Network::PACKET_LOGIC_EXIT:
-        packet >> ssGameModeChange;
-        return true;
-    case Network::PACKET_LOGIC_STAGECHG:
-        packet >> ssGameModeChange >> ssNextStageNumber >> ssNextActNumber;
-        return true;
-    case Network::PACKET_LOGIC_PAUSE:
-        packet >> PauseEnabled >> PauseSelection;
-        return true;
-    case Network::PACKET_LOGIC_RAND:
-        packet >> seed;
-        return true;
-    default:
-        return false;
-    }
+		return true;
+	case Network::PACKET_LOGIC_LEVEL:
+		packet >> ssStageNumber >> ssActNumber;
+		return true;
+	case Network::PACKET_LOGIC_ACTSWAP:
+	{
+		int act;
+		packet >> act;
+		if (act != ssActNumber)
+		{
+			act -= ssActNumber;
+			ChangeActM(act);
+		}
+		return true;
+	}
+	case Network::PACKET_LOGIC_EXIT:
+		packet >> ssGameModeChange;
+		return true;
+	case Network::PACKET_LOGIC_STAGECHG:
+		packet >> ssGameModeChange >> ssNextStageNumber >> ssNextActNumber;
+		return true;
+	case Network::PACKET_LOGIC_PAUSE:
+		packet >> PauseEnabled >> PauseSelection;
+		return true;
+	case Network::PACKET_LOGIC_RAND:
+		packet >> seed;
+		return true;
+	default:
+		return false;
+	}
 }
 
 static bool LogicSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
 {
-    switch (type)
-    {
-    case Network::PACKET_LOGIC_TIMER:
-        packet << GameTimer << ulGlobalTimer << gu32GameCnt << gu32LocalCnt;
-        return true;
-    case Network::PACKET_LOGIC_CLOCK:
-        packet << bWake << TimeMinutes << TimeSeconds << TimeFrames;
-        return true;
-    case Network::PACKET_LOGIC_MODE:
-        packet << ulGlobalMode << ssGameMode;
-        return true;
-    case Network::PACKET_LOGIC_LEVEL:
-        packet << ssStageNumber << ssActNumber;
-        return true;
-    case Network::PACKET_LOGIC_ACTSWAP:
-        packet << ssActNumber;
-        return true;
-    case Network::PACKET_LOGIC_EXIT:
-        packet << ssGameModeChange;
-        return true;
-    case Network::PACKET_LOGIC_STAGECHG:
-        packet << ssGameModeChange << ssNextStageNumber << ssNextActNumber;
-        return true;
-    case Network::PACKET_LOGIC_PAUSE:
-        packet << PauseEnabled << PauseSelection;
-        return true;
-    case Network::PACKET_LOGIC_RAND:
-        packet << seed;
-        return true;
-    default:
-        return false;
-    }
+	switch (type)
+	{
+	case Network::PACKET_LOGIC_TIMER:
+		packet << GameTimer << ulGlobalTimer << gu32GameCnt << gu32LocalCnt;
+		return true;
+	case Network::PACKET_LOGIC_CLOCK:
+		packet << bWake << TimeMinutes << TimeSeconds << TimeFrames;
+		return true;
+	case Network::PACKET_LOGIC_MODE:
+		packet << ulGlobalMode << ssGameMode;
+		return true;
+	case Network::PACKET_LOGIC_LEVEL:
+		packet << ssStageNumber << ssActNumber;
+		return true;
+	case Network::PACKET_LOGIC_ACTSWAP:
+		packet << ssActNumber;
+		return true;
+	case Network::PACKET_LOGIC_EXIT:
+		packet << ssGameModeChange;
+		return true;
+	case Network::PACKET_LOGIC_STAGECHG:
+		packet << ssGameModeChange << ssNextStageNumber << ssNextActNumber;
+		return true;
+	case Network::PACKET_LOGIC_PAUSE:
+		packet << PauseEnabled << PauseSelection;
+		return true;
+	case Network::PACKET_LOGIC_RAND:
+		packet << seed;
+		return true;
+	default:
+		return false;
+	}
 }
 
 static void AdvanceActLocal_r(int ssActAddition)
 {
-    TARGET_DYNAMIC(AdvanceActLocal)(ssActAddition);
-    network.Send(Network::PACKET_LOGIC_EXIT, LogicSender, -1, true);
+	TARGET_DYNAMIC(AdvanceActLocal)(ssActAddition);
+	network.Send(Network::PACKET_LOGIC_EXIT, LogicSender, -1, true);
 }
 
 static void SetChangeGameMode_r(__int16 mode)
 {
-    if (network.IsConnected())
-    {
-        auto old = ssGameModeChange;
-        TARGET_DYNAMIC(SetChangeGameMode)(mode);
+	if (network.IsConnected())
+	{
+		auto old = ssGameModeChange;
+		TARGET_DYNAMIC(SetChangeGameMode)(mode);
 
-        if (ssGameModeChange != old)
-        {
-            network.Send(Network::PACKET_LOGIC_EXIT, LogicSender, -1, true);
-        }
-    }
-    else
-    {
-        TARGET_DYNAMIC(SetChangeGameMode)(mode);
-    }
+		if (ssGameModeChange != old)
+		{
+			network.Send(Network::PACKET_LOGIC_EXIT, LogicSender, -1, true);
+		}
+	}
+	else
+	{
+		TARGET_DYNAMIC(SetChangeGameMode)(mode);
+	}
 }
 
 static void ChangeStageWithFadeOut_r(int8_t stg, int8_t act)
 {
-    TARGET_DYNAMIC(ChangeStageWithFadeOut)(stg, act);
-    network.Send(Network::PACKET_LOGIC_STAGECHG, LogicSender, -1, true);
+	TARGET_DYNAMIC(ChangeStageWithFadeOut)(stg, act);
+	network.Send(Network::PACKET_LOGIC_STAGECHG, LogicSender, -1, true);
 }
 
 static void RestartStageWithFadeOut_r()
 {
-    TARGET_DYNAMIC(RestartStageWithFadeOut)();
-    network.Send(Network::PACKET_LOGIC_EXIT, LogicSender, -1, true);
+	TARGET_DYNAMIC(RestartStageWithFadeOut)();
+	network.Send(Network::PACKET_LOGIC_EXIT, LogicSender, -1, true);
 }
 
 extern "C"
 {
-    __declspec(dllexport) void __cdecl OnFrame()
-    {
-        SetInfiniteLives();
+	__declspec(dllexport) void __cdecl OnFrame()
+	{
+		SetInfiniteLives();
 
-        if (network.IsConnected())
-        {
-            network.Poll();
+		if (network.IsConnected())
+		{
+			network.Poll();
 
-            if (network.GetPlayerNum() == 0)
-            {
-                if (netGlobalMode != ulGlobalMode || netGameMode != ssGameMode)
-                {
-                    network.Send(Network::PACKET_LOGIC_MODE, LogicSender, -1, true);
-                    netGlobalMode = ulGlobalMode;
-                    netGameMode = ssGameMode;
-                }
+			if (network.GetPlayerNum() == 0)
+			{
+				if (netGlobalMode != ulGlobalMode || netGameMode != ssGameMode)
+				{
+					network.Send(Network::PACKET_LOGIC_MODE, LogicSender, -1, true);
+					netGlobalMode = ulGlobalMode;
+					netGameMode = ssGameMode;
+				}
 
-                if (netStageNumber != ssStageNumber || netActNumber != ssActNumber)
-                {
-                    network.Send(Network::PACKET_LOGIC_LEVEL, LogicSender, -1, true);
-                    netStageNumber = ssStageNumber;
-                    netActNumber = ssActNumber;
-                }
+				if (netStageNumber != ssStageNumber || netActNumber != ssActNumber)
+				{
+					network.Send(Network::PACKET_LOGIC_LEVEL, LogicSender, -1, true);
+					netStageNumber = ssStageNumber;
+					netActNumber = ssActNumber;
+				}
 
-                if (ssGameMode == 16 || PauseEnabled != oldPauseEnabled)
-                {
-                    network.Send(Network::PACKET_LOGIC_PAUSE, LogicSender);
-                    oldPauseEnabled = PauseEnabled;
-                }
+				if (ssGameMode == 16 || PauseEnabled != oldPauseEnabled)
+				{
+					network.Send(Network::PACKET_LOGIC_PAUSE, LogicSender);
+					oldPauseEnabled = PauseEnabled;
+				}
 
-                if (logic_timer.Finished())
-                {
-                    network.Send(Network::PACKET_LOGIC_MODE, LogicSender);
-                    network.Send(Network::PACKET_LOGIC_TIMER, LogicSender);
+				if (logic_timer.Finished())
+				{
+					network.Send(Network::PACKET_LOGIC_MODE, LogicSender);
+					network.Send(Network::PACKET_LOGIC_TIMER, LogicSender);
 
-                    if (oldTimerWake != bWake || bWake == TRUE)
-                    {
-                        network.Send(Network::PACKET_LOGIC_CLOCK, LogicSender);
-                        oldTimerWake = bWake;
-                    }
-                }
+					if (oldTimerWake != bWake || bWake == TRUE)
+					{
+						network.Send(Network::PACKET_LOGIC_CLOCK, LogicSender);
+						oldTimerWake = bWake;
+					}
+				}
 
-                network.Send(Network::PACKET_LOGIC_RAND, LogicSender, -1, true);
-            }
-        }
-        
-        UpdatePlayersInfo();
-    }
+				network.Send(Network::PACKET_LOGIC_RAND, LogicSender, -1, true);
+			}
+		}
+
+		UpdatePlayersInfo();
+	}
 }
 
 void InitLogic()
@@ -210,8 +210,8 @@ void InitLogic()
 	network.RegisterListener(Network::PACKET_LOGIC_PAUSE, LogicListener);
 	network.RegisterListener(Network::PACKET_LOGIC_RAND, LogicListener);
 
-    AdvanceActLocal_t = new Trampoline(0x4146E0, 0x4146E5, AdvanceActLocal_r);
-    SetChangeGameMode_t = new Trampoline(0x413C90, 0x413C96, SetChangeGameMode_r);
-    ChangeStageWithFadeOut_t = new Trampoline(0x4145D0, 0x4145D6, ChangeStageWithFadeOut_r);
-    RestartStageWithFadeOut_t = new Trampoline(0x414600, 0x414609, RestartStageWithFadeOut_r);
+	AdvanceActLocal_t = new Trampoline(0x4146E0, 0x4146E5, AdvanceActLocal_r);
+	SetChangeGameMode_t = new Trampoline(0x413C90, 0x413C96, SetChangeGameMode_r);
+	ChangeStageWithFadeOut_t = new Trampoline(0x4145D0, 0x4145D6, ChangeStageWithFadeOut_r);
+	RestartStageWithFadeOut_t = new Trampoline(0x414600, 0x414609, RestartStageWithFadeOut_r);
 }

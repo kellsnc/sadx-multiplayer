@@ -56,7 +56,7 @@ namespace gravity
 			if (v) *v = g.vG;
 			if (angx) *angx = g.angGx;
 			if (angz) *angz = g.angGz;
-			
+
 			return true;
 		}
 

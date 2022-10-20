@@ -64,7 +64,7 @@ static void Normal_m(task* tp)
 	else
 	{
 		dsPlay_timer_v(199, (int)twp, 1, 96, 2, twp->pos.x, twp->pos.y, twp->pos.z);
-		if(twp->pos.x + 200.0f < ptwp->pos.x)
+		if (twp->pos.x + 200.0f < ptwp->pos.x)
 		{
 			//SetFreeCameraMode(0);
 			twp->scl.x += 0.15f;

@@ -119,7 +119,7 @@ static void Skydeck_EggcarrierCtrl_m(__int16 act)
 		// Force gravity when button is pressed
 		cloud_pitch = AdjustAngle(cloud_pitch, 0, 64);
 		cloud_roll = AdjustAngle(cloud_roll, 0, 64);
-		
+
 		// Turn off the button if all players pass the check
 		bool turnoff = true;
 		for (int i = 0; i < PLAYER_MAX; ++i)

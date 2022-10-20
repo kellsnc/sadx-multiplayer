@@ -5,7 +5,6 @@ static FunctionHook<void, task*> eggWalker_t(0x576650);
 
 static const int timeLimit = 600;
 
-
 void eggWalker_r(task* tp)
 {
 	if (tp->twp && !tp->twp->mode)

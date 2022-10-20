@@ -39,7 +39,6 @@ static void __cdecl AmySkirtShape_r(task* tp)
 	AmySkirtShape_t.Original(tp);
 }
 
-
 signed int Amy_CheckInput_r(playerwk* co2, motionwk2* data2, taskwk* data)
 {
 	auto even = data->ewp;
@@ -67,7 +66,6 @@ signed int Amy_CheckInput_r(playerwk* co2, motionwk2* data2, taskwk* data)
 }
 
 void Amy_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
-
 	switch (data1->mode)
 	{
 	case 48: //cart
@@ -107,7 +105,6 @@ void Amy_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 			return;
 		}
 
-
 		Mode_SDCylDownChanges(data1, co2);
 
 		return;
@@ -125,7 +122,7 @@ void Amy_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
 				co2->htp = 0;
 			}
 
-			return;	
+			return;
 		}
 		data1->mode = SDCylStd;
 

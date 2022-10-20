@@ -8,60 +8,60 @@ static constexpr size_t memsize = 0x1C * PLAYER_MAX;
 
 static void __cdecl PSSGCollisionForceWorkEffect_r(playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp)
 {
-    auto pnum = TASKWK_PLAYERID(twp);
+	auto pnum = TASKWK_PLAYERID(twp);
 
-    if (pnum < 0 && pnum > 4)
-    {
-        return;
-    }
+	if (pnum < 0 && pnum > 4)
+	{
+		return;
+	}
 
-    auto fwp = pwp->ttp->fwp;
+	auto fwp = pwp->ttp->fwp;
 
-    if (!fwp)
-    {
-        return;
-    }
+	if (!fwp)
+	{
+		return;
+	}
 
-    fwp = &fwp[pnum];
+	fwp = &fwp[pnum];
 
-    if (njScalor(&pwp->spd) == 0.0f)
-    {
-        cp->pos.x = twp->pos.x + vec->x;
-        cp->pos.y = twp->pos.y + vec->y;
-        cp->pos.z = twp->pos.z + vec->z;
-    }
+	if (njScalor(&pwp->spd) == 0.0f)
+	{
+		cp->pos.x = twp->pos.x + vec->x;
+		cp->pos.y = twp->pos.y + vec->y;
+		cp->pos.z = twp->pos.z + vec->z;
+	}
 
-    if (fwp->call_back)
-    {
-        auto x = twp->pos;
-        twp->pos = cp->pos;
-        fwp->call_back(playertp[pnum], twp, fwp);
-        twp->pos = x;
-    }
+	if (fwp->call_back)
+	{
+		auto x = twp->pos;
+		twp->pos = cp->pos;
+		fwp->call_back(playertp[pnum], twp, fwp);
+		twp->pos = x;
+	}
 
-    cp->pos.x = fwp->pos_spd.x + cp->pos.x;
-    cp->pos.y = fwp->pos_spd.y + cp->pos.y;
-    cp->pos.z = fwp->pos_spd.z + cp->pos.z;
-    
-    twp->ang.x = (unsigned __int16)(twp->ang.x + fwp->ang_spd.x);
-    twp->ang.y = (unsigned __int16)(twp->ang.y + fwp->ang_spd.y);
-    twp->ang.z = (unsigned __int16)(twp->ang.z + fwp->ang_spd.z);
+	cp->pos.x = fwp->pos_spd.x + cp->pos.x;
+	cp->pos.y = fwp->pos_spd.y + cp->pos.y;
+	cp->pos.z = fwp->pos_spd.z + cp->pos.z;
+
+	twp->ang.x = (unsigned __int16)(twp->ang.x + fwp->ang_spd.x);
+	twp->ang.y = (unsigned __int16)(twp->ang.y + fwp->ang_spd.y);
+	twp->ang.z = (unsigned __int16)(twp->ang.z + fwp->ang_spd.z);
 }
 
 static void* GetForceWork_r()
 {
-    auto mem = AllocateMemory((int)memsize);
+	auto mem = AllocateMemory((int)memsize);
 
-    if (mem)
-    {
-        memset(mem, 0, memsize);
-    }
+	if (mem)
+	{
+		memset(mem, 0, memsize);
+	}
 
-    return mem;
+	return mem;
 }
 
 void InitForceWorkPatches()
 {
 	GenerateUsercallHook(PSSGCollisionForceWorkEffect_r, noret, (intptr_t)0x43CA40, rEAX, rECX, rESI, stack4);
-    WriteCall((void*)0x40B8AB, GetForceWork_r);
+	WriteCall((void*)0x40B8AB, GetForceWork_r);
 }

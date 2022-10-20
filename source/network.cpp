@@ -12,7 +12,7 @@ bool Network::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
 	if (IsConnected())
 	{
 		Packet packet = Packet(type, player);
-		
+
 		if (!cb(packet, type, PlayerNum))
 		{
 			packet.Destroy();
@@ -94,7 +94,7 @@ void Network::ReadPacket(ENetEvent& event)
 			}
 		}
 	}
-	
+
 	// Read packet if it's for us
 	if (receiver == -1 || receiver == PlayerNum)
 	{
@@ -165,10 +165,10 @@ void Network::Poll()
 			}
 			break;
 		case ENET_EVENT_TYPE_RECEIVE:
-			{
-				ReadPacket(event);
-				break;
-			}
+		{
+			ReadPacket(event);
+			break;
+		}
 		case ENET_EVENT_TYPE_DISCONNECT:
 			if (IsServer())
 			{

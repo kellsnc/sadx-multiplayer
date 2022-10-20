@@ -29,7 +29,6 @@ static void E102DispTimeUpWarning_r(task* tp)
 }
 
 void E102_RunActions_r(task* tsk, motionwk2* data2, playerwk* co2) {
-
 	auto data1 = tsk->twp;
 
 	switch (data1->mode)
@@ -70,7 +69,6 @@ void E102_RunActions_r(task* tsk, motionwk2* data2, playerwk* co2) {
 			co2->htp = 0;
 			return;
 		}
-
 
 		Mode_SDCylDownChanges(data1, co2);
 
@@ -138,7 +136,6 @@ signed int E102_CheckInput_r(playerwk* co2, taskwk* data, motionwk2* data2)
 			return 1;
 
 		break;
-
 	}
 
 	return E102_CheckInput_t.Original(co2, data, data2);
@@ -193,7 +190,6 @@ static void __cdecl E102Display_r(task* tp)
 
 	TARGET_STATIC(E102Display)(tp);
 }
-
 
 static void __cdecl E102_r(task* tp)
 {

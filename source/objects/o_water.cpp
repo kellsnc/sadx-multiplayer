@@ -23,7 +23,7 @@ static void __cdecl Normal2_m(task* tp)
 	if (ptwp)
 	{
 		twp->wtimer -= 256ui16;
-		
+
 		ptwp->pos.y -= njSin(twp->wtimer) * 5.0f;
 		ptwp->pos.z -= njCos(twp->wtimer) * 5.0f;
 

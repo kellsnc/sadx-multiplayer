@@ -85,7 +85,7 @@ static void execShelterKaitenashiba_m(task* tp)
 				twp->pos.y = new_pos;
 			}
 		}
-		
+
 		MirenObjCheckCollisionP(twp, 60.0f);
 
 		tp->disp(tp);

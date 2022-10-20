@@ -18,8 +18,8 @@ static void MoveSnake_o(pathtbl* ptag, float onpathpos, task* tp)
 	auto target = MoveSnake_t.Target();
 	__asm
 	{
-		push [tp]
-		push [onpathpos]
+		push[tp]
+		push[onpathpos]
 		mov eax, [ptag]
 		call target
 		add esp, 8
@@ -74,7 +74,7 @@ static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 	twp->pos.z = pos.z + twp->pos.z;
 
 	auto head = (task*)parent_twp->counter.ptr;
-	
+
 	if (twp->btimer == 2 || twp->btimer == 3 || !twp->btimer || twp->btimer == 5)
 	{
 		if (twp->cwp->flag & 1)

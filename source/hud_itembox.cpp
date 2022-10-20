@@ -258,6 +258,6 @@ void EntryItemBoxPanel_m(int panel, int pnum)
 
 void InitItemBoxHUD()
 {
-	manager_Disp_t   = new Trampoline(0x4C0790, 0x4C0795, manager_Disp_r);
+	manager_Disp_t = new Trampoline(0x4C0790, 0x4C0795, manager_Disp_r);
 	itemBoxManager_t = new Trampoline(0x4C09B0, 0x4C09B5, itemBoxManager_r);
 }

@@ -91,7 +91,7 @@ static void ObjShelterTunnelscrollExec_m(task* tp)
 	if (tunnel_flag)
 	{
 		auto twp = tp->twp;
-		
+
 		if (clear_flag)
 		{
 			twp->timer.f = max(2.0f, twp->timer.f - 0.1f);
@@ -238,7 +238,7 @@ static void TunnelManagerExec_m(task* tp)
 		break;
 	case 3:
 		dsPlay_timer(325, (int)tp, 1, 0, 2);
-		
+
 		if (++twp->timer.l > 170)
 		{
 			for (int i = 0; i < PLAYER_MAX; ++i)

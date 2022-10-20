@@ -47,7 +47,6 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 				for (uint8_t i = 0; i < pmax; ++i)
 				{
 					if (playertwp[i]) {
-
 						PClearSpeed(playermwp[i], playerpwp[i]);
 						MovePlayerToWinnerPos(i, twp);
 					}

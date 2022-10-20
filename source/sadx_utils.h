@@ -323,7 +323,7 @@ VoidFunc(TempEraseSound, 0x424830);
 VoidFunc(FreeQueueSound, 0x424460);
 ObjectFunc(sub_425B30, 0x425B30);
 ObjectFunc(sub_425BB0, 0x425BB0);
-DataPointer(int, Cart_demo_flag, 0x3C4ACA8); // Status of 
+DataPointer(int, Cart_demo_flag, 0x3C4ACA8); // Status of
 DataArray(NJS_TEXANIM, cartsprite_score, 0x3C5D558, 13); // simply "score" in symbols
 VoidFunc(InitActionScore, 0x427EF0);
 DataPointer(BOOL, boolOneShot, 0x3C52464);
@@ -541,7 +541,7 @@ FunctionPointer(void, SetEffectPunchTameParticle, (NJS_POINT3* pos, int num), 0x
 FunctionPointer(void, setShakeHeadParam, (float param), 0x549BB0);
 DataPointer(float, flt_3C63CEC, 0x3C63CEC);
 FunctionPointer(int, EH_PosPlayerCheck, (), 0x573310); //inlined in symbols
-FunctionPointer(void, sub_575190, (Egm1MissilesPrm* a1), 0x575190); 
+FunctionPointer(void, sub_575190, (Egm1MissilesPrm* a1), 0x575190);
 FunctionPointer(signed int, ChkPlayerCanHold, (task* a1, unsigned __int8 PlayerNumber), 0x4C9FE0);
 TaskFunc(CalcTotalScore, 0x42BEE0);
 FunctionPointer(void, SetAutoPilotForBreak, (uint8_t pNum), 0x440F70);
@@ -555,7 +555,6 @@ TaskFunc(KnuEffectChargeUpStay, 0x4C0FF0);
 FunctionPointer(void, KnuEffectPutChargeComp, (NJS_VECTOR* position, float alpha), 0x4C1330);
 FunctionPointer(void, SetLocalPathCamera, (pathtag* path, Sint8 mode, int timer), 0x469300);
 DataPointer(pathtag, pathtag_s_camera, 0x919BF4);
-
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -627,11 +626,11 @@ static inline void HeliPath(taskwk* twp, pathtag* tag, pathinfo info)
 		mov ecx, 14h
 		lea esi, [info];
 		mov edi, esp
-		rep movsd
-		mov edx, [tag]
-		mov esi, [twp]
-		call HeliPathPtr
-		add esp, 50h
+			rep movsd
+			mov edx, [tag]
+			mov esi, [twp]
+			call HeliPathPtr
+			add esp, 50h
 	}
 }
 
@@ -807,7 +806,7 @@ static inline Bool CS_CheckCollisionPlayer2NoWater(CCL_INFO* pinf, taskwk* ctwp)
 }
 
 static const void* const SetRouteDeletaPtr = (void*)0x573380;
-static inline void SetRouteDelta_0(bossextwk* egmwk,  float a2)
+static inline void SetRouteDelta_0(bossextwk* egmwk, float a2)
 {
 	__asm
 	{
@@ -904,7 +903,6 @@ static inline int AmyCheckStop(taskwk* a1, playerwk* a2)
 	return result;
 }
 
-
 static const void* const SonicGetPillarRotSpeedPtr = (void*)0x45AB70;
 static inline int SonicGetPillarRotSpeed(playerwk* a1)
 {
@@ -932,7 +930,6 @@ static inline signed int AmyCheckJump(playerwk* a1, taskwk* a2, motionwk2* a3)
 	}
 	return result;
 }
-
 
 static const void* const BigCheckJumpPtr = (void*)0x48D2A0;
 static inline signed int BigCheckJump(playerwk* a1, taskwk* a2)

@@ -52,7 +52,7 @@ void __cdecl char_sel_sub_exec_r(CharSelWk* wkp)
 	case CHSEL_SMD_DLG1:
 		if (stat < 0)
 			break;
-		
+
 		switch (stat)
 		{
 		case 0: // 0

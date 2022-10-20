@@ -115,7 +115,7 @@ static void dispRaceSingle(RacerWk* rwp, int num)
 	for (int i = 0; i < 3; ++i)
 	{
 		njDrawSprite2D_Queue(&OBJ_MINI_CART_SPRITE_TimeBest, i, 22046.0, NJD_SPRITE_ALPHA, QueuedModelFlagsB_SomeTextureThing);
-		
+
 		if (rwp->subTotal_a[i] == 0)
 		{
 			SetMaterial(0.7f, 0.7f, 0.7f, 0.7f);
@@ -153,7 +153,7 @@ static void __cdecl dispRaceM(task* tp)
 				dispRaceSingle(&wk->racers[i], i);
 			}
 		}
-		
+
 		// MirenEffLoadState:
 		ghDefaultBlendingMode();
 		njControl3D_Restore();
@@ -246,7 +246,7 @@ static void __cdecl execRaceM(task* tp)
 		}
 		break;
 	}
-	
+
 	tp->disp(tp);
 }
 
@@ -263,7 +263,7 @@ static void __cdecl initRaceM(task* tp, void* param_p)
 	}
 
 	RaceManageTask_p = tp;
-	CartInitLetter(); 
+	CartInitLetter();
 }
 
 static const TaskInfo infoM = { sizeof(RaceWkM), 1, initRaceM, execRaceM, dispRaceM, nullptr };

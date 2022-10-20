@@ -48,7 +48,7 @@ extern "C"
 	// ie. "w * HorizontalResolution" is the viewport width
 	// Returns false if no information is avaiable
 	API bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h);
-	
+
 	// Sets the character type of player pnum
 	API void multi_set_charid(uint32_t pnum, Characters character);
 

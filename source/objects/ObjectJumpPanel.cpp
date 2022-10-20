@@ -90,9 +90,9 @@ static BOOL __cdecl CheckCollisionedForJumpPanel_r(taskwk* twp)
 static void StartPlayerPanelJump_m(taskwk* twp)
 {
 	auto cwp = twp->cwp;
-	
+
 	ResetJumpPanels();
-	
+
 	auto panel_twp = CCL_IsHitPanel(twp);
 
 	if (panel_twp)
@@ -100,7 +100,7 @@ static void StartPlayerPanelJump_m(taskwk* twp)
 		auto panel_num = panel_twp->wtimer;
 
 		panel_twp->mode = 1;
-		
+
 		if (panel_num == 9 || !JumpPanelList[panel_num + 1])
 		{
 			jumppanel_tp_list[0]->twp->mode = 2;

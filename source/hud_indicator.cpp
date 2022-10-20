@@ -16,34 +16,34 @@ static task* indicator_tp = nullptr;
 
 enum indicator_tex
 {
-    arrow, arrow_border, cpu_1, cpu_2, p, numbers
+	arrow, arrow_border, cpu_1, cpu_2, p, numbers
 };
 
-static const NJS_TEXANIM INDICATOR_TEXANIMS[] {
-    { 24, 16, 12, -16, 0, 0, 0xFF, 0xFF, MHudTex_Arrow, 0 },
-    { 24, 16, 12, -28, 0, 0, 0xFF, 0xFF, MHudTex_Arrow, 0 },
-    { 24, 24, 24, 12,  0, 0, 0xFF, 0xFF, MHudTex_CPU1,  0 },
-    { 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_CPU2,  0 },
-    { 24, 24, 24, 12,  0, 0, 0xFF, 0xFF, MHudTex_P,     0 },
-    { 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_P1,    0 },
-    { 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_P2,    0 },
-    { 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_P3,    0 },
-    { 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_P4,    0 }
+static const NJS_TEXANIM INDICATOR_TEXANIMS[]{
+	{ 24, 16, 12, -16, 0, 0, 0xFF, 0xFF, MHudTex_Arrow, 0 },
+	{ 24, 16, 12, -28, 0, 0, 0xFF, 0xFF, MHudTex_Arrow, 0 },
+	{ 24, 24, 24, 12,  0, 0, 0xFF, 0xFF, MHudTex_CPU1,  0 },
+	{ 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_CPU2,  0 },
+	{ 24, 24, 24, 12,  0, 0, 0xFF, 0xFF, MHudTex_P,     0 },
+	{ 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_P1,    0 },
+	{ 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_P2,    0 },
+	{ 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_P3,    0 },
+	{ 24, 24, 0,  12,  0, 0, 0xFF, 0xFF, MHudTex_P4,    0 }
 };
 
 static NJS_SPRITE INDICATOR_SPRITE = { {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f, 0, &CON_MULTI_TEXLIST, (NJS_TEXANIM*)INDICATOR_TEXANIMS };
 
 static const NJS_ARGB colors[] = {
-    { 1.000f, 0.000f, 0.000f, 1.000f }, // Sonic
-    { 1.000f, 0.500f, 0.000f, 0.000f }, // Eggman
-    { 1.000f, 1.000f, 0.804f, 0.000f }, // Tails
-    { 1.000f, 1.000f, 0.063f, 0.000f }, // Knuckles
-    { 1.000f, 1.000f, 0.545f, 0.322f }, // Tikal
-    { 1.000f, 1.000f, 0.545f, 0.741f }, // Amy
-    { 1.000f, 0.545f, 0.545f, 0.545f }, // Gamma
-    { 1.000f, 0.451f, 0.192f, 0.804f }, // Big
-    { 1.000f, 0.000f, 1.000f, 1.000f }, // Metal Sonic
-    { 0.750f, 0.500f, 0.500f, 0.500f }  // CPU
+	{ 1.000f, 0.000f, 0.000f, 1.000f }, // Sonic
+	{ 1.000f, 0.500f, 0.000f, 0.000f }, // Eggman
+	{ 1.000f, 1.000f, 0.804f, 0.000f }, // Tails
+	{ 1.000f, 1.000f, 0.063f, 0.000f }, // Knuckles
+	{ 1.000f, 1.000f, 0.545f, 0.322f }, // Tikal
+	{ 1.000f, 1.000f, 0.545f, 0.741f }, // Amy
+	{ 1.000f, 0.545f, 0.545f, 0.545f }, // Gamma
+	{ 1.000f, 0.451f, 0.192f, 0.804f }, // Big
+	{ 1.000f, 0.000f, 1.000f, 1.000f }, // Metal Sonic
+	{ 0.750f, 0.500f, 0.500f, 0.500f }  // CPU
 };
 
 static void drawSprite(int tex, NJD_SPRITE attr)
@@ -108,8 +108,8 @@ static void dispIndicatorNum(int pnum, float screenX, float screenY, float scree
 
 	// Set rendering colour
 	___njSetConstantMaterial(CheckPadReadModeP((unsigned char)pnum) ? (NJS_ARGB*)&colors[TASKWK_CHARID(ptwp)] : (NJS_ARGB*)&colors[9]);
-	
-	const bool isVisible = pos.x < margin_right && pos.x > margin_left && pos.y < margin_bottom && pos.y > margin_top;
+
+	const bool isVisible = pos.x < margin_right&& pos.x > margin_left && pos.y < margin_bottom&& pos.y > margin_top;
 	if (isVisible)
 	{
 		drawSprite(indicator_tex::arrow, NJD_SPRITE_COLOR | NJD_SPRITE_ALPHA);
@@ -127,9 +127,9 @@ static void dispIndicatorNum(int pnum, float screenX, float screenY, float scree
 
 static void __cdecl dispIndicatorP(task* tp)
 {
-    if (!MissedFrames && !IsGamePaused())
-    {
-        ghDefaultBlendingMode();
+	if (!MissedFrames && !IsGamePaused())
+	{
+		ghDefaultBlendingMode();
 
 		bool splitscreen = SplitScreen::IsActive();
 
@@ -158,8 +158,8 @@ static void __cdecl dispIndicatorP(task* tp)
 			}
 		}
 
-        ResetMaterial();
-    }
+		ResetMaterial();
+	}
 }
 
 static void __cdecl destIndicatorP(task* tp)
@@ -169,7 +169,7 @@ static void __cdecl destIndicatorP(task* tp)
 
 static void __cdecl IndicatorP(task* tp)
 {
-    tp->disp(tp);
+	tp->disp(tp);
 }
 
 void CreateIndicatorP()

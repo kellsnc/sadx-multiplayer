@@ -18,7 +18,7 @@ public:
 	Packet() {};
 	Packet(uint8_t identifier, int8_t to = -1, bool reliable = false);
 	Packet(ENetPacket* packet);
-	
+
 	void Destroy();
 
 	uint8_t GetIndentifier();

@@ -11,15 +11,15 @@ static void __cdecl EnemyHotTgtMissile_exec_r(task* tp);
 Trampoline EnemyHotTgtMissile_exec_t(0x5ACB70, 0x5ACB75, EnemyHotTgtMissile_exec_r);
 static void __cdecl EnemyHotTgtMissile_exec_r(task* tp)
 {
-    if (multiplayer::IsActive())
-    {
-        auto pltwp = playertwp[0];
-        playertwp[0] = playertwp[GetClosestPlayerNum(&tp->twp->pos)];
-        TARGET_STATIC(EnemyHotTgtMissile_exec)(tp);
-        playertwp[0] = pltwp;
-    }
-    else
-    {
-        TARGET_STATIC(EnemyHotTgtMissile_exec)(tp);
-    }
+	if (multiplayer::IsActive())
+	{
+		auto pltwp = playertwp[0];
+		playertwp[0] = playertwp[GetClosestPlayerNum(&tp->twp->pos)];
+		TARGET_STATIC(EnemyHotTgtMissile_exec)(tp);
+		playertwp[0] = pltwp;
+	}
+	else
+	{
+		TARGET_STATIC(EnemyHotTgtMissile_exec)(tp);
+	}
 }

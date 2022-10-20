@@ -168,7 +168,7 @@ struct MultiMenuWK
 NJS_TEXNAME AVA_MULTI_TEXNAME[78]{};
 NJS_TEXLIST AVA_MULTI_TEXLIST = { arrayptrandlength(AVA_MULTI_TEXNAME) };
 
-NJS_TEXANIM AVA_MULTI_TEXANIM[] {
+NJS_TEXANIM AVA_MULTI_TEXANIM[]{
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_SONIC, 0x20},
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_EGGMAN, 0x20},
 	{ 64, 64, 32, 32, 0, 0, 0x0FF, 0x0FF, AVAMULTITEX_TAILS, 0x20},
@@ -192,13 +192,13 @@ NJS_ARGB CursorColors[8] = {
 	{ 1.0f, 0.97f, 0.07f, 0.07f },    // light red
 	{ 1.0f, 0.423f, 0.894f, 0.047f }, //light green
 	{ 1.0f, 0.894f, 0.701f, 0.047f }, //yellow
-	{ 1.0f, 0.976f, 0.525f, 0.862f }, //pink 
+	{ 1.0f, 0.976f, 0.525f, 0.862f }, //pink
 	{ 1.0f, 0.584f, 0.074f, 0.560f }, //purple
 	{ 1.0f, 0.070f, 0.047f, 0.894f }, //dark blue
 	{ 1.0f, 0.521f, 0.0f, 0.0f},      //dark red
 };
 
-NJS_POINT2 IconPosMenuMultiCharSel[] {
+NJS_POINT2 IconPosMenuMultiCharSel[]{
 	 { -120.0f,	-50.0f },
 	 { -40.0f,	-50.0f },
 	 { 40.0f,	-50.0f },
@@ -209,7 +209,7 @@ NJS_POINT2 IconPosMenuMultiCharSel[] {
 	 { 120.0f,	50.0f },
 };
 
-PanelPrmType PanelPrmMenuMultiModeSel[] {
+PanelPrmType PanelPrmMenuMultiModeSel[]{
 	 { -100.0f,	0.0f, AVAMULTITEX_COOP   },
 	 { 100.0f,	0.0f, AVAMULTITEX_BATTLE }
 };
@@ -223,7 +223,7 @@ PanelPrmType PanelPrmMenuMultiCoopSel[]{
 	 { -60.0f,	68.0f, AVAMULTITEX_MD_SHOOT }
 };
 
-PanelPrmType PanelPrmMenuMultiBattleSel[] {
+PanelPrmType PanelPrmMenuMultiBattleSel[]{
 	 { -180.0f,	-52.0f, AVAMULTITEX_MD_SPD },
 	 { -60.0f,	-52.0f, AVAMULTITEX_MD_FLY },
 	 { 60.0f,	-52.0f, AVAMULTITEX_MD_EME },
@@ -305,20 +305,20 @@ PanelPrmType PanelPrmMenuMultiStgSelVs[]{
 	 { 75.0f,	80.0f,  AVAMULTITEX_STG2500 }
 };
 
-PanelPrmType PanelPrmMenuMultiStgConfirm[4] {};
+PanelPrmType PanelPrmMenuMultiStgConfirm[4]{};
 
 void menu_multi_confirmdialog_proc(DDlgType* ddltype);
 
 const DialogPrmType MultiMenuModeSelDialog = { DLG_PNLSTYLE_MARU2, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiModeSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 10.0f, 568.0f, 120.0f, 1.625f, 0.8f, LengthOfArray<char>(PanelPrmMenuMultiModeSel), 2i8 };
-const DialogPrmType MultiMenuCoopSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiCoopSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiCoopSel), 6i8};
-const DialogPrmType MultiMenuBattleSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiBattleSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiBattleSel), 8i8};
+const DialogPrmType MultiMenuCoopSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiCoopSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiCoopSel), 6i8 };
+const DialogPrmType MultiMenuBattleSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiBattleSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiBattleSel), 8i8 };
 const DialogPrmType MultiMenuStageSelSonicDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelSonic, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelSonic), 11i8 };
 const DialogPrmType MultiMenuStageSelFlyDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelFly, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelFly), 5i8 };
 const DialogPrmType MultiMenuStageSelEmeDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEme, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelEme), 5i8 };
-const DialogPrmType MultiMenuStageSelEgRobDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEgRob, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray<char>(PanelPrmMenuMultiStgSelEgRob), 3i8};
-const DialogPrmType MultiMenuStageSelBigDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelBig, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray<char>(PanelPrmMenuMultiStgSelBig), 4i8};
+const DialogPrmType MultiMenuStageSelEgRobDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEgRob, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray<char>(PanelPrmMenuMultiStgSelEgRob), 3i8 };
+const DialogPrmType MultiMenuStageSelBigDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelBig, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 3.0f, 1.7f, LengthOfArray<char>(PanelPrmMenuMultiStgSelBig), 4i8 };
 const DialogPrmType MultiMenuStageSelShootDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelShoot, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelShoot), 5i8 };
-const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelTwinkle, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelTwinkle), 6i8};
+const DialogPrmType MultiMenuStageSelTwinkleDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelTwinkle, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelTwinkle), 6i8 };
 const DialogPrmType MultiMenuStageSelVsDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelVs, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 260.0f, 20.0f, 500.0f, 290.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelVs), 8i8 };
 DialogPrmType MultiMenuStageConfirmDialog = { DLG_PNLSTYLE_MARU, menu_multi_confirmdialog_proc, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgConfirm, (DlgSndPrmType*)0x7DFE08, 0x97008740, 0x97008740, 320.0f, 369.0f, 10.0f, 568.0f, 140.0f, 1.625f, 0.8f, 4i8, 3i8 };
 
@@ -393,7 +393,7 @@ const int vs_level_link[]{
 	LevelAndActIDs_E101R
 };
 
-const int charsel_voicelist[] {
+const int charsel_voicelist[]{
 	1098,
 	569,
 	528,
@@ -409,7 +409,7 @@ const AvaTexLdEnum AvaTexLdListForMulti[]{
 	TENUM_AVA_BACK, TENUM_ADV_WINDOW, TENUM_AVA_SQUARE, TENUM_NMAX_SADXPC
 };
 
-const char* stg_confirm_texts[] {
+const char* stg_confirm_texts[]{
 	"\aDo you want to play this stage?",
 	"\aDo you want to play this stage?",
 	"\aVoulez-vous jouer à ce niveau ?",
@@ -417,7 +417,7 @@ const char* stg_confirm_texts[] {
 	"\aDo you want to play this stage?"
 };
 
-const char* press_start_texts[] {
+const char* press_start_texts[]{
 	"\aPress start to join",
 	"\aPress start to join",
 	"\aAppuyez sur entrer pour joindre",
@@ -649,7 +649,7 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 				gConnectMenuMode = ConnectMenuMode::Select;
 
 				if (address_text.empty()) address_text = "\a" + config::network::default_ip + ":" + std::to_string(config::network::default_port);
-				
+
 				if (address_text.size() > address_limit)
 				{
 					address_text.resize(address_limit);
@@ -809,7 +809,7 @@ void menu_multi_tomodesel(MultiMenuWK* wk)
 void menu_multi_confirmdialog_proc(DDlgType* ddltype)
 {
 	msgc_confirm.Draw();
-	
+
 	AVA_MULTI_SPRITE.p.x = 320;
 	AVA_MULTI_SPRITE.p.y = 200;
 	AVA_MULTI_SPRITE.tanim[AVAMULTIANM_STG].texid = stgacttexid;
@@ -1365,13 +1365,13 @@ void menu_multi_disp_controls(MultiMenuWK* wk)
 	AVA_MULTI_SPRITE.p.y = 432.0f;
 
 	AVA_MULTI_SPRITE.p.x = 135.0f;
-	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE, AVAMULTIANM_SELECT, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
 	AVA_MULTI_SPRITE.p.x += 130.0f;
-	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_CONFIRM, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE, AVAMULTIANM_CONFIRM, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
 	AVA_MULTI_SPRITE.p.x += 150.0f;
-	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE , AVAMULTIANM_BACK, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
+	njDrawSprite2D_DrawNow(&AVA_MULTI_SPRITE, AVAMULTIANM_BACK, -64, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR);
 
 	gHelperFunctions->PopScaleUI();
 }
@@ -1591,7 +1591,7 @@ void menu_multi_disp_onlinecon(MultiMenuWK* wk)
 void __cdecl MultiMenuExec_Display(task* tp)
 {
 	auto wk = (MultiMenuWK*)tp->awp;
-	
+
 	if (wk->Stat != ADVA_STAT_REQWAIT)
 	{
 		gHelperFunctions->PushScaleUI(uiscale::Align_Center, false, 1.0f, 1.0f);
@@ -1631,7 +1631,7 @@ void __cdecl MultiMenuExec_Display(task* tp)
 				menu_multi_disp_onlinecon(wk);
 			}
 		}
-		
+
 		// Draw charsel background and items
 		menu_multi_disp_charsel(wk);
 
@@ -1682,7 +1682,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			wk->T = 1.0f;
 			wk->BaseCol = 0xFFFFFFFF;
 		}
-		
+
 		wk->alphaConnect = wk->alphaCharSel = wk->alphaControls = 0.0f;
 		wk->SelStg = -1;
 	}
@@ -1716,7 +1716,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		break;
 	case ADVA_STAT_FADEOUT:
 		wk->T += MissedFrames_B * 0.1f;
-		
+
 		// Fade out shouldn't happen when going back to main menu
 		if (wk->SelStg >= 0)
 		{

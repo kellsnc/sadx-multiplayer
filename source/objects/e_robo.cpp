@@ -137,14 +137,14 @@ static void __cdecl RoboDisplayer_r(task* tp)
 #pragma region RoboHearSound
 static BOOL RoboHearSound_o(taskwk* twp)
 {
-    auto target = RoboHearSound_t.Target();
+	auto target = RoboHearSound_t.Target();
 	BOOL result;
-    __asm
-    {
-        mov ecx, [twp]
-        call target
+	__asm
+	{
+		mov ecx, [twp]
+		call target
 		mov result, eax
-    }
+	}
 	return result;
 }
 
@@ -175,40 +175,40 @@ static int RoboHearSound_m(taskwk* twp)
 
 static BOOL __cdecl RoboHearSound_r(taskwk* twp)
 {
-    if (multiplayer::IsActive())
-    {
-        return RoboHearSound_m(twp) != 0 ? TRUE : FALSE;
-    }
-    else
-    {
-        return RoboHearSound_o(twp);
-    }
+	if (multiplayer::IsActive())
+	{
+		return RoboHearSound_m(twp) != 0 ? TRUE : FALSE;
+	}
+	else
+	{
+		return RoboHearSound_o(twp);
+	}
 }
 
 static void __declspec(naked) RoboHearSound_w()
 {
-    __asm
-    {
-        push ecx
-        call RoboHearSound_r
-        pop ecx
-        retn
-    }
+	__asm
+	{
+		push ecx
+		call RoboHearSound_r
+		pop ecx
+		retn
+	}
 }
 #pragma endregion
 
 #pragma region RoboSearchPlayer
 static BOOL RoboSearchPlayer_o(taskwk* twp, enemywk* ewp)
 {
-    auto target = RoboSearchPlayer_t.Target();
+	auto target = RoboSearchPlayer_t.Target();
 	BOOL result;
-    __asm
-    {
-        mov esi, [twp]
-        mov ebx, [ewp]
-        call target
+	__asm
+	{
+		mov esi, [twp]
+		mov ebx, [ewp]
+		call target
 		mov result, eax
-    }
+	}
 	return result;
 }
 
@@ -258,26 +258,26 @@ static BOOL RoboSearchPlayer_m(taskwk* twp, enemywk* ewp)
 
 static BOOL __cdecl RoboSearchPlayer_r(taskwk* twp, enemywk* ewp)
 {
-    if (multiplayer::IsActive())
-    {
-        return RoboSearchPlayer_m(twp, ewp);
-    }
-    else
-    {
-        return RoboSearchPlayer_o(twp, ewp);
-    }
+	if (multiplayer::IsActive())
+	{
+		return RoboSearchPlayer_m(twp, ewp);
+	}
+	else
+	{
+		return RoboSearchPlayer_o(twp, ewp);
+	}
 }
 
 static void __declspec(naked) RoboSearchPlayer_w()
 {
-    __asm
-    {
-        push ebx
-        push esi
-        call RoboSearchPlayer_r
-        pop esi
-        pop ebx
-        retn
-    }
+	__asm
+	{
+		push ebx
+		push esi
+		call RoboSearchPlayer_r
+		pop esi
+		pop ebx
+		retn
+	}
 }
 #pragma endregion

@@ -100,7 +100,7 @@ static void HeliWriteSub_m(task* tp, taskwk* ptwp)
 		heli_PosTmpZ = twp->pos.z - ptwp->pos.z;
 		heli_PosTmpX = twp->pos.x - ptwp->pos.x - -28.884884f;
 		heli_PosTmp = squareroot(heli_PosTmpZ * heli_PosTmpZ + heli_PosTmpX * heli_PosTmpX);
-		
+
 		if (heli_PosTmp > 50.0f)
 		{
 			heli_PosTmp = 50.0f;
@@ -150,7 +150,7 @@ static void HeliWriteSub_m(task* tp, taskwk* ptwp)
 			}
 		}
 	}
-	
+
 	twp->pos.y += twp->scl.z;
 	twp->counter.l += twp->wtimer;
 
@@ -351,7 +351,7 @@ static void ObjectHeliExec_m(task* tp)
 	}
 
 	twp->scl.x += twp->scl.y;
-	
+
 	EntryColliList(twp);
 	ObjectSetupInput(twp, 0);
 

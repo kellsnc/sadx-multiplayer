@@ -98,11 +98,11 @@ static void PathworkCamera_m(task* tp)
 			}
 
 			if (twp->scl.x + 90.0f < ptwp->pos.x
-			 || twp->scl.y + 90.0f < ptwp->pos.y
-			 || twp->scl.z + 90.0f < ptwp->pos.z
-			 || twp->pos.x - 90.0f > ptwp->pos.x
-			 || twp->pos.y - 90.0f > ptwp->pos.y
-			 || twp->pos.z - 90.0f > ptwp->pos.z)
+				|| twp->scl.y + 90.0f < ptwp->pos.y
+				|| twp->scl.z + 90.0f < ptwp->pos.z
+				|| twp->pos.x - 90.0f > ptwp->pos.x
+				|| twp->pos.y - 90.0f > ptwp->pos.y
+				|| twp->pos.z - 90.0f > ptwp->pos.z)
 			{
 				twp->btimer &= ~plmask;
 				CameraReleaseEventCamera_m(i);
@@ -148,4 +148,3 @@ static void __cdecl PathworkCamera_r(task* tp)
 		TARGET_STATIC(PathworkCamera)(tp);
 	}
 }
-

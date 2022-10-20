@@ -37,7 +37,7 @@ static bool GetPressurePoint(task* tp, NJS_POINT3* pt)
 }
 
 static void Normal_m(task* tp)
-{	
+{
 	auto twp = tp->twp;
 	auto dyncol = (NJS_OBJECT*)twp->counter.ptr;
 
@@ -140,7 +140,7 @@ static void __cdecl ObjectMountainAsiba_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
-		ObjectMountainAsiba_m(tp);  
+		ObjectMountainAsiba_m(tp);
 	}
 	else
 	{

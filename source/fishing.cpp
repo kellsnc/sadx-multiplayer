@@ -47,20 +47,20 @@ FunctionPointer(int, sub_46EE90, (), 0x46EE90); // inline, get fished item
 DataPointer(CCL_INFO, lure_colli_tbl, 0x91BA7C);
 DataArray(NJS_POINT3, icecap_fpoint_tbl, 0x91BA44, 4);
 
-static auto sub_46D0D0 = GenerateUsercallWrapper<BOOL (*)(task* tp)>(rEAX, 0x46D0D0, rEAX); // inline, checks if lure touches ground
-static auto sub_46D970 = GenerateUsercallWrapper<BOOL (*)(Big_ypos* big_y_ptr, task* tp)>(rEAX, 0x46D970, rEAX, stack4); // inline, checks if lure collided with water
+static auto sub_46D0D0 = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x46D0D0, rEAX); // inline, checks if lure touches ground
+static auto sub_46D970 = GenerateUsercallWrapper<BOOL(*)(Big_ypos* big_y_ptr, task* tp)>(rEAX, 0x46D970, rEAX, stack4); // inline, checks if lure collided with water
 static auto calcFishingLureY = GenerateUsercallWrapper<void (*)(taskwk* twp, Big_ypos* big_y_ptr, char flag)>(noret, 0x46DD20, rEAX, rESI, stack4);
 static auto moveFishingRotY = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46E380, rEAX);
-static auto chkKabeAngle2 = GenerateUsercallWrapper<BOOL (*)(Angle3* angle3_p)>(noret, 0x46C6A0, rESI);
+static auto chkKabeAngle2 = GenerateUsercallWrapper<BOOL(*)(Angle3* angle3_p)>(noret, 0x46C6A0, rESI);
 
 static Trampoline* dispFishWeightTexture_t = nullptr;
 static Trampoline* exitFishWeightTexture_t = nullptr;
-static Trampoline* dispFishingLure_t       = nullptr;
+static Trampoline* dispFishingLure_t = nullptr;
 static Trampoline* dispFishingLureSwitch_t = nullptr;
-static Trampoline* fishingLureCtrl_t       = nullptr;
-static Trampoline* SetFishingLureTask_t    = nullptr;
-static Trampoline* fishingCursorCtrl_t     = nullptr;
-static Trampoline* SetFishingCursorTask_t  = nullptr;
+static Trampoline* fishingLureCtrl_t = nullptr;
+static Trampoline* SetFishingLureTask_t = nullptr;
+static Trampoline* fishingCursorCtrl_t = nullptr;
+static Trampoline* SetFishingCursorTask_t = nullptr;
 
 BIGETC* GetBigEtc(int pnum)
 {
@@ -262,7 +262,7 @@ static void __cdecl dispFishingLure_m(task* tp)
 	if (GameMode != GameModes_Menu && !MissedFrames && ptwp && TASKWK_CHARID(ptwp) == Characters_Big && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
 	{
 		auto etc = GetBigEtc(pnum);
-		
+
 		njSetTexture(&FISHING_TEXLIST);
 		njControl3D_Backup();
 		njControl3D_Remove(NJD_CONTROL_3D_CONSTANT_MATERIAL);
@@ -401,7 +401,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 		auto pper = per[pnum];
 		auto fish_mwp = fish_tp->mwp;
 		float weight = fish_mwp && fish_mwp->weight == 0.0f ? 0.1f : fish_mwp->weight * 0.0001f;
-		
+
 		if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 		{
 			if (pper->on & (AttackButtons | JumpButtons))
@@ -502,7 +502,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 	}
 
 	etc->reel_tension_aim += (float)(njRandom() * 0.1);
-	
+
 	if (!loop_count)
 	{
 		if (etc->reel_tension_aim != etc->reel_tension)
@@ -659,9 +659,9 @@ static void setLureCameraPos_m(taskwk* twp, BIGETC* etc, int pnum)
 		v.z = v.z * dist + twp->pos.z;
 
 		dist = (v.x - param->camAnyParamTgt.x) * (v.x - param->camAnyParamTgt.x)
-			 + (v.y - param->camAnyParamTgt.y) * (v.y - param->camAnyParamTgt.y)
-			 + (v.z - param->camAnyParamTgt.z) * (v.z - param->camAnyParamTgt.z);
-		
+			+ (v.y - param->camAnyParamTgt.y) * (v.y - param->camAnyParamTgt.y)
+			+ (v.z - param->camAnyParamTgt.z) * (v.z - param->camAnyParamTgt.z);
+
 		if (njSqrt(dist) >= 5.0f)
 		{
 			njSubVector(&v, &param->camAnyParamTgt);
@@ -683,7 +683,7 @@ static void setCameraReturn_m(taskwk* twp, int pnum)
 	if (param)
 	{
 		auto ptwp = playertwp[pnum];
-		
+
 		NJS_VECTOR v = { twp->pos.x - ptwp->pos.x, 0.0f, twp->pos.z - ptwp->pos.z };
 		njUnitVector(&v);
 
@@ -910,7 +910,7 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 	{
 		auto ptwp = playertwp[pnum];
 		auto ppwp = playerpwp[pnum];
-		
+
 		mwp->spd.x = rod_pos_p->x - twp->pos.x;
 		mwp->spd.y = rod_pos_p->y - twp->pos.y;
 		mwp->spd.z = rod_pos_p->z - twp->pos.z;
@@ -1057,7 +1057,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 			Angle3 ang, ang2 = { 0, 0, 0 };
 
 			auto test1 = MSetPosition(&pos, &spd, &ang, lure_radius);
-			
+
 			//pos = twp->pos;
 
 			auto test2 = test1 /*|| BigSetPosition(&pos, &spd, &ang2, lure_radius)*/;
@@ -1353,7 +1353,7 @@ static bool ReturnFishingLure_m(taskwk* twp, motionwk* mwp, NJS_POINT3* rod_pos)
 	njUnitVector(&mwp->spd);
 
 	float scl = twp->mode == MODE_LURE_RETURN ? 10.0f : 2.0f;
-	
+
 	twp->pos.x += scl * mwp->spd.x;
 	twp->pos.y += scl * mwp->spd.y;
 	twp->pos.z += scl * mwp->spd.z;
@@ -1405,7 +1405,7 @@ static void CalcRodPos_m(taskwk* ptwp, playerwk* ppwp, NJS_POINT3* rod_pos_p)
 	njCalcVector(0, &v, rod_pos_p);
 
 	float dist = (ppwp->equipment & Upgrades_PowerRod) != 0 ? 17.0f : 16.0f;
-	
+
 	v.x = ppwp->user0_pos.x - dist * ppwp->user0_vec.x;
 	v.y = ppwp->user0_pos.y - dist * ppwp->user0_vec.y;
 	v.z = ppwp->user0_pos.z - dist * ppwp->user0_vec.z;
@@ -1425,7 +1425,7 @@ static void CalcRodPos_m(taskwk* ptwp, playerwk* ppwp, NJS_POINT3* rod_pos_p)
 	rod_pos_p->x = ptwp->pos.x + rod_pos_p->x + v.x;
 	rod_pos_p->y = ptwp->pos.y + rod_pos_p->y + v.y;
 	rod_pos_p->z = ptwp->pos.z + rod_pos_p->z + v.z;
-	
+
 	njPopMatrixEx();
 }
 
@@ -1939,7 +1939,7 @@ static void setCameraFishingTgt_m(task* tp, int pnum)
 		auto ptwp = playertwp[pnum];
 
 		NJS_VECTOR v = { twp->pos.x - ptwp->pos.x, 0.0f, twp->pos.z - ptwp->pos.z };
-		
+
 		if (njScalor(&v) < 30.0f)
 		{
 			njUnitVector(&v);
@@ -2019,17 +2019,15 @@ static void BigStateInit_r()
 
 void InitFishing()
 {
-
 	dispFishWeightTexture_t = new Trampoline(0x46F580, 0x46F585, dispFishWeightTexture_r);
 	exitFishWeightTexture_t = new Trampoline(0x470160, 0x470165, exitFishWeightTexture_r);
-	dispFishingLure_t       = new Trampoline(0x470580, 0x470588, dispFishingLure_r);
+	dispFishingLure_t = new Trampoline(0x470580, 0x470588, dispFishingLure_r);
 	dispFishingLureSwitch_t = new Trampoline(0x4703F0, 0x4703F8, dispFishingLureSwitch_r);
-	fishingLureCtrl_t       = new Trampoline(0x471580, 0x471589, fishingLureCtrl_r);
+	fishingLureCtrl_t = new Trampoline(0x471580, 0x471589, fishingLureCtrl_r);
 
-
-	SetFishingLureTask_t    = new Trampoline(0x471ED0, 0x471ED6, SetFishingLureTask_r);
-	fishingCursorCtrl_t     = new Trampoline(0x46FA10, 0x46FA18, fishingCursorCtrl_r);
-	SetFishingCursorTask_t  = new Trampoline(0x470330, 0x470336, SetFishingCursorTask_r);
+	SetFishingLureTask_t = new Trampoline(0x471ED0, 0x471ED6, SetFishingLureTask_r);
+	fishingCursorCtrl_t = new Trampoline(0x46FA10, 0x46FA18, fishingCursorCtrl_r);
+	SetFishingCursorTask_t = new Trampoline(0x470330, 0x470336, SetFishingCursorTask_r);
 
 	WriteJump((void*)0x470120, BigStateInit_r);
 	WriteCall((void*)0x48CCE4, Big_CreateBigDisplayFishWeight_j);

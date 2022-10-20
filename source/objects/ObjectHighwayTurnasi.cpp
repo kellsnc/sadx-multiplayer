@@ -55,7 +55,7 @@ static void AsiCollisionCollision_m(task* tp)
 	}
 	else
 	{
-		NJS_VECTOR v { 0.0f, 0.0f, 0.0f };
+		NJS_VECTOR v{ 0.0f, 0.0f, 0.0f };
 		njPushMatrix(_nj_unit_matrix_);
 		njTranslate(0, turnasi_twp->pos.x, turnasi_twp->pos.y, turnasi_twp->pos.z);
 		njRotateY_(turnasi_twp->ang.y);
@@ -88,10 +88,9 @@ static void AsiCollisionCollision_m(task* tp)
 
 					turnasi_twp->value.f = njScalor(&pwp->spd);
 					turnasi_twp->btimer = 10;
-					twp->scl.z = 10.0f; 
+					twp->scl.z = 10.0f;
 					twp->scl.x = max(-15.0f, min(15.0f, ptwp->pos.x - twp->pos.x));
 					twp->value.f = max(-15.0f, min(15.0f, ptwp->pos.z - twp->pos.z));
-
 				}
 			}
 
@@ -204,7 +203,7 @@ static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 
 			twp->mode = MD_TURNASI_RESET;
 
-			NJS_VECTOR v { twp->value.f + 3.0f, 0.0f, 0.0f };
+			NJS_VECTOR v{ twp->value.f + 3.0f, 0.0f, 0.0f };
 			Angle3 ang{ 0, twp->ang.y, 0 };
 			SetVelocityAndRotationAndNoconTimeP(pnum, &v, &ang, 10);
 		}
@@ -246,7 +245,7 @@ static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 
 			NJS_VECTOR v{ twp->value.f + 1.0f, 0.0f, 0.0f };
 			Angle3 ang{ 0, twp->ang.y, 0 };
-			
+
 			SetVelocityAndRotationAndNoconTimeP(pnum, &v, &ang, 10);
 			dsPlay_oneshot(101, 0, 0, 0);
 		}

@@ -80,7 +80,6 @@ static void __cdecl SetFinishAction_r()
 			ForcePlayerAction(i, 19);
 		}
 
-
 		if (CurrentLevel == LevelIDs_TwinkleCircuit)
 		{
 			ADX_Close();
@@ -95,7 +94,6 @@ static void __cdecl SetFinishAction_r()
 		pdVibMxStop(0);
 		multiplayer::IsBattleMode() ? LoadMultiplayerResult() : LoadMultiplayerCoopResult();
 		return;
-
 	}
 
 	SetFinishAction_t.Original();

@@ -633,13 +633,10 @@ void __cdecl InitScore_r()
 }
 
 int __cdecl GetRaceWinnerPlayer_r() {
-
 	if (multiplayer::IsCoopMode()) {
 		for (int i = 1; i < PLAYER_MAX; i++) {
-
 			if (playertwp[i] && (TASKWK_CHARID(playertwp[i]) == Characters_Tails))
 				return 1;
-
 		}
 	}
 

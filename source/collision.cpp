@@ -28,7 +28,7 @@ static colaround around_enemy_list_p3[657];
 
 static Uint16 arl_num2, arl_num3, ael_num2, ael_num3;
 
-colaround* around_ring_list_p[] {
+colaround* around_ring_list_p[]{
 	around_ring_list_p0,
 	around_ring_list_p1,
 	around_ring_list_p2,
@@ -305,7 +305,7 @@ colaround* GetTargetEnemyList(Uint8 pno)
 
 Bool __cdecl PCheckTargetEnemy_r(Uint8 pno)
 {
-	return pno < PLAYER_MAX && around_enemy_list_p[pno]->twp != nullptr;
+	return pno < PLAYER_MAX&& around_enemy_list_p[pno]->twp != nullptr;
 }
 
 void __cdecl LockingOnTargetEnemy_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -561,7 +561,7 @@ void __cdecl SonicHomingOnTarget_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 			pos.z = njSin(twp->ang.y) * njSqrt(1.0f - pos.y * pos.y);
 
 			Float r = (pwp->equipment & Upgrades_SuperSonic) ? 10.0f : 5.0f;
-			
+
 			if (pwp->free.sw[3] > 180)
 			{
 				r *= (njRandom() * 0.1f + 0.7f);
@@ -825,7 +825,7 @@ void InitCollisionPatches()
 {
 	// Dyncol lookup rewrite
 	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
-	
+
 	// Simple bound checking
 	WriteJump(CheckCollisionP, CheckCollisionP_r);
 	WriteJump(CheckCollisionCylinderP, CheckCollisionCylinderP_r);

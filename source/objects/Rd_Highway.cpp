@@ -137,7 +137,7 @@ static void __cdecl subRd_Highway_r(task* tp)
 			{
 				RdHighwayCheckArriveAtTheBuilding_m(twp);
 			}
-			
+
 			break;
 		case 2:
 		case 3:

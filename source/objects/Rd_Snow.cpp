@@ -19,7 +19,7 @@ static void __cdecl RdSnowBoardingSpeedManager_m(task* tp)
 	auto& timer = awp->work.ul[0];
 	auto pnum = awp->work.ul[1];
 	auto ppwp = playerpwp[pnum];
-	
+
 	if (ppwp)
 	{
 		if (ppwp->spd.x > 4.0f) ppwp->spd.x = 4.0f;
@@ -141,7 +141,7 @@ static void __cdecl Rd_Snow_r(task* tp)
 	if (multiplayer::IsActive())
 	{
 		auto twp = tp->twp;
-		
+
 		NadareStart = FALSE;
 
 		switch (twp->mode)

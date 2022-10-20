@@ -12,7 +12,7 @@ short toactnum(short num)
 	return num & 0xf;
 }
 
-void SetPlayerPositionAroundPoint(taskwk* ptwp, NJS_POINT3* pin,  Float dist)
+void SetPlayerPositionAroundPoint(taskwk* ptwp, NJS_POINT3* pin, Float dist)
 {
 	auto pcount = multiplayer::GetPlayerCount();
 	auto pnum = TASKWK_PLAYERID(ptwp);
@@ -63,7 +63,6 @@ void SetAllPlayersInitialPosition()
 		}
 	}
 }
-
 
 void  SetAllPlayersInitialPositionHook(taskwk* data)
 {
@@ -293,7 +292,7 @@ bool isPlayerInCart(char pnum)
 			return mde == 53;
 		case Characters_Big:
 			return mde == 55;
-		}	
+		}
 	}
 
 	return false;

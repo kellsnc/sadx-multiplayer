@@ -182,7 +182,6 @@ int EH_PosPlayerCheck_r()
 	{
 		return EH_PosPlayerCheck_t.Original();
 	}
-
 }
 
 void eggHornet_r(task* tp)
@@ -196,7 +195,6 @@ void eggHornet_r(task* tp)
 
 void initEggHornetPatches()
 {
-
 	eggHornet_t.Hook(eggHornet_r);
 
 	EH_PosPlayerCheck_t.Hook(EH_PosPlayerCheck_r);

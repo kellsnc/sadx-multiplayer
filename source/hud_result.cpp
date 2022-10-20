@@ -227,7 +227,6 @@ static void __cdecl CalcTotalScoreM(task* tp)
 	tp->disp(tp);
 }
 
-
 void LoadMultiplayerResult()
 {
 	auto tp = CreateElementalTask(LoadObj_Data1, LEV_5, CalcTotalScoreM);

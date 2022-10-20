@@ -92,7 +92,7 @@ static void ObjectFinalEggElevator2_m(task* tp)
 		End_m(tp);
 		break;
 	}
-	
+
 	tp->disp(tp);
 }
 

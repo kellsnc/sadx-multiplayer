@@ -10,57 +10,56 @@ UsercallFuncVoid(GachaCheckColli_Hook, (taskwk* twp, gachamotionwk* mwp), (twp, 
 
 void chk_mode_r(taskwk* twp, gachamotionwk* mwp, task* tp)
 {
-    if ((twp->flag & 4) && twp->mode != 11 && twp->mode != 7)
-    {
-        auto pltwp = CCL_IsHitPlayerWithNum(twp, 1);
-        if (pltwp)
-        {
-            twp->mode = 7;
-            twp->wtimer = 30;
-            NJS_POINT3 p = twp->pos;
-            njAddVector(&p, &pltwp->pos);
-            p.x *= 0.5f;
-            p.y *= 0.5f;
-            p.z *= 0.5f;
-            CreateHitmark(&p, 0.5f);
-            twp->scl.z = 0.35f;
-            SetVelocityP(TASKWK_PLAYERID(pltwp), 0.0f, 1.2f, 0.0f);
-        }
-    }
+	if ((twp->flag & 4) && twp->mode != 11 && twp->mode != 7)
+	{
+		auto pltwp = CCL_IsHitPlayerWithNum(twp, 1);
+		if (pltwp)
+		{
+			twp->mode = 7;
+			twp->wtimer = 30;
+			NJS_POINT3 p = twp->pos;
+			njAddVector(&p, &pltwp->pos);
+			p.x *= 0.5f;
+			p.y *= 0.5f;
+			p.z *= 0.5f;
+			CreateHitmark(&p, 0.5f);
+			twp->scl.z = 0.35f;
+			SetVelocityP(TASKWK_PLAYERID(pltwp), 0.0f, 1.2f, 0.0f);
+		}
+	}
 
-    chk_mode_Hook.Original(twp, mwp, tp);
+	chk_mode_Hook.Original(twp, mwp, tp);
 }
 
 void GachaCheckColli_r(taskwk* twp, gachamotionwk* mwp)
 {
-    if (multiplayer::IsActive())
-    {
-        twp->flag &= ~0x1;
+	if (multiplayer::IsActive())
+	{
+		twp->flag &= ~0x1;
 
-        if (twp->pos.y < mwp->height + 0.1f)
-        {
-            twp->pos.y = mwp->height;
-            twp->flag |= 1;
-        }
+		if (twp->pos.y < mwp->height + 0.1f)
+		{
+			twp->pos.y = mwp->height;
+			twp->flag |= 1;
+		}
 
-        auto pnum = GetClosestPlayerNum(&twp->pos);
-        auto ptwp = playertwp[pnum];
+		auto pnum = GetClosestPlayerNum(&twp->pos);
+		auto ptwp = playertwp[pnum];
 
-        if (ptwp)
-        {
-            mwp->playerang = -0x4000 - -njArcTan(ptwp->pos.x - twp->pos.x, ptwp->pos.z - twp->pos.z);
-            mwp->playerangdiff = DiffAngle(mwp->playerang, twp->ang.y);
-        }
-
-    }
-    else
-    {
-        GachaCheckColli_Hook.Original(twp, mwp);
-    }
+		if (ptwp)
+		{
+			mwp->playerang = -0x4000 - -njArcTan(ptwp->pos.x - twp->pos.x, ptwp->pos.z - twp->pos.z);
+			mwp->playerangdiff = DiffAngle(mwp->playerang, twp->ang.y);
+		}
+	}
+	else
+	{
+		GachaCheckColli_Hook.Original(twp, mwp);
+	}
 }
 
 void PatchGachapon()
 {
-    chk_mode_Hook.Hook(chk_mode_r);
-    GachaCheckColli_Hook.Hook(GachaCheckColli_r);
+	chk_mode_Hook.Hook(chk_mode_r);
+	GachaCheckColli_Hook.Hook(GachaCheckColli_r);
 }

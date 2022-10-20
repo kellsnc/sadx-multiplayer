@@ -27,7 +27,7 @@ void DrawBattleEmeRadar(int pnum, int scalors)
 			pos.y = screenY + scaleY * 16.0f + scale * 32.0f;
 			EmeraldRadarHud_Draw(&pos, 3, scale, 1.0f);
 		}
-		else if(fragm.boutflag == 0) // Draw as non collected
+		else if (fragm.boutflag == 0) // Draw as non collected
 		{
 			auto ptwp = playertwp[pnum];
 			float dist = GetDistance(&ptwp->pos, &fragm.pos);

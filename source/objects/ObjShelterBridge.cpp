@@ -99,7 +99,7 @@ static void ObjShelterBridgeShrink_m(task* tp)
 	auto sub_twp = reinterpret_cast<taskwk*>(twp->value.ptr);
 
 	twp->scl.z += twp->scl.y;
-	
+
 	NJS_VECTOR dir = { 0.0f, 0.0f, twp->scl.z };
 	njPushMatrix(_nj_unit_matrix_);
 	njTranslateEx(&twp->pos);
@@ -108,7 +108,7 @@ static void ObjShelterBridgeShrink_m(task* tp)
 	njPopMatrixEx();
 
 	dir.z = twp->scl.y;
-	
+
 	auto fwp = tp->fwp;
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -116,7 +116,7 @@ static void ObjShelterBridgeShrink_m(task* tp)
 		if (CheckPlayerRideOnMobileLandObjectP(i, tp))
 		{
 			auto ptwp = playertwp[i];
-			
+
 			njPushMatrix(_nj_unit_matrix_);
 			njRotateY_(twp->ang.y);
 			njCalcVector(0, &dir, &fwp[i].pos_spd);

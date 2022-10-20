@@ -22,7 +22,7 @@ namespace config
 		if (general)
 		{
 			splitScreenEnabled = general->getBool("SplitScreen", splitScreenEnabled);
-			indicatorEnabled   = general->getBool("Indicator", indicatorEnabled);
+			indicatorEnabled = general->getBool("Indicator", indicatorEnabled);
 			infiniteLives = general->getBool("infiniteLives", infiniteLives);
 		}
 

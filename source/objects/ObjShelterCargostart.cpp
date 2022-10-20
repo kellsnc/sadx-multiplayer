@@ -104,7 +104,7 @@ static void ObjShelterCargostartExec_m(task* tp)
 
 		twp->timer.f = min(20.0f, twp->timer.f + 0.1f);
 		twp->pos.y = min(twp->value.f, twp->pos.y + 0.05f);
-		
+
 		Move(tp, -twp->timer.f);
 
 		break;

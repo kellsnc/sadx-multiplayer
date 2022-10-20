@@ -5,7 +5,6 @@
 #include "ObjCylinderCmn.h"
 #include "e_cart.h"
 
-
 TaskHook BigTheCat_t((intptr_t)Big_Main);
 
 Trampoline* BigChkMode_t = nullptr; //doesn't want to work with FuncHook for some weird reason
@@ -119,17 +118,14 @@ Bool Big_CheckInput_r(playerwk* co2, taskwk* data, motionwk2* data2)
 		return Big_CheckInput_t.Original(co2, data, data2);
 	}
 
-
 	switch (data->smode)
 	{
-
 	case 32:
 
 		if (SetCylinderNextAction(data, data2, co2))
 			return 1;
 
 		break;
-
 	}
 
 	return Big_CheckInput_t.Original(co2, data, data2);
@@ -178,7 +174,6 @@ static void __cdecl BigChkMode_r(playerwk* co2, taskwk* data1, motionwk2* data2)
 			break;
 		}
 
-
 		Mode_SDCylDownChanges(data1, co2);
 
 		return;
@@ -220,7 +215,6 @@ static void __cdecl BigChkMode_r(playerwk* co2, taskwk* data1, motionwk2* data2)
 		data1->mode = SDCylStd;
 		return;
 	}
-
 
 	BigChkMode_o(data1, data2, co2);
 }
