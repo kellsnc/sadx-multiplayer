@@ -8,6 +8,104 @@ static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunsActions_t((int
 TaskHook AmyJiggle_t((intptr_t)0x485C50);
 TaskHook AmySkirtShape_t(0x485F40);
 TaskHook AmyEyeTracker_t(0x486410);
+TaskHook AmyBirdExe_t(0x4C63F0);
+TaskHook LoadAmyBird_t(0x4C6790);
+
+task* AmyBirdM[PLAYER_MAX] = { 0 };
+
+void AmyBird_Del(task* obj)
+{
+	if (obj->twp)
+	{
+		char pnum = obj->twp->smode;
+
+		auto task = AmyBirdM[pnum];
+
+		if (task)
+		{
+			FreeTask(task);
+		}
+
+		AmyBirdM[pnum] = nullptr;
+	}
+}
+
+void __cdecl AmyBird_Main_r(task* obj)
+{
+	if (!multiplayer::IsActive() || EV_MainThread_ptr)
+	{
+		return AmyBirdExe_t.Original(obj);
+	}
+
+	auto data = obj->twp;
+	auto pnum = data->smode;
+	auto Player = playertwp[pnum];
+
+	if (!Player)
+	{
+		FreeTask(obj);
+		return;
+	}
+
+	data->ang.y = BAMS_SubWrap(data->ang.y, 0x8000 - Player->ang.y, 1024);
+	data->ang.x += 16;
+	data->ang.z += 1024;
+
+	NJS_VECTOR dest;
+
+	dest.x = njCos(data->ang.x) * 3.0f + Player->pos.x;
+	dest.y = njSin(data->ang.z) + 12.0f + Player->pos.y;
+	dest.z = njSin(data->ang.x) * 3.0f + Player->pos.z;
+
+	float distance = sqrtf(powf(dest.x - data->pos.x, 2) + powf(dest.y - data->pos.y, 2) + powf(dest.z - data->pos.z, 2));
+
+	if (distance >= 200.0f) {
+		data->pos.x = dest.x;
+		data->pos.y = dest.y;
+		data->pos.z = dest.z;
+	}
+	else
+	{
+		data->pos.x = (dest.x - data->pos.x) * 0.25f + data->pos.x;
+		data->pos.y = (dest.y - data->pos.y) * 0.25f + data->pos.y;
+		data->pos.z = (dest.z - data->pos.z) * 0.25f + data->pos.z;
+	}
+
+	data->counter.f = FrameCounterUnpaused % Birdie_Anim.motion->nbFrame;
+	obj->disp(obj);
+
+	DrawShadow((EntityData1*)&data, 0.40000001f);
+	LoopTaskC(obj);
+}
+
+void Load_AmyBird_r(task* obj)
+{
+	obj->exec = AmyBird_Main_r;
+	obj->disp = (TaskFuncPtr)0x4C62D0;
+	obj->dest = AmyBird_Del;
+	auto data = obj->twp;
+	auto pnum = data->smode;
+	data->pos = playertwp[pnum]->pos;
+	data->pos.y += 12.0f;
+	data->ang.y = 0x8000 - data->ang.y;
+}
+
+void __cdecl Init_AmyBird(task* tp)
+{
+	if (!multiplayer::IsActive() || EV_MainThread_ptr)
+	{
+		return LoadAmyBird_t.Original(tp);
+	}
+
+	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+	{
+		if (!AmyBirdM[i] && playertwp[i] && playertwp[i]->counter.b[1] == Characters_Amy)
+		{
+			AmyBirdM[i] = CreateElementalTask(LoadObj_Data1, 3, Load_AmyBird_r);
+			AmyBirdM[i]->twp->smode = i;
+		}
+	}
+}
 
 static void __cdecl AmyEyeTracker_r(task* tp)
 {
@@ -191,4 +289,7 @@ void Init_AmyPatches()
 	AmyJiggle_t.Hook(AmyJiggle_r);
 	AmySkirtShape_t.Hook(AmySkirtShape_r);
 	AmyEyeTracker_t.Hook(AmyEyeTracker_r);
+
+	LoadAmyBird_t.Hook(Init_AmyBird);
+	AmyBirdExe_t.Hook(AmyBird_Main_r);
 }
