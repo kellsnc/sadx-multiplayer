@@ -16,8 +16,8 @@ void dsHangPoleCom_r(taskwk* a1)
 			{
 				if (data == playertwp[i])
 				{
-					EnemyBounceThing(i, 0.0, 2.0, 0.0);
-					data->pos.y = data->pos.y + 1.0;
+					EnemyBounceThing(i, 0.0f, 2.0f, 0.0f);
+					data->pos.y = data->pos.y + 1.0f;
 					return;
 				}
 			}
