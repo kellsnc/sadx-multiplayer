@@ -10,12 +10,9 @@ Level-related adjustements for multiplayer
 
 */
 
-Trampoline* Rd_Chaos0_t = nullptr;
 Trampoline* Rd_Chaos2_t = nullptr;
 Trampoline* Rd_Chaos4_t = nullptr;
 Trampoline* Rd_Chaos6_t = nullptr;
-Trampoline* Rd_Bossegm1_t = nullptr;
-Trampoline* Rd_Bossegm2_t = nullptr;
 Trampoline* Rd_E101_t = nullptr;
 Trampoline* Rd_E101_R_t = nullptr;
 
@@ -159,17 +156,6 @@ void MultiArena(task* tp)
 	}
 }
 
-void __cdecl Rd_Chaos0_r(task* tp)
-{
-	if (multiplayer::IsFightMode())
-	{
-		MultiArena(tp);
-	}
-	else
-	{
-		TARGET_DYNAMIC(Rd_Chaos0)(tp);
-	}
-}
 
 void __cdecl Rd_Chaos2_r(task* tp)
 {
@@ -204,30 +190,6 @@ void __cdecl Rd_Chaos6_r(task* tp)
 	else
 	{
 		TARGET_DYNAMIC(Rd_Chaos6)(tp);
-	}
-}
-
-void __cdecl Rd_Bossegm1_r(task* tp)
-{
-	if (multiplayer::IsFightMode())
-	{
-		MultiArena(tp);
-	}
-	else
-	{
-		TARGET_DYNAMIC(Rd_Bossegm1)(tp);
-	}
-}
-
-void __cdecl Rd_Bossegm2_r(task* tp)
-{
-	if (multiplayer::IsFightMode())
-	{
-		MultiArena(tp);
-	}
-	else
-	{
-		TARGET_DYNAMIC(Rd_Bossegm2)(tp);
 	}
 }
 
@@ -651,12 +613,9 @@ void InitLevels()
 	WriteData((uint8_t*)0x4E91C0, 0xC3ui8); // Ice Cap
 
 	// In battle mode, boss become fighting arenas
-	Rd_Chaos0_t = new Trampoline(0x545E60, 0x545E66, Rd_Chaos0_r);
 	Rd_Chaos2_t = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
 	Rd_Chaos4_t = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
 	Rd_Chaos6_t = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
-	Rd_Bossegm1_t = new Trampoline(0x571850, 0x571856, Rd_Bossegm1_r);
-	Rd_Bossegm2_t = new Trampoline(0x5758D0, 0x5758D6, Rd_Bossegm2_r);
 	Rd_E101_t = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
 	Rd_E101_R_t = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
 

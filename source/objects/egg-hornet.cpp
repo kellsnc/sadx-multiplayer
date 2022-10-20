@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "bosses.h"
+#include "levels.h"
 
 static FunctionHook<void, task*> eggHornet_t(0x572010);
 static FunctionHook<int> EH_PosPlayerCheck_t(0x573310);
@@ -186,6 +187,11 @@ int EH_PosPlayerCheck_r()
 
 void eggHornet_r(task* tp)
 {
+	if (multiplayer::IsFightMode())
+	{
+		return MultiArena(tp);
+	}
+
 	if (tp->twp && !tp->twp->mode)
 		ResetBossRNG();
 

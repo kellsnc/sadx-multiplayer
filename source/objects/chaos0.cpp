@@ -1,11 +1,9 @@
 #include "pch.h"
-#include "SADXModLoader.h"
-#include "FunctionHook.h"
-#include "UsercallFunctionHandler.h"
 #include "camera.h"
 #include "camerafunc.h"
 #include "splitscreen.h"
 #include "bosses.h"
+#include "levels.h"
 
 static const int timeLimit = 300;
 
@@ -354,6 +352,11 @@ void Bg_Chaos0_r(task* tp)
 
 void Chaos0_Exec_r(task* tp)
 {
+	if (multiplayer::IsFightMode())
+	{
+		return MultiArena(tp);
+	}
+
 	auto twp = tp->twp;
 
 	if (twp && !twp->mode)
