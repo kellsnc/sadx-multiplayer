@@ -148,6 +148,7 @@
     <ClInclude Include="objects\ObjectRocket.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
     <ClInclude Include="objects\o_sky_cannon_s.h" />
+    <ClInclude Include="objects\o_sky_ocm.h" />
     <ClInclude Include="objects\SnowBoard.h" />
     <ClInclude Include="objects\sonic.h" />
     <ClInclude Include="packet.h" />
@@ -298,6 +299,7 @@
     <ClCompile Include="objects\o_sky_crane.cpp" />
     <ClCompile Include="objects\o_sky_cyl_cmn.cpp" />
     <ClCompile Include="objects\o_sky_elevator.cpp" />
+    <ClCompile Include="objects\o_sky_ocm.cpp" />
     <ClCompile Include="objects\o_sky_sinkrane.cpp" />
     <ClCompile Include="objects\o_windy_broobj.cpp" />
     <ClCompile Include="objects\o_windy_poline.cpp" />

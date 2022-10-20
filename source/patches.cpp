@@ -20,6 +20,7 @@
 #include "objects/e_gachapon.h"
 #include "objects/ladder.h"
 #include "objects/ObjCylinderCmn.h"
+#include "objects/o_sky_ocm.h"
 
 #include "objects/sonic.h"
 #include "objects//miles.h"
@@ -746,6 +747,7 @@ void InitPatches()
 	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
 	WriteData((uint8_t*)0x4BB3BE, (uint8_t)PLAYER_MAX); // Fix regular path detection for 3+ players
 	WriteData((uint8_t*)0x5F188D, (uint8_t)PLAYER_MAX); // Fix regular path variant detection for 3+ players
+	WriteData((uint8_t*)0x500017, (uint8_t)PLAYER_MAX); // Patch launch ramp EC for 8 players
 
 	// Score patches
 	EnemyCheckDamage_t.Hook(EnemyCheckDamage_r);
@@ -826,14 +828,12 @@ void InitPatches()
 	initLadderPatches();
 	initSDIntroPatches();
 	init_SDCylinderPatches();
+	PatchSkyDeckOCM();
 	initSonicPatch();
 	initMilesPatches();
 	Init_KnuxPatches();
 	Init_AmyPatches();
 	Init_BigPatches();
 	initGammaPatch();
-
 	PatchRocket();
-
-	WriteData<1>((int*)0x500017, 8); //patch launch ramp EC for 8 players
 }
