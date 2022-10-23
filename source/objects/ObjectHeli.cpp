@@ -289,7 +289,7 @@ static void ObjectHeli_Hover(task* tp, taskwk* twp)
 			}
 
 			twp->btimer = TASKWK_PLAYERID(ptwp);
-			SetInputP(twp->id, PL_OP_PLACEWITHHUNG);
+			SetInputP(twp->btimer, PL_OP_PLACEWITHHUNG);
 			twp->mode = MD_HELI_MOVE;
 			twp->flag &= ~0x2000;
 		}
