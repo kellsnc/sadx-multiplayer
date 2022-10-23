@@ -47,7 +47,7 @@ static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 	twp->ang.x = next_pt->slangx;
 	twp->scl.z += 1.0f;
 
-	double x, z;
+	Float x, z;
 	if (onpathpos + 2.0f < parent_twp->scl.z)
 	{
 		x = next_pt[2].xpos - next_pt->xpos;
@@ -149,17 +149,17 @@ static void __cdecl ObjectRuinSnake_r(task* tp)
 
 		if (suimen_ypos != 0.0f)
 		{
-			auto v3 = suimen_ypos - (twp->scl.x + twp->pos.y);
-			if (v3 <= 10.0f)
+			auto height = suimen_ypos - (twp->scl.x + twp->pos.y);
+			if (height <= 10.0f)
 			{
-				if (v3 >= -10.0f)
+				if (height >= -10.0f)
 				{
 					up_up_speed = 0.0f;
 				}
 				else
 				{
 					up_up_speed = -0.8f;
-					twp->pos.y -= up_up_speed;
+					twp->pos.y += up_up_speed;
 				}
 			}
 			else
