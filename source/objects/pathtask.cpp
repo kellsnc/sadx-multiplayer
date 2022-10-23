@@ -8,10 +8,14 @@
 static void __cdecl PathworkCamera_r(task* tp);
 static void __cdecl PathworkSeeingPath_r(task* tp);
 static void __cdecl PathworkSeeingPath_Sky_r(task* tp);
+static void __cdecl PathworkLaddering_r(task* tp);
+static void __cdecl PathworkGoWithHangingDownFromBars_r(task* tp);
 
 TaskHook PathworkCamera_h(0x4BBB90, PathworkCamera_r);
 TaskHook PathworkSeeingPath_h(0x4BB1F0, PathworkSeeingPath_r);
 TaskHook PathworkSeeingPath_Sky_h(0x5F16C0, PathworkSeeingPath_Sky_r);
+TaskHook PathworkLaddering_h(0x4BB830, PathworkLaddering_r);
+TaskHook PathworkGoWithHangingDownFromBars_h(0x4BB520, PathworkGoWithHangingDownFromBars_r);
 
 // Fix PathworkCamera, a path task only used for Red Mountain
 
@@ -360,5 +364,180 @@ static void __cdecl PathworkSeeingPath_Sky_r(task* tp)
 	else
 	{
 		PathworkSeeingPath_Sky_h.Original(tp);
+	}
+}
+
+static void __cdecl PathworkLaddering_m(task* tp)
+{
+	auto twp = tp->twp;
+	auto path = (pathtag*)twp->value.ptr;
+
+	// Originally a switch but who cares
+	if (twp->mode == 1)
+	{
+		if (GetStageNumber() != twp->timer.w[0])
+		{
+			FreeTask(tp);
+			return;
+		}
+
+		for (int pnum = 0; pnum < PLAYER_MAX; ++pnum)
+		{
+			auto ptwp = playertwp[pnum];
+
+			if (!ptwp)
+				continue;
+
+			auto mask = (1 << pnum);
+
+			if (twp->btimer & mask)
+			{
+				if (!(ptwp->flag & Status_OnPath))
+				{
+					twp->counter.b[pnum] = 0;
+					twp->btimer &= ~mask;
+				}
+			}
+			else
+			{
+				if (++twp->counter.b[pnum] < 60)
+				{
+					continue;
+				}
+
+				twp->counter.b[pnum] = 60;
+
+				if (CheckPathBounds(&ptwp->pos, &twp->pos, &twp->scl, 0.0f))
+				{
+					for (int i = 0; i < path->points; ++i)
+					{
+						auto pt = &path->tblhead[i];
+						NJS_POINT3 pos = { pt->xpos, pt->ypos, pt->zpos };
+						njSubVector(&pos, &ptwp->pos);
+						if (njScalor(&pos) < (TASKWK_CHARID(ptwp) == Characters_Big ? 10.0f : 5.0f))
+						{
+							LadderingPathP(pnum, path, i, &twp->ang);
+							twp->btimer |= mask;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+	}
+	else if (twp->mode == 0)
+	{
+		twp->btimer = 0;
+		twp->counter.b[0] = 60;
+		twp->counter.b[1] = 60;
+		twp->counter.b[2] = 60;
+		twp->counter.b[3] = 60;
+		CalcPathBounds(path, &twp->pos, &twp->scl, 10.0f /*5.0f*/);
+
+		//if (GetPlayerNumber() == Characters_Big)
+		//{
+		//	twp->scl.x += 5.0f;
+		//	twp->scl.z += 5.0f;
+		//	twp->pos.x -= 5.0f;
+		//	twp->pos.x += 5.0f;
+		//}
+
+		twp->mode = 1;
+	}
+}
+
+static void __cdecl PathworkLaddering_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		PathworkLaddering_m(tp);
+	}
+	else
+	{
+		PathworkLaddering_h.Original(tp);
+	}
+}
+
+static void __cdecl PathworkGoWithHangingDownFromBars_m(task* tp)
+{
+	auto twp = tp->twp;
+	auto path = (pathtag*)twp->value.ptr;
+
+	// Originally a switch but who cares
+	if (twp->mode == 1)
+	{
+		if (GetStageNumber() != twp->timer.w[0])
+		{
+			FreeTask(tp);
+			return;
+		}
+
+		for (int pnum = 0; pnum < PLAYER_MAX; ++pnum)
+		{
+			auto ptwp = playertwp[pnum];
+
+			if (!ptwp)
+				continue;
+
+			auto mask = (1 << pnum);
+
+			if (twp->btimer & mask)
+			{
+				if (!(ptwp->flag & Status_OnPath))
+				{
+					twp->counter.b[pnum] = 0;
+					twp->btimer &= ~mask;
+				}
+			}
+			else
+			{
+				if (++twp->counter.b[pnum] < 30)
+				{
+					continue;
+				}
+
+				twp->counter.b[pnum] = 30;
+
+				if (CheckPathBounds(&ptwp->pos, &twp->pos, &twp->scl, 0.0f))
+				{
+					for (int i = 0; i < path->points; ++i)
+					{
+						auto pt = &path->tblhead[i];
+						NJS_POINT3 pos = { pt->xpos, pt->ypos, pt->zpos };
+						njSubVector(&pos, &ptwp->pos);
+						if (njScalor(&pos) < 10.0f)
+						{
+							HangDownFromPathP(pnum, path, i);
+							twp->btimer |= mask;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+	}
+	else if (twp->mode == 0)
+	{
+		twp->btimer = 0;
+		twp->counter.b[0] = 30;
+		twp->counter.b[1] = 30;
+		twp->counter.b[2] = 30;
+		twp->counter.b[3] = 30;
+		CalcPathBounds(path, &twp->pos, &twp->scl, 10.0f);
+		twp->mode = 1;
+	}
+}
+
+static void __cdecl PathworkGoWithHangingDownFromBars_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		PathworkGoWithHangingDownFromBars_m(tp);
+	}
+	else
+	{
+		PathworkGoWithHangingDownFromBars_h.Original(tp);
 	}
 }
