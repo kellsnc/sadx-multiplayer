@@ -3,6 +3,7 @@
 #include "Trampoline.h"
 #include "VariableHook.hpp"
 #include "multiplayer.h"
+#include "splitscreen.h"
 #include "camera.h"
 #include "fog.h"
 
@@ -300,14 +301,16 @@ static void __cdecl ObjectRuinMirror_r(task* tp)
 #pragma endregion
 
 #pragma region ObjectRuinBigMirror
-static void HitMirror_m(taskwk* twp, ruinfogwk* wk)
+static void HitMirror_m(taskwk* twp, ruinfogwk* wk, int pnum)
 {
 	const NJS_POINT3 pos = { twp->pos.x, twp->pos.y + 12.0f, twp->pos.z };
 	NJS_POINT2 p2;
-
 	njProjectScreen(0, &pos, &p2);
-	float dist = sqrtf((HorizontalStretch * 340.0f - p2.x) * (HorizontalStretch * 340.0f - p2.x)
-		+ (VerticalStretch * 240.0f - p2.y) * (VerticalStretch * 240.0f - p2.y));
+
+	auto ratio = SplitScreen::GetScreenRatio(pnum);
+	float w = HorizontalStretch * ratio->w * 340.0f;
+	float h = VerticalStretch * ratio->h * 240.0f;
+	float dist = sqrtf((w - p2.x) * (w - p2.x) + (h - p2.y) * (h - p2.y));
 
 	if (dist < 40.0f)
 	{
@@ -325,15 +328,13 @@ static void __cdecl BigMirrorDraw_r(task* tp)
 	{
 		auto twp = tp->twp;
 
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			auto ptwp = playertwp[i];
-			auto wk = &ruinfogwp[i];
+		auto pnum = SplitScreen::GetCurrentScreenNum();
+		auto ptwp = playertwp[pnum];
+		auto wk = &ruinfogwp[pnum];
 
-			if (wk->ruin_m_flag == 1 && wk->name_flag == (int)twp->scl.y)
-			{
-				HitMirror_m(twp, wk);
-			}
+		if (ptwp && wk->ruin_m_flag == 1 && wk->name_flag == (int)twp->scl.y)
+		{
+			HitMirror_m(twp, wk, pnum);
 		}
 	}
 

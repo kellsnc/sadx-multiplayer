@@ -745,8 +745,6 @@ void InitPatches()
 	// Misc
 	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
 	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
-	WriteData((uint8_t*)0x4BB3BE, (uint8_t)PLAYER_MAX); // Fix regular path detection for 3+ players
-	WriteData((uint8_t*)0x5F188D, (uint8_t)PLAYER_MAX); // Fix regular path variant detection for 3+ players
 	WriteData((uint8_t*)0x500017, (uint8_t)PLAYER_MAX); // Patch launch ramp EC for 8 players
 
 	// Score patches
