@@ -5,9 +5,64 @@
 #include "camera.h"
 #include "camerafunc.h"
 
+static void __cdecl PathworkCamera_r(task* tp);
+static void __cdecl PathworkSeeingPath_r(task* tp);
+static void __cdecl PathworkSeeingPath_Sky_r(task* tp);
+
+TaskHook PathworkCamera_h(0x4BBB90, PathworkCamera_r);
+TaskHook PathworkSeeingPath_h(0x4BB1F0, PathworkSeeingPath_r);
+TaskHook PathworkSeeingPath_Sky_h(0x5F16C0, PathworkSeeingPath_Sky_r);
+
 // Fix PathworkCamera, a path task only used for Red Mountain
 
 PATHCAMERA1WORK pathcamera1playersworks[PLAYER_MAX] = {};
+
+/*
+ * Guessed inlined function
+ * Gets a box boundary that contains the entire path
+ */
+static void CalcPathBounds(pathtag* path, NJS_POINT3* pMin, NJS_POINT3* pMax, Float margin)
+{
+	pMin->x = pMax->x = path->tblhead[0].xpos;
+	pMin->y = pMax->y = path->tblhead[0].ypos;
+	pMin->z = pMax->z = path->tblhead[0].zpos;
+
+	for (int i = 0; i < path->points; ++i)
+	{
+		auto p = &path->tblhead[i];
+
+		if (p->xpos > pMax->x)
+			pMax->x = p->xpos;
+		if (p->ypos > pMax->y)
+			pMax->y = p->ypos;
+		if (p->zpos > pMax->z)
+			pMax->z = p->zpos;
+
+		if (p->xpos < pMin->x)
+			pMin->x = p->xpos;
+		if (p->ypos < pMin->y)
+			pMin->y = p->ypos;
+		if (p->zpos < pMin->z)
+			pMin->z = p->zpos;
+	}
+
+	pMax->x += margin;
+	pMax->y += margin;
+	pMax->z += margin;
+	pMin->x -= margin;
+	pMin->y -= margin;
+	pMin->z -= margin;
+}
+
+/*
+ * Guessed inlined function
+ * Check if position is in box boundary
+ */
+static bool CheckPathBounds(NJS_POINT3* pPos, NJS_POINT3* pMin, NJS_POINT3* pMax, Float radius)
+{
+	return (pMax->x + radius) >= pPos->x && (pMax->y + radius) >= pPos->y && (pMax->z + radius) >= pPos->z
+		&& (pMin->x - radius) <= pPos->x && (pMin->y - radius) <= pPos->y && (pMin->z - radius) <= pPos->z;
+}
 
 static void PathworkCamera_m(task* tp)
 {
@@ -40,12 +95,7 @@ static void PathworkCamera_m(task* tp)
 			}
 
 			// Inlined function that checks if in bounding box
-			if (twp->scl.x + 50.0f < ptwp->pos.x
-				|| twp->scl.y + 50.0f < ptwp->pos.y
-				|| twp->scl.z + 50.0f < ptwp->pos.z
-				|| twp->pos.x - 50.0f > ptwp->pos.x
-				|| twp->pos.y - 50.0f > ptwp->pos.y
-				|| twp->pos.z - 50.0f > ptwp->pos.z)
+			if (!CheckPathBounds(&ptwp->pos, &twp->pos, &twp->scl, 50.0f))
 			{
 				continue;
 			}
@@ -135,8 +185,6 @@ static void PathworkCamera_m(task* tp)
 	}
 }
 
-static void __cdecl PathworkCamera_r(task* tp);
-Trampoline PathworkCamera_t(0x4BBB90, 0x4BBB97, PathworkCamera_r);
 static void __cdecl PathworkCamera_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -145,6 +193,172 @@ static void __cdecl PathworkCamera_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(PathworkCamera)(tp);
+		PathworkCamera_h.Original(tp);
+	}
+}
+
+static void __cdecl PathworkSeeingPath_m(task* tp)
+{
+	auto twp = tp->twp;
+	auto path = (pathtag*)twp->value.ptr;
+
+	// Originally a switch but who cares
+	if (twp->mode == 1)
+	{
+		if (GetStageNumber() != twp->timer.w[0])
+		{
+			FreeTask(tp);
+			return;
+		}
+
+		for (int pnum = 0; pnum < PLAYER_MAX; ++pnum)
+		{
+			auto ptwp = playertwp[pnum];
+
+			if (!ptwp)
+				continue;
+
+			auto mask = (1 << pnum);
+
+			if (twp->btimer & mask)
+			{
+				if (!(ptwp->flag & Status_OnPath))
+				{
+					twp->counter.b[pnum] = 0;
+					twp->btimer &= ~mask;
+				}
+			}
+			else
+			{
+				if (++twp->counter.b[pnum] < 60)
+				{
+					continue;
+				}
+
+				twp->counter.b[pnum] = 60;
+
+				if (CheckPathBounds(&ptwp->pos, &twp->pos, &twp->scl, 0.0f))
+				{
+					for (int i = 0; i < path->points - 1; ++i)
+					{
+						auto pt = &path->tblhead[i];
+						NJS_POINT3 pos = { pt->xpos, pt->ypos, pt->zpos };
+						njSubVector(&pos, &ptwp->pos);
+						if (njScalor(&pos) < 40.0f)
+						{
+							RunWithSeeingPathP(pnum, path);
+							twp->btimer |= mask;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+	}
+	else if (twp->mode == 0)
+	{
+		twp->btimer = 0;
+		twp->counter.b[0] = 60;
+		twp->counter.b[1] = 60;
+		twp->counter.b[2] = 60;
+		twp->counter.b[3] = 60;
+		CalcPathBounds(path, &twp->pos, &twp->scl, 40.0f);
+		twp->mode = 1;
+	}
+}
+
+static void __cdecl PathworkSeeingPath_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		PathworkSeeingPath_m(tp);
+	}
+	else
+	{
+		PathworkSeeingPath_h.Original(tp);
+	}
+}
+
+static void __cdecl PathworkSeeingPath_Sky_m(task* tp)
+{
+	auto twp = tp->twp;
+	auto path = (pathtag*)twp->value.ptr;
+
+	// Originally a switch but who cares
+	if (twp->mode == 1)
+	{
+		if (GetStageNumber() != twp->timer.w[0])
+		{
+			FreeTask(tp);
+			return;
+		}
+
+		for (int pnum = 0; pnum < PLAYER_MAX; ++pnum)
+		{
+			auto ptwp = playertwp[pnum];
+
+			if (!ptwp)
+				continue;
+
+			auto mask = (1 << pnum);
+
+			if (twp->btimer & mask)
+			{
+				if (!(ptwp->flag & Status_OnPath))
+				{
+					twp->counter.b[pnum] = 0;
+					twp->btimer &= ~mask;
+				}
+			}
+			else
+			{
+				if (++twp->counter.b[pnum] < 60)
+				{
+					continue;
+				}
+
+				twp->counter.b[pnum] = 60;
+
+				if (CheckPathBounds(&ptwp->pos, &twp->pos, &twp->scl, 0.0f))
+				{
+					for (int i = 0; i < path->points - 1; ++i)
+					{
+						auto pt = &path->tblhead[i];
+						NJS_POINT3 pos = { pt->xpos, pt->ypos, pt->zpos };
+						njSubVector(&pos, &ptwp->pos);
+						if (njScalor(&pos) < 10.0f)
+						{
+							RunWithSeeingPathP(pnum, path);
+							twp->btimer |= mask;
+							break;
+						}
+					}
+				}
+			}
+		}
+
+	}
+	else if (twp->mode == 0)
+	{
+		twp->btimer = 0;
+		twp->counter.b[0] = 60;
+		twp->counter.b[1] = 60;
+		twp->counter.b[2] = 60;
+		twp->counter.b[3] = 60;
+		CalcPathBounds(path, &twp->pos, &twp->scl, 10.0f);
+		twp->mode = 1;
+	}
+}
+
+static void __cdecl PathworkSeeingPath_Sky_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		PathworkSeeingPath_Sky_m(tp);
+	}
+	else
+	{
+		PathworkSeeingPath_Sky_h.Original(tp);
 	}
 }
