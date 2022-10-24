@@ -1915,6 +1915,7 @@ void __cdecl Camera_r(task* tp)
 
 	if (twp->mode == 0)      /* First init pass */
 	{
+		InitFreeCamera(); /* <- The call is inlined in SetCameraTask so the patch did not apply */
 		oldTaskWork = {};
 		camera_twp = twp;
 		twp->mode = 1;
