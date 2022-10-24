@@ -511,6 +511,9 @@
     <ClCompile Include="objects\o_sky_ocm.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_beach_yurehasi.cpp">
+      <Filter>Header FIles\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
