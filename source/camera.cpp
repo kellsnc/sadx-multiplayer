@@ -917,7 +917,7 @@ bool freecameramode_m(int pnum)
 	}
 
 	/* Check if free camera can proceed (enabled, authorized, not on a path, etc.) */
-	if (!(fcmode & MODE_ENABLED) /*|| !(fcmode & MODE_AUTHORIZED)*/ || (playertwp[pnum]->flag & Status_OnPath)
+	if (!(fcmode & MODE_ENABLED) || !(fcmode & MODE_AUTHORIZED) || (playertwp[pnum]->flag & Status_OnPath)
 		|| system.G_scCameraMode == CAMMD_PATHCAM || system.G_scCameraMode == -1
 		/*|| checkfreecameraarea(0)*/ || (fcmode & MODE_TIMER) != 0)
 	{
