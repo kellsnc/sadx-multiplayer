@@ -838,6 +838,136 @@ void InitCameraParam_m(int pnum)
 	eventReleaseTimer_m[pnum] = 0;
 }
 
+Bool checkfreecameraarea_m(Sint32 sw, int pnum)
+{
+	int count = 0;
+	freeboxdat* data = nullptr;
+
+	if (!sw)
+	{
+		switch (GetStageNumber())
+		{
+		case 0x1A04:
+			count = 2;
+			data = fbd6660;
+			break;
+		case 0x1D05:
+			count = 1;
+			data = fbd7429;
+			break;
+		case 0x2100:
+			count = 1;
+			data = fbd8448;
+			break;
+		case 0x1A03:
+			count = 4;
+			data = fbd6659;
+			break;
+		case 0x1A02:
+			count = 1;
+			data = fbd6658;
+			break;
+		case 0x1A01:
+			count = 3;
+			data = fbd6657;
+			break;
+		case 0xC01:
+			count = 1;
+			data = fbd3073;
+			break;
+		case 0x1A00:
+			count = 6;
+			data = fbd6656;
+			break;
+		case 0xA01:
+			count = 1;
+			data = fbd2561;
+			break;
+		case 0x600:
+			count = 2;
+			data = fbd1536;
+			break;
+		case 0x701:
+			count = 4;
+			data = fbd1793;
+			break;
+		case 0xA00:
+			count = 4;
+			data = fbd2560;
+			break;
+		case 0x501:
+			count = 1;
+			data = fbd1281;
+			break;
+		case 0x402:
+			count = 3;
+			data = fbd1026;
+			break;
+		case 0x301:
+			count = 2;
+			data = fbd0769;
+			break;
+		case 0x101:
+			count = 1;
+			data = fbd0257;
+			break;
+		case 0x202:
+			count = 1;
+			data = fbd0514;
+			break;
+		}
+	}
+
+	if (count <= 0)
+	{
+		return FALSE;
+	}
+
+	taskwk* ptwp = playertwp[pnum];
+
+	for (Int i = 0; i < count; ++i)
+	{
+		freeboxdat* current = &data[i];
+		NJS_POINT3 p0 = current->p0;
+		NJS_POINT3 p1 = current->p1;
+
+		if (p0.x > current->p1.x)
+		{
+			p0.x = current->p1.x;
+			p1.x = current->p0.x;
+		}
+
+		if (p0.y > current->p1.y)
+		{
+			p0.y = current->p1.y;
+			p1.y = current->p0.y;
+		}
+
+		if (p0.z > current->p1.z)
+		{
+			p0.z = current->p1.z;
+			p1.z = current->p0.z;
+		}
+
+		NJS_POINT3 dist;
+		dist.x = p1.x - p0.x;
+		dist.y = p1.y - p0.y;
+		dist.z = p1.z - p0.z;
+
+		NJS_POINT3 pos;
+		pos.x = ptwp->pos.x - p0.x;
+		pos.y = ptwp->pos.y - p0.y;
+		pos.z = ptwp->pos.z - p0.z;
+
+		if (pos.x >= 0.0f && pos.y >= 0.0f && pos.z >= 0.0f && pos.x <= dist.x && pos.y <= dist.y && pos.z <= dist.z)
+		{
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 void setdistdata_m(int pnum)
 {
 	auto& fcwp = fcwrk_m[pnum];
@@ -919,7 +1049,7 @@ bool freecameramode_m(int pnum)
 	/* Check if free camera can proceed (enabled, authorized, not on a path, etc.) */
 	if (!(fcmode & MODE_ENABLED) || !(fcmode & MODE_AUTHORIZED) || (playertwp[pnum]->flag & Status_OnPath)
 		|| system.G_scCameraMode == CAMMD_PATHCAM || system.G_scCameraMode == -1
-		/*|| checkfreecameraarea(0)*/ || (fcmode & MODE_TIMER) != 0)
+		|| checkfreecameraarea_m(0, pnum) || (fcmode & MODE_TIMER) != 0)
 	{
 		return false;
 	}

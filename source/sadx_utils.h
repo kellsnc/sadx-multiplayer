@@ -317,6 +317,12 @@ struct colaround
 	float dist;
 };
 
+struct freeboxdat
+{
+	NJS_POINT3 p0;
+	NJS_POINT3 p1;
+};
+
 DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -530,6 +536,23 @@ FunctionPointer(Float, orGetWaveHeight, (Float pos_x, Float pos_z), 0x4F8A00);
 DataArray(Float, hasi_a_posy, 0x3C5E7F4, 2);
 DataArray(Float, hasi_b_posy, 0x3C5E790, 25);
 DataArray(Float, hasi_b_angz, 0x3C5E800, 25);
+DataArray(freeboxdat, fbd6660, 0x9150AC, 2);
+DataArray(freeboxdat, fbd7429, 0x9150DC, 1);
+DataArray(freeboxdat, fbd8448, 0x9150F4, 1);
+DataArray(freeboxdat, fbd6659, 0x915110, 4);
+DataArray(freeboxdat, fbd6658, 0x915170, 1);
+DataArray(freeboxdat, fbd6657, 0x915188, 3);
+DataArray(freeboxdat, fbd3073, 0x9151D0, 1);
+DataArray(freeboxdat, fbd6656, 0x9151E8, 6);
+DataArray(freeboxdat, fbd2561, 0x915278, 1);
+DataArray(freeboxdat, fbd1536, 0x915290, 2);
+DataArray(freeboxdat, fbd1793, 0x9152C0, 4);
+DataArray(freeboxdat, fbd2560, 0x915320, 4);
+DataArray(freeboxdat, fbd1281, 0x915380, 1);
+DataArray(freeboxdat, fbd1026, 0x915398, 3);
+DataArray(freeboxdat, fbd0769, 0x9153E0, 2);
+DataArray(freeboxdat, fbd0257, 0x915410, 1);
+DataArray(freeboxdat, fbd0514, 0x915428, 1);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
