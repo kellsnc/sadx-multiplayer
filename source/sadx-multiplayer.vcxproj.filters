@@ -40,9 +40,6 @@
     <ClCompile Include="patches.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectBeachWave.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -53,12 +50,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="objects\ObjectItemBox.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjectTPCoaster.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjectBeachOruka.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="testspawn.cpp">
@@ -82,85 +73,22 @@
     <ClCompile Include="hud_result.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectHeli.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectCrane.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjectHighwayTurnasi.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\Rd_Highway.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjectWindyTorout.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\ObjectKaosEme.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\Rd_Snow.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectJumpPanel.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\SnowBoard.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\ObjectFrog.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectFinalEggTarget.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjectFinalEggUptarget.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\dispE102Laser.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\EnemyWindyE103.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\EnemyWindyTgtMissile.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\EnemyMountainE104.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\EnemyMountainTgtMissile.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjShelterElevator.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\EnemyHotE105.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\EnemyHotTgtMissile.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjShelterBridge.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjShelterCrane.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjShelterCargostart.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\RdHotShelter.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjShelterKaitendai.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ef_spark.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjectTPCatapult.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\ObjectExplosionRock.cpp">
@@ -178,20 +106,11 @@
     <ClCompile Include="hud_emerald.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectSkyLever.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectTogedai.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="milesrace.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjectMountainAsiba.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\PathKassha.cpp">
-      <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="fishing.cpp">
       <Filter>Source Files</Filter>
@@ -205,65 +124,17 @@
     <ClCompile Include="objects\BigKaeru.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectIcecapFuta.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjShelterSen.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\Eggrob.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_twinkle_door.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\ObjectBaloon.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectFinalEggElevator.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjectFinalEggRainbowDoor.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjShelterKaitenKey.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\mirror.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ObjShelterUkijima.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_shelter_gate1.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_shelter_kaitenashiba.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_shelter_haguruma.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_hebigate.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_ruin_snake.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="forcewk.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_shelter_cargo.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_shelter_cargotop.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_shelter_cargocontainer.cpp">
-      <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="hud_indicator.cpp">
       <Filter>Source Files\gui</Filter>
@@ -275,24 +146,6 @@
       <Filter>Source Files\gui</Filter>
     </ClCompile>
     <ClCompile Include="objects\ef_barrier.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_ruin_swdoor_x.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_ruin_mirror.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_suimen.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_water.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_rockroll.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_ruin_reverse.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="gravity.cpp">
@@ -307,82 +160,10 @@
     <ClCompile Include="objects\E102.cpp">
       <Filter>Source Files\objects\figure</Filter>
     </ClCompile>
-    <ClCompile Include="objects\o_ruin_tatearuki.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="fog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="objects\o_cart_stopper.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\e_cart.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_twinkle_shutter.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_casino_fanfan.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_casino_hasigo.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_twinkle_go_round.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_connect.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_talap0.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_cannon_h2.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_wing.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\rd_skydeck.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_sinkrane.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\e_aircraft.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ef_sky_scope.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_elevator.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_crane.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_conveyorbelt.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_spintube_small.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_spintube_medium.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_spintube_big.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_ukishima.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_elevator2.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_hallgate.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_fun.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="input.cpp">
@@ -403,16 +184,7 @@
     <ClCompile Include="camerafunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="objects\o_windy_broobj.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_windy_torin.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\colli_space.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\e_pondskater.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="event.cpp">
@@ -427,55 +199,16 @@
     <ClCompile Include="objects\boss-common.cpp">
       <Filter>Source Files\objects\bosses</Filter>
     </ClCompile>
-    <ClCompile Include="objects\e_robo.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\e_sai.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\egg-walker.cpp">
       <Filter>Source Files\objects\bosses</Filter>
     </ClCompile>
-    <ClCompile Include="objects\o_icecap_icicle.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_windy_poline.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\e_gachapon.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_mountain_yougan.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\pathtask.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_beach_pathcam.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_hw_pathcam.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_ruin_pathcam.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_casino_pathcam.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_finalegg_pathcam.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\rd_sandboard.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\o_casino_kowaresoniczo.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ladder.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_cannon_s.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="objects\ObjectRocket.cpp">
@@ -484,14 +217,8 @@
     <ClCompile Include="objects\AmyRose.cpp">
       <Filter>Source Files\objects\figure</Filter>
     </ClCompile>
-    <ClCompile Include="objects\o_sky_cannon_cmn.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\knuckles.cpp">
       <Filter>Source Files\objects\figure</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_cyl_cmn.cpp">
-      <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="menu_adventure.cpp">
       <Filter>Source Files\gui</Filter>
@@ -499,20 +226,293 @@
     <ClCompile Include="collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="objects\o_casino_hosin.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\miles.cpp">
       <Filter>Source Files\objects\figure</Filter>
     </ClCompile>
-    <ClCompile Include="objects\o_Mountain_MagmaCnt.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\o_sky_ocm.cpp">
-      <Filter>Source Files\objects</Filter>
+    <ClCompile Include="objects\o_beach_pathcam.cpp">
+      <Filter>Source Files\objects\stg01_beach</Filter>
     </ClCompile>
     <ClCompile Include="objects\o_beach_yurehasi.cpp">
-      <Filter>Header FIles\objects</Filter>
+      <Filter>Source Files\objects\stg01_beach</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectBeachOruka.cpp">
+      <Filter>Source Files\objects\stg01_beach</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectBeachWave.cpp">
+      <Filter>Source Files\objects\stg01_beach</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_windy_broobj.cpp">
+      <Filter>Source Files\objects\stg02_windy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_windy_poline.cpp">
+      <Filter>Source Files\objects\stg02_windy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_windy_torin.cpp">
+      <Filter>Source Files\objects\stg02_windy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_twinkle_door.cpp">
+      <Filter>Source Files\objects\stg03_twinkle</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_twinkle_shutter.cpp">
+      <Filter>Source Files\objects\stg03_twinkle</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_twinkle_go_round.cpp">
+      <Filter>Source Files\objects\stg03_twinkle</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_hw_pathcam.cpp">
+      <Filter>Source Files\objects\stg04_highway</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectHeli.cpp">
+      <Filter>Source Files\objects\stg04_highway</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectHighwayTurnasi.cpp">
+      <Filter>Source Files\objects\stg04_highway</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectWindyTorout.cpp">
+      <Filter>Source Files\objects\stg02_windy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectMountainAsiba.cpp">
+      <Filter>Source Files\objects\stg05_mountain</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_mountain_yougan.cpp">
+      <Filter>Source Files\objects\stg05_mountain</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_Mountain_MagmaCnt.cpp">
+      <Filter>Source Files\objects\stg05_mountain</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_cannon_cmn.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_cannon_h2.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_cannon_s.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_connect.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_crane.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_cyl_cmn.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_elevator.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_ocm.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_sinkrane.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_talap0.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_sky_wing.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_ruin_mirror.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_ruin_pathcam.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_ruin_reverse.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_ruin_snake.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_ruin_swdoor_x.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_ruin_tatearuki.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_rockroll.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\Rd_Snow.cpp">
+      <Filter>Source Files\objects\stg08_icecap</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectIcecapFuta.cpp">
+      <Filter>Source Files\objects\stg08_icecap</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_casino_fanfan.cpp">
+      <Filter>Source Files\objects\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_casino_hasigo.cpp">
+      <Filter>Source Files\objects\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_casino_hosin.cpp">
+      <Filter>Source Files\objects\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_casino_kowaresoniczo.cpp">
+      <Filter>Source Files\objects\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_casino_pathcam.cpp">
+      <Filter>Source Files\objects\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_conveyorbelt.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_elevator2.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_fun.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_hallgate.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_pathcam.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_spintube_big.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_spintube_medium.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_spintube_small.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_finalegg_ukishima.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectFinalEggElevator.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectFinalEggRainbowDoor.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectFinalEggTarget.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectFinalEggUptarget.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\rd_skydeck.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\Rd_Highway.cpp">
+      <Filter>Source Files\objects\stg04_highway</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_shelter_cargo.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_shelter_cargocontainer.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_shelter_cargotop.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_shelter_gate1.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_shelter_haguruma.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_shelter_kaitenashiba.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjShelterCrane.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjShelterCargostart.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjShelterBridge.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjShelterKaitendai.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjShelterElevator.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjShelterKaitenKey.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjShelterSen.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjShelterUkijima.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\RdHotShelter.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyMountainTgtMissile.cpp">
+      <Filter>Source Files\objects\stg05_mountain</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyMountainE104.cpp">
+      <Filter>Source Files\objects\stg05_mountain</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyHotTgtMissile.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyHotE105.cpp">
+      <Filter>Source Files\objects\stg12_hotshelter</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyWindyTgtMissile.cpp">
+      <Filter>Source Files\objects\stg02_windy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\EnemyWindyE103.cpp">
+      <Filter>Source Files\objects\stg02_windy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_cart.cpp">
+      <Filter>Source Files\objects\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_gachapon.cpp">
+      <Filter>Source Files\objects\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_pondskater.cpp">
+      <Filter>Source Files\objects\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_robo.cpp">
+      <Filter>Source Files\objects\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_sai.cpp">
+      <Filter>Source Files\objects\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\e_aircraft.cpp">
+      <Filter>Source Files\objects\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\PathKassha.cpp">
+      <Filter>Source Files\objects\stg05_mountain</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectTPCoaster.cpp">
+      <Filter>Source Files\objects\stg03_twinkle</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectTPCatapult.cpp">
+      <Filter>Source Files\objects\stg03_twinkle</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp">
+      <Filter>Source Files\objects\stg10_finalegg</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ef_sky_scope.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_icecap_icicle.cpp">
+      <Filter>Source Files\objects\stg08_icecap</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_hebigate.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_suimen.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\o_water.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectSkyLever.cpp">
+      <Filter>Source Files\objects\stg06_skydeck</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\SnowBoard.cpp">
+      <Filter>Source Files\objects\stg08_icecap</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -591,18 +591,6 @@
     <ClInclude Include="hud_result.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
-    <ClInclude Include="objects\SnowBoard.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\EnemyWindyE103.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\EnemyMountainE104.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\EnemyHotE105.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
     <ClInclude Include="objects\ef_spark.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
@@ -624,12 +612,6 @@
     <ClInclude Include="objects\BigKaeru.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
-    <ClInclude Include="objects\ObjShelterKaitenKey.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\mirror.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
     <ClInclude Include="forcewk.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
@@ -647,9 +629,6 @@
     </ClInclude>
     <ClInclude Include="fog.h">
       <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\e_cart.h">
-      <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="input.h">
       <Filter>Header FIles</Filter>
@@ -669,16 +648,10 @@
     <ClInclude Include="camerafunc.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="objects\e_pondskater.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
     <ClInclude Include="VariableHook.hpp">
       <Filter>Header FIles\classes</Filter>
     </ClInclude>
     <ClInclude Include="objects\bosses.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\e_gachapon.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="GameText.hpp">
@@ -688,9 +661,6 @@
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="objects\ObjectRocket.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\ObjCylinderCmn.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
     <ClInclude Include="menu_adventure.h">
@@ -720,11 +690,41 @@
     <ClInclude Include="objects\miles.h">
       <Filter>Header FIles\objects\figure</Filter>
     </ClInclude>
+    <ClInclude Include="objects\e_cart.h">
+      <Filter>Header FIles\objects\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\e_gachapon.h">
+      <Filter>Header FIles\objects\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\e_pondskater.h">
+      <Filter>Header FIles\objects\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\EnemyHotE105.h">
+      <Filter>Header FIles\objects\stg12_hotshelter</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\EnemyMountainE104.h">
+      <Filter>Header FIles\objects\stg05_mountain</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\EnemyWindyE103.h">
+      <Filter>Header FIles\objects\stg02_windy</Filter>
+    </ClInclude>
     <ClInclude Include="objects\o_sky_cannon_s.h">
-      <Filter>Header FIles\objects</Filter>
+      <Filter>Header FIles\objects\stg06_skydeck</Filter>
     </ClInclude>
     <ClInclude Include="objects\o_sky_ocm.h">
-      <Filter>Header FIles\objects</Filter>
+      <Filter>Header FIles\objects\stg06_skydeck</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\ObjCylinderCmn.h">
+      <Filter>Header FIles\objects\stg06_skydeck</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\ObjShelterKaitenKey.h">
+      <Filter>Header FIles\objects\stg12_hotshelter</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\SnowBoard.h">
+      <Filter>Header FIles\objects\stg08_icecap</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\mirror.h">
+      <Filter>Header FIles\objects\stg03_twinkle</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -766,6 +766,63 @@
     </Filter>
     <Filter Include="Header FIles\objects\figure">
       <UniqueIdentifier>{8c180e99-72c3-4944-be96-09e009ff6f0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg01_beach">
+      <UniqueIdentifier>{fa93a4ab-6d25-4187-8219-c4b8a16950c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg02_windy">
+      <UniqueIdentifier>{785b7423-e251-42f3-be33-2aa0ecd8dc80}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg03_twinkle">
+      <UniqueIdentifier>{50eb0df9-6a5c-4494-9fc4-b7926ee8ac1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg04_highway">
+      <UniqueIdentifier>{213d5d93-e5a0-440b-8ced-54a22c57512a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg05_mountain">
+      <UniqueIdentifier>{55f8f0a8-91ea-410b-bad6-2273d72b29e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg06_skydeck">
+      <UniqueIdentifier>{c36bc248-2394-411b-89a3-325bf0d30c16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg07_ruin">
+      <UniqueIdentifier>{e27f5109-41c4-49ae-a317-12176de7b244}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg08_icecap">
+      <UniqueIdentifier>{13846364-408d-4384-9acb-665387784b33}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg09_casino">
+      <UniqueIdentifier>{639de8cb-0a52-418b-8459-821e02fb1c47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg10_finalegg">
+      <UniqueIdentifier>{8ec3b469-24cf-4081-a0ee-8644c9279df2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\stg12_hotshelter">
+      <UniqueIdentifier>{3fb45c08-d3db-4376-83e0-9aac412d0e58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\enemy">
+      <UniqueIdentifier>{711f2f4d-0024-4a9b-aa32-634b16c23a18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\enemy">
+      <UniqueIdentifier>{81c5c565-ce1e-4972-955b-3c35d5358c64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg12_hotshelter">
+      <UniqueIdentifier>{bec4c527-f67c-41b7-a105-db0f91068ed4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg05_mountain">
+      <UniqueIdentifier>{8c0d83ae-3c68-4ee9-8e34-24392f4d84a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg02_windy">
+      <UniqueIdentifier>{2392a3ca-2fed-4f34-860c-dafadd36aee0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg06_skydeck">
+      <UniqueIdentifier>{97885f92-1a5f-4994-97dd-6079a3b042b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg03_twinkle">
+      <UniqueIdentifier>{f25cd30a-3099-4f95-bda7-44e94b9dc0b6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg08_icecap">
+      <UniqueIdentifier>{b753b058-ec18-47e3-a0bb-fee83cb59d3e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
