@@ -887,7 +887,7 @@ void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 	}
 	else
 	{
-		TARGET_STATIC(CartGetOffPlayer)(tp);
+		return TARGET_STATIC(SetCartPos)(tp, pos, ang);
 	}
 }
 
