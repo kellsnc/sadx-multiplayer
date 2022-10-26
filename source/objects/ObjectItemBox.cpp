@@ -6,6 +6,7 @@
 
 Trampoline* ObjectItemboxNormal_t = nullptr;
 Trampoline* itembox_airCollisitonBefore_t = nullptr;
+TaskHook ItemBoxAir_t((intptr_t)ItemBoxAir_Main);
 
 static bool CheckHitByPlayerOrBullet(taskwk* twp)
 {
@@ -306,6 +307,40 @@ static void __declspec(naked) itembox_airCollisitonBefore_w()
 }
 #pragma endregion
 
+void __cdecl ItemBoxAir_Main_r(task* obj)
+{
+	if (multiplayer::IsActive())
+	{
+		auto data = obj->twp;
+
+		if (CurrentLevel == LevelIDs_TwinklePark && CurrentAct == 0)
+		{
+			if (data->mode >= 3 && data->scl.x != 6) //respawn airbox in TP if it isn't a life
+			{
+				if (++data->wtimer == 120)
+				{
+					data->mode = 0;
+					data->wtimer = 0;
+					return;
+				}
+			}
+		}
+
+	}
+
+	ItemBoxAir_t.Original(obj);
+}
+
+static void DeleteAirBox(task* obj)
+{
+	if (multiplayer::IsActive() && CurrentLevel == LevelIDs_TwinklePark && CurrentAct == 0)
+	{
+		return;
+	}
+
+	DeadOut(obj);
+}
+
 void InitItemBoxPatches()
 {
 	ObjectItemboxNormal_t = new Trampoline(0x4D6670, 0x4D6677, ObjectItemboxNormal_w);
@@ -319,4 +354,7 @@ void InitItemBoxPatches()
 	item_info[6].effect_func = ef_1up_r;
 	item_info[7].effect_func = ef_explosion_r;
 	item_info[8].effect_func = ef_th_baria_r;
+
+	WriteCall((void*)0x4C097C, DeleteAirBox);
+	ItemBoxAir_t.Hook(ItemBoxAir_Main_r);
 }
