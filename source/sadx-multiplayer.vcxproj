@@ -151,6 +151,7 @@
     <ClInclude Include="objects\o_sky_ocm.h" />
     <ClInclude Include="objects\SnowBoard.h" />
     <ClInclude Include="objects\sonic.h" />
+    <ClInclude Include="objects\Sw_Door.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="patches.h" />
     <ClInclude Include="pch.h" />
@@ -326,6 +327,7 @@
     <ClCompile Include="objects\sonic.cpp" />
     <ClCompile Include="objects\AmyRose.cpp" />
     <ClCompile Include="objects\o_sky_cannon_cmn.cpp" />
+    <ClCompile Include="o_ruinSwDoor_.cpp" />
     <ClCompile Include="packet.cpp" />
     <ClCompile Include="patches.cpp" />
     <ClCompile Include="pch.cpp">

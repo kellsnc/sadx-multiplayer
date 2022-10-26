@@ -29,6 +29,7 @@
 #include "objects/gamma.h"
 #include "objects/big.h"
 #include "objects/o_sky_cannon_s.h"
+#include "objects/Sw_Door.h"
 
 /*
 
@@ -827,6 +828,7 @@ void InitPatches()
 	initSDIntroPatches();
 	init_SDCylinderPatches();
 	PatchSkyDeckOCM();
+	init_SwDoorPatch();
 	initSonicPatch();
 	initMilesPatches();
 	Init_KnuxPatches();

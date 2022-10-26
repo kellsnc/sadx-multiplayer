@@ -514,6 +514,9 @@
     <ClCompile Include="objects\SnowBoard.cpp">
       <Filter>Source Files\objects\stg08_icecap</Filter>
     </ClCompile>
+    <ClCompile Include="o_ruinSwDoor_.cpp">
+      <Filter>Source Files\objects\stg07_ruin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -725,6 +728,9 @@
     </ClInclude>
     <ClInclude Include="objects\mirror.h">
       <Filter>Header FIles\objects\stg03_twinkle</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\Sw_Door.h">
+      <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
