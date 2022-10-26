@@ -35,8 +35,14 @@ void __cdecl execTPCoaster_r(task* tp)
 			SetRotationP(id, twp->ang.x, twp->ang.y - 0x4000, twp->ang.z);
 			break;
 		case 4:
-			GetOutOfCartP(id, -1.2f, 1.5f, 0.0f);
-			RumbleA(id, 0);
+			if (multiplayer::IsActive()) {
+				for (uint8_t i = 1; i < multiplayer::GetPlayerCount(); i++)
+				{
+					RumbleA(i, 0);
+					GetOutOfCartP(i, -1.2f, 1.5f, 0.0f);
+				}
+				twp->mode = 5;
+			}
 			break;
 		}
 	}

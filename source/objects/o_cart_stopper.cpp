@@ -74,8 +74,16 @@ static void execObject_m(task* tp)
 	case MODE_STOP:
 		CartGetOffPlayer(wk->cart_tp);
 		MirenSoundPlayOneShotSE(9, &twp->pos, nullptr);
+		twp->btimer = 0;
 		wk->mode = MODE_FIX;
 		break;
+	case MODE_FIX:
+		if (++twp->btimer == 30)
+		{
+			wk->mode = MODE_WAIT;
+		}
+		break;
+
 	}
 
 	tp->disp(tp);

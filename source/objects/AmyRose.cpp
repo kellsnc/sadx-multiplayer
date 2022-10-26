@@ -18,7 +18,6 @@ void AmyBird_Del(task* obj)
 	if (obj->twp)
 	{
 		char pnum = obj->twp->smode;
-
 		auto task = AmyBirdM[pnum];
 
 		if (task)
