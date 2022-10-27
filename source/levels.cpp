@@ -358,6 +358,10 @@ void __cdecl Rd_Twinkle_r(task* tp)
 			{
 				NJS_VECTOR pos = playertwp[pnum]->pos;
 				Angle ang = playertwp[pnum]->ang.y;
+				for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+				{
+					CharColliOff(playertwp[i]);
+				}
 				ChangeActM(-1);
 				rdTwinkleInit(tp);
 				SetAllPlayersPosition(pos.x, pos.y, pos.z, ang);
