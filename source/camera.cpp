@@ -579,7 +579,7 @@ void CameraViewSet_m(int pnum)
 
 void ApplyMultiCamera(int pnum)
 {
-	if (!camera_twp || !playertwp[pnum] || pnum >= PLAYER_MAX)
+	if (!camera_twp || !playertwp[pnum] || pnum < 0 || pnum >= PLAYER_MAX)
 	{
 		return;
 	}
