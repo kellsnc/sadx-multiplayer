@@ -19,7 +19,9 @@ FunctionHook<void, taskwk*, motionwk2*, playerwk*> LockingOnTargetEnemy_h(0x44C1
 FunctionHook<Bool, taskwk*> BigCheckTargetEnemy_h(0x46EE40);
 FunctionHook<Sint32, Uint8> GetRivalPlayerNumber_h(0x441BF0);
 
-static Trampoline* MakeLandCollLandEntryRangeIn_t = nullptr;
+FunctionHook<void> MakeLandCollLandEntryRangeIn_h(0x43AEF0);
+
+static _OBJ_LANDENTRY ri_landentry_buf_ex[256]; // 256 instead of 128
 
 static colaround around_ring_list_p2[257];
 static colaround around_ring_list_p3[257];
@@ -135,7 +137,7 @@ void QueueLandCollLand() // guessed inline function
 	{
 		for (int i = 0; i < pObjLandTable->ssCount; ++i)
 		{
-			if (numLandCollList >= 1024 || ri_landentry_nmb >= 128)
+			if (numLandCollList >= 1024 || ri_landentry_nmb >= LengthOfArray(ri_landentry_buf_ex))
 			{
 				break;
 			}
@@ -165,7 +167,7 @@ void QueueLandCollLand() // guessed inline function
 
 				if (njScalor(&cv) - mleriRangeRad < lnd.xWidth)
 				{
-					ri_landentry_buf[ri_landentry_nmb++] = lnd;
+					ri_landentry_buf_ex[ri_landentry_nmb++] = lnd;
 					LandCollList[numLandCollList++] = { lnd.slAttribute, lnd.pObject, nullptr };
 					break;
 				}
@@ -190,7 +192,7 @@ void __cdecl MakeLandCollLandEntryRangeIn_r()
 	}
 	else
 	{
-		TARGET_DYNAMIC(MakeLandCollLandEntryRangeIn)();
+		MakeLandCollLandEntryRangeIn_h.Original();
 	}
 }
 
@@ -824,7 +826,8 @@ Bool KnucklesCheckFinishThrowObject_r(taskwk* twp, motionwk2* mwp, playerwk* pwp
 void InitCollisionPatches()
 {
 	// Dyncol lookup rewrite
-	MakeLandCollLandEntryRangeIn_t = new Trampoline(0x43AEF0, 0x43AEF5, MakeLandCollLandEntryRangeIn_r);
+	MakeLandCollLandEntryRangeIn_h.Hook(MakeLandCollLandEntryRangeIn_r);
+	WriteData((_OBJ_LANDENTRY**)0x43AE3D, ri_landentry_buf_ex);
 
 	// Simple bound checking
 	WriteJump(CheckCollisionP, CheckCollisionP_r);
