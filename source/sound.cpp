@@ -31,7 +31,7 @@ bool validate_sound(int tone)
 		}
 	}
 
-	if (bank == 2 || bank == 3 || bank == 6)
+	if (bank == 3 || bank == 6)
 	{
 		// Only allow sound if all players are the stage character
 		for (int i = 0; i < PLAYER_MAX; ++i)
