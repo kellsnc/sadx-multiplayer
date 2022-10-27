@@ -253,6 +253,7 @@
     <ClCompile Include="objects\o_beach_yurehasi.cpp" />
     <ClCompile Include="objects\o_casino_hosin.cpp" />
     <ClCompile Include="objects\o_Mountain_MagmaCnt.cpp" />
+    <ClCompile Include="objects\o_shat.cpp" />
     <ClCompile Include="objects\o_sky_cannon_s.cpp" />
     <ClCompile Include="objects\ObjectSkyLever.cpp" />
     <ClCompile Include="objects\ObjectTogedai.cpp" />
