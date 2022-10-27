@@ -50,6 +50,23 @@ CAM_ANYPARAM* GetCamAnyParam(int pnum)
 	return &CamAnyParam_m[pnum];
 }
 
+void SetRuinWaka1Data(NJS_POINT3* pos, NJS_POINT3* tgt, int pnum)
+{
+	if (pnum == 0)
+	{
+		camera_twp->scl = *pos;
+		camera_twp->counter.f = tgt->x;
+		camera_twp->timer.f = tgt->y;
+		camera_twp->value.f = tgt->z;
+	}
+
+	if (auto param = GetCamAnyParam(pnum))
+	{
+		param->camAnyParamPos = *pos;
+		param->camAnyParamTgt = *tgt;
+	}
+}
+
 void gravDispose3_m(int pnum)
 {
 	NJS_VECTOR up = { 0.0f, 1.0f, 0.0f };
@@ -457,14 +474,32 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 // Make this use CamAnyParam as it should have...
 void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 {
-	auto param = GetCamAnyParam(TASKWK_PLAYERID(playertwp[0]));
-	camcont_wp->camxpos = param->camAnyParamPos.x;
-	camcont_wp->camypos = param->camAnyParamPos.y;
-	camcont_wp->camzpos = param->camAnyParamPos.z;
-	camcont_wp->tgtxpos = param->camAnyParamTgt.x;
-	camcont_wp->tgtypos = param->camAnyParamTgt.y;
-	camcont_wp->tgtzpos = param->camAnyParamTgt.z;
-	camcont_wp->angz = 0;
+	auto pnum = TASKWK_PLAYERID(playertwp[0]);
+
+	if (pnum == 0)
+	{
+		camcont_wp->camxpos = camera_twp->scl.x;
+		camcont_wp->camypos = camera_twp->scl.y;
+		camcont_wp->camzpos = camera_twp->scl.z;
+		camcont_wp->tgtxpos = camera_twp->counter.f;
+		camcont_wp->tgtypos = camera_twp->timer.f;
+		camcont_wp->tgtzpos = camera_twp->value.f;
+	}
+	else
+	{
+		auto param = GetCamAnyParam(pnum);
+
+		if (param)
+		{
+			camcont_wp->camxpos = param->camAnyParamPos.x;
+			camcont_wp->camypos = param->camAnyParamPos.y;
+			camcont_wp->camzpos = param->camAnyParamPos.z;
+			camcont_wp->tgtxpos = param->camAnyParamTgt.x;
+			camcont_wp->tgtypos = param->camAnyParamTgt.y;
+			camcont_wp->tgtzpos = param->camAnyParamTgt.z;
+			camcont_wp->angz = 0;
+		}
+	}
 }
 
 void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)

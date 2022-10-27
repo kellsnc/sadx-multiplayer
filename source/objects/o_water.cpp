@@ -133,15 +133,15 @@ static void __cdecl Normal_m(task* tp)
 		NJS_POINT3 velo = { 0.0f, 0.2f, 0.0f };
 		CreateWater(&pos, &velo, 1.0f);
 
-		if (auto param = GetCamAnyParam(pnum))
-		{
-			param->camAnyParamPos.x = pi2.xpos + sin * 0.5f;
-			param->camAnyParamPos.y = pi2.ypos + 6.0f;
-			param->camAnyParamPos.z = pi2.zpos + cos * 0.5f;
-			param->camAnyParamTgt.x = pi1.xpos + sin * 0.5f;
-			param->camAnyParamTgt.y = pi1.ypos + 6.0f;
-			param->camAnyParamTgt.z = pi1.zpos + cos * 0.5f;
-		}
+		NJS_POINT3 cam_pos, cam_tgt;
+		cam_pos.x = pi2.xpos + sin * 0.5f;
+		cam_pos.y = pi2.ypos + 6.0f;
+		cam_pos.z = pi2.zpos + cos * 0.5f;
+		cam_tgt.x = pi1.xpos + sin * 0.5f;
+		cam_tgt.y = pi1.ypos + 6.0f;
+		cam_tgt.z = pi1.zpos + cos * 0.5f;
+
+		SetRuinWaka1Data(&cam_pos, &cam_tgt, pnum);
 	}
 	else
 	{
