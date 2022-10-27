@@ -63,7 +63,7 @@ void __cdecl ExecHosin_r(task* tp);
 TaskHook ExecHosin_h(0x5C5400, ExecHosin_r);
 void __cdecl ExecHosin_r(task* tp)
 {
-	if (multiplayer::IsActive)
+	if (multiplayer::IsActive())
 	{
 		ExecHosin_m(tp);
 	}
