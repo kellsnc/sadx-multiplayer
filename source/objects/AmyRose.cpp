@@ -148,7 +148,7 @@ signed int Amy_CheckInput_r(playerwk* co2, motionwk2* data2, taskwk* data)
 	switch (data->smode)
 	{
 	case 5:
-		if (CurrentLevel == LevelIDs_SkyDeck)
+		if (CurrentLevel != LevelIDs_Casinopolis)
 		{
 			data->mode = SDCannonMode;
 			co2->mj.reqaction = 18; //falling

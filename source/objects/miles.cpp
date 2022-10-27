@@ -18,7 +18,7 @@ static Bool Miles_CheckInput_r(playerwk* co2, taskwk* twp, motionwk2* data2)
 
 	if (twp->smode == 5)
 	{
-		if (CurrentLevel != LevelIDs_SkyDeck)
+		if (CurrentLevel == LevelIDs_Casinopolis)
 		{
 			return 0;
 		}

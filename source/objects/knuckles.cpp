@@ -180,7 +180,7 @@ Bool Knux_CheckInput_r(playerwk* co2, taskwk* twp, motionwk2* data2)
 	switch (twp->smode)
 	{
 	case 5:
-		if (CurrentLevel == LevelIDs_SkyDeck)
+		if (CurrentLevel != LevelIDs_Casinopolis)
 		{
 			twp->mode = SDCannonMode;
 			co2->mj.reqaction = 19;
