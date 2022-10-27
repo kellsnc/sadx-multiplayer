@@ -1,23 +1,19 @@
 #include "pch.h"
 #include "FunctionHook.h"
+#include "UsercallFunctionHandler.h"
 #include "multiplayer.h"
 #include "splitscreen.h"
 #include "camera.h"
 #include "sound.h"
 
-FunctionHook<int, int, int, int, int> dsPlay_oneshot_h(0x423D70);
-FunctionHook<int, int, int, int, int> dsPlay_iloop_h(0x423E20);
-FunctionHook<int, int, int, int, int, int> dsPlay_timer_h(0x423F50);
-FunctionHook<void, int, int, int, int, int, taskwk*> dsPlay_oneshot_Dolby_h(0x424880);
-FunctionHook<void, int, int, int, int, int, taskwk*> dsPlay_Dolby_time_h(0x424920);
+DataArray(int, banktbl, 0x910090, 64 * 2);
+UsercallFunc(Bool, IsPlayOK_h, (int tone), (tone), 0x424590, rEAX, rEDX);
 
 Trampoline* dsGetVolume_t = nullptr;
 Trampoline* dsPlay_timer_v_t = nullptr;
 Trampoline* dsPlay_timer_vq_t = nullptr;
 Trampoline* dsPlay_oneshot_v_t = nullptr;
 Trampoline* dsPlay_Dolby_timer_vq_t = nullptr;
-
-DataArray(int, banktbl, 0x910090, 64 * 2);
 
 bool validate_sound(int tone)
 {
@@ -37,7 +33,7 @@ bool validate_sound(int tone)
 
 	if (bank == 2 || bank == 3 || bank == 6)
 	{
-		// If it's a character bank, gotta check if it can play (ie. all chars are the same)
+		// Only allow sound if all players are the stage character
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
 			auto ptwp = playertwp[i];
@@ -63,59 +59,17 @@ bool validate_sound(int tone)
 	return true;
 }
 
-int __cdecl dsPlay_oneshot_r(int tone, int id, int pri, int volofs)
+Bool IsPlayOK_r(int tone)
 {
 	if (!multiplayer::IsActive() || validate_sound(tone))
 	{
-		return dsPlay_oneshot_h.Original(tone, id, pri, volofs);
+		return IsPlayOK_h.Original(tone);
 	}
-
-	return -1;
-}
-
-int __cdecl dsPlay_iloop_r(int tone, int id, int pri, int volofs)
-{
-	if (!multiplayer::IsActive() || validate_sound(tone))
-	{
-		return dsPlay_iloop_h.Original(tone, id, pri, volofs);
-	}
-
-	return -1;
-}
-
-int __cdecl dsPlay_timer_r(int tone, int id, int pri, int volofs, int timer)
-{
-	if (!multiplayer::IsActive() || validate_sound(tone))
-	{
-		return dsPlay_timer_h.Original(tone, id, pri, volofs, timer);
-	}
-
-	return -1;
-}
-
-void __cdecl dsPlay_oneshot_Dolby_r(int tone, int id, int pri, int volofs, int time, taskwk* pTaskwk)
-{
-	if (!multiplayer::IsActive() || validate_sound(tone))
-	{
-		dsPlay_oneshot_Dolby_h.Original(tone, id, pri, volofs, time, pTaskwk);
-	}
-}
-
-void __cdecl dsPlay_Dolby_time_r(int tone, int id, int pri, int volofs, int time, taskwk* pTaskwk)
-{
-	if (!multiplayer::IsActive() || validate_sound(tone))
-	{
-		dsPlay_oneshot_Dolby_h.Original(tone, id, pri, volofs, time, pTaskwk);
-	}
+	return 0;
 }
 
 int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z)
 {
-	if (multiplayer::IsActive() && !validate_sound(tone))
-	{
-		return -1;
-	}
-
 	if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, 40000.0f))
 	{
 		int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
@@ -155,11 +109,6 @@ int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, 
 
 int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z, float rad)
 {
-	if (multiplayer::IsActive() && !validate_sound(tone))
-	{
-		return -1;
-	}
-
 	if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, rad))
 	{
 		int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
@@ -200,11 +149,6 @@ int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x,
 
 int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, float z)
 {
-	if (multiplayer::IsActive() && !validate_sound(tone))
-	{
-		return -1;
-	}
-
 	if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, 40000.0f))
 	{
 		int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
@@ -244,11 +188,6 @@ int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, 
 
 void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float rad, taskwk* pTaskwk)
 {
-	if (multiplayer::IsActive() && !validate_sound(tone))
-	{
-		return;
-	}
-
 	if (SplitScreen::IsActive())
 	{
 		if (pTaskwk && IsCameraInSphere(&pTaskwk->pos, rad))
@@ -446,11 +385,7 @@ void InitSoundPatches()
 	dsPlay_Dolby_timer_vq_t = new Trampoline(0x4249E0, 0x4249E5, dsPlay_Dolby_timer_vq_r);
 	WriteJump((void*)0x4253B1, dsDolbySound_w);
 
-	dsPlay_oneshot_h.Hook(dsPlay_oneshot_r);
-	dsPlay_iloop_h.Hook(dsPlay_iloop_r);
-	dsPlay_timer_h.Hook(dsPlay_timer_r);
-	dsPlay_oneshot_Dolby_h.Hook(dsPlay_oneshot_Dolby_r);
-	dsPlay_Dolby_time_h.Hook(dsPlay_Dolby_time_r);
+	IsPlayOK_h.Hook(IsPlayOK_r);
 
 	// Allow 2P Tails sounds in multiplayer
 	WriteCall((void*)0x45C037, dsPlay_oneshot_miles); // jump
