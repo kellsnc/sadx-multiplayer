@@ -581,6 +581,9 @@ void InitLevels()
 	// Windy Valley leaves
 	WriteData((uint8_t*)0x4E4344, 0xEBui8);
 
+	// Windy Valley PushUpWind
+	WriteData((uint8_t*)0x4E5253, (uint8_t)PLAYER_MAX);
+
 	// Ice Cap breath generator
 	WriteData((uint8_t*)0x4E91AE, (uint8_t)PLAYER_MAX);
 
