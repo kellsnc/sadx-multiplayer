@@ -828,6 +828,10 @@ void InitCollisionPatches()
 	// Dyncol lookup rewrite
 	MakeLandCollLandEntryRangeIn_h.Hook(MakeLandCollLandEntryRangeIn_r);
 	WriteData((_OBJ_LANDENTRY**)0x43AE3D, ri_landentry_buf_ex);
+	WriteData((_OBJ_LANDENTRY**)0x43B123, ri_landentry_buf_ex);
+	WriteData((_OBJ_LANDENTRY**)0x43B62E, ri_landentry_buf_ex);
+	WriteData((size_t*)0x43B2AD, LengthOfArray(ri_landentry_buf_ex));
+	WriteData((size_t*)0x43B688, LengthOfArray(ri_landentry_buf_ex));
 
 	// Simple bound checking
 	WriteJump(CheckCollisionP, CheckCollisionP_r);
