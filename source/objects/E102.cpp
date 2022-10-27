@@ -127,7 +127,7 @@ signed int E102_CheckInput_r(playerwk* co2, taskwk* data, motionwk2* data2)
 	switch (data->smode)
 	{
 	case 5:
-		if (CurrentLevel == LevelIDs_SkyDeck)
+		if (CurrentLevel != LevelIDs_Casinopolis)
 		{
 			data->mode = SDCannonMode;
 			co2->mj.reqaction = 7;
