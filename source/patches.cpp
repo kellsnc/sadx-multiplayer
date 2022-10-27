@@ -56,6 +56,8 @@ static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7
 UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
 UsercallFunc(signed int, PlayerVacumedRing_t, (taskwk* a1), (a1), 0x44FA90, rEAX, rEDI);
 
+TaskHook OTpRing_t((intptr_t)OTpRing);
+
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
 	if (SplitScreen::IsActive() && pwp->attr & 0x20000)
@@ -165,6 +167,27 @@ void __cdecl SonicMotionCheckEdition_r(taskwk* twp)
 	}
 }
 
+bool GrabRingMulti(taskwk* twp, task* tp)
+{
+	auto player = CCL_IsHitPlayer(twp);
+
+	if (player)
+	{
+		int pID = TASKWK_PLAYERID(player);
+
+		if (!(playerpwp[pID]->item & 0x4000))
+		{
+			twp->mode = 2;
+			AddNumRingM(pID, 1);
+			dsPlay_oneshot(7, 0, 0, 0);
+			tp->disp = RingDoneDisplayer;
+			return true;
+		}
+	}
+
+	return false;
+}
+
 // Patch for other players to collect rings
 void __cdecl Ring_r(task* tp)
 {
@@ -174,25 +197,28 @@ void __cdecl Ring_r(task* tp)
 
 		if (twp->mode == 1)
 		{
-			auto player = CCL_IsHitPlayer(twp);
-
-			if (player)
-			{
-				int pID = TASKWK_PLAYERID(player);
-
-				if (!(playerpwp[pID]->item & 0x4000))
-				{
-					twp->mode = 2;
-					AddNumRingM(pID, 1);
-					dsPlay_oneshot(7, 0, 0, 0);
-					tp->disp = RingDoneDisplayer;
-					return;
-				}
-			}
+			if (GrabRingMulti(twp, tp))
+				return;
 		}
 	}
 
 	TARGET_DYNAMIC(Ring)(tp);
+}
+
+void __cdecl OTpRing_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		taskwk* twp = tp->twp;
+
+		if (twp->mode == 1)
+		{
+			if (GrabRingMulti(twp, tp))
+				return;
+		}
+	}
+
+	OTpRing_t.Original(tp);
 }
 
 // Patch for other players to collect scattered rings
@@ -734,6 +760,7 @@ void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
 	Tobitiri_t = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);;
+	OTpRing_t.Hook(OTpRing_r);
 	PlayerVacumedRing_t.Hook(PlayerVacumedRing_r);
 	savepointCollision_t = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	ListGroundForDrawing_t = new Trampoline(0x43A900, 0x43A905, ListGroundForDrawing_r);
