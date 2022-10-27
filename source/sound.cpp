@@ -1,8 +1,13 @@
 #include "pch.h"
+#include "FunctionHook.h"
+#include "UsercallFunctionHandler.h"
 #include "multiplayer.h"
 #include "splitscreen.h"
 #include "camera.h"
 #include "sound.h"
+
+DataArray(int, banktbl, 0x910090, 64 * 2);
+UsercallFunc(Bool, IsPlayOK_h, (int tone), (tone), 0x424590, rEAX, rEDX);
 
 Trampoline* dsGetVolume_t = nullptr;
 Trampoline* dsPlay_timer_v_t = nullptr;
@@ -10,9 +15,62 @@ Trampoline* dsPlay_timer_vq_t = nullptr;
 Trampoline* dsPlay_oneshot_v_t = nullptr;
 Trampoline* dsPlay_Dolby_timer_vq_t = nullptr;
 
+bool validate_sound(int tone)
+{
+	// Check if the sound is from a character bank
+	int startid = 0;
+	int bank = 0;
+
+	for (int* test = &banktbl[0]; *test >= 0; test += 2)
+	{
+		if (tone > *test)
+		{
+			startid = *test;
+			bank = test[1];
+			break;
+		}
+	}
+
+	if (bank == 2 || bank == 3 || bank == 6)
+	{
+		// Only allow sound if all players are the stage character
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			auto ptwp = playertwp[i];
+			
+			if (ptwp)
+			{
+				auto pno = TASKWK_CHARID(ptwp);
+
+				if ((CurrentCharacter == Characters_Sonic || CurrentCharacter == Characters_Tails)
+					&& (pno == Characters_Sonic || pno == Characters_Tails))
+				{
+					continue;
+				}
+
+				if (pno != CurrentCharacter)
+				{
+					return false;
+				}
+			}
+		}
+	}
+
+	return true;
+}
+
+Bool IsPlayOK_r(int tone)
+{
+	if (!multiplayer::IsActive() || validate_sound(tone))
+	{
+		return IsPlayOK_h.Original(tone);
+	}
+	return 0;
+}
+
 int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z)
 {
-	if (IsCameraInSphere(x, y, z, 40000.0f))
+	if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, 40000.0f))
 	{
 		int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
 		if (num < 0)
@@ -327,13 +385,15 @@ void InitSoundPatches()
 	dsPlay_Dolby_timer_vq_t = new Trampoline(0x4249E0, 0x4249E5, dsPlay_Dolby_timer_vq_r);
 	WriteJump((void*)0x4253B1, dsDolbySound_w);
 
+	IsPlayOK_h.Hook(IsPlayOK_r);
+
 	// Allow 2P Tails sounds in multiplayer
 	WriteCall((void*)0x45C037, dsPlay_oneshot_miles); // jump
 	WriteData<2>((void*)0x45C02D, 0x90ui8);
 	WriteCall((void*)0x45BE01, dsPlay_oneshot_miles); // it's not always inlined!
 	WriteData<2>((void*)0x45BDF4, 0x90ui8);
 	WriteCall((void*)0x45BF8D, dsPlay_oneshot_miles); //hurt
-	WriteCall((void*)0x45BF5D, dsPlay_oneshot_miles);
 	WriteData<2>((void*)0x45BF80, 0x90ui8);
+	WriteCall((void*)0x45BF5D, dsPlay_oneshot_miles);
 	WriteData<2>((void*)0x45BF50, 0x90ui8);
 }
