@@ -83,7 +83,9 @@ namespace SplitScreen
 
 	bool IsActive()
 	{
-		return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel() && cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT;
+		return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel()
+			&& cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT && GetStageNumber() != LevelAndActIDs_Casinopolis3
+			&& GetStageNumber() != LevelAndActIDs_Casinopolis4;
 	}
 
 	unsigned int GetCurrentScreenNum()
