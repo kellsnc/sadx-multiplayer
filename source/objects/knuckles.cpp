@@ -180,9 +180,13 @@ Bool Knux_CheckInput_r(playerwk* co2, taskwk* twp, motionwk2* data2)
 	switch (twp->smode)
 	{
 	case 5:
-		twp->mode = SDCannonMode;
-		co2->mj.reqaction = 19;
-		return 1;
+		if (CurrentLevel == LevelIDs_SkyDeck)
+		{
+			twp->mode = SDCannonMode;
+			co2->mj.reqaction = 19;
+			return 1;
+		}
+		break;
 	case 32:
 
 		if (SetCylinderNextAction(twp, data2, co2))

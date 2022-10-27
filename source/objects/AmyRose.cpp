@@ -148,9 +148,13 @@ signed int Amy_CheckInput_r(playerwk* co2, motionwk2* data2, taskwk* data)
 	switch (data->smode)
 	{
 	case 5:
-		data->mode = SDCannonMode;
-		co2->mj.reqaction = 18; //falling
-		return 1;
+		if (CurrentLevel == LevelIDs_SkyDeck)
+		{
+			data->mode = SDCannonMode;
+			co2->mj.reqaction = 18; //falling
+			return 1;
+		}
+		break;
 	case 32:
 
 		if (SetCylinderNextAction(data, data2, co2))

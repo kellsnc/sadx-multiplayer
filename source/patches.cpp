@@ -825,6 +825,8 @@ void InitPatches()
 	PatchTwinkleMirrors();
 	PatchPondSkater();
 	PatchGachapon();
+
+
 	initLadderPatches();
 	initSDIntroPatches();
 	init_SDCylinderPatches();
