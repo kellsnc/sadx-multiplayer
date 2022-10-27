@@ -121,6 +121,7 @@
     <ClInclude Include="logic.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="menu_adventure.h" />
+    <ClInclude Include="objects\e_robo.h" />
     <ClInclude Include="objects\miles.h" />
     <ClInclude Include="milesrace.h" />
     <ClInclude Include="mod.h" />

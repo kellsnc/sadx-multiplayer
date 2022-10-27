@@ -21,6 +21,7 @@
 #include "objects/ladder.h"
 #include "objects/ObjCylinderCmn.h"
 #include "objects/o_sky_ocm.h"
+#include "objects/e_robo.h"
 
 #include "objects/sonic.h"
 #include "objects//miles.h"
@@ -836,4 +837,5 @@ void InitPatches()
 	Init_BigPatches();
 	initGammaPatch();
 	PatchRocket();
+	initERoboHack();
 }

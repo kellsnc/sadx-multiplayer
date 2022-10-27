@@ -28,6 +28,91 @@ Trampoline RoboDisplayer_t(0x4A4DA0, 0x4A4DA7, RoboDisplayer_r);
 Trampoline RoboHearSound_t(0x4A5190, 0x4A5195, RoboHearSound_w);
 Trampoline RoboSearchPlayer_t(0x4A51F0, 0x4A51F8, RoboSearchPlayer_w);
 
+UsercallFuncVoid(RoboSwing_t, (taskwk* a1, enemywk* a2), (a1, a2), 0x4A5840, rECX, rEAX);
+
+static auto RoboCombo = GenerateUsercallWrapper<void(*)(enemywk* wk, taskwk* a2)>(noret, 0x4A4AA0, rEAX, rECX);
+
+void RoboBumpSide_r(taskwk* a1, char pnum)
+{
+	Rotation3 r; 
+	NJS_VECTOR s;
+
+	auto v1 = playertwp[pnum];
+	auto v2 = playertwp[pnum]->pos.x - a1->pos.x;
+	auto v3 = playertwp[pnum]->pos.z;
+	r.x = 0;
+	r.y = (unsigned int)(unsigned __int64)(atan2(v2, v3 - a1->pos.z) * 65536.0f * 0.1591549762031479f);
+	s.x = 3.5;
+	s.y = 1.8;
+	s.z = 0.0;
+	dothedash(pnum, &s, &r, 60);
+	v1->pos.y = v1->pos.y + 1.0f;
+}
+
+void RoboSwing_r(taskwk* data, enemywk* a2)
+{
+	if (!multiplayer::IsActive())
+	{
+		return RoboSwing_t.Original(data, a2);
+	}
+
+	auto pnum = GetTheNearestPlayerNumber(&data->pos);
+	float v5;
+	GetPlayerDistance((EntityData1*)data, pnum);
+	auto dataCol = data->cwp;
+
+	a2->aim = playertwp[pnum]->pos;
+	EnemyCalcAimAngle(data, a2);
+	data->ang.y = BAMS_SubWrap(data->ang.y, a2->aim_angle, 2304);
+	if ((dataCol->flag & 1) != 0 && dataCol->my_num == 1 && !dataCol->hit_cwp->id)
+	{
+		RoboBumpSide_r(data, pnum);
+	}
+	switch (data->smode)
+	{
+	case 0:
+		a2->angz_spd += 2048;
+		break;
+	case 1:
+		data->cwp->info[1].attr &= 0xFFFFFFEF;
+		v5 = a2->nframe + 0.44999999;
+		a2->nframe = v5;
+		if (v5 > 29.0)
+		{
+			a2->nframe = 29.0;
+			data->smode = 2;
+			a2->lframe = a2->pframe;
+		}
+		data->flag &= 0xDFu;
+		break;
+	case 2:
+		data->cwp->info[1].attr &= 0xFFFFFFEF;
+		if (data->wtimer > 0x14u)
+		{
+			data->smode = 3;
+		}
+		data->flag &= 0xDFu;
+		break;
+	case 3:
+		data->cwp->info[1].attr |= 0x10u;
+		a2->angz_spd -= 2048;
+		data->flag |= 0x20u;
+		break;
+	case 4:
+		data->flag &= 0xD7u;
+		data->mode = a2->old_mode;
+		data->wtimer = 0;
+		break;
+	default:
+		break;
+	}
+
+	a2->acc.y = a2->force.z / ((data->pos.y - a2->shadow.hit[2].onpos) * 1.4f + 3.0f) + a2->acc.y;
+	RoboCombo(a2, data);
+	EnemyCheckGroundCollision(data, a2);
+	RoboDraw(data, a2);
+}
+
 #pragma region RoboHeadDisplayer
 static void __cdecl RoboHeadDisplayer_r(task* tp)
 {
@@ -281,3 +366,8 @@ static void __declspec(naked) RoboSearchPlayer_w()
 	}
 }
 #pragma endregion
+
+void initERoboHack()
+{
+	//RoboSwing_t.Hook(RoboSwing_r);
+}

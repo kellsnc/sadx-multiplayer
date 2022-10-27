@@ -732,6 +732,9 @@
     <ClInclude Include="objects\Sw_Door.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
+    <ClInclude Include="objects\e_robo.h">
+      <Filter>Header FIles\objects\enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
