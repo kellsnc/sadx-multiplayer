@@ -532,6 +532,7 @@ DataPointer(Uint16, ael_num1, 0x3B240A8);
 FunctionPointer(void, PPutHeldObject, (taskwk* twp, taskwk* htwp, playerwk* pwp), 0x4421F0);
 FunctionPointer(Float, GetUnitVector, (NJS_POINT3* vec), 0x459AC0);
 FunctionPointer(void, HangDownFromPathP, (Uint8 pno, pathtag* pp, Sint32 point), 0x440E90);
+FunctionPointer(void, RunAlongPathP, (Uint8 pno, pathtag* pp), 0x440E20);
 FunctionPointer(Float, orGetWaveHeight, (Float pos_x, Float pos_z), 0x4F8A00);
 DataArray(Float, hasi_a_posy, 0x3C5E7F4, 2);
 DataArray(Float, hasi_b_posy, 0x3C5E790, 25);

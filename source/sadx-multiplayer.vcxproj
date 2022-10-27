@@ -305,6 +305,7 @@
     <ClCompile Include="objects\o_sky_ocm.cpp" />
     <ClCompile Include="objects\o_sky_sinkrane.cpp" />
     <ClCompile Include="objects\o_windy_broobj.cpp" />
+    <ClCompile Include="objects\o_windy_pathact.cpp" />
     <ClCompile Include="objects\o_windy_poline.cpp" />
     <ClCompile Include="objects\o_windy_torin.cpp" />
     <ClCompile Include="objects\pathtask.cpp" />

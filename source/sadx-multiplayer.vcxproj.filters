@@ -517,6 +517,9 @@
     <ClCompile Include="objects\o_cart_stopper.cpp">
       <Filter>Source Files\objects\stg03_twinkle</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_windy_pathact.cpp">
+      <Filter>Source Files\objects\stg02_windy</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
