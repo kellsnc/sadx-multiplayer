@@ -28,9 +28,12 @@ static void Exec_m(task* tp)
 			bomb_twp->ang.y = twp->ang.y;
 			bomb_twp->pos = twp->pos;
 
-			task* hit_tp = twp->cwp->hit_cwp->mytask;
-			if (IsThisTaskPlayer(hit_tp) >= 0)
-				SetVelocityP(TASKWK_PLAYERID(hit_tp->twp), 0.0f, 2.5f, 0.0f);
+			if (twp->cwp && twp->cwp->hit_cwp && twp->cwp->mytask)
+			{
+				task* hit_tp = twp->cwp->hit_cwp->mytask;
+				if (IsThisTaskPlayer(hit_tp) >= 0)
+					SetVelocityP(TASKWK_PLAYERID(hit_tp->twp), 0.0f, 2.5f, 0.0f);
+			}
 		}
 		else
 		{
