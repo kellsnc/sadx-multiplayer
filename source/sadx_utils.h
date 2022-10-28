@@ -554,6 +554,7 @@ DataArray(freeboxdat, fbd1026, 0x915398, 3);
 DataArray(freeboxdat, fbd0769, 0x9153E0, 2);
 DataArray(freeboxdat, fbd0257, 0x915410, 1);
 DataArray(freeboxdat, fbd0514, 0x915428, 1);
+FunctionPointer(void, SetSpringVelocityP, (Uint8 pnum, Float x, Float y, Float z), 0x441370);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);

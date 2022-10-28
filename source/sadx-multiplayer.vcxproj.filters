@@ -523,6 +523,9 @@
     <ClCompile Include="objects\o_shat.cpp">
       <Filter>Source Files\objects\stg09_casino</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_fountain.cpp">
+      <Filter>Source Files\objects\stg04_highway</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
