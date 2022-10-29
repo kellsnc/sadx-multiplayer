@@ -17,6 +17,16 @@ UsercallFunc(signed int, E102_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2
 TaskHook E102_t((intptr_t)0x483430);
 TaskHook E102DispTimeUpWarning_t(0x4C51D0);
 
+void __cdecl E102AddSeconds_r(int seconds)
+{
+	if (multiplayer::IsActive() && CurrentCharacter != Characters_Gamma)
+	{
+		return;
+	}
+
+	AddSeconds(seconds);
+}
+
 static void E102DispTimeUpWarning_r(task* tp)
 {
 	if (multiplayer::IsActive() && CurrentCharacter != Characters_Gamma)
@@ -303,4 +313,5 @@ void initGammaPatch()
 	E102_CheckInput_t.Hook(E102_CheckInput_r);
 	E102_RunsActions_t.Hook(E102_RunActions_r);
 	E102DispTimeUpWarning_t.Hook(E102DispTimeUpWarning_r);
+	WriteCall((void*)0x49FD54, E102AddSeconds_r);
 }
