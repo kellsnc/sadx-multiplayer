@@ -6,67 +6,13 @@
 #include "camera.h"
 #include "sound.h"
 
-DataArray(int, banktbl, 0x910090, 64 * 2);
-UsercallFunc(Bool, IsPlayOK_h, (int tone), (tone), 0x424590, rEAX, rEDX);
+FunctionHook<void> dsLoadStageSound_h(0x424C80);
 
 Trampoline* dsGetVolume_t = nullptr;
 Trampoline* dsPlay_timer_v_t = nullptr;
 Trampoline* dsPlay_timer_vq_t = nullptr;
 Trampoline* dsPlay_oneshot_v_t = nullptr;
 Trampoline* dsPlay_Dolby_timer_vq_t = nullptr;
-
-bool validate_sound(int tone)
-{
-	// Check if the sound is from a character bank
-	int startid = 0;
-	int bank = 0;
-
-	for (int* test = &banktbl[0]; *test >= 0; test += 2)
-	{
-		if (tone > *test)
-		{
-			startid = *test;
-			bank = test[1];
-			break;
-		}
-	}
-
-	if (bank == 3 || bank == 6)
-	{
-		// Only allow sound if all players are the stage character
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			auto ptwp = playertwp[i];
-			
-			if (ptwp)
-			{
-				auto pno = TASKWK_CHARID(ptwp);
-
-				if ((CurrentCharacter == Characters_Sonic || CurrentCharacter == Characters_Tails)
-					&& (pno == Characters_Sonic || pno == Characters_Tails))
-				{
-					continue;
-				}
-
-				if (pno != CurrentCharacter)
-				{
-					return false;
-				}
-			}
-		}
-	}
-
-	return true;
-}
-
-Bool IsPlayOK_r(int tone)
-{
-	if (!multiplayer::IsActive() || validate_sound(tone))
-	{
-		return IsPlayOK_h.Original(tone);
-	}
-	return 0;
-}
 
 int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z)
 {
@@ -376,6 +322,64 @@ void dsPlay_oneshot_miles(int tone, int id, int pri, int volofs)
 	}
 }
 
+// Allow every character sound in multiplayer
+void dsLoadStageSound_r()
+{
+	dsLoadStageSound_h.Original();
+
+	if (multiplayer::IsActive())
+	{
+		// Hack sound banks if in MP
+		MDHeaderClose(bankhandle[3]);
+		MDHeaderClose(bankhandle[6]);
+		bankhandle[3] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_SONICTAILS_BANK03.dat", 1);
+		bankhandle[6] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_SONICTAILS_E_BANK06.dat", 1);
+
+		MDHeaderClose(bankhandle[8]);
+		MDHeaderClose(bankhandle[9]);
+		bankhandle[8] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_KNUCKLES_BANK03.dat", 1);
+		bankhandle[9] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_KNUCKLES_E_BANK06.dat", 1);
+		banktbl[67] = 8;
+		banktbl[13] = 9;
+
+		MDHeaderClose(bankhandle[10]);
+		MDHeaderClose(bankhandle[11]);
+		bankhandle[10] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_AMY_BANK03.dat", 1);
+		bankhandle[11] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_AMY_E_BANK06.dat", 1);
+		banktbl[65] = 10;
+		banktbl[11] = 11;
+
+		MDHeaderClose(bankhandle[12]);
+		MDHeaderClose(bankhandle[13]);
+		bankhandle[12] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_BIG_BANK03.dat", 1);
+		bankhandle[13] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_BIG_E_BANK06.dat", 1);
+		banktbl[61] = 12;
+		banktbl[7] = 13;
+
+		MDHeaderClose(bankhandle[14]);
+		MDHeaderClose(bankhandle[15]);
+		bankhandle[14] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_E102_BANK03.dat", 1);
+		bankhandle[15] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_E102_E_BANK06.dat", 1);
+		banktbl[63] = 14;
+		banktbl[9] = 15;
+	}
+	else
+	{
+		// Restore our hack if in SP
+		if (banktbl[67] == 8)
+		{
+			banktbl[67] = 3;
+			banktbl[13] = 6;
+			banktbl[65] = 3;
+			banktbl[11] = 6;
+			banktbl[61] = 3;
+			banktbl[7] = 6;
+			banktbl[63] = 3;
+			banktbl[9] = 6;
+		}
+	}
+}
+
 void InitSoundPatches()
 {
 	dsGetVolume_t = new Trampoline(0x4244A0, 0x4244A7, dsGetVolume_w);
@@ -385,7 +389,7 @@ void InitSoundPatches()
 	dsPlay_Dolby_timer_vq_t = new Trampoline(0x4249E0, 0x4249E5, dsPlay_Dolby_timer_vq_r);
 	WriteJump((void*)0x4253B1, dsDolbySound_w);
 
-	IsPlayOK_h.Hook(IsPlayOK_r);
+	dsLoadStageSound_h.Hook(dsLoadStageSound_r);
 
 	// Allow 2P Tails sounds in multiplayer
 	WriteCall((void*)0x45C037, dsPlay_oneshot_miles); // jump

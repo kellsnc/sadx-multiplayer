@@ -323,6 +323,22 @@ struct freeboxdat
 	NJS_POINT3 p1;
 };
 
+struct MDHEADER
+{
+	Uint32 nofs;
+	Uint32 fofs;
+	Uint32 fsize;
+};
+
+struct MDHANDLE
+{
+	char header[16];
+	const char* mdname;
+	Void* data;
+	Sint32 mdnum;
+	MDHEADER md[1];
+};
+
 DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -555,6 +571,10 @@ DataArray(freeboxdat, fbd0769, 0x9153E0, 2);
 DataArray(freeboxdat, fbd0257, 0x915410, 1);
 DataArray(freeboxdat, fbd0514, 0x915428, 1);
 FunctionPointer(void, SetSpringVelocityP, (Uint8 pnum, Float x, Float y, Float z), 0x441370);
+FunctionPointer(MDHANDLE*, MDHeaderOpen, (const char* fname, Sint32 flag), 0x4B4D10);
+FunctionPointer(void, MDHeaderClose, (MDHANDLE* mdh), 0x4B4F50);
+DataArray(MDHANDLE*, bankhandle, 0x3B291C8, 16);
+DataArray(int, banktbl, 0x910090, 64 * 2);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
