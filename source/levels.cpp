@@ -580,7 +580,6 @@ void InitLevels()
 	// Emerald Coast Bridge
 	WriteData<2>((void*)0x501B66, 0x90ui8);
 	WriteData<2>((void*)0x501B12, 0x90ui8);
-	WriteData((uint8_t*)0x501C2F, 0xEBui8); //crash in act 2 after playing act 1
 
 	// Windy Valley leaves
 	WriteData((uint8_t*)0x4E4344, 0xEBui8);
