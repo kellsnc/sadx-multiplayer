@@ -3,6 +3,7 @@
 #include "players.h"
 #include "result.h"
 #include "camera.h"
+#include "collision.h"
 #include "../include/multiapi.h"
 
 bool splitscreen_is_active()
@@ -220,4 +221,14 @@ void camera_set_event_camera_func(uint32_t pnum, CamFuncPtr fnCamera, uint32_t u
 void camera_release_event_camera(uint32_t pnum)
 {
 	CameraReleaseEventCamera_m(pnum);
+}
+
+colaround* multi_get_enemy_list(Uint8 pno)
+{
+	return GetTargetEnemyList(pno);
+}
+
+Uint16* multi_get_enemy_list_index(Uint8 pno)
+{
+	return getAelNum(pno);
 }

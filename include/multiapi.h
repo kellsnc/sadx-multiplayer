@@ -160,6 +160,12 @@ extern "C"
 	// Note that the vanilla function `CameraReleaseEventCmaera` will work for P1
 	API void camera_release_event_camera(uint32_t pnum);
 
+	// get Homing Attack target list 
+	API colaround* multi_get_enemy_list(Uint8 pno);
+
+	// get Homing Attack index target list 
+	API Uint16* multi_get_enemy_list_index(Uint8 pno);
+
 #ifdef __cplusplus
 }
 #endif

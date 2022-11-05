@@ -310,6 +310,11 @@ Bool __cdecl PCheckTargetEnemy_r(Uint8 pno)
 	return pno < PLAYER_MAX&& around_enemy_list_p[pno]->twp != nullptr;
 }
 
+Uint16* __cdecl getAelNum(Uint8 pno)
+{
+	return pno < PLAYER_MAX ? ael_num_p[pno] : nullptr;
+}
+
 void __cdecl LockingOnTargetEnemy_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (!multiplayer::IsActive())
