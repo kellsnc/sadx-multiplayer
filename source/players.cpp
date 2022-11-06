@@ -195,6 +195,7 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 {
 	if (CheckContinueData())
 	{
+		SetTime2(RestartLevel.Minute, RestartLevel.Second, RestartLevel.Frame);
 		*pos = continue_data.pos;
 		*ang = continue_data.ang;
 	}
@@ -275,9 +276,10 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 				++stpos;
 			}
 
+	
 			*pos = continue_data.pos = stpos->p;
 			*ang = continue_data.ang = { 0, stpos->angy, 0 };
-			continue_data.continue_flag = TRUE;
+			SetRestartData(pos, (Rotation3*)ang);
 		}
 	}
 }

@@ -756,6 +756,17 @@ void initBossesPatches()
 	initEggWalkerPatches();
 }
 
+void __cdecl SetTime2_r(char minute, char second, char frame)
+{
+	if (multiplayer::IsActive() && GameState == 15)
+		return;
+
+	TimeMinutes = minute,
+	TimeSeconds = second;
+	TimeFrames = frame;
+	return;
+}
+
 void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
@@ -775,6 +786,7 @@ void InitPatches()
 	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
 	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
 	WriteData((uint8_t*)0x500017, (uint8_t)PLAYER_MAX); // Patch launch ramp EC for 8 players
+	WriteJump((void*)0x4265F0, SetTime2_r); //don't reset time with death in multiplayer
 
 	// Score patches
 	EnemyCheckDamage_t.Hook(EnemyCheckDamage_r);
