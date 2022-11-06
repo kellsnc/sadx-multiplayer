@@ -250,11 +250,9 @@ static void __cdecl BreathCounterP_r(task* tp)
 			FreeTask(tp);
 			return;
 		}
-		isTimeUp = timer == timeOver;
 	}
 	if (isTimeUp)
 	{
-
 		ForcePlayerAction(pnum, 39); //drown	
 
 		switch (player->counter.b[1])
@@ -286,6 +284,7 @@ static void __cdecl BreathCounterP_r(task* tp)
 	}
 	else if (timer == 920)
 	{
+		playerpwp[pnum]->breathtimer = 0;
 		KillAndWarpPlayers(pnum);
 	}
 	else if (GetDebugMode())
@@ -304,5 +303,4 @@ static void __cdecl BreathCounterP_r(task* tp)
 
 		tp->disp(tp);
 	}
-
 }
