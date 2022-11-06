@@ -101,7 +101,6 @@
     <ClInclude Include="collision.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="d3d8vars.h" />
-    <ClInclude Include="death.h" />
     <ClInclude Include="drawqueue.h" />
     <ClInclude Include="emeraldhunt.h" />
     <ClInclude Include="event.h" />

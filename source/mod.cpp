@@ -5,7 +5,6 @@
 #include "menu.h"
 #include "hud_multi.h"
 #include "patches.h"
-#include "death.h"
 #include "set.h"
 #include "levels.h"
 #include "race.h"
@@ -44,7 +43,6 @@ extern "C"
 		InitCamera();
 		InitInputPatches();
 		InitPatches();
-		InitDeathPatches();
 		InitPlayerPatches();
 		InitMenu();
 		MultiHudInit();

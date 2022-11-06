@@ -1,10 +1,13 @@
 #include "pch.h"
-#include "death.h"
 #include "camera.h"
 
-Trampoline* KillHimP_t = nullptr;
-Trampoline* KillHimByFallingDownP_t = nullptr;
-Trampoline* KillPlayerFallingDownStageP_t = nullptr;
+static void __cdecl KillHimP_r(int pNum);
+static void __cdecl KillHimByFallingDownP_r(int pno);
+static void __cdecl KillPlayerFallingDownStageP_r(task* tp);
+
+static FunctionHook<void, int> KillHimP_t(KillHimP, KillHimP_r);
+static FunctionHook<void, int> KillHimByFallingDownP_t(KillHimByFallingDownP, KillHimByFallingDownP_r);
+TaskHook KillPlayerFallingDownStageP_t(0x44AE80, KillPlayerFallingDownStageP_r);
 
 void __cdecl GamePlayerMissedFree(task* tp)
 {
@@ -61,7 +64,7 @@ void __cdecl GamePlayerMissed_r(task* tp)
 	}
 }
 
-void __cdecl KillHimP_r(unsigned __int8 pNum)
+static void __cdecl KillHimP_r(int pNum)
 {
 	if (multiplayer::IsActive())
 	{
@@ -76,7 +79,7 @@ void __cdecl KillHimP_r(unsigned __int8 pNum)
 	}
 	else
 	{
-		TARGET_DYNAMIC(KillHimP)(pNum);
+		KillHimP_t.Original(pNum);
 	}
 }
 
@@ -132,7 +135,7 @@ void ExecFallingDownP_r(int pNum)
 	}
 }
 
-void __cdecl KillHimByFallingDownP_r(int pno)
+static void __cdecl KillHimByFallingDownP_r(int pno)
 {
 	if (multiplayer::IsActive())
 	{
@@ -142,16 +145,15 @@ void __cdecl KillHimByFallingDownP_r(int pno)
 	}
 	else
 	{
-		TARGET_DYNAMIC(KillHimByFallingDownP)(pno);
+		KillHimByFallingDownP_t.Original(pno);
 	}
 }
 
-void __cdecl KillPlayerFallingDownStageP_r(task* tp)
+static void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		TARGET_DYNAMIC(KillPlayerFallingDownStageP)(tp);
-		return;
+		return KillPlayerFallingDownStageP_t.Original(tp);
 	}
 
 	LoopTaskC(tp);
@@ -208,12 +210,4 @@ void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 			}
 		}
 	}
-}
-
-// Series of hacks to not reset the game if player 1 dies and make every players able to die
-void InitDeathPatches()
-{
-	KillHimP_t = new Trampoline(0x440CD0, 0x440CD7, KillHimP_r);
-	KillHimByFallingDownP_t = new Trampoline(0x446AD0, 0x446AD7, KillHimByFallingDownP_r);
-	KillPlayerFallingDownStageP_t = new Trampoline(0x44AE80, 0x44AE88, KillPlayerFallingDownStageP_r);
 }

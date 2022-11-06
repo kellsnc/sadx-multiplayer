@@ -567,9 +567,6 @@
     <ClInclude Include="d3d8vars.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="death.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
     <ClInclude Include="patches.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
