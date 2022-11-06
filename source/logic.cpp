@@ -152,6 +152,15 @@ extern "C"
 	{
 		SetInfiniteLives();
 
+		for (int i = 0; i < 4; i++)
+		{
+			if (Controllers[i].PressedButtons & Buttons_Y)
+			{
+				if (playertwp[i])
+					playertwp[i]->pos.y += 10.0f;
+			}
+		}
+
 		if (network.IsConnected())
 		{
 			network.Poll();

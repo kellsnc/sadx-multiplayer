@@ -300,6 +300,10 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 
 		twp->ang = ang;
 		SetPlayerPositionAroundPoint(twp, &pos, 5.0f);
+
+		//ugly (temporary) fix to prevent character from clipping ground after a respawn (happen in EC bridge and SH first CP)
+		if (TimeSeconds > 0 || TimeMinutes > 0)
+			twp->pos.y += 10.0f;
 	}
 	else
 	{
