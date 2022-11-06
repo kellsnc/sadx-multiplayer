@@ -183,7 +183,7 @@ static void __cdecl Skydeck_EggcarrierCtrl_r(__int16 act)
 	}
 	else
 	{
-		TARGET_STATIC(RdSkydeckWind)(act);
+		TARGET_STATIC(Skydeck_EggcarrierCtrl)(act);
 	}
 }
 
