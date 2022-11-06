@@ -4,14 +4,51 @@
 static void __cdecl KillHimP_r(int pNum);
 static void __cdecl KillHimByFallingDownP_r(int pno);
 static void __cdecl KillPlayerFallingDownStageP_r(task* tp);
+static void __cdecl BreathCounterP_r(task* tp);
 
 static FunctionHook<void, int> KillHimP_t(KillHimP, KillHimP_r);
 static FunctionHook<void, int> KillHimByFallingDownP_t(KillHimByFallingDownP, KillHimByFallingDownP_r);
 TaskHook KillPlayerFallingDownStageP_t(0x44AE80, KillPlayerFallingDownStageP_r);
+TaskHook BreathCounterP_t(0x446B10, BreathCounterP_r);
 
 void __cdecl GamePlayerMissedFree(task* tp)
 {
 	BYTEn(tp->ptp->twp->counter.l, tp->awp->work.ul[1]) = FALSE;
+}
+
+void KillAndWarpPlayers(char pNum)
+{
+	auto twp = playertwp[pNum];
+	auto pwp = playerpwp[pNum];
+
+	if (!CheckEditMode() && playertp[pNum])
+	{
+		if (GetNumPlayerM(pNum) <= 0)
+		{
+			SetChangeGameMode(1);
+			TempEraseSound();
+		}
+		else
+		{
+			if (multiplayer::IsActive() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
+			{
+				CharColliOff(playertwp[pNum]);
+				SetPlayerInitialPosition(playertwp[pNum]);
+			}
+
+			CameraReleaseEventCamera_m(pNum);
+
+			// Don't reset mode if player is riding something
+			if (!isPlayerInCart(pNum) && !isPlayerOnSnowBoard(pNum))
+			{
+				SetInputP(pNum, PL_OP_LETITGO);
+				twp->mode = 1;
+			}
+
+			pwp->item &= ~Powerups_Dead;
+			CharColliOn(playertwp[pNum]);
+		}
+	}
 }
 
 void __cdecl GamePlayerMissed_r(task* tp)
@@ -31,35 +68,8 @@ void __cdecl GamePlayerMissed_r(task* tp)
 
 	if (++awp->work.ul[0] > 0x78)
 	{
-		if (!CheckEditMode() && playertp[pNum])
-		{
-			if (GetNumPlayerM(pNum) <= 0)
-			{
-				SetChangeGameMode(1);
-				TempEraseSound();
-			}
-			else
-			{
-				if (multiplayer::IsActive() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
-				{
-					CharColliOff(playertwp[pNum]);
-					SetPlayerInitialPosition(playertwp[pNum]);
-				}
-
-				CameraReleaseEventCamera_m(pNum);
-
-				// Don't reset mode if player is riding something
-				if (!isPlayerInCart(pNum) && !isPlayerOnSnowBoard(pNum))
-				{
-					SetInputP(pNum, PL_OP_LETITGO);
-					twp->mode = 1;
-				}
-
-				pwp->item &= ~Powerups_Dead;
-				CharColliOn(playertwp[pNum]);
-			}
-		}
-
+		
+		KillAndWarpPlayers(pNum);
 		FreeTask(tp);
 	}
 }
@@ -210,4 +220,89 @@ static void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 			}
 		}
 	}
+}
+
+static void __cdecl BreathCounterP_r(task* tp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return BreathCounterP_t.Original(tp);
+	}
+
+	int DrownVoice = 1506;
+	auto data = tp->awp;
+	auto timer = data->work.ul[1]++;
+	static const int timeOver = 760;
+	_BOOL1 isTimeUp = timer == timeOver;
+	char pnum = data->work.ub[0];
+	auto player = playertwp[pnum];
+
+	if (!player)
+	{
+		FreeTask(tp);
+		return;
+	}
+
+	if (timer < timeOver)
+	{
+		if (playerpwp[pnum]->breathtimer < 60)
+		{
+			FreeTask(tp);
+			return;
+		}
+		isTimeUp = timer == timeOver;
+	}
+	if (isTimeUp)
+	{
+
+		ForcePlayerAction(pnum, 39); //drown	
+
+		switch (player->counter.b[1])
+		{
+		default:
+			DrownVoice = 1506;
+			break;
+		case Characters_Tails:
+			DrownVoice = 1468;
+			break;
+		case Characters_Knuckles:
+			DrownVoice = 1452;
+			break;
+		case Characters_Amy:
+			DrownVoice = 1397;
+			break;
+		case Characters_Big:
+			DrownVoice = 1417;
+			break;
+		}
+		if (MetalSonicFlag)
+		{
+			PlayVoice(2046);
+		}
+		else
+		{
+			PlaySound(DrownVoice, 0, 0, 0);
+		}
+	}
+	else if (timer == 920)
+	{
+		KillAndWarpPlayers(pnum);
+	}
+	else if (GetDebugMode())
+	{
+		FreeTask(tp);
+		playerpwp[pnum]->breathtimer = 0;
+	}
+	else
+	{
+		if (timer <= 1)
+		{
+			tp->dest = (void(__cdecl*)(task*))j_RestoreLastSong;
+			tp->disp = (void(__cdecl*)(task*))0x440D20;
+			PlayJingle(96);		
+		}
+
+		tp->disp(tp);
+	}
+
 }
