@@ -1,12 +1,16 @@
 #include "pch.h"
 #include "multiplayer.h"
 #include "result.h"
+#include "patches.h"
 
 Trampoline* e103_move_t = nullptr;
 Trampoline* e103_chkPlayerRadius_t = nullptr;
-Trampoline* e103_chkPlayerRangeIn_t = nullptr;
-Trampoline* e103_turnBody_t = nullptr;
-Trampoline* e103_chkDamage_t = nullptr;
+FunctionHook <BOOL, task*> e103_chkPlayerRangeIn_t(0x4E6B30);
+
+TaskHook E103_Exec_t(E103_Main);
+
+UsercallFuncVoid(e103_turnBody_t, (task* a1, NJS_POINT3* a2, int a3), (a1, a2, a3), 0x4E6940, rEAX, rECX, rEDI);
+UsercallFuncVoid(e103_chkDamage_t, (task* a1), (a1), 0x4E6790, rESI);
 
 #pragma region move
 static void e103_move_o(task* tp)
@@ -202,23 +206,12 @@ static BOOL __cdecl e103_chkPlayerRangeIn_r(task* tp)
 	}
 	else
 	{
-		return TARGET_DYNAMIC(e103_chkPlayerRangeIn)(tp);
+		return e103_chkPlayerRangeIn_t.Original(tp);
 	}
 }
 #pragma endregion
 
 #pragma region turnBody
-static void e103_turnBody_o(task* pTask, NJS_POINT3* posTarget, Angle angMax)
-{
-	auto target = e103_turnBody_t->Target();
-	__asm
-	{
-		mov eax, [angMax]
-		mov ecx, [posTarget]
-		mov eax, [pTask]
-		call target
-	}
-}
 
 static void __cdecl e103_turnBody_r(task* pTask, NJS_POINT3* posTarget, Angle angMax)
 {
@@ -228,41 +221,18 @@ static void __cdecl e103_turnBody_r(task* pTask, NJS_POINT3* posTarget, Angle an
 
 		if (ptwp)
 		{
-			e103_turnBody_o(pTask, &ptwp->pos, angMax);
+			e103_turnBody_t.Original(pTask, &ptwp->pos, angMax);
 		}
 	}
 	else
 	{
-		e103_turnBody_o(pTask, posTarget, angMax);
+		e103_turnBody_t.Original(pTask, posTarget, angMax);
 	}
 }
 
-static void __declspec(naked) e103_turnBody_w()
-{
-	__asm
-	{
-		push edi
-		push ecx
-		push eax
-		call e103_turnBody_r
-		pop eax
-		pop ecx
-		pop edi
-		retn
-	}
-}
 #pragma endregion
 
 #pragma region chkDamage
-static void e103_chkDamage_o(task* tp)
-{
-	auto target = e103_chkDamage_t->Target();
-	__asm
-	{
-		mov esi, [tp]
-		call target
-	}
-}
 
 static void __cdecl e103_chkDamage_r(task* tp)
 {
@@ -281,28 +251,31 @@ static void __cdecl e103_chkDamage_r(task* tp)
 		}
 	}
 
-	e103_chkDamage_o(tp);
+	e103_chkDamage_t.Original(tp);
 }
 
-static void __declspec(naked) e103_chkDamage_w()
-{
-	__asm
-	{
-		push esi
-		call e103_chkDamage_r
-		pop esi
-		retn
-	}
-}
 #pragma endregion
+
+void E103Enemy_Main_R(task* obj) {
+
+	auto data1 = obj->twp;
+	auto pNum = GetTheNearestPlayerNumber(&data1->pos);
+	auto player = playertwp[pNum];
+
+	if (player)
+		E100CheckAndSetDamage(data1, player);
+
+	E103_Exec_t.Original(obj);
+}
 
 void InitE103Patches()
 {
 	e103_move_t = new Trampoline(0x4E6D00, 0x4E6D07, e103_move_w);
 	e103_chkPlayerRadius_t = new Trampoline(0x4E6900, 0x4E6908, e103_chkPlayerRadius_w);
-	e103_turnBody_t = new Trampoline(0x4E6940, 0x4E6949, e103_turnBody_w);
-	e103_chkDamage_t = new Trampoline(0x4E6790, 0x4E6796, e103_chkDamage_w);
+	e103_turnBody_t.Hook(e103_turnBody_r);
+	e103_chkDamage_t.Hook(e103_chkDamage_r);
 
-	e103_chkPlayerRangeIn_t = new Trampoline(0x4E6B30, 0x4E6B37, e103_chkPlayerRangeIn_r);
-	WriteCall((void*)((int)e103_chkPlayerRangeIn_t->Target() + 2), (void*)0x441AC0); // Patch trampoline
+	e103_chkPlayerRangeIn_t.Hook(e103_chkPlayerRangeIn_r);
+
+	E103_Exec_t.Hook(E103Enemy_Main_R);
 }

@@ -766,6 +766,15 @@ void __cdecl SetTime2_r(char minute, char second, char frame)
 	return;
 }
 
+//Allow non gamma character to damage E100 Series.
+void E100CheckAndSetDamage(taskwk* data1, taskwk* p1)
+{
+	if ( (GetCollidingEntityA((EntityData1*)data1) || GetCollidingEntityB((EntityData1*)data1)) && p1->flag & Status_Attack && p1->counter.b[1] != Characters_Gamma && data1->mode > 0)
+	{
+		data1->flag |= Status_Hurt;
+	}
+}
+
 void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
