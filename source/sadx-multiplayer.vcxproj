@@ -189,6 +189,8 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="logic.cpp" />
     <ClCompile Include="menu_adventure.cpp" />
+    <ClCompile Include="objects\e101.cpp" />
+    <ClCompile Include="objects\e101r.cpp" />
     <ClCompile Include="objects\miles.cpp" />
     <ClCompile Include="milesrace.cpp" />
     <ClCompile Include="multiapi.cpp" />

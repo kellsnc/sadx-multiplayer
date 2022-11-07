@@ -13,8 +13,6 @@ Level-related adjustements for multiplayer
 Trampoline* Rd_Chaos2_t = nullptr;
 Trampoline* Rd_Chaos4_t = nullptr;
 Trampoline* Rd_Chaos6_t = nullptr;
-Trampoline* Rd_E101_t = nullptr;
-Trampoline* Rd_E101_R_t = nullptr;
 
 Trampoline* Rd_Beach_t = nullptr;
 Trampoline* Rd_Windy_t = nullptr;
@@ -190,30 +188,6 @@ void __cdecl Rd_Chaos6_r(task* tp)
 	else
 	{
 		TARGET_DYNAMIC(Rd_Chaos6)(tp);
-	}
-}
-
-void __cdecl Rd_E101_r(task* tp)
-{
-	if (multiplayer::IsFightMode())
-	{
-		MultiArena(tp);
-	}
-	else
-	{
-		TARGET_DYNAMIC(Rd_E101)(tp);
-	}
-}
-
-void __cdecl Rd_E101_R_r(task* tp)
-{
-	if (multiplayer::IsFightMode())
-	{
-		MultiArena(tp);
-	}
-	else
-	{
-		TARGET_DYNAMIC(Rd_E101_R)(tp);
 	}
 }
 
@@ -622,8 +596,6 @@ void InitLevels()
 	Rd_Chaos2_t = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
 	Rd_Chaos4_t = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
 	Rd_Chaos6_t = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
-	Rd_E101_t = new Trampoline(0x566C00, 0x566C05, Rd_E101_r);
-	Rd_E101_R_t = new Trampoline(0x569040, 0x569047, Rd_E101_R_r);
 
 	// Act swap fixes
 	Rd_Beach_t = new Trampoline(0x4F6D60, 0x4F6D67, Rd_Beach_r);

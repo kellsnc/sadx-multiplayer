@@ -2,7 +2,7 @@
 #include "bosses.h"
 #include "levels.h"
 
-static FunctionHook<void, task*> eggHornet_t(0x572010);
+TaskHook eggHornet_t(0x572010);
 static FunctionHook<int> EH_PosPlayerCheck_t(0x573310);
 static FunctionHook<int, taskwk*> EH_GetVsPlayerAng_t(0x573160);
 
