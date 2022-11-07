@@ -1,14 +1,17 @@
 #include "pch.h"
 #include "multiplayer.h"
 #include "result.h"
+#include "patches.h"
 
 // E104 is almost entirely a copy paste of E103
 
 Trampoline* e104_move_t = nullptr;
 Trampoline* e104_chkPlayerRadius_t = nullptr;
-Trampoline* e104_chkPlayerRangeIn_t = nullptr;
+FunctionHook <BOOL, task*> e104_chkPlayerRangeIn_t(0x604650);
 Trampoline* e104_turnBody_t = nullptr;
 Trampoline* e104_chkDamage_t = nullptr;
+
+TaskHook E104_Exec_t(E104_Main);
 
 #pragma region move
 static void e104_move_o(task* tp)
@@ -204,7 +207,7 @@ static BOOL __cdecl e104_chkPlayerRangeIn_r(task* tp)
 	}
 	else
 	{
-		return TARGET_DYNAMIC(e104_chkPlayerRangeIn)(tp);
+		return  e104_chkPlayerRangeIn_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -298,6 +301,18 @@ static void __declspec(naked) e104_chkDamage_w()
 }
 #pragma endregion
 
+void E104Enemy_Main_R(task* obj) {
+
+	auto data1 = obj->twp;
+	auto pNum = GetTheNearestPlayerNumber(&data1->pos);
+	auto player = playertwp[pNum];
+
+	if (player)
+		E100CheckAndSetDamage(data1, player);
+
+	E104_Exec_t.Original(obj);
+}
+
 void InitE104Patches()
 {
 	e104_move_t = new Trampoline(0x6048B0, 0x6048B5, e104_move_w);
@@ -305,6 +320,7 @@ void InitE104Patches()
 	e104_turnBody_t = new Trampoline(0x604480, 0x604485, e104_turnBody_w);
 	e104_chkDamage_t = new Trampoline(0x604310, 0x604316, e104_chkDamage_w);
 
-	e104_chkPlayerRangeIn_t = new Trampoline(0x604650, 0x604657, e104_chkPlayerRangeIn_r);
-	WriteCall((void*)((int)e104_chkPlayerRangeIn_t->Target() + 2), (void*)0x441AC0); // Patch trampoline
+	e104_chkPlayerRangeIn_t.Hook(e104_chkPlayerRangeIn_r);
+
+	E104_Exec_t.Hook(E104Enemy_Main_R);
 }
