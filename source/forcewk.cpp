@@ -10,7 +10,7 @@ static void __cdecl PSSGCollisionForceWorkEffect_r(playerwk* pwp, NJS_POINT3* ve
 {
 	auto pnum = TASKWK_PLAYERID(twp);
 
-	if (pnum < 0 && pnum > 4)
+	if (pnum < 0 || pnum > 4)
 	{
 		return;
 	}
