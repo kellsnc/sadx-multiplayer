@@ -54,6 +54,7 @@ static FunctionHook<int, taskwk*, enemywk*> EnemyCheckDamage_t((intptr_t)OhNoImD
 static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
 UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
 UsercallFunc(signed int, PlayerVacumedRing_t, (taskwk* a1), (a1), 0x44FA90, rEAX, rEDI);
+static Trampoline* OGate2_Main_t = nullptr;
 
 TaskHook OTpRing_t((intptr_t)OTpRing);
 
@@ -775,6 +776,21 @@ void E100CheckAndSetDamage(taskwk* data1, taskwk* p1)
 	}
 }
 
+void __cdecl OGate2_Main_r(task* obj)
+{
+	auto twp = obj->twp;
+
+	//if none of the player is Amy 
+	if (!isOnePlayerSpecifiedChar(Characters_Amy))
+	{
+		if (twp->mode < 2)
+			twp->mode = 2; //force the door to open
+	}
+
+	TaskFunc(origin, OGate2_Main_t->Target());
+	origin(obj);
+}
+
 void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
@@ -812,6 +828,9 @@ void InitPatches()
 
 	// Bosses
 	SetCircleLimit_t.Hook(SetCircleLimit_r);
+
+	//open door in hot shelter if not amy
+	OGate2_Main_t = new Trampoline(0x59C850, 0x59C858, OGate2_Main_r);
 
 	// Character shadows:
 	// Game draws shadow in logic sub but also in display sub *if* game is paused.

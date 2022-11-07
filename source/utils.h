@@ -24,3 +24,4 @@ void __cdecl SetAndDisp(task* obj, TaskFuncPtr disp);
 bool isInHubWorld();
 bool isPlayerInCart(char pnum);
 bool isPlayerOnSnowBoard(char pnum);
+bool isOnePlayerSpecifiedChar(char charID);

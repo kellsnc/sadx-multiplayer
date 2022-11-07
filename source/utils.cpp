@@ -317,3 +317,20 @@ bool isPlayerOnSnowBoard(char pnum)
 
 	return false;
 }
+
+bool isOnePlayerSpecifiedChar(char charID)
+{
+	if (multiplayer::IsActive())
+	{
+		for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+		{
+			if (playertwp[i] && playertwp[i]->counter.b[1] == charID)
+			{
+				return true;
+			}
+		}
+	}
+
+	return false;
+
+}
