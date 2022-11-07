@@ -253,13 +253,10 @@ static void __cdecl BreathCounterP_r(task* tp)
 	}
 	if (isTimeUp)
 	{
-		ForcePlayerAction(pnum, 39); //drown	
+		SetInputP(pnum, 39); //drown	
 
 		switch (player->counter.b[1])
 		{
-		default:
-			DrownVoice = 1506;
-			break;
 		case Characters_Tails:
 			DrownVoice = 1468;
 			break;
