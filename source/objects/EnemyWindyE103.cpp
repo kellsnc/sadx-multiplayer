@@ -265,6 +265,12 @@ void E103Enemy_Main_R(task* obj) {
 	if (player)
 		E100CheckAndSetDamage(data1, player);
 
+	if (!IsPlayerInsideSphere(&data1->pos, 300.0f) && data1->mode > 1)
+	{
+		data1->mode = 0;
+		return;
+	}
+
 	E103_Exec_t.Original(obj);
 }
 
