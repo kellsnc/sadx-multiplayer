@@ -699,6 +699,11 @@ static void __cdecl InitTime_r()
 
 static int __cdecl GammaTickTimePatch()
 {
+	if (!isOnePlayerSpecifiedChar(Characters_Gamma))
+	{
+		return Characters_Sonic;
+	}
+
 	return multiplayer::IsBattleMode() ? 0 : CurrentCharacter;
 }
 
