@@ -796,6 +796,16 @@ void __cdecl OGate2_Main_r(task* obj)
 	origin(obj);
 }
 
+void FixShakeoffGarbageAction(uint8_t pnum, int action) { //This make the game crashes as Tails.
+
+	if (multiplayer::IsActive())
+	{
+		return;
+	}
+
+	return ForcePlayerAction(pnum, action);
+}
+
 void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
@@ -816,6 +826,7 @@ void InitPatches()
 	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
 	WriteData((uint8_t*)0x500017, (uint8_t)PLAYER_MAX); // Patch launch ramp EC for 8 players
 	WriteJump((void*)0x4265F0, SetTime2_r); //don't reset time with death in multiplayer
+	WriteCall((void*)0x5C5906, FixShakeoffGarbageAction);
 
 	// Score patches
 	EnemyCheckDamage_t.Hook(EnemyCheckDamage_r);
