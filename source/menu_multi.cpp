@@ -224,14 +224,14 @@ PanelPrmType PanelPrmMenuMultiCoopSel[]{
 };
 
 PanelPrmType PanelPrmMenuMultiBattleSel[]{
-	 { -180.0f,	-52.0f, AVAMULTITEX_MD_SPD },
-	 { -60.0f,	-52.0f, AVAMULTITEX_MD_FLY },
-	 { 60.0f,	-52.0f, AVAMULTITEX_MD_EME },
-	 { 180.0f,	-52.0f, AVAMULTITEX_MD_EGROB },
-	 { -180.0f,	68.0f, AVAMULTITEX_MD_FISH },
-	 { -60.0f,	68.0f, AVAMULTITEX_MD_SHOOT },
-	 { 60.0f,	68.0f, AVAMULTITEX_MD_TC },
-	 { 180.0f,	68.0f, AVAMULTITEX_MD_VS }
+	 { -180.0f,	-60.0f, AVAMULTITEX_MD_SPD },
+	 { -60.0f,	-60.0f, AVAMULTITEX_MD_FLY },
+	 { 60.0f,	-60.0f, AVAMULTITEX_MD_EME },
+	 { 180.0f,	-60.0f, AVAMULTITEX_MD_EGROB },
+	 { -180.0f,	60.0f, AVAMULTITEX_MD_FISH },
+	 { -60.0f,	60.0f, AVAMULTITEX_MD_SHOOT },
+	 { 60.0f,	60.0f, AVAMULTITEX_MD_TC },
+	 { 180.0f,	60.0f, AVAMULTITEX_MD_VS }
 };
 
 PanelPrmType PanelPrmMenuMultiStgSelSonic[]{
@@ -311,7 +311,7 @@ void menu_multi_confirmdialog_proc(DDlgType* ddltype);
 
 const DialogPrmType MultiMenuModeSelDialog = { DLG_PNLSTYLE_MARU2, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiModeSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 10.0f, 568.0f, 120.0f, 1.625f, 0.8f, LengthOfArray<char>(PanelPrmMenuMultiModeSel), 2i8 };
 const DialogPrmType MultiMenuCoopSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiCoopSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiCoopSel), 6i8 };
-const DialogPrmType MultiMenuBattleSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiBattleSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiBattleSel), 8i8 };
+const DialogPrmType MultiMenuBattleSelDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiBattleSel, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 270.0f, 20.0f, 500.0f, 260.0f, 1.2f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiBattleSel), 8i8 };
 const DialogPrmType MultiMenuStageSelSonicDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelSonic, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 280.0f, 20.0f, 500.0f, 340.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelSonic), 11i8 };
 const DialogPrmType MultiMenuStageSelFlyDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelFly, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelFly), 5i8 };
 const DialogPrmType MultiMenuStageSelEmeDialog = { DLG_PNLSTYLE_MARU4, nullptr, &AVA_MULTI_TEXLIST, PanelPrmMenuMultiStgSelEme, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 320.0f, 250.0f, 20.0f, 500.0f, 200.0f, 2.1f, 1.2f, LengthOfArray<char>(PanelPrmMenuMultiStgSelEme), 5i8 };
@@ -1636,7 +1636,7 @@ void __cdecl MultiMenuExec_Display(task* tp)
 		menu_multi_disp_charsel(wk);
 
 		// Draw controls
-		menu_multi_disp_controls(wk);
+		// menu_multi_disp_controls(wk);
 
 		ResetMaterial();
 		gHelperFunctions->PopScaleUI();
