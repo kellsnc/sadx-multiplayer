@@ -6,6 +6,8 @@
 
 static constexpr size_t memsize = 0x1C * PLAYER_MAX;
 
+static UsercallFuncVoid(PSSGCollisionForceWorkEffect_t, (playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp), (pwp, vec, twp, cp), 0x43CA40, rEAX, rECX, rESI, stack4);
+
 static void __cdecl PSSGCollisionForceWorkEffect_r(playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp)
 {
 	auto pnum = TASKWK_PLAYERID(twp);
@@ -13,6 +15,11 @@ static void __cdecl PSSGCollisionForceWorkEffect_r(playerwk* pwp, NJS_POINT3* ve
 	if (pnum < 0 || pnum > 4)
 	{
 		return;
+	}
+
+	if (!multiplayer::IsActive() || EV_MainThread_ptr)
+	{
+		return PSSGCollisionForceWorkEffect_t.Original(pwp, vec, twp, cp);
 	}
 
 	auto fwp = pwp->ttp->fwp;
@@ -62,6 +69,6 @@ static void* GetForceWork_r()
 
 void InitForceWorkPatches()
 {
-	GenerateUsercallHook(PSSGCollisionForceWorkEffect_r, noret, (intptr_t)0x43CA40, rEAX, rECX, rESI, stack4);
+	PSSGCollisionForceWorkEffect_t.Hook(PSSGCollisionForceWorkEffect_r);
 	WriteCall((void*)0x40B8AB, GetForceWork_r);
 }
