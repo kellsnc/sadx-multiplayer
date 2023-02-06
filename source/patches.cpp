@@ -684,7 +684,7 @@ static void __cdecl InitTimer_r()
 	TimeMinutes = 0;
 	GameTimer = 0;
 
-	if (GetPlayerNumber() == Characters_Gamma && !multiplayer::IsBattleMode())
+	if (isOnePlayerSpecifiedChar(Characters_Gamma))
 	{
 		TimeMinutes = 3;
 		TimeSeconds = 0;
