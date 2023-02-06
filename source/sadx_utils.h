@@ -339,6 +339,12 @@ struct MDHANDLE
 	MDHEADER md[1];
 };
 
+struct SeqDataType
+{
+	AdvaModeEnum BornMode;
+	ModeSelPrmType SeqData;
+};
+
 DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -575,6 +581,8 @@ FunctionPointer(MDHANDLE*, MDHeaderOpen, (const char* fname, Sint32 flag), 0x4B4
 FunctionPointer(void, MDHeaderClose, (MDHANDLE* mdh), 0x4B4F50);
 DataArray(MDHANDLE*, bankhandle, 0x3B291C8, 16);
 DataArray(int, banktbl, 0x910090, 64 * 2);
+DataArray(SeqDataType, BackToChSelSeqFlowData, 0x7EEB58, 14);
+DataArray(const SeqDataType*, AllSeqDataPtr, 0x10D7B40, 3);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);

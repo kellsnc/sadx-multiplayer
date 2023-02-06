@@ -126,11 +126,6 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 
 		AdvertiseWork.MainMenuSelectedMode = GblMenuTbl[stat >= 3 ? stat - 1 : stat];
 
-		if (stat >= 0)
-		{
-			WriteData((int*)0x7EEB58, (int)ADVA_MODE_CHAR_SEL); // Restore changes made to force return to multi menu (failsafe)
-		}
-
 		switch (stat)
 		{
 		case 0: // Adventure
@@ -187,23 +182,9 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 	}
 }
 
-// Restore changes made to force return to multi menu (failsafe)
-void __cdecl char_sel_exec_r(task* tp)
-{
-	auto wk = (CharSelWk*)tp->awp;
-
-	if (SeqTp->awp->work.ul[1] == ADVA_MODE_CHAR_SEL && wk->Stat <= ADVA_STAT_FADEIN)
-	{
-		WriteData((int*)0x7EEB58, (int)ADVA_MODE_CHAR_SEL);
-	}
-
-	TARGET_DYNAMIC(char_sel_exec)(tp);
-}
-
 void __cdecl InitMenu()
 {
 	title_menu_sub_exec_t = new Trampoline(0x50B630, 0x50B638, title_menu_sub_exec_r);
-	char_sel_exec_t = new Trampoline(0x5122D0, 0x5122DA, char_sel_exec_r);
 	dialog_disp_t = new Trampoline(0x432480, 0x432487, dialog_disp_r);
 
 	DialogPrm[2].PnlPrmPtr = PanelPrmTitleMenu1;
