@@ -532,6 +532,9 @@
     <ClCompile Include="objects\e101r.cpp">
       <Filter>Source Files\objects\bosses</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_tikal_hint.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
