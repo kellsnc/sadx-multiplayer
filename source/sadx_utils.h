@@ -345,6 +345,22 @@ struct SeqDataType
 	ModeSelPrmType SeqData;
 };
 
+struct SeqWk
+{
+	SeqDataType* SeqDataPtr;
+	AdvaModeEnum Mode;
+	AdvaModeEnum OldMode;
+	AdvaModeEnum FixMode;
+	AdvaRetEnum AdvanceFlg;
+	Sint32 RetVal;
+	AdvaModeEnum WMode;
+	Sint16 Cnt;
+	Uint8 WFlg;
+	Uint8 FadeEndFlg;
+	Uint8 FadeOutFlg;
+	Uint8 FadeOutFlg2;
+};
+
 DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);

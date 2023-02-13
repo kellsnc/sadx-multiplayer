@@ -768,7 +768,6 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 	CurrentCharacter = gNextMultiMode == multiplayer::mode::coop ? menu_multiCoop_getCurCharType(backupCoopCharacter) : menu_multi_getplayerno(selected_characters[0]);
 	CurrentLevel = level;
 	CurrentAct = act;
-	SeqTp->awp[1].work.ul[0] = 100;
 	AvaStgActT stgact = { static_cast<uint8_t>(level), static_cast<uint8_t>(act) };
 	AvaCmnPrm = { static_cast<uint8_t>(level), static_cast<uint8_t>(act) };
 	AdvertiseWork.Stage = level;
@@ -776,6 +775,9 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 	wk->SelStg = level;
 	wk->Stat = ADVA_STAT_FADEOUT;
 	wk->T = 0.0f;
+
+	auto seqwk = (SeqWk*)SeqTp->awp;
+	seqwk->RetVal = ADVA_RETVALUE_TRIAL;
 }
 
 void menu_multi_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
@@ -1662,9 +1664,10 @@ void __cdecl MultiMenuExec_Display(task* tp)
 void __cdecl MultiMenuExec_Main(task* tp)
 {
 	auto wk = (MultiMenuWK*)tp->awp;
+	auto seqwk = (SeqWk*)SeqTp->awp;
 
 	// Check if our menu is ready
-	if (SeqTp->awp->work.ul[1] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
+	if (seqwk->Mode == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
 	{
 		PlayMenuMusicID(MusicIDs_JingleE);
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
@@ -1699,7 +1702,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	}
 
 	// Check if our menu has to change
-	if (SeqTp->awp->work.ul[2] == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_KEEP)
+	if (seqwk->OldMode == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_KEEP)
 	{
 		PlayMenuEnterSound();
 		wk->Stat = ADVA_STAT_FADEOUT;
@@ -1738,7 +1741,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		{
 			wk->Stat = ADVA_STAT_REQWAIT;
 
-			SeqTp->awp[1].work.ub[15] = 1i8;
+			seqwk->FadeEndFlg = TRUE;
 
 			njReleaseTexture(&AVA_MULTI_TEXLIST);
 
@@ -1753,7 +1756,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			// Force stage mode:
 			if (wk->SelStg >= 0)
 			{
-				SeqTp->awp[1].work.sl[1] = 100;
+				seqwk->AdvanceFlg = ADVA_RETVALUE_TRIAL;
 			}
 		}
 
