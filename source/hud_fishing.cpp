@@ -67,7 +67,7 @@ static void __cdecl dispZankiTexturePause_r(task* tp)
 {
 	if (multiplayer::IsBattleMode())
 	{
-		if (!IsGamePaused() && !loop_count && ssStageNumber != STAGE_TWINKLEPARK && HideHud >= 0 && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
+		if (!IsGamePaused() && !loop_count && ssStageNumber != STAGE_MG_CART && HideHud >= 0 && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
 		{
 			reel_sprite.ang = 0;
 
