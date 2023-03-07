@@ -11,7 +11,7 @@ UsercallFuncVoid(SonicHomingOnTarget_h, (taskwk* twp, playerwk* pwp, motionwk2* 
 UsercallFuncVoid(SonicHomeOnTarget_h, (taskwk* twp, playerwk* pwp, motionwk2* mwp), (twp, pwp, mwp), 0x494B80, rECX, rEAX, stack4);
 UsercallFuncVoid(miles_oneshot, (taskwk* twp, Sint32 tone), (twp, tone), 0x45BDF0, rEAX, stack4);
 UsercallFunc(Bool, MilesCheckFinishThrowObject_h, (taskwk* twp, playerwk* pwp), (twp, pwp), 0x45D0F0, rEAX, rESI, stack4);
-UsercallFunc(Bool, KnucklesCheckFinishThrowObject_h, (taskwk* twp, motionwk2* mwp, playerwk* pwp), (twp, mwp, pwp), 0x4738A0, rEAX, rESI, stack4, stack4);
+
 FunctionHook<taskwk*, taskwk*> CCL_IsHitPlayer_h(0x41CBC0);
 FunctionHook<void> CCL_ClearAll_h(0x41C680);
 FunctionHook<void> CCL_Analyze_h(0x420700);
@@ -20,6 +20,7 @@ FunctionHook<Bool, taskwk*> BigCheckTargetEnemy_h(0x46EE40);
 FunctionHook<Sint32, Uint8> GetRivalPlayerNumber_h(0x441BF0);
 
 FunctionHook<void> MakeLandCollLandEntryRangeIn_h(0x43AEF0);
+static Trampoline* KnucklesCheckFinishThrowObject_h = nullptr;
 
 static _OBJ_LANDENTRY ri_landentry_buf_ex[256]; // 256 instead of 128
 
@@ -736,11 +737,28 @@ Bool MilesCheckFinishThrowObject_r(taskwk* twp, playerwk* pwp)
 	return 1;
 }
 
+static Bool __cdecl KnucklesCheckFinishThrowObject_origin(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	auto target = KnucklesCheckFinishThrowObject_h->Target();
+
+	Bool result;
+	__asm
+	{
+		push[pwp]
+		push[mwp]
+		mov esi, [twp]
+		call target
+		add esp, 8
+		mov result, eax
+	}
+	return result;
+}
+
 Bool KnucklesCheckFinishThrowObject_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return KnucklesCheckFinishThrowObject_h.Original(twp, mwp, pwp);
+		return KnucklesCheckFinishThrowObject_origin(twp, mwp, pwp);
 	}
 
 	auto htp = pwp->htp;
@@ -828,6 +846,22 @@ Bool KnucklesCheckFinishThrowObject_r(taskwk* twp, motionwk2* mwp, playerwk* pwp
 	return 1;
 }
 
+static void __declspec(naked) KnuckleCheckFinishThrowObjectASM()
+{
+	__asm
+	{
+		push[esp + 08h] // a3
+		push[esp + 08h] // a2
+		push esi // a1
+		call KnucklesCheckFinishThrowObject_r
+		pop esi // a1
+		add esp, 4 // a2
+		add esp, 4 // a3
+		retn
+	}
+}
+
+
 void InitCollisionPatches()
 {
 	// Dyncol lookup rewrite
@@ -856,6 +890,6 @@ void InitCollisionPatches()
 	SonicHomingOnTarget_h.Hook(SonicHomingOnTarget_r);
 	SonicHomeOnTarget_h.Hook(SonicHomeOnTarget_r);
 	MilesCheckFinishThrowObject_h.Hook(MilesCheckFinishThrowObject_r);
-	KnucklesCheckFinishThrowObject_h.Hook(KnucklesCheckFinishThrowObject_r);
+	KnucklesCheckFinishThrowObject_h = new Trampoline((int)0x4738A0, (int)0x4738A6, KnuckleCheckFinishThrowObjectASM);
 	WriteJump((void*)0x43C110, PCheckTargetEnemy_r);
 }
