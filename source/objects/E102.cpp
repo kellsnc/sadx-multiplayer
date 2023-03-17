@@ -22,6 +22,21 @@ bool IsCountingDown()
 	return CurrentCharacter == Characters_Gamma && !multiplayer::IsBattleMode();
 }
 
+void __cdecl E102TimeOverHook(Uint8 pno)
+{
+	if (IsCountingDown())
+	{
+		if (multiplayer::IsCoopMode())
+		{
+			SetChangeGameMode(GAMEMD_MISS);
+		}
+		else
+		{
+			KillHimP(pno);
+		}
+	}
+}
+
 void __cdecl E102AddSeconds_r(int seconds)
 {
 	if (IsCountingDown())
@@ -327,4 +342,5 @@ void initGammaPatch()
 	E102_RunsActions_t.Hook(E102_RunActions_r);
 	E102DispTimeUpWarning_t.Hook(E102DispTimeUpWarning_r);
 	WriteCall((void*)0x49FD54, E102AddSeconds_r);
+	WriteCall((void*)0x47FC17, E102TimeOverHook);
 }
