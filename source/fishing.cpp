@@ -1054,15 +1054,20 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		{
 			NJS_POINT3 pos = twp->pos;
 			NJS_POINT3 spd = etc->Big_Fish_Ptr->mwp->spd;
-			Angle3 ang, ang2 = { 0, 0, 0 };
+			Angle3 ang = { 0 };
+			Angle3 ang2 = { 0 };
 
 			auto test1 = MSetPosition(&pos, &spd, &ang, lure_radius);
 
-			//pos = twp->pos;
+			pos = twp->pos;
 
 			auto test2 = test1 /*|| BigSetPosition(&pos, &spd, &ang2, lure_radius)*/;
 			auto test3 = chkKabeAngle2(&ang);
 			auto test4 = chkKabeAngle2(&ang2);
+
+			// Todo: investigate why two lures touching a wall simultaneously breaks MSetPosition
+			if (isnan(spd.x) || isnan(spd.y) || isnan(spd.z))
+				spd = mwp->spd;
 
 			if (test1 & test2 & test3 & test4)
 			{
@@ -1135,7 +1140,8 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 
 		NJS_POINT3 pos = twp->pos;
 		NJS_POINT3 spd = mwp->spd;
-		Angle3 ang, ang2 = { 0, 0, 0 };
+		Angle3 ang = { 0 };
+		Angle3 ang2 = { 0 };
 
 		auto test1 = MSetPosition(&pos, &spd, &ang, lure_radius);
 
@@ -1145,11 +1151,15 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 			test1 = FALSE;
 		}
 
-		//pos = twp->pos;
+		pos = twp->pos;
 
-		auto test2 = test1/* || BigSetPosition(&pos, &spd, &ang2, lure_radius)*/;
+		auto test2 = test1 || BigSetPosition(&pos, &spd, &ang2, lure_radius);
 		auto test3 = chkKabeAngle2(&ang);
 		auto test4 = chkKabeAngle2(&ang2);
+
+		// Todo: investigate why two lures touching a wall simultaneously breaks MSetPosition
+		if (isnan(spd.x) || isnan(spd.y) || isnan(spd.z))
+			spd = mwp->spd;
 
 		if (test1 & test2 & test3 & test4)
 		{
