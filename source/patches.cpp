@@ -57,6 +57,7 @@ UsercallFunc(signed int, PlayerVacumedRing_t, (taskwk* a1), (a1), 0x44FA90, rEAX
 static Trampoline* OGate2_Main_t = nullptr;
 
 TaskHook OTpRing_t((intptr_t)OTpRing);
+static FunctionHook<void>EnableTime_t(0x426030);
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
@@ -767,7 +768,7 @@ void __cdecl SetTime2_r(char minute, char second, char frame)
 		return;
 
 	TimeMinutes = minute,
-	TimeSeconds = second;
+		TimeSeconds = second;
 	TimeFrames = frame;
 	return;
 }
@@ -775,7 +776,7 @@ void __cdecl SetTime2_r(char minute, char second, char frame)
 //Allow non gamma character to damage E100 Series.
 void E100CheckAndSetDamage(taskwk* data1, taskwk* p1)
 {
-	if ( (GetCollidingEntityA((EntityData1*)data1) || GetCollidingEntityB((EntityData1*)data1)) && p1->flag & Status_Attack && p1->counter.b[1] != Characters_Gamma && data1->mode > 0)
+	if ((GetCollidingEntityA((EntityData1*)data1) || GetCollidingEntityB((EntityData1*)data1)) && p1->flag & Status_Attack && p1->counter.b[1] != Characters_Gamma && data1->mode > 0)
 	{
 		data1->flag |= Status_Hurt;
 	}
@@ -806,6 +807,53 @@ void FixShakeoffGarbageAction(uint8_t pnum, int action) { //This make the game c
 	return ForcePlayerAction(pnum, action);
 }
 
+void RemoveAttackSolidColFlags(uint8_t pID)
+{
+	if (!playertwp[pID] || EV_MainThread_ptr || CharacterBossActive || !multiplayer::IsCoopMode())
+		return;
+
+	auto pData = playertwp[pID];
+
+	if (pData->cwp && pData->cwp->nbInfo)
+	{
+		for (int8_t i = 0; i < pData->cwp->nbInfo; i++)
+		{
+			playertwp[pID]->cwp->info[i].damage &= ~0x20u; //Remove damage on other players
+			playertwp[pID]->cwp->info[i].push &= ~0x1u; //remove push flag on other players
+		}
+	}
+}
+
+void RestorePlayerCollisionFlags(uint8_t ID)
+{
+	if (!playertwp[ID])
+		return;
+
+	auto data = playertwp[ID];
+
+	if (data->cwp)
+	{
+		if (data->cwp->nbInfo)
+		{
+			for (int8_t i = 0; i < data->cwp->nbInfo; i++)
+			{
+				playertwp[ID]->cwp->info[i].damage |= 0x20u; //Restore damage on other players
+				playertwp[ID]->cwp->info[i].push |= 0x1u; //Restore push flag on other players
+			}
+		}
+	}
+}
+
+void EnableTime_r()
+{
+	EnableTime_t.Original();
+
+	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+	{
+		RemoveAttackSolidColFlags(i);
+	}
+}
+
 void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
@@ -820,6 +868,7 @@ void InitPatches()
 	PGetAcceleration_t = new Trampoline(0x44C270, 0x44C278, PGetAcceleration_r);
 	PGetAccelerationSnowBoard_t = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
 	SonicMotionCheckEdition.Hook(SonicMotionCheckEdition_r);
+	EnableTime_t.Hook(EnableTime_r); //patch player col push
 
 	// Misc
 	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
