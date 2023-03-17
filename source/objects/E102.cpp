@@ -17,25 +17,35 @@ UsercallFunc(signed int, E102_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2
 TaskHook E102_t((intptr_t)0x483430);
 TaskHook E102DispTimeUpWarning_t(0x4C51D0);
 
+bool IsCountingDown()
+{
+	return CurrentCharacter == Characters_Gamma && !multiplayer::IsBattleMode();
+}
+
 void __cdecl E102AddSeconds_r(int seconds)
 {
-	if (multiplayer::IsActive() && CurrentCharacter != Characters_Gamma)
+	if (IsCountingDown())
 	{
-		return;
+		AddSeconds(seconds);
 	}
-
-	AddSeconds(seconds);
 }
 
 static void E102DispTimeUpWarning_r(task* tp)
 {
-	if (multiplayer::IsActive() && CurrentCharacter != Characters_Gamma)
+	if (IsCountingDown())
 	{
-		FreeTask(tp);
-		return;
+		if (SplitScreen::IsActive())
+		{
+			SplitScreen::SaveViewPort();
+			SplitScreen::ChangeViewPort(-1);
+			E102DispTimeUpWarning_t.Original(tp);
+			SplitScreen::RestoreViewPort();
+		}
+		else
+		{
+			E102DispTimeUpWarning_t.Original(tp);
+		}
 	}
-
-	E102DispTimeUpWarning_t.Original(tp);
 }
 
 void E102_RunActions_r(task* tsk, motionwk2* data2, playerwk* co2) {
@@ -284,16 +294,19 @@ static void __cdecl E102AddSecTotalNewDisplay_r(task* tp);
 Trampoline E102AddSecTotalNewDisplay_t(0x49FDA0, 0x49FDA5, E102AddSecTotalNewDisplay_r);
 static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
 {
-	if (multiplayer::IsCoopMode() && SplitScreen::IsActive())
+	if (IsCountingDown())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
-		TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
-		SplitScreen::RestoreViewPort();
-	}
-	else if (!multiplayer::IsActive())
-	{
-		TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+		if (SplitScreen::IsActive())
+		{
+			SplitScreen::SaveViewPort();
+			SplitScreen::ChangeViewPort(-1);
+			TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+			SplitScreen::RestoreViewPort();
+		}
+		else
+		{
+			TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+		}
 	}
 }
 
@@ -301,7 +314,7 @@ static void __cdecl E102AddSecTotalNew_r(task* tp);
 Trampoline E102AddSecTotalNew_t(0x49FF10, 0x49FF16, E102AddSecTotalNew_r);
 static void __cdecl E102AddSecTotalNew_r(task* tp)
 {
-	if (!multiplayer::IsBattleMode())
+	if (IsCountingDown())
 	{
 		TARGET_STATIC(E102AddSecTotalNew)(tp);
 	}
