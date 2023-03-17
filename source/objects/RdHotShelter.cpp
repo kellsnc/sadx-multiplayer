@@ -238,8 +238,9 @@ static void TunnelManagerExec_m(task* tp)
 		break;
 	case 3:
 		dsPlay_timer(325, (int)tp, 1, 0, 2);
+		++twp->timer.l;
 
-		if (++twp->timer.l > 170)
+		if (twp->timer.l > 170)
 		{
 			for (int i = 0; i < PLAYER_MAX; ++i)
 			{
@@ -252,6 +253,12 @@ static void TunnelManagerExec_m(task* tp)
 
 			twp->mode = 4;
 			twp->timer.l = 0;
+		}
+		else if (twp->timer.l > 165)
+		{
+			for (int i = 0; i < PLAYER_MAX; ++i)
+				if (playertwp[i] && GetDistance(&end_pos, &playertwp[i]->pos) < 200.0f)
+					SetPositionP(i, end_pos.x, end_pos.y, end_pos.z);
 		}
 		break;
 	case 4:
