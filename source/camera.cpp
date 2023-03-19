@@ -38,6 +38,8 @@ VariableHook<Float, 0x3B2CA6C> fActionFrame_m;
 VariableHook<Bool, 0x3B2CAC0> dword_3B2CAC0_m;
 VariableHook<Bool, 0x3B2C6C0> flagCameraNoUnderWater_m;
 VariableHook<_OBJ_CAMERAPARAM, 0x3B2C6CC> externCameraParam_m;
+VariableHook<Sint32, 0x3B2C6F0> CameraCurrentRingBuf_m;
+VariableHook<NJS_VECTOR[50], 0x3B2C6F8> CameraChaseBuffer_m;
 
 static taskwk* backup_pl;
 static motionwk2* backup_mtn;
@@ -836,6 +838,37 @@ void InitCameraParam_m(int pnum)
 
 	cameraTimer_m[pnum] = 0;
 	eventReleaseTimer_m[pnum] = 0;
+}
+
+void setChaseRingBuffer(int pnum)
+{
+	auto& CameraCurrentRingBuf = CameraCurrentRingBuf_m[pnum];
+	auto& CameraChaseBuffer = CameraChaseBuffer_m[pnum];
+
+	Sint32 num = CameraCurrentRingBuf ? CameraCurrentRingBuf - 1 : 49;
+
+	NJS_VECTOR v;
+	v.x = playertwp[pnum]->pos.x - CameraChaseBuffer[num].x;
+	v.y = playertwp[pnum]->pos.y - CameraChaseBuffer[num].y + playerpwp[pnum]->p.eyes_height;
+	v.z = playertwp[pnum]->pos.z - CameraChaseBuffer[num].z;
+
+	if (njScalor(&v) > 1.0f)
+	{
+		CameraChaseBuffer[CameraCurrentRingBuf].x = playertwp[pnum]->pos.x;
+		CameraChaseBuffer[CameraCurrentRingBuf].y = playerpwp[pnum]->p.eyes_height + playertwp[pnum]->pos.y;
+		CameraChaseBuffer[CameraCurrentRingBuf].z = playertwp[pnum]->pos.z;
+
+		CameraCurrentRingBuf += 1;
+		if (CameraCurrentRingBuf > 50)
+			CameraCurrentRingBuf = 0;
+	}
+}
+
+NJS_POINT3* FollowRingData_r(Sint32 num)
+{
+	auto pnum = TASKWK_PLAYERID(playertwp[0]);
+	auto current = CameraCurrentRingBuf_m[pnum];
+	return &CameraChaseBuffer_m[pnum][current - num + (current - num < 0 ? 0x32 : 0)];
 }
 
 Bool checkfreecameraarea_m(Sint32 sw, int pnum)
@@ -1970,6 +2003,7 @@ void __cdecl Camera_r(task* tp)
 				CameraRunTimers(i);
 				CameraCameraMode_m(i);
 				cameraAdjustCheck_m(i, twp, &oldTaskWork);
+				setChaseRingBuffer(i);
 
 				if (camera_mode_m[i] == 1)
 				{
@@ -2180,6 +2214,7 @@ void InitCamera()
 	WriteJump((void*)0x435D10, CamcontSetCameraTGTOFST_r);
 	WriteJump((void*)0x434600, cameraModeInit_r);
 	WriteJump((void*)0x434680, AddCameraStage_r);
+	WriteJump((void*)0x437220, FollowRingData_r);
 
 	WriteCall((void*)0x45ED73, CameraReleaseEventCamera_PlayerHack);
 	WriteCall((void*)0x45EEC4, CameraReleaseEventCamera_PlayerHack);
