@@ -3,6 +3,8 @@
 #include "network.h"
 #include "set.h"
 
+TaskHook EnemySai_h(0x7A1380);
+
 enum
 {
 	MODE_DYING = 7,
@@ -56,18 +58,8 @@ static bool SaiSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM p
 	return false;
 }
 
-static void __cdecl EnemySai_r(task* tp);
-Trampoline EnemySai_t(0x7A1380, 0x7A138A, EnemySai_r);
 static void __cdecl EnemySai_r(task* tp)
 {
-	// Temporary:
-	static bool initialized = false;
-	if (!initialized)
-	{
-		initialized = true;
-		network.RegisterListener(Network::PACKET_OBJECT_RHINOTANK, SaiListener);
-	}
-
 	if (tp->twp->mode != 0 && network.IsConnected())
 	{
 		if (network.GetPlayerNum() == 0)
@@ -77,5 +69,14 @@ static void __cdecl EnemySai_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(EnemySai)(tp);
+	auto backup = playertwp[0];
+	playertwp[0] = playertwp[GetClosestPlayerNum(&tp->twp->pos)];
+	EnemySai_h.Original(tp);
+	playertwp[0] = backup;
+}
+
+void InitEnemySaiPatches()
+{
+	EnemySai_h.Hook(EnemySai_r);
+	network.RegisterListener(Network::PACKET_OBJECT_RHINOTANK, SaiListener);
 }

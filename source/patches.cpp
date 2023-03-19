@@ -21,6 +21,7 @@
 #include "objects/ObjCylinderCmn.h"
 #include "objects/o_sky_ocm.h"
 #include "objects/e_robo.h"
+#include "objects/e_sai.h"
 
 #include "objects/sonic.h"
 #include "objects//miles.h"
@@ -957,7 +958,6 @@ void InitPatches()
 	PatchPondSkater();
 	PatchGachapon();
 
-
 	initLadderPatches();
 	initSDIntroPatches();
 	init_SDCylinderPatches();
@@ -971,4 +971,5 @@ void InitPatches()
 	initGammaPatch();
 	PatchRocket();
 	initERoboHack();
+	InitEnemySaiPatches();
 }

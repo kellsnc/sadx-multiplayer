@@ -750,6 +750,9 @@
     <ClInclude Include="objects\e_robo.h">
       <Filter>Header FIles\objects\enemy</Filter>
     </ClInclude>
+    <ClInclude Include="objects\e_sai.h">
+      <Filter>Header FIles\objects\enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
