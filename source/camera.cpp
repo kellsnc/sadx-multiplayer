@@ -842,7 +842,7 @@ void InitCameraParam_m(int pnum)
 
 void setChaseRingBuffer(int pnum)
 {
-	auto& CameraCurrentRingBuf = CameraCurrentRingBuf_m[pnum];
+	auto CameraCurrentRingBuf = CameraCurrentRingBuf_m[pnum];
 	auto& CameraChaseBuffer = CameraChaseBuffer_m[pnum];
 
 	Sint32 num = CameraCurrentRingBuf ? CameraCurrentRingBuf - 1 : 49;
