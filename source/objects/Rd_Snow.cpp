@@ -110,7 +110,7 @@ static void RdSnowBoardingRegular_m(task* tp)
 			}
 
 			// Since the avalanch is not there, we hardcode a speed to pass the pit
-			else if (ptwp->pos.x < -5362.0f && ptwp->pos.x > -5462.0f)
+			else if (ptwp->pos.x < -5362.0f && ptwp->pos.x > -5462.0f && ptwp->pos.y > -4000.0f)
 			{
 				SetVelocityAndRotationAndNoconTimeP(i, &vel_hardcodedgap, &ang_spdman, 60);
 			}
