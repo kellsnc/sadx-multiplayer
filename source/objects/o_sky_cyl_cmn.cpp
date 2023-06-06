@@ -1,4 +1,7 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FunctionHook.h"
+#include "sadx_utils.h"
 
 signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* co2)
 {
@@ -163,6 +166,111 @@ void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2)
 	}
 
 	return;
+}
+
+UsercallFunc(BOOL, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
+
+void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd);
+FunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0, dsHangPoleCom_r);
+void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd)
+{
+	if (!multiplayer::IsActive)
+	{
+		dsHangPoleCom_h.Original(tp, rotspd);
+		return;
+	}
+
+	taskwk* twp = tp->twp;
+	int cdt[PLAYER_MAX] = { 0 };
+
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		taskwk* pltwp = playertwp[i];
+		if (pltwp)
+		{
+			cdt[i] = 0;
+
+			if (--twp->counter.b[i] == 0)
+				twp->counter.b[i] = 1;
+
+			if (sub_5EDD60(tp, i) && twp->counter.b[i] == 1)
+			{
+				cdt[i] = -1;
+
+				NJS_VECTOR dir;
+				dir.x = pltwp->pos.x - twp->pos.x;
+				dir.y = 0.0f;
+				dir.z = pltwp->pos.z - twp->pos.z;
+				njUnitVector(&dir);
+
+				motionwk2* mwp = playermwp[i];
+				NJS_VECTOR spd;
+				spd.x = mwp->spd.x;
+				spd.y = 0.0f;
+				spd.z = mwp->spd.z;
+				njUnitVector(&spd);
+				if (njInnerProduct(&spd, &dir) < 0.5f)
+				{
+					cdt[i] = 1;
+				}
+			}
+		}
+	}
+
+	EntryColliList(twp);
+	ObjectSetupInput(twp, 0);
+
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		taskwk* pltwp = playertwp[i];
+		if (pltwp)
+		{
+			if (twp->value.l & (1 << i))
+			{
+				NJS_VECTOR dir;
+				dir.x = pltwp->pos.x - twp->pos.x;
+				dir.y = 0.0f;
+				dir.z = pltwp->pos.z - twp->pos.z;
+				Float dist = njSqrt(dir.z * dir.z + dir.x * dir.x);
+				Angle angY = twp->ang.x - -njArcTan2(-dir.x, -dir.z);
+				SetRotationP(i, 0, angY, 0);
+				SetPositionP(i, njCos(-0x4000 - angY) * dist + twp->pos.x, pltwp->pos.y, njSin(-0x4000 - angY) * dist + twp->pos.z);
+			}
+
+			if (!cdt[i] || playerpwp[i]->htp != tp)
+			{
+				if (twp->value.l & (1 << i))
+				{
+					twp->value.l &= ~(1 << i);
+					twp->counter.b[i] = 60;
+
+					NJS_VECTOR dir;
+					dir.x = pltwp->pos.x - twp->pos.x;
+					dir.y = 0.0f;
+					dir.z = pltwp->pos.z - twp->pos.z;
+					njUnitVector(&dir);
+
+					Angle angY = njArcTan2(-dir.x, -dir.z);
+					SetRotationP(i, 0, angY, 0);
+					SetVelocityP(i, njCos(-0x4000 - angY) * 1.2f, 2.2f, njSin(-0x4000 - angY) * 1.2f);
+				}
+			}
+
+			if (cdt[i] == 1 && twp->counter.b[i] == 1 && !(twp->value.l & (1 << i)))
+			{
+				HoldOnPillarP(i, tp);
+
+				NJS_VECTOR dir;
+				dir.x = pltwp->pos.x - twp->pos.x;
+				dir.y = 0.0f;
+				dir.z = pltwp->pos.z - twp->pos.z;
+				njUnitVector(&dir);
+				SetRotationP(i, 0, njArcTan2(-dir.x, -dir.z), 0);
+
+				twp->value.l |= 1 << i;
+			}
+		}
+	}
 }
 
 void init_SDCylinderPatches()
