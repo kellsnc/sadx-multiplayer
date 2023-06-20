@@ -12,6 +12,7 @@ private:
 	MSGC msgc = {};
 	int gbix = 0xD0000000 + ((int)this % 0xFFFFFFF);
 	std::string m_text;
+	bool m_initialized = false;
 
 public:
 	void Draw()
@@ -45,8 +46,13 @@ public:
 
 	void Free()
 	{
-		MSG_Close(&msgc);
-		msgc = {};
+		if (m_initialized)
+		{
+			MSG_Close(&msgc);
+			msgc = {};
+			m_text.empty();
+			m_initialized = false;
+		}
 	}
 
 	void Initialize(const char* text, int x, int y)
@@ -55,6 +61,7 @@ public:
 		MSG_Open(&msgc, x, y, 640, 40, gbix);
 		MSG_Cls(&msgc);
 		SetText(text);
+		m_initialized = true;
 	}
 
 	void Initialize(std::string& text, int x, int y)
