@@ -55,6 +55,11 @@ public:
 		PACKET_LOGIC_PAUSE,
 		PACKET_LOGIC_RAND,
 
+		PACKET_MENU_CONFIRM,
+		PACKET_MENU_SYNC,
+		PACKET_MENU_CHAR,
+		PACKET_MENU_START,
+
 		PACKET_OBJECT_RHINOTANK
 	};
 
@@ -79,7 +84,7 @@ public:
 			return true;
 		}
 		else
-	{
+		{
 			return packet.Send(m_pPeer);
 		}
 	}

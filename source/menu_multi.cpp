@@ -638,7 +638,7 @@ void OpenLevelDialog(const DialogPrmType* dial, const int* list, int character, 
 	}
 }
 
-void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
+bool menu_multi_apply_change(MultiMenuWK* wk, MD_MULTI id, int dial)
 {
 	int nextdial = wk->SubMode < id ? 0 : gNextDialogStat;
 
@@ -679,16 +679,24 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 		saved_mode = wk->SubMode;
 		break;
 	case MD_MULTI_MODESEL:
+		if (previous < id)
+			PlayMenuEnterSound();
+
+		if (previous == MD_MULTI_ONLINECON)
+			pcount = network.GetPlayerCount();
+
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_MODESEL;
 		OpenDialogCsrLet(&MultiMenuModeSelDialog, nextdial, 0);
 		break;
 	case MD_MULTI_COOPSEL:
+		gNextMultiMode = multiplayer::mode::coop;
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_COOPSEL;
 		OpenModeDialog(&MultiMenuCoopSelDialog, nextdial);
 		break;
 	case MD_MULTI_BATTLESEL:
+		gNextMultiMode = multiplayer::mode::battle;
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_BATTLESEL;
 		OpenModeDialog(&MultiMenuBattleSelDialog, nextdial);
@@ -696,58 +704,175 @@ void menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 	case MD_MULTI_CHARSEL: // Open character select
 		menu_multi_getcharaenable();
 		menu_multi_charsel_unready();
+		if (previous == MD_MULTI_COOPSEL)
+		{
+			selected_characters[0] = 0;
+			chara_ready[0] = true;
+		}
 		break;
 	case MD_MULTI_STGSEL_SPD:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_SPD;
 		OpenLevelDialog(&MultiMenuStageSelSonicDialog, spd_level_link, Characters_Sonic, nextdial);
+		gNextDialogStat = 0;
 		break;
 	case MD_MULTI_STGSEL_FLY:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_FLY;
 		OpenLevelDialog(&MultiMenuStageSelFlyDialog, fly_level_link, Characters_Tails, nextdial);
+		gNextDialogStat = 1;
 		break;
 	case MD_MULTI_STGSEL_EME:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_EME;
 		OpenLevelDialog(&MultiMenuStageSelEmeDialog, eme_level_link, Characters_Knuckles, nextdial);
+		gNextDialogStat = 2;
 		break;
 	case MD_MULTI_STGSEL_EGROB:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_EGROB;
 		OpenLevelDialog(&MultiMenuStageSelEgRobDialog, egrob_level_link, Characters_Amy, nextdial);
+		gNextDialogStat = 3;
 		break;
 	case MD_MULTI_STGSEL_FISH:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_FISH;
 		OpenLevelDialog(&MultiMenuStageSelBigDialog, fish_level_link, Characters_Big, nextdial);
+		gNextDialogStat = 4;
 		break;
 	case MD_MULTI_STGSEL_SHOOT:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_SHOOT;
 		OpenLevelDialog(&MultiMenuStageSelShootDialog, shoot_level_link, Characters_Gamma, nextdial);
+		gNextDialogStat = 5;
 		break;
 	case MD_MULTI_STGSEL_TC:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_TC;
 		OpenDialogCsrLet(&MultiMenuStageSelTwinkleDialog, nextdial, 0);
+		gNextDialogStat = 6;
 		break;
 	case MD_MULTI_STGSEL_VS:
 		menu_multi_setsqrcursor();
 		saved_mode = MD_MULTI_STGSEL_VS;
 		OpenDialogCsrLet(&MultiMenuStageSelVsDialog, nextdial, 0);
+		gNextDialogStat = 7;
 		break;
 	case MD_MULTI_STGASK: // Open prompt to ask level confirmation
+	{
+		const int* link;
+		switch (previous)
+		{
+		case MD_MULTI_STGSEL_SPD:
+			link = spd_level_link;
+			break;
+		case MD_MULTI_STGSEL_FLY:
+			link = fly_level_link;
+			break;
+		case MD_MULTI_STGSEL_EME:
+			link = eme_level_link;
+			break;
+		case MD_MULTI_STGSEL_EGROB:
+			link = egrob_level_link;
+			break;
+		case MD_MULTI_STGSEL_FISH:
+			link = fish_level_link;
+			break;
+		case MD_MULTI_STGSEL_SHOOT:
+			link = shoot_level_link;
+			break;
+		case MD_MULTI_STGSEL_TC:
+			link = twinkle_level_link;
+			break;
+		case MD_MULTI_STGSEL_VS:
+			link = vs_level_link;
+			break;
+		default:
+			return false;
+		}
+
+		const int level = link[dial];
+		int actcnt = 1;
+
+		auto act = toactnum(level);
+
+		MultiMenuStageConfirmDialog.CsrMax = actcnt + 1;
+		MultiMenuStageConfirmDialog.CsrCancel = actcnt;
+
+		if (actcnt == 1)
+		{
+			PanelPrmMenuMultiStgConfirm[0] = { -114.0f, 25.0f, AVAMULTITEX_YES };
+			PanelPrmMenuMultiStgConfirm[1] = { 114.0f, 25.0f, AVAMULTITEX_NO };
+		}
+		else if (actcnt == 2)
+		{
+			PanelPrmMenuMultiStgConfirm[0] = { -144.0f, 25.0f, (uint8_t)(AVAMULTITEX_ACT1 + act) };
+			PanelPrmMenuMultiStgConfirm[1] = { 0.0f, 25.0f, (uint8_t)(AVAMULTITEX_ACT2 + act) };
+			PanelPrmMenuMultiStgConfirm[2] = { 144.0f, 25.0f, AVAMULTITEX_NO };
+		}
+		else if (actcnt == 3)
+		{
+			PanelPrmMenuMultiStgConfirm[0] = { -177.0f, 25.0f, AVAMULTITEX_ACT1 };
+			PanelPrmMenuMultiStgConfirm[1] = { -60.0f, 25.0f, AVAMULTITEX_ACT2 };
+			PanelPrmMenuMultiStgConfirm[2] = { 60.0f, 25.0f, AVAMULTITEX_ACT3 };
+			PanelPrmMenuMultiStgConfirm[3] = { 177.0f, 25.0f, AVAMULTITEX_NO };
+		}
+
+		stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[dial].PvrIdx;
+		wk->stgreq = tolevelnum(level);
+		wk->actreq = act;
+
 		menu_multi_setrndcursor();
 		OpenDialog(&MultiMenuStageConfirmDialog);
 		break;
 	}
+	}
+
+	return true;
 }
 
-void menu_multi_launch_level(MultiMenuWK* wk, int act)
+bool menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 {
-	CloseDialog();
+	if (network.IsConnected())
+	{
+		if (network.GetPlayerNum() != 0)
+			return false;
 
+		struct { int16_t id; int8_t menu; int8_t nextmenu; int8_t stat; int8_t nextstat; } data = { rand(), id, next_mode, GetDialogStat(), gNextDialogStat };
+		network.Send(Network::PACKET_MENU_SYNC, data, -1, true);
+
+		int count = 0;
+		int tries = 0;
+		while (1)
+		{
+			Packet packet;
+			if (network.PollMessage(Network::PACKET_MENU_CONFIRM, packet))
+			{
+				int16_t incoming_id;
+				packet.read(incoming_id);
+				if (incoming_id == data.id)
+				{
+					++count;
+				}
+			}
+
+			if (count == network.GetPlayerCount() - 1)
+			{
+				break;
+			}
+
+			if (++tries > 1000)
+			{
+				return false;
+			}
+		}
+	}
+	
+	return menu_multi_apply_change(wk, id, GetDialogStat());
+}
+
+void menu_multi_start(MultiMenuWK* wk, int act)
+{
 	// Enable multiplayer mode
 	multiplayer::Enable(pcount, gNextMultiMode);
 
@@ -780,36 +905,46 @@ void menu_multi_launch_level(MultiMenuWK* wk, int act)
 	seqwk->RetVal = ADVA_RETVALUE_TRIAL;
 }
 
-void menu_multi_request_stg(MultiMenuWK* wk, int level, int actcnt, int item)
+void menu_multi_request_start(MultiMenuWK* wk, int act)
 {
-	auto act = toactnum(level);
+	CloseDialog();
 
-	MultiMenuStageConfirmDialog.CsrMax = actcnt + 1;
-	MultiMenuStageConfirmDialog.CsrCancel = actcnt;
+	if (network.IsConnected())
+	{
+		if (network.GetPlayerNum() != 0)
+			return;
 
-	if (actcnt == 1)
-	{
-		PanelPrmMenuMultiStgConfirm[0] = { -114.0f, 25.0f, AVAMULTITEX_YES };
-		PanelPrmMenuMultiStgConfirm[1] = { 114.0f, 25.0f, AVAMULTITEX_NO };
-	}
-	else if (actcnt == 2)
-	{
-		PanelPrmMenuMultiStgConfirm[0] = { -144.0f, 25.0f, (uint8_t)(AVAMULTITEX_ACT1 + act) };
-		PanelPrmMenuMultiStgConfirm[1] = { 0.0f, 25.0f, (uint8_t)(AVAMULTITEX_ACT2 + act) };
-		PanelPrmMenuMultiStgConfirm[2] = { 144.0f, 25.0f, AVAMULTITEX_NO };
-	}
-	else if (actcnt == 3)
-	{
-		PanelPrmMenuMultiStgConfirm[0] = { -177.0f, 25.0f, AVAMULTITEX_ACT1 };
-		PanelPrmMenuMultiStgConfirm[1] = { -60.0f, 25.0f, AVAMULTITEX_ACT2 };
-		PanelPrmMenuMultiStgConfirm[2] = { 60.0f, 25.0f, AVAMULTITEX_ACT3 };
-		PanelPrmMenuMultiStgConfirm[3] = { 177.0f, 25.0f, AVAMULTITEX_NO };
+		struct { int16_t id; int8_t mode; int8_t level; int8_t act; int8_t chars[4]; } data = { rand(), (int8_t)gNextMultiMode, wk->stgreq, act, { selected_characters[0], selected_characters[1], selected_characters[2], selected_characters[3] } };
+		network.Send(Network::PACKET_MENU_START, data, -1, true);
+
+		int count = 0;
+		int tries = 0;
+		while (1)
+		{
+			Packet packet;
+			if (network.PollMessage(Network::PACKET_MENU_CONFIRM, packet))
+			{
+				int16_t incoming_id;
+				packet.read(incoming_id);
+				if (incoming_id == data.id)
+				{
+					++count;
+				}
+			}
+
+			if (count == network.GetPlayerCount() - 1)
+			{
+				break;
+			}
+
+			if (++tries > 1000)
+			{
+				return;
+			}
+		}
 	}
 
-	stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[item].PvrIdx;
-	menu_multi_change(wk, MD_MULTI_STGASK);
-	wk->stgreq = tolevelnum(level);
-	wk->actreq = toactnum(level);
+	menu_multi_start(wk, act);
 }
 
 void menu_multi_tomodesel(MultiMenuWK* wk)
@@ -853,7 +988,7 @@ void menu_multi_stg_confirm(MultiMenuWK* wk)
 				act = wk->actreq + act - AVAMULTITEX_ACT1;
 			}
 
-			menu_multi_launch_level(wk, act);
+			menu_multi_request_start(wk, act);
 		}
 		else
 		{
@@ -862,20 +997,96 @@ void menu_multi_stg_confirm(MultiMenuWK* wk)
 	}
 }
 
-void menu_multi_stgsel(MultiMenuWK* wk, const DialogPrmType* dialog, const int* list, int back)
+void menu_multi_stgsel(MultiMenuWK* wk, const DialogPrmType* dialog)
 {
 	auto stat = GetDialogStat();
 
 	if (stat == dialog->CsrCancel) // go back request
 	{
-		gNextDialogStat = back;
 		menu_multi_change(wk, gNextMultiMode == multiplayer::mode::battle ? MD_MULTI_BATTLESEL : MD_MULTI_COOPSEL);
 	}
 	else if (stat != -1) // launch game request
 	{
+		menu_multi_change(wk, MD_MULTI_STGASK);
 		gNextDialogStat = stat;
-		menu_multi_request_stg(wk, list[stat], 1, stat);
 	}
+}
+
+bool menu_multi_charsel_input(MultiMenuWK* wk, int i)
+{
+	auto& sel = selected_characters[i];
+	auto press = GetPressedButtons(i);
+
+	if (player_ready[i] == false) // If player is not connected
+	{
+		return false;
+	}
+
+	if (chara_ready[i] == false) // Character selection
+	{
+		if (press & Buttons_Right)
+		{
+			sel = (sel - (sel % 4)) + ((sel + 1) % 4);
+			PlayMenuBipSound();
+		}
+		else if (press & Buttons_Left)
+		{
+			sel = sel - 1 < (sel - (sel % 4)) ? (sel - (sel % 4)) + 4 - 1 : sel - 1;
+			PlayMenuBipSound();
+		}
+		else if (press & (Buttons_Up | Buttons_Down))
+		{
+			sel = sel > 3 ? sel - 4 : sel + 4;
+			PlayMenuBipSound();
+		}
+
+		while (enabled_characters[sel] == false)
+		{
+			if (press & Buttons_Left)
+			{
+				sel = abs(sel % 8 - 1);
+			}
+			else
+			{
+				sel = abs(sel % 8 + 1);
+			}
+		}
+
+		if (MenuSelectButtonsPressedM(i))
+		{
+			chara_ready[i] = true;
+			PlayVoice(charsel_voicelist[menu_multi_getplayerno(sel)]);
+			PlayMenuEnterSound();
+
+			if (network.IsConnected())
+			{
+				int8_t send_sel = sel;
+				network.Send(Network::PACKET_MENU_CHAR, send_sel, -1, true);
+			}
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else // player is ready
+	{
+		if (press & Buttons_B) // unready
+		{
+			sel = -1;
+			PlayMenuBackSound();
+
+			if (network.IsConnected())
+			{
+				int8_t send_sel = sel;
+				network.Send(Network::PACKET_MENU_CHAR, send_sel, -1, true);
+			}
+
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void menu_multi_charsel(MultiMenuWK* wk)
@@ -892,71 +1103,38 @@ void menu_multi_charsel(MultiMenuWK* wk)
 		}
 	}
 
-	// Manage input
-	for (uint8_t i = 0; i < PLAYER_MAX; ++i)
+	if (network.IsConnected())
 	{
-		auto& sel = selected_characters[i];
-		auto press = GetPressedButtons(i);
+		menu_multi_charsel_input(wk, network.GetPlayerNum());
 
-		if (player_ready[i] == false) // If player is not connected
+		int count = 0;
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			continue;
+			if (chara_ready[i])
+			{
+				++count;
+			}
 		}
 
-		if (chara_ready[i] == false) // Character selection
+		if (count >= network.GetPlayerCount())
 		{
-			done = false;
-
-			if (press & Buttons_Right)
-			{
-				sel = (sel - (sel % 4)) + ((sel + 1) % 4);
-				PlayMenuBipSound();
-			}
-			else if (press & Buttons_Left)
-			{
-				sel = sel - 1 < (sel - (sel % 4)) ? (sel - (sel % 4)) + 4 - 1 : sel - 1;
-				PlayMenuBipSound();
-			}
-			else if (press & (Buttons_Up | Buttons_Down))
-			{
-				sel = sel > 3 ? sel - 4 : sel + 4;
-				PlayMenuBipSound();
-			}
-
-			while (enabled_characters[sel] == false)
-			{
-				if (press & Buttons_Left)
-				{
-					sel = abs(sel % 8 - 1);
-				}
-				else
-				{
-					sel = abs(sel % 8 + 1);
-				}
-			}
-
-			if (MenuSelectButtonsPressedM(i))
-			{
-				chara_ready[i] = true;
-				PlayVoice(charsel_voicelist[menu_multi_getplayerno(sel)]);
-				PlayMenuEnterSound();
-			}
-		}
-		else // player is ready
-		{
-			if (press & Buttons_B) // unready
-			{
-				done = false;
-				sel = -1;
-				PlayMenuBackSound();
-			}
+			menu_multi_change(wk, next_mode);
 		}
 	}
-
-	// If everyone has selected
-	if (done == true)
+	else
 	{
-		menu_multi_change(wk, next_mode);
+		bool done = true;
+
+		for (int i = 0; i < pcount; ++i)
+		{
+			if (!menu_multi_charsel_input(wk, i))
+				done = false;
+		}
+
+		if (done == true)
+		{
+			menu_multi_change(wk, next_mode);
+		}
 	}
 }
 
@@ -1057,11 +1235,9 @@ void menu_multi_modesel(MultiMenuWK* wk)
 	switch (stat)
 	{
 	case 0:
-		gNextMultiMode = multiplayer::mode::coop;
 		menu_multi_change(wk, MD_MULTI_COOPSEL);
 		break;
 	case 1:
-		gNextMultiMode = multiplayer::mode::battle;
 		menu_multi_change(wk, MD_MULTI_BATTLESEL);
 		break;
 	case 2:
@@ -1210,9 +1386,9 @@ void menu_multi_online_hub(MultiMenuWK* wk)
 			int port;
 			std::string ip;
 
-			if (s != std::string::npos)
+			if (s != std::string::npos && s > 1)
 			{
-				ip = address_text.substr(0, s);
+				ip = address_text.substr(1, s - 1);
 				port = std::stoi(address_text.substr(s + 1));
 			}
 			else
@@ -1239,8 +1415,6 @@ void menu_multi_online_hub(MultiMenuWK* wk)
 	// If at least one player is there
 	if (MenuSelectButtonsPressedM() && network.IsConnected() && network.GetPlayerCount() > 1)
 	{
-		pcount = network.GetPlayerCount();
-		PlayMenuEnterSound();
 		menu_multi_change(wk, MD_MULTI_MODESEL);
 	}
 }
@@ -1301,7 +1475,6 @@ void menu_multi_localcon(MultiMenuWK* wk)
 	// If everyone is ready and at least two players are there (including player 1)
 	if (MenuSelectButtonsPressedM() && player_ready[0] == true && pcount > 1)
 	{
-		PlayMenuEnterSound();
 		menu_multi_change(wk, MD_MULTI_MODESEL);
 	}
 }
@@ -1329,28 +1502,28 @@ void menu_multi_subexec(MultiMenuWK* wk)
 		menu_multi_battlesel(wk);
 		break;
 	case MD_MULTI_STGSEL_SPD:
-		menu_multi_stgsel(wk, &MultiMenuStageSelSonicDialog, spd_level_link, 0);
+		menu_multi_stgsel(wk, &MultiMenuStageSelSonicDialog);
 		break;
 	case MD_MULTI_STGSEL_FLY:
-		menu_multi_stgsel(wk, &MultiMenuStageSelFlyDialog, fly_level_link, 1);
+		menu_multi_stgsel(wk, &MultiMenuStageSelFlyDialog);
 		break;
 	case MD_MULTI_STGSEL_EME:
-		menu_multi_stgsel(wk, &MultiMenuStageSelEmeDialog, eme_level_link, 2);
+		menu_multi_stgsel(wk, &MultiMenuStageSelEmeDialog);
 		break;
 	case MD_MULTI_STGSEL_EGROB:
-		menu_multi_stgsel(wk, &MultiMenuStageSelEgRobDialog, egrob_level_link, 3);
+		menu_multi_stgsel(wk, &MultiMenuStageSelEgRobDialog);
 		break;
 	case MD_MULTI_STGSEL_FISH:
-		menu_multi_stgsel(wk, &MultiMenuStageSelBigDialog, fish_level_link, 4);
+		menu_multi_stgsel(wk, &MultiMenuStageSelBigDialog);
 		break;
 	case MD_MULTI_STGSEL_SHOOT:
-		menu_multi_stgsel(wk, &MultiMenuStageSelShootDialog, shoot_level_link, 5);
+		menu_multi_stgsel(wk, &MultiMenuStageSelShootDialog);
 		break;
 	case MD_MULTI_STGSEL_TC:
-		menu_multi_stgsel(wk, &MultiMenuStageSelTwinkleDialog, twinkle_level_link, 6);
+		menu_multi_stgsel(wk, &MultiMenuStageSelTwinkleDialog);
 		break;
 	case MD_MULTI_STGSEL_VS:
-		menu_multi_stgsel(wk, &MultiMenuStageSelVsDialog, vs_level_link, 7);
+		menu_multi_stgsel(wk, &MultiMenuStageSelVsDialog);
 		break;
 	case MD_MULTI_STGASK:
 		menu_multi_stg_confirm(wk);
@@ -1792,8 +1965,96 @@ void __cdecl FreeMultiMenu()
 	}
 }
 
+static bool NetMenuListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+{
+	if (type == Network::PACKET_MENU_SYNC)
+	{
+		if (MultiMenuTp)
+		{
+			int16_t identifier;
+			packet >> identifier;
+			network.Send(Network::PACKET_MENU_CONFIRM, identifier, pnum, true);
+
+			if (MultiMenuTp->awp)
+			{
+				int8_t menu, nextmenu, dial, nextdial;
+				packet >> menu >> nextmenu >> dial >> nextdial;
+
+				gNextDialogStat = nextdial;
+				backupCoopCharacter = next_mode = (MD_MULTI)nextmenu;
+
+				menu_multi_apply_change((MultiMenuWK*)MultiMenuTp->awp, (MD_MULTI)menu, dial);
+			}
+		}
+		return true;
+	}
+	else if (type == Network::PACKET_MENU_CHAR)
+	{
+		if (MultiMenuTp)
+		{
+			int8_t incoming_sel;
+			packet.read(incoming_sel);
+
+			auto sender = packet.GetSender();
+
+			if (!(sender == 0 && network.GetPlayerNum() == 0) && sender >= 0 && sender < PLAYER_MAX)
+			{
+				if (incoming_sel >= 0)
+				{
+					selected_characters[sender] = incoming_sel;
+					if (chara_ready[sender] == false)
+					{
+						PlayVoice(charsel_voicelist[menu_multi_getplayerno(incoming_sel)]);
+						PlayMenuEnterSound();
+					}
+					chara_ready[sender] = true;
+				}
+				else
+				{
+					chara_ready[sender] = false;
+				}
+			}
+		}
+		return true;
+	}
+	else if (type == Network::PACKET_MENU_START)
+	{
+		if (MultiMenuTp)
+		{
+			int16_t identifier;
+			packet >> identifier;
+			network.Send(Network::PACKET_MENU_CONFIRM, identifier, pnum, true);
+
+			if (MultiMenuTp->awp)
+			{
+				MultiMenuWK* wk = (MultiMenuWK*)MultiMenuTp->awp;
+
+				int8_t mode, level, act, chars[4];
+				packet >> mode >> level >> act >> chars[0] >> chars[1] >> chars[2] >> chars[3];
+
+				gNextMultiMode = (multiplayer::mode)mode;
+				wk->stgreq = level;
+				wk->actreq = act;
+				selected_characters[0] = chars[0];
+				selected_characters[1] = chars[1];
+				selected_characters[2] = chars[2];
+				selected_characters[3] = chars[3];
+
+				menu_multi_start(wk, act);
+			}
+		}
+		return true;
+	}
+
+	return false;
+}
+
 void InitMultiMenu()
 {
+	network.RegisterListener(Network::PACKET_MENU_SYNC, NetMenuListener);
+	network.RegisterListener(Network::PACKET_MENU_CHAR, NetMenuListener);
+	network.RegisterListener(Network::PACKET_MENU_START, NetMenuListener);
+
 	CreateModeFncPtrs[ADVA_MODE_EXPLAIN] = LoadMultiMenu; // Replace unused menu
 	FreeModeFncPtrs[ADVA_MODE_EXPLAIN] = FreeMultiMenu;
 	AvaTexLdLists[ADVA_MODE_EXPLAIN] = (int*)AvaTexLdListForMulti;
