@@ -62,11 +62,26 @@ public:
 	using PACKET_CALL = bool(*)(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum);
 
 	template<typename T>
-	bool Send(PACKET_TYPE type, const T& data, bool reliable = false)
+	bool Send(PACKET_TYPE type, const T& data, PNUM player = -1, bool reliable = false)
 	{
-		Packet packet = Packet(sizeof(type) + sizeof(PlayerNum) + sizeof(T));
-		packet << type << PlayerNum << data;
-		return packet.Send();
+		Packet packet = Packet(type, player, reliable);
+		packet.write(data);
+		if (IsServer())
+		{
+			for (auto& p : m_ConnectedPeers)
+			{
+				auto peer_pnum = reinterpret_cast<int>(p->data);
+				if (player == -1 || player == peer_pnum)
+				{
+					packet.Send(p);
+				}
+			}
+			return true;
+		}
+		else
+	{
+			return packet.Send(m_pPeer);
+		}
 	}
 
 	bool Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player = -1, bool reliable = false);

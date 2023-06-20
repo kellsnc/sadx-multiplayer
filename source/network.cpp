@@ -11,7 +11,7 @@ bool Network::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
 {
 	if (IsConnected())
 	{
-		Packet packet = Packet(type, player);
+		Packet packet = Packet(type, player, reliable);
 
 		if (!cb(packet, type, PlayerNum))
 		{
@@ -219,7 +219,7 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 			PRINT("An error occurred while trying to create an ENet server host.");
 			return false;
 		}
-
+		
 		PlayerCount = 1;
 		PlayerNum = 0;
 		PRINT("Created server: %s:%d", ip == nullptr ? "localhost" : ip, port);
@@ -289,58 +289,61 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 
 void Network::Exit()
 {
-	if (!IsServer())
+	if (network.IsConnected())
 	{
-		if (m_pPeer)
+		if (!IsServer())
 		{
-			ENetEvent event;
-			enet_peer_disconnect(m_pPeer, 0);
-
-			bool succeeded = false;
-
-			while (!succeeded && enet_host_service(m_pHost, &event, 1000) > 0)
+			if (m_pPeer)
 			{
-				switch (event.type)
+				ENetEvent event;
+				enet_peer_disconnect(m_pPeer, 0);
+
+				bool succeeded = false;
+
+				while (!succeeded && enet_host_service(m_pHost, &event, 1000) > 0)
 				{
-				case ENET_EVENT_TYPE_RECEIVE:
-					enet_packet_destroy(event.packet);
-					break;
-				case ENET_EVENT_TYPE_DISCONNECT:
-					succeeded = true;
-					PRINT("Disconnection succeeded.");
-					break;
+					switch (event.type)
+					{
+					case ENET_EVENT_TYPE_RECEIVE:
+						enet_packet_destroy(event.packet);
+						break;
+					case ENET_EVENT_TYPE_DISCONNECT:
+						succeeded = true;
+						PRINT("Disconnection succeeded.");
+						break;
+					}
 				}
-			}
 
-			if (!succeeded)
-			{
-				enet_peer_reset(m_pPeer);
-			}
+				if (!succeeded)
+				{
+					enet_peer_reset(m_pPeer);
+				}
 
-			m_pPeer = nullptr;
+				m_pPeer = nullptr;
+			}
 		}
-	}
-	else
-	{
-		// Disconnected all connected peers
-		for (auto& p : m_ConnectedPeers)
+		else
 		{
-			enet_peer_disconnect(p, 0);
-			enet_host_flush(p->host);
+			// Disconnected all connected peers
+			for (auto& p : m_ConnectedPeers)
+			{
+				enet_peer_disconnect(p, 0);
+				enet_host_flush(p->host);
+			}
+
+			m_ConnectedPeers.clear();
 		}
 
-		m_ConnectedPeers.clear();
-	}
+		if (m_pHost)
+		{
+			enet_host_destroy(m_pHost);
+			m_pHost = nullptr;
+		}
 
-	if (m_pHost)
-	{
-		enet_host_destroy(m_pHost);
-		m_pHost = nullptr;
+		PlayerNum = -1;
+		PlayerCount = 0;
+		connected = false;
 	}
-
-	PlayerNum = -1;
-	PlayerCount = 0;
-	connected = false;
 }
 
 Network::Network()
