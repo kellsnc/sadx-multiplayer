@@ -1970,7 +1970,7 @@ void __cdecl Camera_r(task* tp)
 			__PlayerStatus_last_pos_m[i] = playertwp[i] ? playertwp[i]->pos : playertwp[0]->pos;
 			__CameraInertia_last_pos_m[i] = camera_twp->pos;
 
-			if (SplitScreen::IsScreenEnabled(i))
+			if (SplitScreen::IsScreenEnabled(i) && playertwp[i])
 			{
 				CameraCameraMode_m(i);
 			}
@@ -1987,9 +1987,9 @@ void __cdecl Camera_r(task* tp)
 	{
 		++debug_disp_camera_timer;
 
-		for (unsigned int i = 0; i < multiplayer::GetPlayerCount(); ++i)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (SplitScreen::IsScreenEnabled(i))
+			if (SplitScreen::IsScreenEnabled(i) && playertwp[i])
 			{
 				if (camera_mode_m[i] == 2)
 				{
