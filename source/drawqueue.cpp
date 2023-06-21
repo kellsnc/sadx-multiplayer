@@ -355,4 +355,9 @@ void DrawQueue_Init()
 {
 	late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
 	late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_w);
+	
+	// Expand draw queue memory pool
+	WriteData((Uint32*)0x408643, 0x100000ui32);
+	WriteData((Uint32*)0x40864D, 0x100000ui32);
+	WriteData((Uint32*)0x40866B, 0x100000ui32);
 }
