@@ -10,6 +10,7 @@
 #include "hud_indicator.h"
 #include "players.h"
 #include "config.h"
+#include "menu_multi.h"
 
 /*
 
@@ -533,7 +534,7 @@ void UpdatePlayersInfo()
 
 		if (coop || vs)
 		{
-			for (int i = 0; i < PLAYER_MAX; ++i)
+			for (uint8_t i = 0; i < PLAYER_MAX; ++i)
 			{
 				if (playertwp[i])
 				{
@@ -547,7 +548,7 @@ void UpdatePlayersInfo()
 
 void ResetCharactersArray()
 {
-	for (int i = 0; i < PLAYER_MAX; i++)
+	for (uint8_t i = 0; i < PLAYER_MAX; i++)
 	{
 		characters[i] = -1;
 	}
