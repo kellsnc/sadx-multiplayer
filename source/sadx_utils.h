@@ -621,6 +621,7 @@ FunctionPointer(void, SetAutoPilotForBreak, (uint8_t pNum), 0x440F70);
 FunctionPointer(void, SetLookingAngleP, (uint8_t pnum, Angle3* a2), 0x441040);
 FunctionPointer(void, PResetPosition, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x43EE70);
 FunctionPointer(void, HoldOnPillarP, (Uint8 pnum, task* tp), 0x4411D0);
+FunctionPointer(void, StopPlayerLookAt, (Uint8 pnum), 0x441080);
 
 FunctionPointer(void, Knux_RunsActions, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x478020);
 TaskFunc(dispKnuEffectChargeUpStay, 0x4C0FC0);

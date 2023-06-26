@@ -284,6 +284,20 @@ void AmyExec_r(task* obj)
 	AmyExec_t.Original(obj);
 }
 
+static void VictoryPoseFix(unsigned __int8 a1)
+{
+	StopPlayerLookAt(a1);
+
+	auto pwp = playerpwp[a1];
+	if (pwp && multiplayer::IsActive())
+	{
+		if (CurrentLevel < LevelIDs_Chaos0 || CurrentLevel > LevelIDs_E101R)
+		{
+			pwp->mj.reqaction = CurrentCharacter != Characters_Amy ? 42 : 32;		
+		}
+	}
+}
+
 void Init_AmyPatches()
 {
 	AmyExec_t.Hook(AmyExec_r);
@@ -295,4 +309,5 @@ void Init_AmyPatches()
 
 	LoadAmyBird_t.Hook(Init_AmyBird);
 	AmyBirdExe_t.Hook(AmyBird_Main_r);
+	WriteCall((void*)0x4879EA, VictoryPoseFix);
 }
