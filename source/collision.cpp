@@ -342,9 +342,12 @@ void __cdecl LockingOnTargetEnemy_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 			++ael;
 		} while (ael->twp);
 
-		mwp->ang_aim.y = njArcTan2(closest_tgt->cwp->info->center.z + closest_tgt->pos.z - twp->cwp->info->center.z,
-			closest_tgt->cwp->info->center.x + closest_tgt->pos.x - twp->cwp->info->center.x);
-		twp->ang.y = AdjustAngle(twp->ang.y, mwp->ang_aim.y, 0x1000);
+		if (closest_tgt && closest_tgt->cwp)
+		{
+			mwp->ang_aim.y = njArcTan2(closest_tgt->cwp->info->center.z + closest_tgt->pos.z - twp->cwp->info->center.z,
+				closest_tgt->cwp->info->center.x + closest_tgt->pos.x - twp->cwp->info->center.x);
+			twp->ang.y = AdjustAngle(twp->ang.y, mwp->ang_aim.y, 0x1000);
+		}
 	}
 	else
 	{
@@ -383,11 +386,12 @@ void __cdecl pLockingOnTargetEnemy2_r(taskwk* twp, motionwk2* mwp, playerwk* pwp
 		}
 		else
 		{
-			if (closest_tgt) {
+			if (closest_tgt && closest_tgt->cwp)
+			{
 				mwp->ang_aim.y = njArcTan2(closest_tgt->cwp->info->center.z + closest_tgt->pos.z - twp->cwp->info->center.z,
 					closest_tgt->cwp->info->center.x + closest_tgt->pos.x - twp->cwp->info->center.x);
+				twp->ang.y = AdjustAngle(twp->ang.y, mwp->ang_aim.y, 0x1000);
 			}
-			twp->ang.y = AdjustAngle(twp->ang.y, mwp->ang_aim.y, 0x1000);
 		}
 	}
 	else
