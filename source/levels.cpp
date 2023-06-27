@@ -311,6 +311,16 @@ void __cdecl Rd_Twinkle_r(task* tp)
 
 			auto pnum = IsPlayerInSphere(80.0f, 0.0f, -300.0f, 50.0f) - 1;
 
+			if (twp->btimer)
+			{
+				for (int i = 0; i < PLAYER_MAX; i++)
+				{
+					if (playertwp[i])
+						CharColliOn(playertwp[i]);
+				}
+				twp->btimer = 0;
+			}
+
 			if (pnum >= 0)
 			{
 				NJS_VECTOR pos = playertwp[pnum]->pos;
@@ -332,10 +342,14 @@ void __cdecl Rd_Twinkle_r(task* tp)
 			{
 				NJS_VECTOR pos = playertwp[pnum]->pos;
 				Angle ang = playertwp[pnum]->ang.y;
-				for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+
+				for (int i = 0; i < PLAYER_MAX; i++)
 				{
-					CharColliOff(playertwp[i]);
+					if (playertwp[i])
+						CharColliOff(playertwp[i]);
+					twp->btimer = 1;
 				}
+
 				ChangeActM(-1);
 				rdTwinkleInit(tp);
 				SetAllPlayersPosition(pos.x, pos.y, pos.z, ang);
@@ -353,6 +367,7 @@ void __cdecl Rd_Twinkle_r(task* tp)
 		TARGET_DYNAMIC(Rd_Twinkle)(tp);
 	}
 }
+
 void __cdecl Rd_Ruin_r(task* tp)
 {
 	if (multiplayer::IsActive())
