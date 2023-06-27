@@ -248,7 +248,7 @@ void CameraSetNormalCamera_m(int pnum, Sint16 ssCameraMode, Uint8 ucAdjustType)
 
 		Sint8 adjust = cameraLevel == -1 ? 21 : pObjCameraEntry[cameraLevel].ucAdjType;
 
-		system.G_scRestoreCameraAdjust[cameraLevel] = adjust;
+		system.G_scRestoreCameraAdjust[0] = adjust;
 		system.G_pfnRestoreAdjust[0] = pObjCameraAdjust[adjust].fnAdjust;
 
 		system.G_scCameraLevel = CLEVEL_NORMAL;
