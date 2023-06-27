@@ -164,6 +164,7 @@
     <ClInclude Include="set.h" />
     <ClInclude Include="sound.h" />
     <ClInclude Include="splitscreen.h" />
+    <ClInclude Include="teleport.h" />
     <ClInclude Include="testspawn.h" />
     <ClInclude Include="timer.h" />
     <ClInclude Include="utils.h" />
@@ -350,6 +351,7 @@
     <ClCompile Include="set.cpp" />
     <ClCompile Include="sound.cpp" />
     <ClCompile Include="splitscreen.cpp" />
+    <ClCompile Include="teleport.cpp" />
     <ClCompile Include="testspawn.cpp" />
     <ClCompile Include="timer.cpp" />
     <ClCompile Include="utils.cpp" />

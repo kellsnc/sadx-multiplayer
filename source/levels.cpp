@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "UsercallFunctionHandler.h"
 #include "splitscreen.h"
+#include "teleport.h"
 #include "result.h"
 #include "levels.h"
 
@@ -153,7 +154,6 @@ void MultiArena(task* tp)
 		}
 	}
 }
-
 
 void __cdecl Rd_Chaos2_r(task* tp)
 {
@@ -309,25 +309,11 @@ void __cdecl Rd_Twinkle_r(task* tp)
 		{
 			SetFreeCameraMode(1);
 
-			auto pnum = IsPlayerInSphere(80.0f, 0.0f, -300.0f, 50.0f) - 1;
-
-			if (twp->btimer)
+			if (IsPlayerInSphere(80.0f, 0.0f, -300.0f, 50.0f))
 			{
-				for (int i = 0; i < PLAYER_MAX; i++)
-				{
-					if (playertwp[i])
-						CharColliOn(playertwp[i]);
-				}
-				twp->btimer = 0;
-			}
-
-			if (pnum >= 0)
-			{
-				NJS_VECTOR pos = playertwp[pnum]->pos;
-				Angle ang = playertwp[pnum]->ang.y;
 				ChangeActM(1);
 				rdTwinkleInit(tp);
-				SetAllPlayersPosition(pos.x, pos.y, pos.z, ang);
+				TeleportPlayers(82.0f, 0.0f, -305.0f);
 			}
 
 			break;
@@ -336,23 +322,11 @@ void __cdecl Rd_Twinkle_r(task* tp)
 		{
 			SetFreeCameraMode(0);
 
-			auto pnum = IsPlayerInSphere(350.0f, 100.0f, 550.0f, 36.0f) - 1;
-
-			if (pnum >= 0)
+			if (IsPlayerInSphere(350.0f, 100.0f, 550.0f, 36.0f))
 			{
-				NJS_VECTOR pos = playertwp[pnum]->pos;
-				Angle ang = playertwp[pnum]->ang.y;
-
-				for (int i = 0; i < PLAYER_MAX; i++)
-				{
-					if (playertwp[i])
-						CharColliOff(playertwp[i]);
-					twp->btimer = 1;
-				}
-
 				ChangeActM(-1);
 				rdTwinkleInit(tp);
-				SetAllPlayersPosition(pos.x, pos.y, pos.z, ang);
+				TeleportPlayers(328.0f, 100.0f, 566.0f);
 			}
 
 			break;
@@ -545,18 +519,30 @@ static void __cdecl Create_Mountain_Cloud()
 	CreateElementalTask(2u, LEV_1, (TaskFuncPtr)0x601230); // load task into slot 1 instead of 0 (to not run before the camera)
 }
 
+void SetAllPlayersInitialPosition(taskwk* data)
+{
+	if (multiplayer::IsActive())
+	{
+		TeleportPlayersToStart();
+	}
+	else
+	{
+		SetPlayerInitialPosition(data);
+	}
+}
+
 void InitLevels()
 {
 	// Patch start positions
-	WriteCall((void*)0x4150FA, SetAllPlayersInitialPositionHook); // General
-	WriteCall((void*)0x4151B1, SetAllPlayersInitialPositionHook); // General
-	WriteJump((void*)0x7B0B00, SetAllPlayersInitialPositionHook); // General
-	WriteCall((void*)0x4DD52D, SetAllPlayersInitialPositionHook); // Windy Valley
-	WriteCall((void*)0x5E15CA, SetAllPlayersInitialPositionHook); // Lost World
-	WriteCall((void*)0x5EDC66, SetAllPlayersInitialPositionHook); // Sky Deck
-	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPositionHook); // Sky Deck
-	WriteCall((void*)0x5EDD27, SetAllPlayersInitialPositionHook); // Sky Deck
-	WriteCall((void*)0x5602F1, SetAllPlayersInitialPositionHook); // Perfect Chaos
+	WriteCall((void*)0x4150FA, SetAllPlayersInitialPosition); // General
+	WriteCall((void*)0x4151B1, SetAllPlayersInitialPosition); // General
+	WriteJump((void*)0x7B0B00, SetAllPlayersInitialPosition); // General
+	WriteCall((void*)0x4DD52D, SetAllPlayersInitialPosition); // Windy Valley
+	WriteCall((void*)0x5E15CA, SetAllPlayersInitialPosition); // Lost World
+	WriteCall((void*)0x5EDC66, SetAllPlayersInitialPosition); // Sky Deck
+	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPosition); // Sky Deck
+	WriteCall((void*)0x5EDD27, SetAllPlayersInitialPosition); // Sky Deck
+	WriteCall((void*)0x5602F1, SetAllPlayersInitialPosition); // Perfect Chaos
 
 	// Patch Skyboxes (display function managing mode)
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast

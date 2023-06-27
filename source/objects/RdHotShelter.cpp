@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "multiplayer.h"
 #include "splitscreen.h"
+#include "teleport.h"
 
 DataPointer(NJS_POINT3, tunnel_pos, 0x17D0AE8);
 DataPointer(BOOL, tunnel_flag, 0x3C72A78);
@@ -246,7 +247,7 @@ static void TunnelManagerExec_m(task* tp)
 			{
 				if (playertwp[i] && GetDistance(&end_pos, &playertwp[i]->pos) < 200.0f)
 				{
-					SetPositionP(i, -850.0f, 3030.0f, -3183.0f);
+					TeleportPlayer(i, -850.0f, 3030.0f, -3183.0f);
 					PadReadOnP(i);
 				}
 			}

@@ -541,6 +541,9 @@
     <ClCompile Include="objects\flicky.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="teleport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -761,6 +764,9 @@
     </ClInclude>
     <ClInclude Include="objects\flicky.h">
       <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="teleport.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

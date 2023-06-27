@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "camera.h"
+#include "teleport.h"
 
 static void __cdecl KillHimP_r(int pNum);
 static void __cdecl KillHimByFallingDownP_r(int pno);
@@ -32,8 +33,13 @@ void KillAndWarpPlayers(char pNum)
 		{
 			if (multiplayer::IsActive() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
 			{
-				CharColliOff(playertwp[pNum]);
-				SetPlayerInitialPosition(playertwp[pNum]);
+				TeleportPlayerToStart(pNum);
+
+				// Reset time for Gamma in coop
+				if (multiplayer::IsCoopMode() && continue_data.continue_flag)
+				{
+					SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
+				}
 			}
 
 			CameraReleaseEventCamera_m(pNum);
@@ -46,7 +52,6 @@ void KillAndWarpPlayers(char pNum)
 			}
 
 			pwp->item &= ~Powerups_Dead;
-			CharColliOn(playertwp[pNum]);
 		}
 	}
 }
@@ -68,7 +73,6 @@ void __cdecl GamePlayerMissed_r(task* tp)
 
 	if (++awp->work.ul[0] > 0x78)
 	{
-		
 		KillAndWarpPlayers(pNum);
 		FreeTask(tp);
 	}

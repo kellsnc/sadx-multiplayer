@@ -2,10 +2,6 @@
 
 short tolevelnum(short num);
 short toactnum(short num);
-void SetPlayerPositionAroundPoint(taskwk* ptwp, NJS_POINT3* pin, Float dist);
-void SetAllPlayersInitialPosition();
-void SetAllPlayersInitialPositionHook(taskwk* data);
-void SetAllPlayersPosition(float x, float y, float z, Angle angy);
 float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2);
 int GetClosestPlayerNum(NJS_POINT3* pos);
 int GetClosestPlayerNum(float x, float y, float z);

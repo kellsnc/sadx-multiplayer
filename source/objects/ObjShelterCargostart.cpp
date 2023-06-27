@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "multiplayer.h"
 #include "splitscreen.h"
+#include "teleport.h"
 
 // Objects in Gamma's Hot Shelter that teleports player to cargo area
 
@@ -114,7 +115,7 @@ static void ObjShelterCargostartExec_m(task* tp)
 		if (++twp->wtimer > 170ui16)
 		{
 			PadReadOnP(twp->btimer);
-			PositionPlayer(twp->btimer, -48.0f, 10006.0f, -188.0f);
+			TeleportPlayer(twp->btimer, -48.0f, 10006.0f, -188.0f);
 			twp->btimer = 0;
 			twp->mode = MDCARGO_OUT;
 		}

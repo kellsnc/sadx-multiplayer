@@ -1,6 +1,8 @@
 #include "pch.h"
 #include "camera.h"
 #include "splitscreen.h"
+#include "teleport.h"
+#include "utils.h"
 
 short tolevelnum(short num)
 {
@@ -10,86 +12,6 @@ short tolevelnum(short num)
 short toactnum(short num)
 {
 	return num & 0xf;
-}
-
-void SetPlayerPositionAroundPoint(taskwk* ptwp, NJS_POINT3* pin, Float dist)
-{
-	auto pcount = multiplayer::GetPlayerCount();
-	auto pnum = TASKWK_PLAYERID(ptwp);
-
-	if (pcount <= 4)
-	{
-		ptwp->pos.x = pin->x + njCos(ptwp->ang.y - 0x2000 + 0x4000 * pnum) * dist;
-		ptwp->pos.y = pin->y;
-		ptwp->pos.z = pin->z + njSin(ptwp->ang.y - 0x2000 + 0x4000 * pnum) * dist;
-	}
-	else if (pcount <= 2)
-	{
-		ptwp->pos.y = pin->y;
-
-		if (pnum == 0)
-		{
-			ptwp->pos.x = pin->x + njCos(ptwp->ang.y + 0x4000) * dist;
-			ptwp->pos.z = pin->z + njSin(ptwp->ang.y + 0x4000) * dist;
-		}
-		else
-		{
-			ptwp->pos.x = pin->x + njCos(ptwp->ang.y - 0x4000) * dist;
-			ptwp->pos.z = pin->z + njSin(ptwp->ang.y - 0x4000) * dist;
-		}
-	}
-	else
-	{
-		ptwp->pos = *pin;
-	}
-}
-
-void SetAllPlayersInitialPosition()
-{
-	NJS_POINT3 pos; Angle3 ang;
-	GetPlayerInitialPositionM(&pos, &ang);
-
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		auto ptwp = playertwp[i];
-
-		if (ptwp)
-		{
-			PClearSpeed(playermwp[i], playerpwp[i]);
-			SetInputP(i, PL_OP_LETITGO);
-
-			ptwp->ang = ang;
-			SetPlayerPositionAroundPoint(ptwp, &pos, 5.0f);
-		}
-	}
-}
-
-void  SetAllPlayersInitialPositionHook(taskwk* data)
-{
-	if (isInHubWorld() || !multiplayer::IsActive())
-	{
-		return SetPlayerInitialPosition(data);
-	}
-
-	SetAllPlayersInitialPosition();
-}
-
-void SetAllPlayersPosition(float x, float y, float z, Angle angy)
-{
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		auto ptwp = playertwp[i];
-
-		if (ptwp)
-		{
-			PClearSpeed(playermwp[i], playerpwp[i]);
-			SetInputP(i, PL_OP_LETITGO);
-
-			ptwp->ang.y = angy;
-			NJS_POINT3 pos = { x, y, z };
-			SetPlayerPositionAroundPoint(ptwp, &pos, 5.0f);
-		}
-	}
 }
 
 float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2)
@@ -249,7 +171,7 @@ void ChangeActM(int amount)
 	AddSetStage(amount);
 	AddCameraStage(amount);
 	AdvanceAct(amount);
-	SetAllPlayersInitialPosition();
+	TeleportPlayersToStart();
 }
 
 void __cdecl SetAndDisp(task* obj, TaskFuncPtr disp)

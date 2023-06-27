@@ -8,9 +8,10 @@
 #include "result.h"
 #include "milesrace.h"
 #include "hud_indicator.h"
-#include "players.h"
 #include "config.h"
 #include "menu_multi.h"
+#include "teleport.h"
+#include "players.h"
 
 /*
 
@@ -18,7 +19,7 @@ Multiplayer manager
 - Extends player variables
 - Load available players
 - Patch start positions
-- GameStates
+- Sync players in netplay
 
 */
 
@@ -40,15 +41,13 @@ DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
 Trampoline* SetPlayerInitialPosition_t = nullptr;
 static FunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
 static FunctionHook<void> SetPlayer_t(SetPlayer);
-static FunctionHook<int, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
-static FunctionHook<void, uint8_t, float, float, float> SetPositionP_t(SetPositionP);
-
-static bool isCharSel = false;
+static FunctionHook<Bool, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
 
 VariableHook<int16_t, 0x3B0F0E4> ssNumRing_m;
 VariableHook<int8_t, 0x3B0EF34> scNumPlayer_m;
 VariableHook<int32_t, 0x3B0F104> EnemyScore_m;
 
+static bool isCharSel = false;
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
 static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack | Status_LightDash;
@@ -63,15 +62,6 @@ TaskFuncPtr charfuncs[] = {
 	E102,
 	BigTheCat
 };
-
-void LoadCharObj(int pnum, int character)
-{
-	task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
-	TASKWK_CHARID(tp->twp) = character;
-	TASKWK_PLAYERID(tp->twp) = pnum;
-	playertwp[pnum] = tp->twp;
-	playermwp[pnum] = (motionwk2*)tp->mwp;
-}
 
 void ResetEnemyScoreM()
 {
@@ -97,7 +87,7 @@ void SetEnemyScoreM(int pNum, int Number)
 	EnemyScore_m[pNum] = Number;
 }
 
-void __cdecl ResetNumPlayerM()
+void ResetNumPlayerM()
 {
 	std::fill(scNumPlayer_m.begin(), scNumPlayer_m.end(), 4);
 }
@@ -285,26 +275,11 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 	}
 }
 
-void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
+void SetPlayerInitialPosition_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
-		auto pnum = TASKWK_PLAYERID(twp);
-
-		NJS_POINT3 pos; Angle3 ang;
-		GetPlayerInitialPositionM(&pos, &ang);
-
-		if (pnum == 0 && multiplayer::IsCoopMode() && continue_data.continue_flag)
-		{
-			SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
-		}
-
-		twp->ang = ang;
-		SetPlayerPositionAroundPoint(twp, &pos, 5.0f);
-
-		//ugly (temporary) fix to prevent character from clipping ground after a respawn (happen in EC bridge and SH first CP)
-		if (TimeSeconds > 0 || TimeMinutes > 0)
-			twp->pos.y += 10.0f;
+		TeleportPlayerToStart(TASKWK_PLAYERID(twp));
 	}
 	else
 	{
@@ -312,7 +287,7 @@ void __cdecl SetPlayerInitialPosition_r(taskwk* twp)
 	}
 }
 
-void __cdecl DamegeRingScatter_r(char pno)
+void DamegeRingScatter_r(char pno)
 {
 	if (multiplayer::IsActive())
 	{
@@ -548,7 +523,7 @@ void UpdatePlayersInfo()
 
 void ResetCharactersArray()
 {
-	for (uint8_t i = 0; i < PLAYER_MAX; i++)
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		characters[i] = -1;
 	}
@@ -564,6 +539,15 @@ int GetCurrentCharacter(int pnum)
 	return characters[pnum];
 }
 
+void LoadPlayerTask(int pnum, int character)
+{
+	task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
+	TASKWK_CHARID(tp->twp) = character;
+	TASKWK_PLAYERID(tp->twp) = pnum;
+	playertwp[pnum] = tp->twp;
+	playermwp[pnum] = (motionwk2*)tp->mwp;
+}
+
 void SetPlayer_r()
 {
 	if (multiplayer::IsActive())
@@ -575,7 +559,7 @@ void SetPlayer_r()
 
 			if (playernum >= 0)
 			{
-				LoadCharObj(i, playernum);
+				LoadPlayerTask(i, playernum);
 			}
 		}
 
@@ -602,7 +586,7 @@ void SetPlayer_r()
 
 		CreateIndicatorP();
 		SetWinnerMulti(-1);
-		SetAllPlayersInitialPosition();
+		TeleportPlayersToStart();
 	}
 	else
 	{
@@ -620,28 +604,30 @@ void SetOtherPlayers()
 
 			if (playernum >= 0 && !playertwp[i])
 			{
-				LoadCharObj(i, playernum);
-
+				LoadPlayerTask(i, playernum);
+				
 				if (playertwp[i])
 				{
-					playertwp[i]->pos = playertwp[i - 1]->pos;
-					playertwp[i]->pos.z += 5.0f;
-					playertwp[i]->ang = playertwp[i - 1]->ang;
+					TeleportPlayerArea(i, &playertwp[0]->pos, 5.0f);
+					playertwp[i]->ang = playertwp[0]->ang;
 				}
 			}
 		}
 	}
 }
 
-void __cdecl InitScore_r()
+void InitScore_r()
 {
 	ResetNumRingM();
 	slJudge = 0;
 }
 
-int __cdecl GetRaceWinnerPlayer_r() {
-	if (multiplayer::IsCoopMode()) {
-		for (int i = 1; i < PLAYER_MAX; i++) {
+int GetRaceWinnerPlayer_r()
+{
+	if (multiplayer::IsCoopMode())
+	{
+		for (int i = 1; i < PLAYER_MAX; i++)
+		{
 			if (playertwp[i] && (TASKWK_CHARID(playertwp[i]) == Characters_Tails))
 				return 1;
 		}
@@ -650,7 +636,7 @@ int __cdecl GetRaceWinnerPlayer_r() {
 	return RaceWinnerPlayer;
 }
 
-int isInDeathZone_r(taskwk* a1)
+Bool isInDeathZone_r(taskwk* a1)
 {
 	if (multiplayer::IsCoopMode() && CurrentCharacter != Characters_Knuckles)
 	{
@@ -660,34 +646,12 @@ int isInDeathZone_r(taskwk* a1)
 	return isInDeathZone_t.Original(a1);
 }
 
-void __cdecl SetPositionP_r(Uint8 charIndex, float x, float y, float z)
-{
-	SetPositionP_t.Original(charIndex, x, y, z);
-
-	if (multiplayer::IsActive())
-	{
-		if (!charIndex && (isInHubWorld() || CurrentLevel == LevelIDs_Casinopolis))
-		{
-			NJS_VECTOR pos = { x, y, z };
-
-			for (int i = 1; i < multiplayer::GetPlayerCount(); i++)
-			{
-				if (playertwp[i])
-				{
-					SetPlayerPositionAroundPoint(playertwp[i], &pos, 6.0f);
-				}
-			}
-		}
-	}
-}
-
 void SetInfiniteLives()
 {
-	if (multiplayer::IsActive())
+	if (config::infiniteLives && multiplayer::IsActive())
 	{
-		for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+		for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
 		{
-			if (config::infiniteLives)
 				scNumPlayer_m[i] = CHAR_MAX;
 		}
 	}
@@ -712,7 +676,6 @@ void InitPlayerPatches()
 	DamegeRingScatter_t.Hook(DamegeRingScatter_r);
 	SetPlayer_t.Hook(SetPlayer_r);
 	isInDeathZone_t.Hook(isInDeathZone_r);
-	SetPositionP_t.Hook(SetPositionP_r);
 
 	WriteJump(ResetNumPlayer, ResetNumPlayerM);
 	WriteJump(ResetNumRing, ResetNumRingM);

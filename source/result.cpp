@@ -2,6 +2,8 @@
 #include "result.h"
 #include "hud_result.h"
 #include "splitscreen.h"
+#include "teleport.h"
+#include "result.h"
 
 static FunctionHook<void> SetFinishAction_t(SetFinishAction);
 static FunctionHook<void, task*> CalcTotalScore_t((intptr_t)0x42BCC0);
@@ -22,12 +24,9 @@ void MovePlayerToWinnerPos(int pnum, taskwk* twp)
 {
 	if (multiplayer::IsCoopMode() && playertwp[pnum])
 	{
-		auto winner = playertwp[GetTheNearestPlayerNumber(&twp->pos)]; //get the player who reached the goal
-
 		if (GetDistance(&twp->pos, &playertwp[pnum]->pos) > 40.0f)
 		{
-			CharColliOff(playertwp[pnum]);
-			SetAllPlayersPosition(winner->pos.x, winner->pos.y, winner->pos.z, winner->ang.y);
+			TeleportPlayersToPlayer(GetTheNearestPlayerNumber(&twp->pos));
 		}
 	}
 }

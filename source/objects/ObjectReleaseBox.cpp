@@ -58,14 +58,6 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 
 			twp->counter.f -= 0.25f;
 
-			if (twp->counter.f < -2.0f)
-			{
-				for (int i = 0; i < pmax; i++) {
-					auto ptwp = playertwp[i];
-					CharColliOn(ptwp); //restore col to stand on the capsule
-				}
-			}
-
 			if (twp->counter.f < -3.0f)
 			{
 				twp->counter.f = -3.0f;
