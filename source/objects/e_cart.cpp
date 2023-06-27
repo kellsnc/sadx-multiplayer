@@ -62,6 +62,11 @@ Characters GetPlayerNumberM(int pnum)
 	return playertwp[pnum] ? (Characters)TASKWK_CHARID(playertwp[pnum]) : Characters_Sonic;
 }
 
+int GetParamNumberM(int pnum)
+{
+	return (ssStageNumber == STAGE_TWINKLEPARK && ssActNumber == 0) ? 0 : GetPlayerNumberM(pnum);
+}
+
 void cartDisplayM(task* tp)
 {
 	auto twp = tp->twp;
@@ -70,7 +75,7 @@ void cartDisplayM(task* tp)
 	{
 		cart_data = (ENEMY_CART_DATA*)tp->awp;
 		auto pnum = twp->btimer;
-		auto cartparam = &CartParameter[GetPlayerNumberM(pnum)];
+		auto cartparam = &CartParameter[GetParamNumberM(pnum)];
 
 		// list of those color effects
 		for (int i = 0; i < bodyListNum[cart_data->cart_type]; ++i)
@@ -143,7 +148,7 @@ void cartDisplayExplosionM(task* tp)
 	{
 		cart_data = (ENEMY_CART_DATA*)tp->awp;
 		auto pnum = twp->btimer;
-		auto cartparam = &CartParameter[GetPlayerNumberM(pnum)];
+		auto cartparam = &CartParameter[GetParamNumberM(pnum)];
 
 		// list of those color effects
 		for (int i = 0; i < bodyListNum[cart_data->cart_type]; ++i)
@@ -570,9 +575,12 @@ void cartSpdControlSonicOnTheCartM(taskwk* twp, int pnum)
 	// todo: rewrite
 	auto backup1 = perG[0];
 	auto backup2 = Rings;
+	auto backup3 = player_no;
 	Rings = GetNumRingM(pnum);
 	perG[0] = perG[pnum];
+	player_no = GetParamNumberM(pnum);
 	cartSpdControlSonicOnTheCart(twp);
+	player_no = backup3;
 	perG[0] = backup1;
 	Rings = backup2;
 }
@@ -660,7 +668,7 @@ void EnemyCartM(task* tp)
 	cart_data = (ENEMY_CART_DATA*)tp->awp;
 	auto pnum = twp->mode < 3 ? GetClosestPlayerNum(&twp->pos) : CART_PNUM(twp);
 	player_no = GetPlayerNumberM(pnum);
-	auto cartparam = &CartParameter[GetPlayerNumberM(pnum)];
+	auto cartparam = &CartParameter[GetParamNumberM(pnum)];
 
 	switch (twp->mode)
 	{
