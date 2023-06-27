@@ -707,7 +707,6 @@ bool menu_multi_apply_change(MultiMenuWK* wk, MD_MULTI id, int dial)
 		if (previous == MD_MULTI_COOPSEL)
 		{
 			selected_characters[0] = 0;
-			chara_ready[0] = true;
 		}
 		break;
 	case MD_MULTI_STGSEL_SPD:
