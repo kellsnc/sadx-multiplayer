@@ -738,6 +738,9 @@ void EnemyCartM(task* tp)
 		cartSetVectorM(twp, pnum); // custom
 		tp->disp = cartDisplayExplosionM;
 		cartExplosion(twp);
+		// custom: cartExplosion doesn't work well for some reason, let's help it
+		if (++cart_data->invincible_timer > CartOtherParam.dead_wait_time)
+			twp->mode = CARTMD_DEST;
 		break;
 	case CARTMD_8:
 		cart_data->flag &= ~1u;
@@ -765,7 +768,11 @@ void EnemyCartM(task* tp)
 		break;
 	case CARTMD_DEST:
 	default:
-		DeadOut(tp);
+		// custom: condition to respawn cart in TP1
+		if (tp->ocp && !(ssStageNumber == STAGE_TWINKLEPARK && ssActNumber == 0))
+			DeadOut(tp);
+		else
+			FreeTask(tp);
 		return;
 	}
 
