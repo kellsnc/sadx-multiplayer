@@ -13,6 +13,21 @@ TaskHook LoadAmyBird_t(0x4C6790);
 
 task* AmyBirdM[PLAYER_MAX] = { 0 };
 
+static uint16_t GetVictoryAnim(unsigned __int8 a1)
+{
+	auto pwp = playerpwp[a1];
+	if (pwp && multiplayer::IsActive())
+	{
+		if (CurrentLevel < LevelIDs_Chaos0 || CurrentLevel > LevelIDs_E101R)
+		{
+			return CurrentCharacter != Characters_Amy ? 42u : 32u;
+		}
+	}
+
+	return (ssActNumber | (ssStageNumber << 8)) >= LevelAndActIDs_Chaos0 ? 42u : 32u;
+}
+
+
 void AmyBird_Del(task* obj)
 {
 	if (obj->twp)
@@ -155,6 +170,16 @@ signed int Amy_CheckInput_r(playerwk* co2, motionwk2* data2, taskwk* data)
 			return 1;
 		}
 		break;
+	case 19:
+		data->mode = 13;
+		co2->mj.reqaction = GetVictoryAnim(data->counter.b[0]);
+		data->ang.z = 0;
+		data->ang.x = 0;
+		data2->spd = { 0, 0, 0 };
+		co2->spd = { 0, 0, 0 };
+		data->flag &= 0xDAu;
+		StopPlayerLookAt(0);
+		return 1;
 	case 32:
 
 		if (SetCylinderNextAction(data, data2, co2))
@@ -257,11 +282,6 @@ void AmyExec_r(task* obj)
 	motionwk2* data2 = (motionwk2*)obj->mwp;
 	playerwk* co2 = (playerwk*)obj->mwp->work.l;
 
-	if (co2)
-	{
-		co2 = co2;
-	}
-
 	switch (data->mode)
 	{
 	case SDCannonMode:
@@ -284,20 +304,6 @@ void AmyExec_r(task* obj)
 	AmyExec_t.Original(obj);
 }
 
-static void VictoryPoseFix(unsigned __int8 a1)
-{
-	StopPlayerLookAt(a1);
-
-	auto pwp = playerpwp[a1];
-	if (pwp && multiplayer::IsActive())
-	{
-		if (CurrentLevel < LevelIDs_Chaos0 || CurrentLevel > LevelIDs_E101R)
-		{
-			pwp->mj.reqaction = CurrentCharacter != Characters_Amy ? 42 : 32;		
-		}
-	}
-}
-
 void Init_AmyPatches()
 {
 	AmyExec_t.Hook(AmyExec_r);
@@ -309,5 +315,4 @@ void Init_AmyPatches()
 
 	LoadAmyBird_t.Hook(Init_AmyBird);
 	AmyBirdExe_t.Hook(AmyBird_Main_r);
-	WriteCall((void*)0x4879EA, VictoryPoseFix);
 }
