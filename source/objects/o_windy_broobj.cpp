@@ -12,6 +12,8 @@ static void Exec_m(task* tp)
 		return;
 	}
 
+	twp->timer.f += twp->scl.x;
+
 	if (twp->mode == 0i8)
 	{
 		if (EnemyCheckDamage(twp, (enemywk*)tp->mwp))
