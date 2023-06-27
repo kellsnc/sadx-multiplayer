@@ -22,6 +22,7 @@
 #include "objects/o_sky_ocm.h"
 #include "objects/e_robo.h"
 #include "objects/e_sai.h"
+#include "objects/flicky.h"
 
 #include "objects/sonic.h"
 #include "objects//miles.h"
@@ -959,6 +960,7 @@ void InitPatches()
 	PatchTwinkleMirrors();
 	PatchPondSkater();
 	PatchGachapon();
+	PatchFlicky();
 
 	initLadderPatches();
 	initSDIntroPatches();

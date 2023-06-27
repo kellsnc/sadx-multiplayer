@@ -122,6 +122,7 @@
     <ClInclude Include="menu_adventure.h" />
     <ClInclude Include="objects\e_robo.h" />
     <ClInclude Include="objects\e_sai.h" />
+    <ClInclude Include="objects\flicky.h" />
     <ClInclude Include="objects\miles.h" />
     <ClInclude Include="milesrace.h" />
     <ClInclude Include="mod.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="objects\e101.cpp" />
     <ClCompile Include="objects\e101r.cpp" />
     <ClCompile Include="objects\extra.cpp" />
+    <ClCompile Include="objects\flicky.cpp" />
     <ClCompile Include="objects\miles.cpp" />
     <ClCompile Include="milesrace.cpp" />
     <ClCompile Include="multiapi.cpp" />

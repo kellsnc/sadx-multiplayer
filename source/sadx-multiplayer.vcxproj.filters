@@ -538,6 +538,9 @@
     <ClCompile Include="objects\o_ruinSwDoor_.cpp">
       <Filter>Source Files\objects\stg07_ruin</Filter>
     </ClCompile>
+    <ClCompile Include="objects\flicky.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -755,6 +758,9 @@
     </ClInclude>
     <ClInclude Include="objects\e_sai.h">
       <Filter>Header FIles\objects\enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\flicky.h">
+      <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

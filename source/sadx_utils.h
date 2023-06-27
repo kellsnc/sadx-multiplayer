@@ -361,6 +361,38 @@ struct SeqWk
 	Uint8 FadeOutFlg2;
 };
 
+struct FlickyData
+{
+	Uint16 color;
+	Uint16 baseangle;
+	Angle rotate;
+	Float scale;
+	Float framespeed;
+	NJS_TEXLIST* texlist;
+};
+
+struct Flicky
+{
+	Sint8 id;
+	Sint8 rand;
+	Sint8 wallcnt;
+	Sint8 tmp00;
+	Float frame;
+	NJS_POINT3 transvelocity;
+	NJS_POINT3 transaccel;
+	NJS_POINT3 bscl;
+	NJS_POINT3 bsclv;
+	Angle targetangle;
+	Float targetradius;
+	Angle shadowangx;
+	Angle shadowangz;
+	NJS_POINT3 aim;
+	NJS_POINT3 oldtrans;
+	void(__cdecl* movefunc)(Flicky*, taskwk*);
+	void(__cdecl* delfunc)(task*);
+	FlickyData* flickydata;
+};
+
 DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
