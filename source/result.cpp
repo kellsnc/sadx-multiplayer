@@ -20,13 +20,21 @@ void SetWinnerMulti(int pnum)
 	gBattleResult = pnum;
 }
 
-void MovePlayerToWinnerPos(int pnum, taskwk* twp)
+void MovePlayersToWinnerPos(NJS_VECTOR* endpos)
 {
-	if (multiplayer::IsCoopMode() && playertwp[pnum])
+	if (multiplayer::IsCoopMode())
 	{
-		if (GetDistance(&twp->pos, &playertwp[pnum]->pos) > 40.0f)
+		taskwk* winner = playertwp[GetClosestPlayerNum(endpos)];
+		NJS_VECTOR pos = winner->pos;
+
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			TeleportPlayersToPlayer(GetTheNearestPlayerNumber(&twp->pos));
+			taskwk* ptwp = playertwp[i];
+			if (ptwp && GetDistance(endpos, &ptwp->pos) > 40.0f)
+			{
+				ptwp->ang.y = winner->ang.y;
+				TeleportPlayerArea(i, &pos, 5.0f);
+			}
 		}
 	}
 }

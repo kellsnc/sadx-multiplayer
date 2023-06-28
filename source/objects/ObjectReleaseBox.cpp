@@ -43,15 +43,7 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 			{
 				PadReadOff();
 				PadReadOffP(-1);
-
-				for (uint8_t i = 0; i < pmax; ++i)
-				{
-					if (playertwp[i]) {
-						PClearSpeed(playermwp[i], playerpwp[i]);
-						MovePlayerToWinnerPos(i, twp);
-					}
-				}
-
+				MovePlayersToWinnerPos(&twp->pos);
 				twp->mode = 1;
 				dsPlay_oneshot(13, 0, 0, 0);
 			}
