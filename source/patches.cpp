@@ -484,7 +484,7 @@ static BOOL PlayerVacumedRing_r(taskwk* twp)
 		playerwk* plpwp = nullptr;
 		float dist = 10000000.0f;
 
-		for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); ++i)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
 			auto pltwp = playertwp[i];
 			plpwp = playerpwp[i];
@@ -724,24 +724,28 @@ bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 	}
 }
 
-task* __cdecl SetCircleLimit_r(NJS_POINT3* pPos, NJS_POINT3* a2, float radius)
+task* __cdecl SetCircleLimit_r(NJS_POINT3* pos, NJS_POINT3* center, float radius)
 {
-	if (multiplayer::IsActive()) {
-		for (unsigned int i = 1; i < multiplayer::GetPlayerCount(); i++)
+	if (multiplayer::IsActive())
+	{
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			task* obj = CreateElementalTask((LoadObj_Data1), 0, CircleLimit);
-
-			if (obj && playertwp[i])
+			if (playertwp[i])
 			{
-				auto data = obj->twp;
-				data->pos = *a2;
-				data->scl.x = radius;
-				data->counter.l = (unsigned int)&playertwp[i]->pos;
+				task* tp = CreateElementalTask((LoadObj_Data1), 0, CircleLimit);
+
+				if (tp)
+				{
+					auto twp = tp->twp;
+					twp->pos = *center;
+					twp->scl.x = radius;
+					twp->counter.l = (unsigned int)&playertwp[i]->pos;
+				}
 			}
 		}
 	}
 
-	return SetCircleLimit_t.Original(pPos, a2, radius);
+	return SetCircleLimit_t.Original(pos, center, radius);
 }
 
 void __cdecl HoldOnIcicleP_r(Uint8 pno, task* ttp)
@@ -852,7 +856,7 @@ void EnableTime_r()
 {
 	EnableTime_t.Original();
 
-	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		RemoveAttackSolidColFlags(i);
 	}

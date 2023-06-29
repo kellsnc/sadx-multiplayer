@@ -282,16 +282,14 @@ static void __cdecl deadRoundM(task* tp)
 
 static void LoadAdditionalCarts()
 {
-	for (unsigned int i = 1ui32; i < multiplayer::GetPlayerCount(); ++i)
+	for (int i = 1; i < PLAYER_MAX; ++i)
 	{
-		auto tp = CreateElementalTask(LoadObj_Data1 | LoadObj_UnknownA | LoadObj_UnknownB, LEV_3, EnemyCart);
-
-		if (tp && tp->twp)
+		if (playertwp[i])
 		{
-			tp->twp->btimer = i;
-
-			if (playertwp[i])
+			auto tp = CreateElementalTask(LoadObj_Data1 | LoadObj_UnknownA | LoadObj_UnknownB, LEV_3, EnemyCart);
+			if (tp && tp->twp)
 			{
+				tp->twp->btimer = i;
 				tp->twp->scl.y = 1.0f;
 				tp->twp->pos = { 1513.0f, 9.0f, 74.0f };
 				tp->twp->ang.y = 0xC000;

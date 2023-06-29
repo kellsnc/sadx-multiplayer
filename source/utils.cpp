@@ -244,15 +244,13 @@ bool isOnePlayerSpecifiedChar(char charID)
 {
 	if (multiplayer::IsActive())
 	{
-		for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (playertwp[i] && playertwp[i]->counter.b[1] == charID)
+			if (playertwp[i] && TASKWK_CHARID(playertwp[i]) == charID)
 			{
 				return true;
 			}
 		}
 	}
-
 	return false;
-
 }

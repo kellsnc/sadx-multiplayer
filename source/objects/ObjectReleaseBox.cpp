@@ -33,7 +33,6 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 {
 	if (multiplayer::IsActive())
 	{
-		char pmax = multiplayer::GetPlayerCount();
 		auto twp = task_p->twp;
 		auto parent_twp = task_p->ptp->twp;
 
