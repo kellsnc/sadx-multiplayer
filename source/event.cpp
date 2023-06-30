@@ -4,22 +4,30 @@
 static FunctionHook<void, int> EV_Load2_t(EV_Load2);
 static char backupMode = 0;
 
-int timer = 0;
+static int bannedCutscene[] = { 0x2 };
 void EV_Load2_r(int no)
 {
 	if (multiplayer::IsActive())
 	{
 		backupMode = multiplayer::IsCoopMode() ? 0 : 1; //unused for now
 
-		for (int i = 1; i < PLAYER_MAX; i++)
+		for (uint16_t j = 0; j < LengthOfArray(bannedCutscene); j++)
 		{
-			if (playertp[i])
+			if (bannedCutscene[j] == no)
 			{
-				FreeTask(playertp[i]);
+				return EV_Load2_t.Original(no);
 			}
 		}
 
-		//multiplayer::TemporaryDisable();
+		for (uint8_t i = 1u; i < PLAYER_MAX; i++)
+		{
+			auto P = playertp[i];
+			if (P)
+			{
+				FreeTask(P);
+			}
+
+		}
 	}
 
 	return EV_Load2_t.Original(no);
