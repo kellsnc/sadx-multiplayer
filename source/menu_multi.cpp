@@ -490,9 +490,10 @@ void menu_multi_unready()
 
 void menu_multi_setallcharacters(int c)
 {
-	for (auto& i : selected_characters)
+	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		i = c;
+		if (player_ready[i])
+			selected_characters[i] = c;
 	}
 }
 
@@ -501,7 +502,6 @@ int menu_multi_getplayerno(int num)
 	switch (num)
 	{
 	case CharSelChara_Sonic:
-	default:
 		return Characters_Sonic;
 	case CharSelChara_Tails:
 		return Characters_Tails;
@@ -517,6 +517,8 @@ int menu_multi_getplayerno(int num)
 		return Characters_Tikal;
 	case CharSelChara_Eggman:
 		return Characters_Eggman;
+	default:
+		return -1;
 	}
 }
 
@@ -872,10 +874,18 @@ bool menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 
 void menu_multi_start(MultiMenuWK* wk, int act)
 {
-	// Enable multiplayer mode
-	multiplayer::Enable(pcount, gNextMultiMode);
+	int count = 0;
 
-	for (int i = 0; i < pcount; ++i)
+	for (int i = PLAYER_MAX; i > 1; --i)
+	{
+		if (player_ready[i - 1])
+			count = i;
+	}
+
+	// Enable multiplayer mode
+	multiplayer::Enable(count, gNextMultiMode);
+
+	for (int i = 0; i < count; ++i)
 	{
 		SetCurrentCharacter(i, (Characters)menu_multi_getplayerno(selected_characters[i]));
 	}
@@ -1016,11 +1026,6 @@ bool menu_multi_charsel_input(MultiMenuWK* wk, int i)
 	auto& sel = selected_characters[i];
 	auto press = GetPressedButtons(i);
 
-	if (player_ready[i] == false) // If player is not connected
-	{
-		return false;
-	}
-
 	if (chara_ready[i] == false) // Character selection
 	{
 		if (press & Buttons_Right)
@@ -1124,8 +1129,11 @@ void menu_multi_charsel(MultiMenuWK* wk)
 	{
 		bool done = true;
 
-		for (int i = 0; i < pcount; ++i)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
+			if (player_ready[i] == false)
+				continue;
+
 			if (!menu_multi_charsel_input(wk, i))
 				done = false;
 		}

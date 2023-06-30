@@ -15,7 +15,7 @@ namespace multiplayer
 
 	void Enable(int player_count, mode md)
 	{
-		if (player_count > 0 && player_count <= PLAYER_MAX)
+		if (player_count > 1 && player_count <= PLAYER_MAX)
 		{
 			gMode = md;
 			enabled = true;

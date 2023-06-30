@@ -57,13 +57,27 @@ namespace SplitScreen
 	const ScreenRatio* ScreenRatios[]
 	{
 		ScreenRatio2,
+		ScreenRatio2,
 		ScreenRatio3,
 		ScreenRatio4
 	};
 
 	const ScreenRatio* GetScreenRatio(int num)
 	{
-		return &ScreenRatios[multiplayer::GetPlayerCount() - 2][num];
+		int screenid = 0;
+		int screencount = 0;
+
+		for (int i = 0; i < PLAYER_MAX; ++i)
+		{
+			if (i == 0 || IsScreenEnabled(i))
+			{
+				if (i < num)
+					++screenid;
+				++screencount;
+			}
+		}
+
+		return &ScreenRatios[screencount - 1][screenid];
 	}
 
 	void SaveViewPort()
@@ -95,7 +109,7 @@ namespace SplitScreen
 
 	bool IsScreenEnabled(int num)
 	{
-		return num == 0 ? true : IsActive() && playertp[num] != nullptr;
+		return num == 0 ? true : IsActive() && playertp[num] != nullptr && num < multiplayer::GetPlayerCount();
 	}
 
 	// Change the viewport (-1 is whole screen)
@@ -121,12 +135,17 @@ namespace SplitScreen
 			return true;
 		}
 
-		if (num < 0 || num >(int)multiplayer::GetPlayerCount() || num > PLAYER_MAX)
+		if (num < 0 || num > PLAYER_MAX)
 		{
 			return false;
 		}
 
 		auto ratio = GetScreenRatio(num);
+
+		if (!ratio)
+		{
+			return false;
+		}
 
 		Direct3D_ViewPort.X = static_cast<DWORD>(ratio->x * static_cast<float>(HorizontalResolution));
 		Direct3D_ViewPort.Y = static_cast<DWORD>(ratio->y * static_cast<float>(VerticalResolution));
@@ -153,7 +172,7 @@ void __cdecl SpLoopOnlyDisplay_r()
 {
 	if (SplitScreen::IsActive())
 	{
-		for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); ++i)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
 			if (SplitScreen::IsScreenEnabled(i))
 			{
@@ -174,22 +193,11 @@ void __cdecl SpLoopOnlyDisplay_r()
 // Draw every task in subscreen
 static void DrawScreen(int num)
 {
-	if (SplitScreen::ChangeViewPort(num))
+	if (SplitScreen::IsScreenEnabled(num) && SplitScreen::ChangeViewPort(num))
 	{
-		if (SplitScreen::IsScreenEnabled(num))
-		{
-			// If player exists, draw all objects into viewport:
-
-			SplitScreen::numScreen = num;
-			DisplayTask_hook.Original();
-			DisplayMultiHud(num);
-		}
-		else
-		{
-			// If player is not there, draw a black screen and skip:
-
-			DrawWaitScreen(num);
-		}
+		SplitScreen::numScreen = num;
+		DisplayTask_hook.Original();
+		DisplayMultiHud(num);
 	}
 }
 
@@ -200,7 +208,7 @@ void __cdecl DisplayTask_r()
 	{
 		// If multiplayer is enabled, split screen:
 
-		for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); ++i)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
 			DrawScreen(i);
 		}
@@ -227,7 +235,7 @@ void __cdecl LoopTask_r()
 		LoopTask_hook.Original();
 		DisplayMultiHud(0);
 
-		for (unsigned int i = 1ui32; i < multiplayer::GetPlayerCount(); ++i)
+		for (int i = 1; i < PLAYER_MAX; ++i)
 		{
 			DrawScreen(i);
 		}
