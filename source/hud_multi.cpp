@@ -228,6 +228,9 @@ void MultiHudRings(int num)
 
 void MultiHudLives(int num)
 {
+	if (isInHubWorld() || !IsIngame())
+		return;
+
 	njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TASKWK_CHARID(playertwp[num]) + 12, 0, NJD_SPRITE_ALPHA);
 
 	if (HideHud >= 0)
