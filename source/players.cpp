@@ -33,7 +33,7 @@ DataPointer(GM_START_POSANG*, paE102IP_Ptr, 0x414941);
 DataPointer(GM_START_POSANG*, paBigIP_Ptr, 0x414933);
 
 DataPointer(ADVPOS**, vInitialPositionSS_Ptr, 0x62F6EE);
-DataPointer(ADVPOS**, vInitialPositionEC_AB_Ptr, 0x52D854);
+DataPointer(ADVPOS**, vInitialPositionEC_AB_Ptr, 0x52D853);
 DataPointer(ADVPOS**, vInitialPositionEC_C_Ptr, 0x52D861);
 DataPointer(ADVPOS**, vInitialPositionMR_Ptr, 0x5307AE);
 DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
