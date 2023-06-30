@@ -909,9 +909,6 @@ void menu_multi_start(MultiMenuWK* wk, int act)
 	wk->SelStg = level;
 	wk->Stat = ADVA_STAT_FADEOUT;
 	wk->T = 0.0f;
-
-	auto seqwk = (SeqWk*)SeqTp->awp;
-	seqwk->RetVal = ADVA_RETVALUE_TRIAL;
 }
 
 void menu_multi_request_start(MultiMenuWK* wk, int act)
@@ -1936,6 +1933,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 			// Force stage mode:
 			if (wk->SelStg >= 0)
 			{
+				seqwk->RetVal = ADVA_RETVALUE_TRIAL;
 				seqwk->AdvanceFlg = ADVA_RETVALUE_TRIAL;
 			}
 		}
