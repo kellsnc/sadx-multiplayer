@@ -228,7 +228,7 @@ void MultiHudRings(int num)
 
 void MultiHudLives(int num)
 {
-	if (isInHubWorld() || !IsIngame())
+	if (!IsIngame())
 		return;
 
 	njDrawSprite2D_ForcePriority(&MULTIHUDDIGIT_SPRITE, TASKWK_CHARID(playertwp[num]) + 12, 0, NJD_SPRITE_ALPHA);
@@ -276,13 +276,13 @@ void DisplayMultiHud(int num)
 
 	float x = MULTIHUD_SPRITE.p.x = 16.0f * scale + screenX;
 
-	if (HideTimerAndRings >= 0)
+	if (HideTimerAndRings >= 0 && (!isInHubWorld() && !IsLevelChaoGarden()))
 	{
 		MULTIHUD_SPRITE.p.y = 16.0f * scaleY + screenY;
 		njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
 		MultiHudScore(num);
 
-		if (SplitScreen::numScreen == 0)
+		if (SplitScreen::numScreen == 0 )
 		{
 			MULTIHUD_SPRITE.p.x = x;
 			MULTIHUD_SPRITE.p.y += 24 * scale;
@@ -301,6 +301,17 @@ void DisplayMultiHud(int num)
 		MULTIHUDDIGIT_SPRITE.p.x = x;
 		MULTIHUDDIGIT_SPRITE.p.y = VerticalResolution * ratio->h - 16.0f * scaleY + screenY;
 		MultiHudLives(num);
+	}
+
+	if (GetLevelType() == 1)
+	{
+		HideLives = -1;
+		HideTimerAndRings = -1;
+	}
+	else
+	{
+		HideLives = HideHud;
+		HideTimerAndRings = HideHud;
 	}
 
 	ResetMaterial();
