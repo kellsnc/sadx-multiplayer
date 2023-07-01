@@ -12,6 +12,7 @@
 #include "menu_multi.h"
 #include "teleport.h"
 #include "players.h"
+#include "patches.h"
 
 /*
 
@@ -504,17 +505,26 @@ void UpdatePlayersInfo()
 
 	if (IsIngame())
 	{
-		bool coop = multiplayer::IsCoopMode();
 		bool vs = multiplayer::IsFightMode();
+		bool coop = multiplayer::IsCoopMode();
 
-		if (coop || vs)
+		if (vs || coop)
 		{
 			for (uint8_t i = 0; i < PLAYER_MAX; ++i)
 			{
 				if (playertwp[i])
 				{
-					if (coop) RemovePlayersDamage(playertwp[i]);
-					if (vs) SetPlayerTargetable(playertwp[i]);
+					if (CharacterBossActive)
+					{
+						RestorePlayerCollisionFlags(i);	
+					}
+					else
+					{
+						if (vs)
+							SetPlayerTargetable(playertwp[i]);
+						else if (coop)
+							RemoveAttackSolidColFlags(i);
+					}
 				}
 			}
 		}

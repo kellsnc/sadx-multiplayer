@@ -32,6 +32,7 @@
 #include "objects/big.h"
 #include "objects/o_sky_cannon_s.h"
 #include "objects/Sw_Door.h"
+#include "objects/AI_Fight.h"
 
 /*
 
@@ -59,7 +60,6 @@ UsercallFunc(signed int, PlayerVacumedRing_t, (taskwk* a1), (a1), 0x44FA90, rEAX
 static Trampoline* OGate2_Main_t = nullptr;
 
 TaskHook OTpRing_t((intptr_t)OTpRing);
-static FunctionHook<void>EnableTime_t(0x426030);
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
@@ -848,16 +848,6 @@ void RestorePlayerCollisionFlags(uint8_t ID)
 	}
 }
 
-void EnableTime_r()
-{
-	EnableTime_t.Original();
-
-	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
-	{
-		RemoveAttackSolidColFlags(i);
-	}
-}
-
 void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
@@ -872,7 +862,6 @@ void InitPatches()
 	PGetAcceleration_t = new Trampoline(0x44C270, 0x44C278, PGetAcceleration_r);
 	PGetAccelerationSnowBoard_t = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
 	SonicMotionCheckEdition.Hook(SonicMotionCheckEdition_r);
-	EnableTime_t.Hook(EnableTime_r); //patch player col push
 
 	// Misc
 	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
@@ -976,4 +965,5 @@ void InitPatches()
 	PatchRocket();
 	initERoboHack();
 	InitEnemySaiPatches();
+	init_AIFight_Patches();
 }
