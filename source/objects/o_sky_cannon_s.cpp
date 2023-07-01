@@ -6,8 +6,9 @@ static char PInCannon[PLAYER_MAX];
 
 void isPlayerinCannon(taskwk* data)
 {
-	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++) {
-		if (GetDistance(&data->pos, &playertwp[i]->pos) <= 100.0f)
+	for (int i = 0; i < PLAYER_MAX; i++)
+	{
+		if (playertwp[i] && GetDistance(&data->pos, &playertwp[i]->pos) <= 100.0f)
 		{
 			PInCannon[i] = 1;
 		}
@@ -20,7 +21,7 @@ void isPlayerinCannon(taskwk* data)
 
 static void SDSetPlayerPos(taskwk* data)
 {
-	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (PInCannon[i])
 		{
@@ -34,7 +35,7 @@ static void SDSetPlayerPosDiff(taskwk* data)
 	NJS_VECTOR pos = data->pos;
 	pos.z += 90.0f;
 
-	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (PInCannon[i])
 		{
@@ -84,7 +85,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		PadReadOffP(-1);
 		if (data->wtimer <= 0x36u)
 		{
-			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+			for (int i = 0; i < PLAYER_MAX; i++)
 			{
 				if (PInCannon[i])
 				{
@@ -95,9 +96,10 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		}
 		else
 		{
-			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+			for (int i = 0; i < PLAYER_MAX; i++)
 			{
-				if (playertwp[i]->counter.b[1] == Characters_Sonic) {
+				if (playertwp[i] && TASKWK_CHARID(playertwp[i]) == Characters_Sonic)
+				{
 					if (!MetalSonicFlag)
 					{
 						if (GetCurrentCharacterID())
@@ -118,12 +120,11 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		}
 		break;
 	case 4:
-
 		PadReadOffP(-1);
 
 		if (data->wtimer == 1)
 		{
-			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+			for (int i = 0; i < PLAYER_MAX; i++)
 			{
 				if (PInCannon[i])
 				{
@@ -154,7 +155,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		break;
 	case 5:
 	default:
-		if ((data->cwp && data->cwp->flag & 1) != 0 && !data->cwp->hit_cwp->id)
+		if (data->cwp && (data->cwp->flag & 1) && !data->cwp->hit_cwp->id)
 		{
 			data->mode = 2;
 			return;

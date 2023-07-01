@@ -11,15 +11,12 @@ static void __cdecl Object_Mountain_Yougan_r(task* tp)
 {
 	if (multiplayer::IsEnabled())
 	{
-		for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+		for (int i = 0; i < PLAYER_MAX; i++)
 		{
-			if (playerpwp[i])
+			if (playerpwp[i] && playerpwp[i]->item & Powerups_Dead && tp->twp->mode >= 2)
 			{
-				if (playerpwp[i]->item & Powerups_Dead && tp->twp->mode >= 2)
-				{
-					tp->twp->mode = 0;
-					break;
-				}
+				tp->twp->mode = 0;
+				break;
 			}
 		}
 	}

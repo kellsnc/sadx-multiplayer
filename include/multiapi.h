@@ -91,11 +91,11 @@ extern "C"
 	// Returns true if multiplayer is active and in coop mode
 	API bool multi_is_coop(void);
 
-	// Enable multiplayer mode
-	API void multi_enable(uint32_t player_count, bool battle);
+	// Enable multiplayer mode, returns true on success
+	API bool multi_enable(uint32_t player_count, bool battle);
 
-	// Disable multiplayer mode
-	API void multi_disable(void);
+	// Disable multiplayer mode, returns true on success
+	API bool multi_disable(void);
 
 	// Get the amount of connected players
 	API uint32_t multi_get_player_count(void);

@@ -10,9 +10,8 @@ namespace multiplayer
 
 	unsigned int GetPlayerCount();
 
-	void Enable(int player_count, mode md);
-	void TemporaryDisable();
-	void Disable();
+	bool Enable(int player_count, mode md);
+	bool Disable();
 
 	bool IsEnabled(); // Check if multiplayer is enabled
 	bool IsActive(); // Check if multiplayer is active (ingame, not in menu)

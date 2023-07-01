@@ -563,7 +563,7 @@ void SetPlayer_r()
 	if (multiplayer::IsActive())
 	{
 		// Load all characters:
-		for (unsigned int i = 0ui32; i < multiplayer::GetPlayerCount(); i++)
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
 			int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
 
@@ -608,7 +608,7 @@ void SetOtherPlayers()
 {
 	if (multiplayer::IsActive())
 	{
-		for (unsigned int i = 1; i < multiplayer::GetPlayerCount(); i++)
+		for (int i = 1; i < PLAYER_MAX; i++)
 		{
 			int playernum = characters[i];
 
@@ -660,9 +660,9 @@ void SetInfiniteLives()
 {
 	if (config::infiniteLives && multiplayer::IsActive())
 	{
-		for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+		for (int i = 0; i < PLAYER_MAX; i++)
 		{
-				scNumPlayer_m[i] = CHAR_MAX;
+			scNumPlayer_m[i] = CHAR_MAX;
 		}
 	}
 }

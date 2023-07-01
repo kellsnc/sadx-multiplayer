@@ -88,9 +88,9 @@ static void __cdecl ObjectRocket_Wait_r(task* tp)
 
 	if (twp->mode == 2)
 	{
-		for (int i = 0; i < multiplayer::GetPlayerCount(); i++)
+		for (int i = 0; i < PLAYER_MAX; i++)
 		{
-			if (ChkPlayerCanHold(tp, i))
+			if (playertwp[i] && ChkPlayerCanHold(tp, i))
 			{
 				EntryColliList(twp);
 				tp->disp(tp);

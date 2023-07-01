@@ -12,7 +12,7 @@ void dsHangPoleCom_r(taskwk* a1)
 		{
 			auto data = a1->cwp->hit_cwp->mytask->twp;
 
-			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+			for (int i = 0; i < PLAYER_MAX; i++)
 			{
 				if (data == playertwp[i])
 				{

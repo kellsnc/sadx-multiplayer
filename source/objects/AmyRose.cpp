@@ -111,9 +111,9 @@ void __cdecl Init_AmyBird(task* tp)
 		return LoadAmyBird_t.Original(tp);
 	}
 
-	for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		if (!AmyBirdM[i] && playertwp[i] && playertwp[i]->counter.b[1] == Characters_Amy)
+		if (!AmyBirdM[i] && playertwp[i] && TASKWK_CHARID(playertwp[i]) == Characters_Amy)
 		{
 			AmyBirdM[i] = CreateElementalTask(LoadObj_Data1, 3, Load_AmyBird_r);
 			AmyBirdM[i]->twp->smode = i;

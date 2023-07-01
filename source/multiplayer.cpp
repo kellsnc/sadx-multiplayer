@@ -13,26 +13,28 @@ namespace multiplayer
 		return pcount;
 	}
 
-	void Enable(int player_count, mode md)
+	bool Enable(int player_count, mode md)
 	{
-		if (player_count > 0 && player_count <= PLAYER_MAX)
+		if (!enabled && player_count > 1 && player_count <= PLAYER_MAX)
 		{
 			gMode = md;
 			enabled = true;
 			pcount = player_count;
+			return true;
 		}
+		return false;
 	}
 
-	void Disable()
+	bool Disable()
 	{
-		enabled = false;
-		pcount = 0;
-		ResetCharactersArray();
-	}
-
-	void TemporaryDisable()
-	{
-		enabled = false;
+		if (enabled)
+		{
+			enabled = false;
+			pcount = 0;
+			ResetCharactersArray();
+			return true;
+		}
+		return false;
 	}
 
 	bool IsEnabled()

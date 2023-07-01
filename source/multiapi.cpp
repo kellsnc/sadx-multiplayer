@@ -123,14 +123,14 @@ bool multi_is_coop()
 	return multiplayer::IsCoopMode();
 }
 
-void multi_enable(uint32_t player_count, bool battle)
+bool multi_enable(uint32_t player_count, bool battle)
 {
-	multiplayer::Enable(player_count, battle ? multiplayer::mode::battle : multiplayer::mode::coop);
+	return multiplayer::Enable(player_count, battle ? multiplayer::mode::battle : multiplayer::mode::coop);
 }
 
-void multi_disable()
+bool multi_disable()
 {
-	multiplayer::Disable();
+	return multiplayer::Disable();
 }
 
 uint32_t multi_get_player_count()

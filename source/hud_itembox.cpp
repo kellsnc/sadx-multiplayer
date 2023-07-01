@@ -125,7 +125,7 @@ static void manager_Disp_m(task* tp)
 
 static void __cdecl manager_Disp_r(task* tp)
 {
-	if (multiplayer::IsActive())
+	if (SplitScreen::IsActive())
 	{
 		manager_Disp_m(tp);
 	}
