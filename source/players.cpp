@@ -201,7 +201,7 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 		}
 		else if (isInHubWorld())
 		{
-			ADVPOS** adpos;
+			ADVPOS* adpos;
 
 			// Adv Field:
 			switch (ssStageNumber)
@@ -210,24 +210,24 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 			case LevelIDs_StationSquare:
 			case 27:
 			case 28:
-				adpos = vInitialPositionSS_Ptr;
+				adpos = &vInitialPositionSS_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			case LevelIDs_EggCarrierOutside:
-				adpos = vInitialPositionEC_AB_Ptr;
+				adpos = &vInitialPositionEC_AB_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			case LevelIDs_EggCarrierInside:
-				adpos = vInitialPositionEC_C_Ptr;
+				adpos = &vInitialPositionEC_C_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			case LevelIDs_MysticRuins:
-				adpos = vInitialPositionMR_Ptr;
+				adpos = &vInitialPositionMR_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			case LevelIDs_Past:
-				adpos = vInitialPositionPast_Ptr;
+				adpos = &vInitialPositionPast_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			}
 
-			*pos = adpos[ssActNumber]->pos;
-			*ang = { 0, adpos[ssActNumber]->angy, 0 };
+			*pos = adpos->pos;
+			*ang = { 0, adpos->angy, 0 };
 		}
 		else
 		{
@@ -267,7 +267,6 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 				}
 				++stpos;
 			}
-
 	
 			*pos = continue_data.pos = stpos->p;
 			*ang = continue_data.ang = { 0, stpos->angy, 0 };
