@@ -665,6 +665,8 @@ DataPointer(pathtag, pathtag_s_camera, 0x919BF4);
 TaskFunc(E101_Main, 0x567fd0);
 TaskFunc(E103_Main, 0x4e7e90);
 TaskFunc(E104_Main, 0x605A90);
+FastcallFunctionPointer(void, Past_InitBgAct, (int a2, task* tp), 0x541D80);
+TaskFunc(Past_Disp, 0x541E00);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
