@@ -955,7 +955,6 @@ void InitPatches()
 	PatchGachapon();
 	PatchFlicky();
 
-	initLadderPatches();
 	initSDIntroPatches();
 	init_SDCylinderPatches();
 	PatchSkyDeckOCM();
