@@ -548,7 +548,7 @@ void __cdecl SkyBox_MysticRuins_Load_r(task* tp)
 
 	switch (twp->mode)
 	{
-	case 0:
+	case 0: //fix race issue
 		SkyBox_MysticRuins_TimeOfDayLightDirection((ObjectMaster*)tp);
 		twp->mode++;
 		break;
@@ -556,9 +556,28 @@ void __cdecl SkyBox_MysticRuins_Load_r(task* tp)
 		tp->disp = (TaskFuncPtr)SkyBox_MysticRuins_Display;
 		twp->mode++;
 		break;
-	}
+	case 2:
+		if (ssActNumber == twp->btimer)
+		{
+			if (twp->btimer == 2)
+			{
+				GetTimeOfDay();
+			}
 
-	return SkyBox_MysticRuins_Load_t.Original(tp);
+			tp->disp(tp);
+		}
+		else
+		{
+			twp->mode = 3;
+		}
+		break;
+	case 3: //fix act transition using wrong tex
+		SkyBox_MysticRuins_TimeOfDayLightDirection((ObjectMaster*)tp);
+		twp->mode = 2;
+		break;
+	default:
+		return;
+	}
 }
 
 void __cdecl SkyBox_Past_Load_r(task* tp)
@@ -580,9 +599,29 @@ void __cdecl SkyBox_Past_Load_r(task* tp)
 		tp->disp = Past_Disp;
 		twp->mode++;
 		break;
-	}
+	case 2:
+		if (ssActNumber == twp->wtimer)
+		{
+			if (twp->wtimer == 2)
+			{
+				njSin(twp->value.l);
+				twp->value.l += 1024;
+			}
 
-	return SkyBox_Past_Load_t.Original(tp);
+			tp->disp(tp);
+		}
+		else
+		{
+			twp->mode = 3;
+		}
+		break;
+	case 3:
+		Past_InitBgAct(0, tp);
+		twp->mode = 2;
+		break;
+	default:
+		return;
+	}
 }
 
 Bool SS_CheckCollision_r(taskwk* twp)
