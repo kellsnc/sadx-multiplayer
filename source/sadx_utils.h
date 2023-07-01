@@ -667,6 +667,10 @@ TaskFunc(E103_Main, 0x4e7e90);
 TaskFunc(E104_Main, 0x605A90);
 FastcallFunctionPointer(void, Past_InitBgAct, (int a2, task* tp), 0x541D80);
 TaskFunc(Past_Disp, 0x541E00);
+DataPointer(int, MRTorokkoRideFlg, 0x3C6333C);
+DataPointer(NJS_VECTOR, RidePos, 0x3C63330);
+DataArray(NJS_ACTION*, MoveAction, 0x3C63340, 3);
+DataPointer(NJS_VECTOR, XVec1, 0x111DD40);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
