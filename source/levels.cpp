@@ -36,6 +36,8 @@ DataPointer(int, ring_kiran, 0x38D8D64);
 static auto setTPFog = GenerateUsercallWrapper<void (*)(unsigned __int8 mode)>(noret, 0x61CAC0, rAL);
 static auto RdRuinInit = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5E1670, rEDI);
 
+TaskHook SkyBox_MysticRuins_Load_t((intptr_t)SkyBox_MysticRuins_Load);
+
 void MultiArena(task* tp)
 {
 	auto twp = tp->twp;
@@ -531,6 +533,30 @@ void SetAllPlayersInitialPosition(taskwk* data)
 	}
 }
 
+void __cdecl SkyBox_MysticRuins_Load_r(task* tp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return SkyBox_MysticRuins_Load_t.Original(tp);
+	}
+
+	auto twp = tp->twp;
+
+	switch (twp->mode)
+	{
+	case 0:
+		SkyBox_MysticRuins_TimeOfDayLightDirection((ObjectMaster*)tp);
+		twp->mode++;
+		break;
+	case 1:
+		tp->disp = (TaskFuncPtr)SkyBox_MysticRuins_Display;
+		twp->mode++;
+		break;
+	}
+
+	return SkyBox_MysticRuins_Load_t.Original(tp);
+}
+
 void InitLevels()
 {
 	// Patch start positions
@@ -609,4 +635,7 @@ void InitLevels()
 	dispBgSnow_t = new Trampoline(0x4E9950, 0x4E9955, dispBgSnow_r);
 	dispBgHighway_t = new Trampoline(0x610570, 0x610575, dispBgHighway_r);
 	dispBgTwinkle_t = new Trampoline(0x61D1F0, 0x61D1F5, dispBgTwinkle_r);
+
+	// fix skybox using wrong act for display (race issue)
+	SkyBox_MysticRuins_Load_t.Hook(SkyBox_MysticRuins_Load_r);
 }
