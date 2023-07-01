@@ -41,6 +41,7 @@ TaskHook SkyBox_Past_Load_t((intptr_t)SkyBox_Past_Load);
 
 UsercallFunc(Bool, SS_CheckCollision_t, (taskwk* a1), (a1), 0x640550, rEAX, rESI);
 UsercallFuncVoid(cartMRLogic_t, (task* tp), (tp), 0x53D830, rEAX);
+TaskHook OCScenechg_t((intptr_t)OCScenechg);
 
 void MultiArena(task* tp)
 {
@@ -847,6 +848,45 @@ void cartMRLogic_r(task* tp)
 	}
 }
 
+void __cdecl OCScenechg_r(task* tp)
+{
+
+	if (!multiplayer::IsActive())
+	{
+		return OCScenechg_t.Original(tp);
+	}
+
+	taskwk* twp = tp->twp;
+
+	if (!CheckRangeOut(tp))
+	{
+		if (ObjectSelectedDebug((ObjectMaster*)tp))
+		{
+			OCScenechg_t.Original(tp);
+		}
+		else if (CheckCollisionCylinderP(&twp->pos, twp->scl.x, twp->scl.y) > 0)
+		{
+			if (twp->ang.x)
+			{
+				if (twp->ang.x == 1)
+				{
+					SetLevelEntrance(0);
+					camerahax_adventurefields();
+					j_SetNextLevelAndAct_CutsceneMode(0x22u, 0);
+				}
+			}
+			else
+			{
+				SetLevelEntrance(0);
+				camerahax_adventurefields();
+				j_SetNextLevelAndAct_CutsceneMode(0x22u, 1u);
+			}
+
+			DeadOut(tp);
+		}
+	}
+}
+
 void InitLevels()
 {
 	// Patch start positions
@@ -924,6 +964,7 @@ void InitLevels()
 	// Hub world swap fixes
 	SS_CheckCollision_t.Hook(SS_CheckCollision_r);
 	cartMRLogic_t.Hook(cartMRLogic_r);
+	OCScenechg_t.Hook(OCScenechg_r);
 
 	// Move landtable mask flag to display for multiplayer compatibility
 	dispBgSnow_t = new Trampoline(0x4E9950, 0x4E9955, dispBgSnow_r);
