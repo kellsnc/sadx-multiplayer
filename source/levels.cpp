@@ -886,6 +886,22 @@ void __cdecl OCScenechg_r(task* tp)
 	}
 }
 
+void __cdecl Casino_StartPos_r(Uint8 pno, float x, float y, float z)
+{
+	if (multiplayer::IsActive())
+	{
+		NJS_POINT3 pos = { x, y, z };
+		for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+		{		
+			TeleportPlayerArea(i, &pos, 5.0f);
+		}
+	}
+	else
+	{
+		SetPositionP(pno, x, y, z);
+	}
+}
+
 void InitLevels()
 {
 	// Patch start positions
@@ -898,6 +914,16 @@ void InitLevels()
 	WriteCall((void*)0x5EFA31, SetAllPlayersInitialPosition); // Sky Deck
 	WriteCall((void*)0x5EDD27, SetAllPlayersInitialPosition); // Sky Deck
 	WriteCall((void*)0x5602F1, SetAllPlayersInitialPosition); // Perfect Chaos
+
+	//casino start pos
+	WriteCall((void*)0x5C0D67, Casino_StartPos_r);
+	WriteCall((void*)0x5C0D9B, Casino_StartPos_r);
+	WriteCall((void*)0x5C0DCB, Casino_StartPos_r);
+	WriteCall((void*)0x5C0E19, Casino_StartPos_r);
+	//don't teleport players to pinball, nobody can move
+	//WriteCall((void*)0x5C0E77, Casino_StartPos_r);	
+	//WriteCall((void*)0x5C0EF1, Casino_StartPos_r);
+
 
 	// Patch Skyboxes (display function managing mode)
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast
