@@ -30,7 +30,6 @@ static void Normal_m(taskwk* twp)
 		twp->counter.f = -1.5f;
 		SleepTimer();
 		SetWinnerMulti(pnum);
-		MovePlayersToWinnerPos(&twp->pos);
 		SetFinishAction();
 	}
 

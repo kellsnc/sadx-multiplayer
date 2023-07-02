@@ -33,7 +33,7 @@ void MovePlayersToWinnerPos(NJS_VECTOR* endpos)
 			if (ptwp && GetDistance(endpos, &ptwp->pos) > 40.0f)
 			{
 				ptwp->ang.y = winner->ang.y;
-				TeleportPlayerArea(i, &pos, 5.0f);
+				TeleportPlayerArea(i, &pos, 8.0f);
 			}
 		}
 	}
@@ -82,20 +82,22 @@ static void __cdecl SetFinishAction_r()
 		PauseEnabled = FALSE;
 		SleepTimer();
 
-		for (uint8_t i = 0; i < PLAYER_MAX; ++i)
-		{
-			ForcePlayerAction(i, 19);
-		}
-
 		if (CurrentLevel == LevelIDs_TwinkleCircuit)
 		{
 			ADX_Close();
 		}
 		else
 		{
+
+			MovePlayersToWinnerPos(&playertwp[0]->pos);
 			Load_DelayedSound_BGM(75);
 			PlayCharaWinSound();
 			SetLocalPathCamera(&pathtag_s_camera, 3, 720);
+
+			for (uint8_t i = 0; i < PLAYER_MAX; ++i)
+			{
+				ForcePlayerAction(i, 19);
+			}
 		}
 
 		pdVibMxStop(0);
