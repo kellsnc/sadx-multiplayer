@@ -3,7 +3,7 @@
 
 static FunctionHook<void, int> EV_Load2_t(EV_Load2);
 static char backupMode = 0;
-static FunctionHook<void> EV_Exec2_t(EV_Exec2);
+static FunctionHook<void, int> EV_InitPlayer_t(EV_InitPlayer);
 
 static int bannedCutscene[] = { 0x2 };
 void EV_Load2_r(int no)
@@ -38,22 +38,22 @@ void RecreateMultiPlayer()
 	return RunLevelDestructor(5);
 }
 
-//fix arbitrary crash on some cutscene (race issue)
+//fix arbitrary crashes and random bugs in cutscenes (race issue)
 void DelayCutsceneStart(int a1)
 {
-	EV_InitPlayer(a1);
-	EV_Wait(5);
+	EV_InitPlayer_t.Original(a1);
+
+	if (multiplayer::IsActive())
+		EV_Wait(5);
 }
 
 void initEvents()
 {
-
-	WriteData<1>((int*)0x42FD98, 0x3); //Load Event Char: change task lvl index from 1 to 3 (fix cutscene char crash, race process weld issue)
+	WriteData<1>((int*)0x42FD98, 0x3); //Load Event Char: change task lvl index from 1 to 3, this adds a small delay to let us time to delete other players
 	EV_Load2_t.Hook(EV_Load2_r);
+
 	WriteJump((void*)0x431286, RecreateMultiPlayer);
 	WriteCall((void*)0x431385, RecreateMultiPlayer);
 	//<--patches-->
-	//patch Post Sky Deck cutscene (race)
-	WriteCall((void*)0x656FE7, DelayCutsceneStart);
-	WriteCall((void*)0x655B66, DelayCutsceneStart);
+	EV_InitPlayer_t.Hook(DelayCutsceneStart);
 }
