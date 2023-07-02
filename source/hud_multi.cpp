@@ -247,7 +247,7 @@ void MultiHudLives(int num)
 
 void DisplayMultiHud(int num)
 {
-	if (MissedFrames || IsGamePaused() || CurrentLevel == LevelIDs_TwinkleCircuit || CurrentCharacter == Characters_Big)
+	if (MissedFrames || IsGamePaused() || !IsIngame() || CurrentLevel == LevelIDs_TwinkleCircuit || CurrentCharacter == Characters_Big)
 	{
 		return;
 	}

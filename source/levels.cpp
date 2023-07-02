@@ -850,7 +850,6 @@ void cartMRLogic_r(task* tp)
 
 void __cdecl OCScenechg_r(task* tp)
 {
-
 	if (!multiplayer::IsActive())
 	{
 		return OCScenechg_t.Original(tp);
