@@ -205,9 +205,6 @@
     <ClCompile Include="objects\rd_sandboard.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ladder.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectRocket.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
@@ -544,6 +541,9 @@
     <ClCompile Include="teleport.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="objects\AI_Fight.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -767,6 +767,9 @@
     </ClInclude>
     <ClInclude Include="teleport.h">
       <Filter>Header FIles</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\AI_Fight.h">
+      <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

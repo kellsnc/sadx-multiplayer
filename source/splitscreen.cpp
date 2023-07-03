@@ -62,6 +62,12 @@ namespace SplitScreen
 		ScreenRatio4
 	};
 
+	LevelAndActIDs bannedLevels[] =
+	{
+		LevelAndActIDs_Casinopolis3,
+		LevelAndActIDs_Casinopolis4,
+	};
+
 	const ScreenRatio* GetScreenRatio(int num)
 	{
 		int screenid = 0;
@@ -95,11 +101,23 @@ namespace SplitScreen
 		return numViewPort;
 	}
 
+	bool isBannedLevel()
+	{
+		for (uint16_t i = 0; i < LengthOfArray(bannedLevels); i++)
+		{
+			if (GetStageNumber() == bannedLevels[i])
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	bool IsActive()
 	{
 		return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel()
-			&& cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT && GetStageNumber() != LevelAndActIDs_Casinopolis3
-			&& GetStageNumber() != LevelAndActIDs_Casinopolis4;
+			&& cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT && !isBannedLevel() && GameMode != GameModes_Credits;
 	}
 
 	unsigned int GetCurrentScreenNum()

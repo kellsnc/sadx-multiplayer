@@ -12,6 +12,7 @@
 #include "menu_multi.h"
 #include "teleport.h"
 #include "players.h"
+#include "patches.h"
 
 /*
 
@@ -200,7 +201,7 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 		}
 		else if (isInHubWorld())
 		{
-			ADVPOS** adpos;
+			ADVPOS* adpos;
 
 			// Adv Field:
 			switch (ssStageNumber)
@@ -209,24 +210,24 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 			case LevelIDs_StationSquare:
 			case 27:
 			case 28:
-				adpos = vInitialPositionSS_Ptr;
+				adpos = &vInitialPositionSS_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			case LevelIDs_EggCarrierOutside:
-				adpos = vInitialPositionEC_AB_Ptr;
+				adpos = &vInitialPositionEC_AB_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			case LevelIDs_EggCarrierInside:
-				adpos = vInitialPositionEC_C_Ptr;
+				adpos = &vInitialPositionEC_C_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			case LevelIDs_MysticRuins:
-				adpos = vInitialPositionMR_Ptr;
+				adpos = &vInitialPositionMR_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			case LevelIDs_Past:
-				adpos = vInitialPositionPast_Ptr;
+				adpos = &vInitialPositionPast_Ptr[ssActNumber][GetLevelEntranceID()];
 				break;
 			}
 
-			*pos = adpos[ssActNumber]->pos;
-			*ang = { 0, adpos[ssActNumber]->angy, 0 };
+			*pos = adpos->pos;
+			*ang = { 0, adpos->angy, 0 };
 		}
 		else
 		{
@@ -266,7 +267,6 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 				}
 				++stpos;
 			}
-
 	
 			*pos = continue_data.pos = stpos->p;
 			*ang = continue_data.ang = { 0, stpos->angy, 0 };
@@ -504,17 +504,26 @@ void UpdatePlayersInfo()
 
 	if (IsIngame())
 	{
-		bool coop = multiplayer::IsCoopMode();
 		bool vs = multiplayer::IsFightMode();
+		bool coop = multiplayer::IsCoopMode();
 
-		if (coop || vs)
+		if (vs || coop)
 		{
 			for (uint8_t i = 0; i < PLAYER_MAX; ++i)
 			{
 				if (playertwp[i])
 				{
-					if (coop) RemovePlayersDamage(playertwp[i]);
-					if (vs) SetPlayerTargetable(playertwp[i]);
+					if (CharacterBossActive)
+					{
+						RestorePlayerCollisionFlags(i);	
+					}
+					else
+					{
+						if (vs)
+							SetPlayerTargetable(playertwp[i]);
+						else if (coop)
+							RemoveAttackSolidColFlags(i);
+					}
 				}
 			}
 		}

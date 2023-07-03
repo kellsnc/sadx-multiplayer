@@ -36,6 +36,13 @@ DataPointer(int, ring_kiran, 0x38D8D64);
 static auto setTPFog = GenerateUsercallWrapper<void (*)(unsigned __int8 mode)>(noret, 0x61CAC0, rAL);
 static auto RdRuinInit = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5E1670, rEDI);
 
+TaskHook SkyBox_MysticRuins_Load_t((intptr_t)SkyBox_MysticRuins_Load);
+TaskHook SkyBox_Past_Load_t((intptr_t)SkyBox_Past_Load);
+
+UsercallFunc(Bool, SS_CheckCollision_t, (taskwk* a1), (a1), 0x640550, rEAX, rESI);
+UsercallFuncVoid(cartMRLogic_t, (task* tp), (tp), 0x53D830, rEAX);
+TaskHook OCScenechg_t((intptr_t)OCScenechg);
+
 void MultiArena(task* tp)
 {
 	auto twp = tp->twp;
@@ -531,6 +538,354 @@ void SetAllPlayersInitialPosition(taskwk* data)
 	}
 }
 
+void __cdecl SkyBox_MysticRuins_Load_r(task* tp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return SkyBox_MysticRuins_Load_t.Original(tp);
+	}
+
+	auto twp = tp->twp;
+
+	switch (twp->mode)
+	{
+	case 0: //fix race issue
+		SkyBox_MysticRuins_TimeOfDayLightDirection((ObjectMaster*)tp);
+		twp->mode++;
+		break;
+	case 1:
+		tp->disp = (TaskFuncPtr)SkyBox_MysticRuins_Display;
+		twp->mode++;
+		break;
+	case 2:
+		if (ssActNumber == twp->btimer)
+		{
+			if (twp->btimer == 2)
+			{
+				GetTimeOfDay();
+			}
+
+			tp->disp(tp);
+		}
+		else
+		{
+			twp->mode = 3;
+		}
+		break;
+	case 3: //fix act transition using wrong tex
+		SkyBox_MysticRuins_TimeOfDayLightDirection((ObjectMaster*)tp);
+		twp->mode = 2;
+		break;
+	default:
+		return;
+	}
+}
+
+void __cdecl SkyBox_Past_Load_r(task* tp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return SkyBox_Past_Load_t.Original(tp);
+	}
+
+	auto twp = tp->twp;
+
+	switch (twp->mode)
+	{
+	case 0:
+		Past_InitBgAct(0, tp);
+		twp->mode++;
+		break;
+	case 1:
+		tp->disp = Past_Disp;
+		twp->mode++;
+		break;
+	case 2:
+		if (ssActNumber == twp->wtimer)
+		{
+			if (twp->wtimer == 2)
+			{
+				njSin(twp->value.l);
+				twp->value.l += 1024;
+			}
+
+			tp->disp(tp);
+		}
+		else
+		{
+			twp->mode = 3;
+		}
+		break;
+	case 3:
+		Past_InitBgAct(0, tp);
+		twp->mode = 2;
+		break;
+	default:
+		return;
+	}
+}
+
+Bool SS_CheckCollision_r(taskwk* twp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return SS_CheckCollision_t.Original(twp);
+	}
+
+	NJS_POINT3 posDiff{ 0 };
+	Float v5 = 0.0f;
+	NJS_POINT3 posOut{ 0 };
+
+	int pnum = GetTheNearestPlayerNumber(&twp->pos);
+	GetPlayerPosition(pnum, 0, &posOut, 0);
+	posDiff.x = posOut.x - twp->pos.x;
+	posDiff.z = posOut.z - twp->pos.z;
+
+	if (fabs(posOut.y - (twp->pos.y + twp->timer.f) + 10.0f) <= twp->timer.f)
+	{
+		Angle v1 = -twp->ang.y;
+		v5 = njSin(v1);
+		Float cosRes = njCos(v1);
+		if (fabs(v5 * posDiff.z + cosRes * posDiff.x) < twp->counter.f && fabs(cosRes * posDiff.z - v5 * posDiff.x) < twp->value.f)
+		{
+			return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
+void cartMRLogic_r(task* tp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return cartMRLogic_t.Original(tp);
+	}
+
+	taskwk* twp = tp->twp;
+
+	if (!twp)
+		return;
+
+	const int pnum = GetTheNearestPlayerNumber(&twp->pos);
+
+	taskwk* pData = playertwp[pnum];
+
+	if (!pData)
+		return;
+
+	NJS_POINT3 a3;
+
+	if (twp->smode)
+	{
+		if (twp->smode == 1)
+		{
+			playertwp[pnum]->pos.x = twp->pos.x;
+			playertwp[pnum]->pos.y = twp->pos.y + 5.4f;
+			playertwp[pnum]->pos.z = twp->pos.z;
+
+			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+			{
+				ForcePlayerAction(i, 12);
+				RotatePlayer(i, twp->ang.y + 0x4000);
+				Float diff = 3.0f;
+				if (i != pnum)
+					PositionPlayer(i, pData->pos.x, pData->pos.y, pData->pos.z + diff + i);
+			}
+
+			twp->value.f -= 0.8f;
+			if (twp->value.f <= 0.0f)
+			{
+				njPushMatrix(nj_unit_matrix_);
+				njTranslateV(0, &twp->pos);
+				int v8 = twp->ang.y;
+				if (v8)
+				{
+					njRotateY(0, v8);
+				}
+				njInvertMatrix(0);
+				njCalcPoint(0, &pData->pos, &RidePos);
+				njPopMatrix(1u);
+				MRTorokkoRideFlg = 1;
+				twp->value.l = 0;
+				dsPlay_oneshot(589, 0, 0, 0);
+				twp->smode = 2;
+			}
+		}
+		else if (twp->smode == 2)
+		{
+			pData = playertwp[0];
+			njPushMatrix(nj_unit_matrix_);
+			CalcMMMatrix(0, MoveAction[twp->timer.w[1]], twp->value.f, 0, 0);
+			SetInstancedMatrix(0, 0);
+			njCalcPoint(0, &RidePos, &pData->pos);
+			njCalcVector(0, &XVec1, &a3);
+			float diff = 5.0f;
+			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+			{
+				if (i != 0)
+					PositionPlayer(i, pData->pos.x, pData->pos.y, pData->pos.z + diff + i);
+				RotatePlayer(i, 0x4000 - (atan2(-a3.z, a3.x) * 65536.0 * -0.1591549762031479));
+			}
+			njPopMatrix(1u);
+			twp->value.f += 0.1;
+			twp->timer.w[0] += 4096;
+			int v4 = twp->timer.w[1];
+			float v22 = MoveAction[v4]->motion->nbFrame - 1.0f;
+			if (twp->value.f >= v22)
+			{
+				twp->value.f = v22;
+			}
+			dsPlay_timer(590, 0, 1, 0, 2);
+			if (++twp->wtimer == 120)
+			{
+				int timerW1 = twp->timer.w[1];
+				if (timerW1)
+				{
+					if (timerW1 == 2)
+					{
+						SetLevelEntrance(2);
+						j_SetNextLevelAndAct_CutsceneMode(0x21u, 0);
+						camerahax_adventurefields();
+					}
+					else if (timerW1 == 1)
+					{
+						SetLevelEntrance(0);
+						j_SetNextLevelAndAct_CutsceneMode(0x29u, 0);
+						camerahax_adventurefields();
+					}
+				}
+				else
+				{
+
+					if (GetCharacterID(0) == 6)
+					{
+						ClearEventFlag((EventFlags)48u);
+					}
+					SetLevelEntrance(0);
+					j_SetNextLevelAndAct_CutsceneMode(0x21u, 2u);
+					camerahax_adventurefields();
+				}
+			}
+		}
+	}
+	else
+	{
+
+		njPushMatrix(nj_unit_matrix_);
+		njTranslateV(0, &twp->pos);
+		int angY = twp->ang.y;
+
+		njRotateY_(angY);
+
+		njInvertMatrix(0);
+		njCalcPoint(0, &pData->pos, &a3);
+		njPopMatrix(1u);
+		colliwk* cwp = twp->cwp;
+		if (cwp)
+		{
+			CCL_INFO* v12 = cwp->info;
+			unsigned int v13 = v12[3].attr;
+			unsigned int v14 = v12[2].attr;
+			unsigned int v15 = v12[1].attr;
+			bool collisionCheck = (a3.z - -0.14892) * (a3.z - -0.14892) + (a3.x - -1.25203) * (a3.x - -1.25203) < 36.0;
+
+			if (collisionCheck)
+			{
+				v12[1].attr |= 0x10;
+				v12[2].attr |= 0x10;
+				v12[3].attr |= 0x10;
+				v12[4].attr |= 0x10;
+				twp->btimer = 0;
+			}
+			else
+			{
+				v12[1].attr &= 0xFFFFFFEF;
+				v12[2].attr &= 0xFFFFFFEF;
+				v12[3].attr &= 0xFFFFFFEF;
+				v12[4].attr &= 0xFFFFFFEF;
+				twp->btimer = 1;
+			}
+		}
+		else
+		{
+			twp->btimer = 0;
+		}
+		colliwk* Cwp = twp->cwp;
+		if (Cwp && (Cwp->flag & 2) != 0 && (Cwp->hit_cwp->mytask == playertp[pnum]) && !Cwp->my_num && !Cwp->hit_num)
+		{
+			if (twp->flag & 1)
+			{
+				if (!twp->btimer)
+				{
+					if (++twp->wtimer >= 2)
+					{
+						for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+						{
+							ForcePlayerAction(i, 12);
+							RotatePlayer(i, twp->ang.y + 0x4000);
+						}
+						twp->btimer = 1;
+						twp->smode = 1;
+					}
+				}
+			}
+		}
+		else
+		{
+			twp->btimer = 0;
+			twp->wtimer = 0;
+		}
+	}
+
+	if (CheckCollisionP(&twp->pos, 50.0f))
+	{
+		twp->flag |= 1u;
+	}
+	else
+	{
+		twp->flag &= 0xFEu;
+	}
+}
+
+void __cdecl OCScenechg_r(task* tp)
+{
+	if (!multiplayer::IsActive())
+	{
+		return OCScenechg_t.Original(tp);
+	}
+
+	taskwk* twp = tp->twp;
+
+	if (!CheckRangeOut(tp))
+	{
+		if (ObjectSelectedDebug((ObjectMaster*)tp))
+		{
+			OCScenechg_t.Original(tp);
+		}
+		else if (CheckCollisionCylinderP(&twp->pos, twp->scl.x, twp->scl.y) > 0)
+		{
+			if (twp->ang.x)
+			{
+				if (twp->ang.x == 1)
+				{
+					SetLevelEntrance(0);
+					camerahax_adventurefields();
+					j_SetNextLevelAndAct_CutsceneMode(0x22u, 0);
+				}
+			}
+			else
+			{
+				SetLevelEntrance(0);
+				camerahax_adventurefields();
+				j_SetNextLevelAndAct_CutsceneMode(0x22u, 1u);
+			}
+
+			DeadOut(tp);
+		}
+	}
+}
+
 void InitLevels()
 {
 	// Patch start positions
@@ -605,8 +960,17 @@ void InitLevels()
 	Rd_Twinkle_t = new Trampoline(0x61D150, 0x61D155, Rd_Twinkle_r);
 	Rd_Ruin_t = new Trampoline(0x5E18B0, 0x5E18B5, Rd_Ruin_r);
 
+	// Hub world swap fixes
+	SS_CheckCollision_t.Hook(SS_CheckCollision_r);
+	cartMRLogic_t.Hook(cartMRLogic_r);
+	OCScenechg_t.Hook(OCScenechg_r);
+
 	// Move landtable mask flag to display for multiplayer compatibility
 	dispBgSnow_t = new Trampoline(0x4E9950, 0x4E9955, dispBgSnow_r);
 	dispBgHighway_t = new Trampoline(0x610570, 0x610575, dispBgHighway_r);
 	dispBgTwinkle_t = new Trampoline(0x61D1F0, 0x61D1F5, dispBgTwinkle_r);
+
+	// fix skybox using wrong act for display (race issue)
+	SkyBox_MysticRuins_Load_t.Hook(SkyBox_MysticRuins_Load_r);
+	SkyBox_Past_Load_t.Hook(SkyBox_Past_Load_r);
 }

@@ -26,7 +26,16 @@ void KillAndWarpPlayers(char pNum)
 	{
 		if (GetNumPlayerM(pNum) <= 0)
 		{
-			SetChangeGameMode(1);
+			if (multiplayer::IsCoopMode() && (GameMode == GameModes_Adventure_Field || GameMode == GameModes_Adventure_ActionStg))
+			{
+				ScreenFade_Start_();
+				GameState = 8;
+			}
+			else
+			{
+				SetChangeGameMode(1);
+			}
+			
 			TempEraseSound();
 		}
 		else
