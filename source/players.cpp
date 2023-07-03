@@ -548,29 +548,51 @@ int GetCurrentCharacter(int pnum)
 	return characters[pnum];
 }
 
-void LoadPlayerTask(int pnum, int character)
+task* LoadPlayerTask(int pnum, int character)
 {
 	task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
 	TASKWK_CHARID(tp->twp) = character;
 	TASKWK_PLAYERID(tp->twp) = pnum;
 	playertwp[pnum] = tp->twp;
 	playermwp[pnum] = (motionwk2*)tp->mwp;
+	return tp;
+}
+
+void SetOtherPlayers()
+{
+	if (!multiplayer::IsActive())
+	{
+		return;
+	}
+		
+	int count = 0;
+	for (int i = 1; i < PLAYER_MAX; i++)
+	{
+		int playernum = characters[i];
+
+		if (playernum >= 0)
+		{
+			if (++count >= multiplayer::GetPlayerCount())
+				break;
+
+			if (!playertwp[i])
+			{
+				if (LoadPlayerTask(i, playernum))
+				{
+					TeleportPlayerArea(i, &playertwp[0]->pos, 5.0f);
+					playertwp[i]->ang = playertwp[0]->ang;
+				}
+			}
+		}
+	}
 }
 
 void SetPlayer_r()
 {
 	if (multiplayer::IsActive())
 	{
-		// Load all characters:
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			int playernum = i == 0 && characters[0] < 0 ? CurrentCharacter : characters[i];
-
-			if (playernum >= 0)
-			{
-				LoadPlayerTask(i, playernum);
-			}
-		}
+		LoadPlayerTask(0, characters[0] < 0 ? CurrentCharacter : characters[0]);
+		SetOtherPlayers();
 
 		// Load game mechanics:
 		switch (CurrentCharacter)
@@ -600,28 +622,6 @@ void SetPlayer_r()
 	else
 	{
 		return SetPlayer_t.Original();
-	}
-}
-
-void SetOtherPlayers()
-{
-	if (multiplayer::IsActive())
-	{
-		for (int i = 1; i < PLAYER_MAX; i++)
-		{
-			int playernum = characters[i];
-
-			if (playernum >= 0 && !playertwp[i])
-			{
-				LoadPlayerTask(i, playernum);
-				
-				if (playertwp[i])
-				{
-					TeleportPlayerArea(i, &playertwp[0]->pos, 5.0f);
-					playertwp[i]->ang = playertwp[0]->ang;
-				}
-			}
-		}
 	}
 }
 
