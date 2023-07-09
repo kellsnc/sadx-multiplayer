@@ -875,11 +875,13 @@ bool menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 void menu_multi_start(MultiMenuWK* wk, int act)
 {
 	int count = 1;
-
 	for (int i = PLAYER_MAX - 1; i > 0; --i)
 	{
 		if (player_ready[i])
+		{
 			count = i + 1;
+			break;
+		}
 	}
 
 	// Enable multiplayer mode
