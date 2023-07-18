@@ -304,7 +304,7 @@ void cartCameraDemo_m(int pnum)
 			if (RaceManageTask_p)
 			{
 				*(Sint8*)RaceManageTask_p->mwp = 2;
-				*(Sint16*)((int)RaceManageTask_p->mwp + 1) = 60;
+				//*(Sint16*)((int)RaceManageTask_p->mwp + 1) = 60; //break the hud
 			}
 		}
 
@@ -331,6 +331,7 @@ void cartCameraDemo_m(int pnum)
 	}
 	else
 	{
+
 		auto save = camcont_wp->cammode;
 		camcont_wp->cammode = 1;
 		sub_466420_m(playerpwp[pnum]->p.eyes_height, pnum);
@@ -388,6 +389,7 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 		demo_count = 0;
 	}
 
+
 	if (Cart_demo_flag == 2)
 	{
 		SetAdjustMode(0);
@@ -397,7 +399,7 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 	}
 
 	ChangeCamsetMode(2);
-
+	
 	switch (camcont_wp->cammode)
 	{
 	case 0:
@@ -429,6 +431,7 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 	}
 
 	camcont_wp->angz = 0;
+
 
 	if (camcont_wp->cammode == 1)
 	{
