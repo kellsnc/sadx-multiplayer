@@ -301,10 +301,11 @@ void cartCameraDemo_m(int pnum)
 			Cart_demo_flag = 0;
 
 			// Cause cartCameraDemoCheckrer doesn't work for some reason, let's do it here
-			if (RaceManageTask_p)
+			task* mtp = RaceManageTask_p;
+			if (mtp)
 			{
-				*(Sint8*)RaceManageTask_p->mwp = 2;
-				//*(Sint16*)((int)RaceManageTask_p->mwp + 1) = 60; //break the hud
+				*(Sint8*)mtp->mwp = 2;
+				*((Sint16*)mtp->mwp + 3) = 60;
 			}
 		}
 
