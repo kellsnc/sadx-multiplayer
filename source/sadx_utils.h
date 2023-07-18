@@ -630,6 +630,7 @@ DataArray(MDHANDLE*, bankhandle, 0x3B291C8, 16);
 DataArray(int, banktbl, 0x910090, 64 * 2);
 DataArray(SeqDataType, BackToChSelSeqFlowData, 0x7EEB58, 14);
 DataArray(const SeqDataType*, AllSeqDataPtr, 0x10D7B40, 3);
+FunctionPointer(task*, GetPlayerTaskPointer, (Sint8 pno), 0x441AC0);
 
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);

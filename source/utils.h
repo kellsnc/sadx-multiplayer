@@ -3,6 +3,7 @@
 short tolevelnum(short num);
 short toactnum(short num);
 float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2);
+float GetDistance2(NJS_VECTOR* v1, NJS_VECTOR* v2);
 int GetClosestPlayerNum(NJS_POINT3* pos);
 int GetClosestPlayerNum(float x, float y, float z);
 int GetClosestPlayerNumRange(NJS_POINT3* pos, float range);
