@@ -58,7 +58,7 @@ void MovePlayersToWinnerPos(NJS_VECTOR* endpos)
 				if (ptwp && GetDistance(endpos, &ptwp->pos) > 40.0f)
 				{
 					ptwp->ang.y = winner->ang.y;
-					TeleportPlayerArea(i, &pos, 5.0f);
+					TeleportPlayerArea(i, &pos, 8.0f);
 				}
 			}
 		}
@@ -128,13 +128,6 @@ static void __cdecl SetFinishAction_r()
 		PauseEnabled = FALSE;
 		SleepTimer();
 
-		for (int i = 0; i < 8; ++i)
-		{
-			if (playertwp[i])
-			{
-				ForcePlayerAction(i, PL_OP_PLACEWITHKIME);
-			}
-		}
 
 		if (CurrentLevel == LevelIDs_TwinkleCircuit)
 		{
@@ -142,9 +135,19 @@ static void __cdecl SetFinishAction_r()
 		}
 		else
 		{
+			MovePlayersToWinnerPos(&playertwp[0]->pos);
 			Load_DelayedSound_BGM(75);
 			multiplayer::IsBattleMode() ? PlayCharaResultSound(GetWinnerMulti()) : PlayCharaResultSound(0);
 			SetLocalPathCamera(&pathtag_s_camera, 3, 720);
+
+
+			for (int i = 0; i < 8; ++i)
+			{
+				if (playertwp[i])
+				{
+					ForcePlayerAction(i, PL_OP_PLACEWITHKIME);
+				}
+			}
 		}
 
 		pdVibMxStop(0);
