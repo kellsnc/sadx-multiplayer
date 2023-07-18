@@ -62,6 +62,11 @@ namespace multiplayer
 		return IsBattleMode() && CurrentLevel >= LevelIDs_Chaos0 && CurrentLevel <= LevelIDs_E101R;
 	}
 
+	bool IsAdventureMode()
+	{
+		return IsActive && ulGlobalMode == MD_ADVENTURE;
+	}
+
 	bool IsOnline()
 	{
 		return online;
