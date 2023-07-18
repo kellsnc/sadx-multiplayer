@@ -600,7 +600,7 @@ void SetPlayer_r()
 		case Characters_Tails:
 			if (multiplayer::IsCoopMode())
 			{
-				Set_NPC_Sonic_m(7); // load opponent into slot 7
+				Set_NPC_Sonic_m(NPC_PNUM); // load opponent into slot 7
 			}
 			break;
 		case Characters_Knuckles:

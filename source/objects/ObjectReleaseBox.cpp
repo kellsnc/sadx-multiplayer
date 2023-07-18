@@ -5,7 +5,7 @@
 
 bool relbox_switch_test_riding_m(taskwk* twp, taskwk* parent_twp)
 {
-	for (int i = 0; i < PLAYER_MAX; ++i)
+	for (int i = 0; i < 8; ++i)
 	{
 		if (playertwp[i])
 		{

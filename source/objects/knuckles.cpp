@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ObjCylinderCmn.h"
 #include "e_cart.h"
+#include "result.h"
 
 UsercallFunc(Bool, Knux_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
 TaskHook KnuxExec_t((intptr_t)Knuckles_Main);
@@ -152,7 +153,7 @@ void __cdecl KnucklesChargeEffectExe_r(task* tp)
 	auto wk = (int*)twp->value.ptr;
 	auto timer = *wk;
 
-	if (timer > 0 && timer < 120.)
+	if (timer > 0 && timer < 120)
 	{
 		if ((timer & 3) == 0)
 		{
@@ -168,34 +169,50 @@ void __cdecl KnucklesChargeEffectExe_r(task* tp)
 	}
 }
 
-Bool Knux_CheckInput_r(playerwk* co2, taskwk* twp, motionwk2* data2)
+Bool Knux_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 {
-	auto even = twp->ewp;
-
-	if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
+	if (multiplayer::IsActive())
 	{
-		return Knux_CheckInput_t.Original(co2, twp, data2);
-	}
+		auto even = twp->ewp;
+		auto pnum = TASKWK_PLAYERID(twp);
 
-	switch (twp->smode)
-	{
-	case 5:
-		if (CurrentLevel != LevelIDs_Casinopolis)
+		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			twp->mode = SDCannonMode;
-			co2->mj.reqaction = 19;
-			return 1;
+			return Knux_CheckInput_t.Original(pwp, twp, mwp);
 		}
-		break;
-	case 32:
 
-		if (SetCylinderNextAction(twp, data2, co2))
-			return 1;
-
-		break;
+		switch (twp->smode)
+		{
+		case PL_OP_PARABOLIC:
+			if (CurrentLevel != LevelIDs_Casinopolis)
+			{
+				twp->mode = SDCannonMode;
+				pwp->mj.reqaction = 19;
+				return TRUE;
+			}
+			break;
+		case PL_OP_PLACEWITHKIME:
+			if (CheckDefeat(pnum))
+			{
+				twp->mode = 16;
+				pwp->mj.reqaction = 27;
+				dsStop_num(SE_K_GLIDE);
+				twp->ang.z = 0;
+				twp->ang.x = 0;
+				PClearSpeed(mwp, pwp);
+				twp->flag &= ~0x2500;
+				CancelLookingAtP(pnum);
+				return TRUE;
+			}
+			break;
+		case PL_OP_HOLDONPILLAR:
+			if (SetCylinderNextAction(twp, mwp, pwp))
+				return TRUE;
+			break;
+		}
 	}
-
-	return Knux_CheckInput_t.Original(co2, twp, data2);
+	
+	return Knux_CheckInput_t.Original(pwp, twp, mwp);
 }
 
 void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {

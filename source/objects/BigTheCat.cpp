@@ -4,6 +4,7 @@
 #include "fishing.h"
 #include "ObjCylinderCmn.h"
 #include "e_cart.h"
+#include "result.h"
 
 TaskHook BigTheCat_t((intptr_t)Big_Main);
 
@@ -109,33 +110,45 @@ static void __cdecl sub_48CE10_r()
 	}
 }
 
-Bool Big_CheckInput_r(playerwk* co2, taskwk* data, motionwk2* data2)
+Bool Big_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 {
-	auto even = data->ewp;
-
-	if (even->move.mode || even->path.list || ((data->flag & Status_DoNextAction) == 0))
+	if (multiplayer::IsActive())
 	{
-		return Big_CheckInput_t.Original(co2, data, data2);
-	}
+		auto even = twp->ewp;
+		auto pnum = TASKWK_PLAYERID(twp);
 
-	switch (data->smode)
-	{
-	case 5:
-		if (CurrentLevel == LevelIDs_Casinopolis)
+		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return 0;
+			return Big_CheckInput_t.Original(pwp, twp, mwp);
 		}
 
-		break;
-	case 32:
-
-		if (SetCylinderNextAction(data, data2, co2))
-			return 1;
-
-		break;
+		switch (twp->smode)
+		{
+		case PL_OP_PARABOLIC:
+			if (CurrentLevel == LevelIDs_Casinopolis)
+				return FALSE;
+			break;
+		case PL_OP_PLACEWITHKIME:
+			if (CheckDefeat(pnum))
+			{
+				twp->mode = 14;
+				pwp->mj.reqaction = 63;
+				twp->ang.z = 0;
+				twp->ang.x = 0;
+				PClearSpeed(mwp, pwp);
+				twp->flag &= ~0x2500;
+				CancelLookingAtP(pnum);
+				return TRUE;
+			}
+			break;
+		case PL_OP_HOLDONPILLAR:
+			if (SetCylinderNextAction(twp, mwp, pwp))
+				return TRUE;
+			break;
+		}
 	}
-
-	return Big_CheckInput_t.Original(co2, data, data2);
+	
+	return Big_CheckInput_t.Original(pwp, twp, mwp);
 }
 
 #define NAKED __declspec(naked)
