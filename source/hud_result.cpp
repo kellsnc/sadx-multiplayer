@@ -113,68 +113,12 @@ static void __cdecl CalcTotalScoreM_dest(task* tp)
 	msgc_continue.Free();
 }
 
-void PlayDefeatAnimation()
-{
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		auto twp = playertwp[i];
-		auto pwp = playerpwp[i];
-
-		if (twp && pwp)
-		{
-			if (GetWinnerMulti() == i)
-			{
-				if (TASKWK_CHARID(twp) == Characters_Tails)
-				{
-					SetTailsRaceVictory();
-					pwp->mj.reqaction = 54;
-				}
-			}
-			else
-			{
-				auto curChar = TASKWK_CHARID(twp);
-				auto curAnim = pwp->mj.reqaction;
-
-				switch (curChar)
-				{
-				default:
-				case Characters_Sonic:
-					if (curAnim != 87)
-						pwp->mj.reqaction = 87;
-					break;
-				case Characters_Tails:
-					if (curAnim != 56 && curAnim != 57)
-						pwp->mj.reqaction = 56;
-					break;
-				case Characters_Knuckles:
-					if (curAnim != 27 && curAnim != 28)
-						pwp->mj.reqaction = 27;
-					break;
-				case Characters_Amy:
-					if (curAnim != 26 && curAnim != 27)
-						pwp->mj.reqaction = 26;
-					break;
-				case Characters_Big:
-					if (curAnim != 63 && curAnim != 64)
-						pwp->mj.reqaction = 63;
-					break;
-				case Characters_Gamma:
-					if (curAnim != 69 && curAnim != 70)
-						pwp->mj.reqaction = 69;
-					break;
-				}
-			}
-		}
-	}
-}
-
 static void __cdecl CalcTotalScoreM(task* tp)
 {
 	auto twp = tp->twp;
 
 	HideLives = -1;
 	HideTimerAndRings = -1;
-	PlayDefeatAnimation();
 
 	switch (twp->mode)
 	{
@@ -256,7 +200,6 @@ void LoadMultiplayerResult()
 
 void LoadMultiplayerCoopResult()
 {
-	SetTailsRaceVictory();
 	auto tp = CreateElementalTask(LoadObj_Data1, LEV_5, CalcTotalScore);
 	tp->dest = CalcTotalScoreM_dest;
 }

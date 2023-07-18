@@ -21,6 +21,13 @@ float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2)
 		(v2->z - v1->z) * (v2->z - v1->z));
 }
 
+float GetDistance2(NJS_VECTOR* v1, NJS_VECTOR* v2)
+{
+	return (v2->x - v1->x) * (v2->x - v1->x) +
+		(v2->y - v1->y) * (v2->y - v1->y) +
+		(v2->z - v1->z) * (v2->z - v1->z);
+}
+
 int GetClosestPlayerNum(NJS_POINT3* pos)
 {
 	float max = 100000000.0f;

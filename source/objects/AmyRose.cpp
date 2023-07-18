@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "ObjCylinderCmn.h"
 #include "e_cart.h"
+#include "result.h"
 
-UsercallFunc(signed int, Amy_CheckInput_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x487810, rEAX, rECX, rEDI, rESI);
+UsercallFunc(Bool, Amy_CheckInput_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x487810, rEAX, rECX, rEDI, rESI);
 TaskHook AmyExec_t((intptr_t)Amy_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunsActions_t((intptr_t)0x488880);
 TaskHook AmyJiggle_t((intptr_t)0x485C50);
@@ -12,21 +13,6 @@ TaskHook AmyBirdExe_t(0x4C63F0);
 TaskHook LoadAmyBird_t(0x4C6790);
 
 task* AmyBirdM[PLAYER_MAX] = { 0 };
-
-static uint16_t GetVictoryAnim(unsigned __int8 a1)
-{
-	auto pwp = playerpwp[a1];
-	if (pwp && multiplayer::IsActive())
-	{
-		if (CurrentLevel < LevelIDs_Chaos0 || CurrentLevel > LevelIDs_E101R)
-		{
-			return CurrentCharacter != Characters_Amy ? 42u : 32u;
-		}
-	}
-
-	return (ssActNumber | (ssStageNumber << 8)) >= LevelAndActIDs_Chaos0 ? 42u : 32u;
-}
-
 
 void AmyBird_Del(task* obj)
 {
@@ -151,44 +137,65 @@ static void __cdecl AmySkirtShape_r(task* tp)
 	AmySkirtShape_t.Original(tp);
 }
 
-signed int Amy_CheckInput_r(playerwk* co2, motionwk2* data2, taskwk* data)
+static Uint16 GetAmyVictoryAnim(unsigned __int8 a1)
 {
-	auto even = data->ewp;
-
-	if (even->move.mode || even->path.list || ((data->flag & Status_DoNextAction) == 0))
+	if (multiplayer::IsActive())
 	{
-		return Amy_CheckInput_t.Original(co2, data2, data);
-	}
-
-	switch (data->smode)
-	{
-	case 5:
-		if (CurrentLevel != LevelIDs_Casinopolis)
+		if (CurrentLevel < LevelIDs_Chaos0 || CurrentLevel > LevelIDs_E101R)
 		{
-			data->mode = SDCannonMode;
-			co2->mj.reqaction = 18; //falling
-			return 1;
+			if (CheckDefeat(a1))
+			{
+				return 26;
+			}
+			else
+			{
+				return CurrentCharacter != Characters_Amy ? 42 : 32;
+			}
 		}
-		break;
-	case 19:
-		data->mode = 13;
-		co2->mj.reqaction = GetVictoryAnim(data->counter.b[0]);
-		data->ang.z = 0;
-		data->ang.x = 0;
-		data2->spd = { 0, 0, 0 };
-		co2->spd = { 0, 0, 0 };
-		data->flag &= 0xDAu;
-		StopPlayerLookAt(0);
-		return 1;
-	case 32:
-
-		if (SetCylinderNextAction(data, data2, co2))
-			return 1;
-
-		break;
 	}
 
-	return Amy_CheckInput_t.Original(co2, data2, data);
+	return GetStageNumber() >= LevelAndActIDs_Chaos0 ? 42 : 32;
+}
+
+Bool Amy_CheckInput_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
+{
+	if (multiplayer::IsActive())
+	{
+		auto even = twp->ewp;
+		auto pnum = TASKWK_PLAYERID(twp);
+
+		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
+		{
+			return Amy_CheckInput_t.Original(pwp, mwp, twp);
+		}
+
+		switch (twp->smode)
+		{
+		case PL_OP_PARABOLIC:
+			if (CurrentLevel != LevelIDs_Casinopolis)
+			{
+				twp->mode = SDCannonMode;
+				pwp->mj.reqaction = 18; //falling
+				return TRUE;
+			}
+			break;
+		case PL_OP_PLACEWITHKIME:
+			twp->mode = 13;
+			pwp->mj.reqaction = GetAmyVictoryAnim(pnum);
+			twp->ang.z = 0;
+			twp->ang.x = 0;
+			PClearSpeed(mwp, pwp);
+			twp->flag &= ~0x2500;
+			StopPlayerLookAt(pnum);
+			return TRUE;
+		case PL_OP_HOLDONPILLAR:
+			if (SetCylinderNextAction(twp, mwp, pwp))
+				return TRUE;
+			break;
+		}
+	}
+	
+	return Amy_CheckInput_t.Original(pwp, mwp, twp);
 }
 
 void Amy_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {

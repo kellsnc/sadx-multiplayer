@@ -1,30 +1,45 @@
 #include "pch.h"
+#include "result.h"
 #include "e_cart.h"
 
 TaskHook MilesJiggle_t((intptr_t)Tails_Jiggle_Main);
 TaskHook MilesDirectAhead_t(0x45DAD0);
 TaskHook MilesDirectAhead2_t(0x45DE20);
 UsercallFuncVoid(Miles_RunActions_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x45E5D0, rEAX, rECX, stack4);
-UsercallFunc(Bool, Miles_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x45C100, rEAX, rEDI, rESI, stack4);
+UsercallFunc(Bool, Miles_CheckInput_t, (playerwk* pwp, taskwk* twp, motionwk2* mwp), (pwp, twp, mwp), 0x45C100, rEAX, rEDI, rESI, stack4);
 
-static Bool Miles_CheckInput_r(playerwk* co2, taskwk* twp, motionwk2* data2)
+static Bool Miles_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 {
-	auto even = twp->ewp;
-
-	if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
+	if (multiplayer::IsActive())
 	{
-		return Miles_CheckInput_t.Original(co2, twp, data2);
-	}
+		auto even = twp->ewp;
+		auto pnum = TASKWK_PLAYERID(twp);
 
-	if (twp->smode == 5)
-	{
-		if (CurrentLevel == LevelIDs_Casinopolis)
+		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return 0;
+			return Miles_CheckInput_t.Original(pwp, twp, mwp);
+		}
+
+		switch (twp->smode)
+		{
+		case PL_OP_PARABOLIC:
+			if (CurrentLevel == LevelIDs_Casinopolis)
+				return FALSE;
+			break;
+		case PL_OP_PLACEWITHKIME:
+			twp->mode = 62;
+			pwp->mj.reqaction = CheckDefeat(pnum) ? 56 : 54;
+			twp->ang.z = 0;
+			twp->ang.x = 0;
+			PClearSpeed(mwp, pwp);
+			twp->flag &= ~0x2500;
+			twp->timer.b[3] |= 8;
+			CancelLookingAtP(pnum);
+			return TRUE;
 		}
 	}
-
-	return Miles_CheckInput_t.Original(co2, twp, data2);
+	
+	return Miles_CheckInput_t.Original(pwp, twp, mwp);
 }
 
 static void __cdecl MilesDirectAhead2_r(task* tp)

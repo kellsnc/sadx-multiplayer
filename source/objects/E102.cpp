@@ -6,6 +6,7 @@
 #include "splitscreen.h"
 #include "ObjCylinderCmn.h"
 #include "e_cart.h"
+#include "result.h"
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 
@@ -150,34 +151,49 @@ void E102_RunActions_r(task* tsk, motionwk2* data2, playerwk* co2) {
 	E102_RunsActions_t.Original(tsk, data2, co2);
 }
 
-signed int E102_CheckInput_r(playerwk* co2, taskwk* data, motionwk2* data2)
+signed int E102_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 {
-	auto even = data->ewp;
-
-	if (even->move.mode || even->path.list || ((data->flag & Status_DoNextAction) == 0))
+	if (multiplayer::IsActive())
 	{
-		return E102_CheckInput_t.Original(co2, data, data2);
-	}
+		auto even = twp->ewp;
+		auto pnum = TASKWK_PLAYERID(twp);
 
-	switch (data->smode)
-	{
-	case 5:
-		if (CurrentLevel != LevelIDs_Casinopolis)
+		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			data->mode = SDCannonMode;
-			co2->mj.reqaction = 7;
-			return 1;
+			return E102_CheckInput_t.Original(pwp, twp, mwp);
 		}
-		break;
-	case 32:
 
-		if (SetCylinderNextAction(data, data2, co2))
-			return 1;
-
-		break;
+		switch (twp->smode)
+		{
+		case PL_OP_PARABOLIC:
+			if (CurrentLevel != LevelIDs_Casinopolis)
+			{
+				twp->mode = SDCannonMode;
+				pwp->mj.reqaction = 7;
+				return TRUE;
+			}
+			break;
+		case PL_OP_PLACEWITHKIME:
+			if (CheckDefeat(pnum))
+			{
+				twp->mode = 52;
+				pwp->mj.reqaction = 69;
+				twp->ang.z = 0;
+				twp->ang.x = 0;
+				PClearSpeed(mwp, pwp);
+				twp->flag &= ~0x2500;
+				CancelLookingAtP(pnum);
+				return TRUE;
+			}
+			break;
+		case PL_OP_HOLDONPILLAR:
+			if (SetCylinderNextAction(twp, mwp, pwp))
+				return TRUE;
+			break;
+		}
 	}
 
-	return E102_CheckInput_t.Original(co2, data, data2);
+	return E102_CheckInput_t.Original(pwp, twp, mwp);
 }
 
 static void __cdecl E102Display_r(task* tp);

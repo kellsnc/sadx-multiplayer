@@ -1,5 +1,6 @@
 #pragma once
 
+bool CheckDefeat(int pnum);
 int GetWinnerMulti();
 void SetWinnerMulti(int pnum);
 
