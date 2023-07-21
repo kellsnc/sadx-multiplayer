@@ -36,7 +36,10 @@ extern "C"
 		gHelperFunctions = &helperFunctions;
 		config::read(path);
 
-		DreamcastConversionEnabled = GetModuleHandle(L"DCMods_Main") != nullptr;
+		if (helperFunctions.Version >= 16)
+		{
+			DreamcastConversionEnabled = helperFunctions.Mods->find("sadx-dreamcast-conversion");
+		}
 
 		InitLogic();
 		InitSplitScreen();
