@@ -4,45 +4,35 @@ void __cdecl Magmacnt_Main_r(task* obj);
 
 TaskHook Magmacnt_Main_t(0x608730, Magmacnt_Main_r);
 
-void __cdecl Magmacnt_Main_r(task* obj)
+void __cdecl Magmacnt_Main_r(task* tp)
 {
-	auto data = obj->twp;
+	auto twp = tp->twp;
 
-	if (!multiplayer::IsEnabled() || !data->mode)
+	if (!multiplayer::IsActive() || !twp->mode)
 	{
-		return 	Magmacnt_Main_t.Original(obj);
+		return Magmacnt_Main_t.Original(tp);
 	}
 
-	if (!ClipSetObject((ObjectMaster*)obj))
+	if (!CheckRangeOut(tp))
 	{
-		if (data->mode == 1)
+		if (twp->mode == 1)
 		{
-			for (int i = 0; i < PLAYER_MAX; i++)
+			if (twp->cwp->flag & 1)
 			{
-				if ((data->cwp->flag & 1) != 0 && data->cwp->hit_cwp->mytask == (task*)GetCharacterObject(i))
+				if (rd_mountain_twp && rd_mountain_twp->pos.y < twp->scl.y)
 				{
-					if (rd_mountain_twp)
-					{
-						rd_mountain_twp->scl.x = data->scl.y;
-						rd_mountain_twp->scl.y = data->scl.z;
-					}
-					data->mode = 2;
+					rd_mountain_twp->scl.x = twp->scl.y;
+					rd_mountain_twp->scl.y = twp->scl.z;
 				}
+				twp->mode = 2;
 			}
-			AddToCollisionList((EntityData1*)data);
+			EntryColliList(twp);
 		}
-		else if (data->mode == 2)
+		else if (twp->mode == 2)
 		{
-			for (int i = 0; i < PLAYER_MAX; i++)
+			if (!(twp->cwp->flag & 1))
 			{
-				if (playerpwp[i])
-				{
-					if (playerpwp[i]->item & Powerups_Dead)
-					{
-						obj->twp->mode = 0;
-						break;
-					}
-				}
+				twp->mode = 1;
 			}
 		}
 	}

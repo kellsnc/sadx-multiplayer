@@ -255,7 +255,7 @@ void __cdecl Rd_Mountain_r(task* tp)
 				return;
 			}
 		}
-		else if (ssActNumber == 1)
+		else if (ssActNumber == 1 && CurrentCharacter != Characters_Gamma)
 		{
 			// Reset lava at the beginning
 			if (rd_mountain_twp && rd_mountain_twp->scl.x != 130.0f && IsPlayerInSphere(-380.0f, 440.0f, 1446.0f, 200.0f))

@@ -41,11 +41,8 @@ static void Normal_m(task* tp)
 	auto twp = tp->twp;
 	auto dyncol = (NJS_OBJECT*)twp->counter.ptr;
 
-	if (!(!rd_mountain_twp || rd_mountain_twp->scl.y == 0.0f && rd_mountain_twp->counter.f == 0.0f))
-	{
-		twp->pos.y += rd_mountain_twp->counter.f;
-		dyncol->pos[1] = twp->pos.y;
-	}
+	twp->pos.y = rd_mountain_twp->pos.y;
+	dyncol->pos[1] = twp->pos.y;
 
 	Angle newx = 0;
 	Angle newz = 0;
