@@ -43,6 +43,8 @@ VariableHook<NJS_POINT3, 0x3C4ABFC> CamPathCam2Core_Pos_m;
 VariableHook<Angle3, 0x3C4ACDC> CamPathCam2Core_Angle_m;
 VariableHook<Bool, 0x3C4AC98> CamPathCam2Core_AliveFlag_m;
 
+FunctionHook<void, _OBJ_CAMERAPARAM*> PathCamera1_h(0x4653E0);
+
 DataPointer(Sint32, demo_count, 0x3C4ACC0);
 
 CAM_ANYPARAM* GetCamAnyParam(int pnum)
@@ -126,6 +128,12 @@ void gravDispose3_m(int pnum)
 
 void __cdecl CameraKlamath_m(_OBJ_CAMERAPARAM* pParam)
 {
+	if (!multiplayer::IsActive())
+	{
+		CameraKlamath(pParam);
+		return;
+	}
+
 	auto pnum = TASKWK_PLAYERID(playertwp[0]);
 	auto ptwp = playertwp[pnum];
 	auto& _y_off = y_off_m[pnum];
@@ -358,6 +366,12 @@ void cartCameraDemo_m(int pnum)
 
 void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 {
+	if (!multiplayer::IsActive())
+	{
+		CameraCart(pParam);
+		return;
+	}
+
 	auto pnum = TASKWK_PLAYERID(playertwp[0]);
 	auto ptwp = playertwp[pnum];
 	auto ppwp = playerpwp[pnum];
@@ -478,6 +492,12 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 // Make this use CamAnyParam as it should have...
 void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 {
+	if (!multiplayer::IsActive())
+	{
+		CameraRuinWaka1(pParam);
+		return;
+	}
+
 	auto pnum = TASKWK_PLAYERID(playertwp[0]);
 
 	if (pnum == 0)
@@ -508,6 +528,12 @@ void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 
 void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)
 {
+	if (!multiplayer::IsActive())
+	{
+		PathCamera1_h.Original(pParam);
+		return;
+	}
+
 	auto pnum = TASKWK_PLAYERID(playertwp[0]);
 	auto ptwp = playertwp[pnum];
 	auto pathwk = pnum == 0 ? (PATHCAMERA1WORK*)camera_twp->counter.ptr : (PATHCAMERA1WORK*)GetCamAnyParam(pnum)->camAnyTmpSint32[0];
@@ -770,6 +796,12 @@ void __cdecl PathCamera2Core_m(_OBJ_CAMERAPARAM* pParam)
 
 void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
+	if (!multiplayer::IsActive())
+	{
+		AdjustNormal(pTaskWork, pOldTaskWork, pCameraAdjustWork);
+		return;
+	}
+
 	auto pnum = TASKWK_PLAYERID(playertwp[0]);
 	auto ptwp = playertwp[pnum];
 
@@ -903,6 +935,12 @@ void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUST
 
 void __cdecl AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
+	if (!multiplayer::IsActive())
+	{
+		AdjustForFreeCamera(pTaskWork, pOldTaskWork, pCameraAdjustWork);
+		return;
+	}
+
 	auto pnum = TASKWK_PLAYERID(playertwp[0]);
 	auto ptwp = playertwp[pnum];
 	auto ppwp = playerpwp[pnum];
@@ -1107,6 +1145,12 @@ void sub_468790_m(int pnum, taskwk* twp, taskwk* ptwp, _OBJ_ADJUSTPARAM* adjwp)
 
 void __cdecl AdjustThreePoint_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
+	if (!multiplayer::IsActive())
+	{
+		AdjustThreePoint(pTaskWork, pOldTaskWork, pCameraAdjustWork);
+		return;
+	}
+
 	int pnum = TASKWK_PLAYERID(playertwp[0]);
 
 	atpCalcCamera2PlayerAngle_m(pnum, pTaskWork, pOldTaskWork, pCameraAdjustWork);
@@ -1162,4 +1206,20 @@ void __cdecl AdjustThreePoint_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_AD
 	{
 		CameraCollisitonCheckAdj(&pTaskWork->pos, &pOldTaskWork->pos);
 	}
+}
+
+void PatchCameraFuncs()
+{
+	PathCamera1_h.Hook(PathCamera1_m);
+	WriteJump(PathCamera2Core, PathCamera2Core_m);
+	CameraMode[CAMMD_KLAMATH].fnCamera = CameraKlamath_m;
+	CameraMode[CAMMD_A_KLAMATH].fnCamera = CameraKlamath_m;
+	CameraMode[CAMMD_C_KLAMATH].fnCamera = CameraKlamath_m;
+	CameraMode[CAMMD_CART].fnCamera = CameraCart_m;
+	CameraMode[CAMMD_RuinWaka1].fnCamera = CameraRuinWaka1_m;
+	CameraAdjust[CAMADJ_NORMAL].fnAdjust = AdjustNormal_m;
+	CameraAdjust[CAMADJ_NORMAL_S].fnAdjust = AdjustNormal_m;
+	CameraAdjust[CAMADJ_FORFREECAMERA].fnAdjust = AdjustForFreeCamera_m;
+	for (int i = CAMADJ_THREE1; i <= CAMADJ_RELATIVE6C; ++i)
+		CameraAdjust[i].fnAdjust = AdjustThreePoint_m;
 }
