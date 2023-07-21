@@ -265,10 +265,10 @@ static float MakeStroke_m(sSonicCtrl* sonic_ctrl)
 
 static bool ChkSonicStack_m(taskwk* stwp)
 {
-	if (SonicCtrlBuff.path_flag & 0x1000000)
+	if (!(SonicCtrlBuff.path_flag & 0x1000000))
 	{
 		NJS_POINT3 v;
-		GetPlayerPosition(TASKWK_PLAYERID(stwp), 0x78u, &v, 0);
+		GetPlayerPosition(TASKWK_PLAYERID(stwp), 120, &v, 0);
 		VecTemp0.x = stwp->pos.x - v.x;
 		VecTemp0.y = stwp->pos.y - v.y;
 		VecTemp0.z = stwp->pos.z - v.z;
