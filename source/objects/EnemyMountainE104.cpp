@@ -271,18 +271,15 @@ static void e104_chkDamage_o(task* tp)
 
 static void __cdecl e104_chkDamage_r(task* tp)
 {
-	if (multiplayer::IsBattleMode())
+	auto twp = tp->twp;
+
+	if (twp->mode != MODE_ATTACK && twp->mode != MODE_DEATH)
 	{
-		auto twp = tp->twp;
+		auto hit_twp = CCL_IsHitBullet(twp);
 
-		if (twp->mode != MODE_ATTACK && twp->mode != MODE_DEATH)
+		if (hit_twp)
 		{
-			auto hit_twp = CCL_IsHitBullet(twp);
-
-			if (hit_twp)
-			{
-				SetWinnerMulti(hit_twp->btimer); // player number is stored in btimer thanks to patch in E102.cpp
-			}
+			SetWinnerMulti(hit_twp->btimer); // player number is stored in btimer thanks to patch in E102.cpp
 		}
 	}
 

@@ -48,16 +48,13 @@ static void __cdecl ObjectKaosEmeDisp(task* tp)
 
 static void CheckGameClear_m(task* tp)
 {
-	if (multiplayer::IsBattleMode())
+	auto twp = tp->twp;
+	auto pnum = IsPlayerInSphere(&twp->pos, (twp->scl.x + 1.0f) * 14.0f) - 1;
+	if (pnum >= 0)
 	{
-		auto twp = tp->twp;
-		auto pnum = IsPlayerInSphere(&twp->pos, (twp->scl.x + 1.0f) * 14.0f) - 1;
-		if (pnum >= 0)
-		{
-			SetWinnerMulti(pnum);
-			SetFinishAction();
-			twp->mode = 4;
-		}
+		SetWinnerMulti(pnum);
+		SetFinishAction();
+		twp->mode = 4;
 	}
 }
 

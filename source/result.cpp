@@ -47,7 +47,7 @@ void MovePlayersToWinnerPos(NJS_VECTOR* endpos)
 	{
 		auto pnum = GetWinnerMulti();
 
-		if (pnum != NPC_PNUM)
+		if (pnum >= 0 && pnum < PLAYER_MAX)
 		{
 			taskwk* winner = playertwp[pnum];
 			NJS_VECTOR pos = winner->pos;
@@ -128,7 +128,6 @@ static void __cdecl SetFinishAction_r()
 		PauseEnabled = FALSE;
 		SleepTimer();
 
-
 		if (CurrentLevel == LevelIDs_TwinkleCircuit)
 		{
 			ADX_Close();
@@ -139,7 +138,6 @@ static void __cdecl SetFinishAction_r()
 			Load_DelayedSound_BGM(75);
 			multiplayer::IsBattleMode() ? PlayCharaResultSound(GetWinnerMulti()) : PlayCharaResultSound(0);
 			SetLocalPathCamera(&pathtag_s_camera, 3, 720);
-
 
 			for (int i = 0; i < 8; ++i)
 			{
