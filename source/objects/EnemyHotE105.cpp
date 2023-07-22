@@ -1,4 +1,8 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "Trampoline.h"
+#include "multiplayer.h"
+#include "result.h"
 
 Trampoline* e105_calcSomeValue_t = nullptr;
 Trampoline* e105_chkPlayerRangeIn_t = nullptr;
@@ -53,6 +57,18 @@ static void __cdecl e105_moveBattery_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
+		auto twp = tp->twp;
+
+		if (twp->mode == 1)
+		{
+			auto hit_twp = CCL_IsHitBullet(twp);
+
+			if (hit_twp)
+			{
+				SetWinnerMulti(hit_twp->btimer); // player number is stored in btimer thanks to patch in E102.cpp
+			}
+		}
+
 		auto pltp = playertp[0];
 		playertp[0] = playertp[GetClosestPlayerNum(&tp->twp->pos)];
 		TARGET_DYNAMIC(e105_moveBattery)(tp);
