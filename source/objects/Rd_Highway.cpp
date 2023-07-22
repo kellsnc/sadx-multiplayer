@@ -128,6 +128,7 @@ static void __cdecl subRd_Highway_r(task* tp)
 								SetWinnerMulti(i);
 								SetFinishAction();
 								twp->smode = 1;
+								break;
 							}
 						}
 					}
