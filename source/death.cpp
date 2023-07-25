@@ -40,15 +40,18 @@ void KillAndWarpPlayers(char pNum)
 		}
 		else
 		{
-			if (multiplayer::IsActive() || pNum == 0) AddNumPlayerM(pNum, -1); // Remove one life
+			if (multiplayer::IsBattleMode() || pNum == 0)
 			{
-				TeleportPlayerToStart(pNum);
+				AddNumPlayerM(pNum, -1); // Remove one life
+			}
 
-				// Reset time for Gamma in coop
-				if (multiplayer::IsCoopMode() && continue_data.continue_flag)
-				{
-					SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
-				}
+			SetNumRingM(pNum, 0);
+			TeleportPlayerToStart(pNum);
+
+			// Reset time for Gamma in coop
+			if (multiplayer::IsCoopMode() && continue_data.continue_flag)
+			{
+				SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
 			}
 
 			CameraReleaseEventCamera_m(pNum);
