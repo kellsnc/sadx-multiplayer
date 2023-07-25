@@ -16,28 +16,11 @@ Trampoline* Rd_MiniCart_t = nullptr;
 
 // RACE MANAGER:
 
-struct RacerWk // custom
-{
-	char lastChekPoint;
-	char currentLap;
-	char displayLap;
-	int totalIntrpt;
-	int lapIntrpt_a[3];
-	int subTotal_a[3];
-	int bestSubTotal_a[3];
-	int bestLapTime_a[3];
-};
-
-#pragma pack(push, 1)
 struct RaceWkM // multiplayer version of RaceWk in symbols
 {
-	char mode;
-	__int16 timer;
-	char dialState;
-	int winner;
-	RacerWk racers[PLAYER_MAX];
+	RaceWk work[PLAYER_MAX];
+	Sint32 winner;
 };
-#pragma pack(pop)
 
 enum RACEMD // guessed
 {
@@ -76,7 +59,7 @@ static void DrawTimer(int time, float x, float y, float s)
 	njDrawSprite2D_Queue(&OBJ_MINI_CART_SPRITE_Lap, t.sec100 % 10, 22048.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, QueuedModelFlagsB_SomeTextureThing);
 }
 
-static void dispRaceSingle(RacerWk* rwp, int num)
+static void dispRaceSingle(RaceWk* rwp, int num)
 {
 	auto ratio = SplitScreen::GetScreenRatio(num);
 	const float scaleY = VerticalStretch * ratio->h;
@@ -150,7 +133,7 @@ static void __cdecl dispRaceM(task* tp)
 		{
 			if (SplitScreen::IsScreenEnabled(i))
 			{
-				dispRaceSingle(&wk->racers[i], i);
+				dispRaceSingle(&wk->work[i], i);
 			}
 		}
 
@@ -169,62 +152,60 @@ static void __cdecl execRaceM(task* tp)
 	auto wk = (RaceWkM*)tp->mwp;
 	bool finished = true;
 
-	switch (wk->mode)
+	switch (wk->work->mode)
 	{
 	case RACEMD_INTRO:
-		if (--wk->timer <= 0)
+		if (--wk->work->timer <= 0)
 		{
-			++wk->dialState;
+			++wk->work->dialState;
 
-			if (wk->dialState < 4)
+			if (wk->work->dialState < 4)
 			{
 				dsPlay_oneshot(701, 0, 0, 0);
-				wk->timer = 60;
+				wk->work->timer = 60;
 			}
 			else
 			{
 				dsPlay_oneshot(702, 0, 0, 0);
-				wk->mode = RACEMD_GAME;
+				wk->work->mode = RACEMD_GAME;
 				PadReadOnP(-1);
 			}
 		}
 		break;
 	case RACEMD_GAME:
 	case RACEMD_CKPT:
-		if (wk->timer && --wk->timer <= 0)
+		if (wk->work->timer && --wk->work->timer <= 0)
 		{
-			wk->mode = RACEMD_GAME;
+			wk->work->mode = RACEMD_GAME;
 		}
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (!playertp[i])
+			if (playertp[i])
 			{
-				continue;
-			}
+				auto rwp = &wk->work[i];
 
-			auto rwp = &wk->racers[i];
+				if (playerpwp[i]->item & Powerups_Dead)
+				{
+					rwp->lastChekPoint = 0;
+				}
 
-			if (playerpwp[i]->item & Powerups_Dead)
-			{
-				rwp->lastChekPoint = 0;
-			}
+				if (cartGoalFlagM[i] == true)
+				{
+					continue;
+				}
 
-			if (cartGoalFlagM[i] == true)
-			{
-				continue;
-			}
+				finished = false;
 
-			finished = false;
+				if (rwp->totalIntrpt < 360000)
+				{
+					rwp->totalIntrpt += 2;
+				}
 
-			if (rwp->totalIntrpt < 360000)
-			{
-				rwp->totalIntrpt += 2;
-			}
-
-			if (rwp->lapIntrpt_a[rwp->displayLap] < 360000)
-			{
-				rwp->lapIntrpt_a[rwp->displayLap] += 2;
+				if (rwp->lapIntrpt_a[rwp->displayLap] < 360000)
+				{
+					rwp->lapIntrpt_a[rwp->displayLap] += 2;
+				}
 			}
 		}
 
@@ -232,17 +213,17 @@ static void __cdecl execRaceM(task* tp)
 		{
 			SleepTimer();
 			CartGoalFlag = TRUE;
-			wk->mode = RACEMD_GOAL;
-			wk->timer = 180;
+			wk->work->mode = RACEMD_GOAL;
+			wk->work->timer = 180;
 		}
 
 		break;
 	case RACEMD_GOAL:
-		if (--wk->timer <= 0)
+		if (--wk->work->timer <= 0)
 		{
 			SetWinnerMulti(wk->winner);
 			SetFinishAction();
-			wk->mode = RACEMD_END;
+			wk->work->mode = RACEMD_END;
 		}
 		break;
 	}
@@ -256,9 +237,23 @@ static void __cdecl initRaceM(task* tp, void* param_p)
 
 	memset(wk, 0, sizeof(RaceWkM));
 	wk->winner = -1;
-
+	wk->work->mode = RACEMD_WAIT1;
+	wk->work->timer = 60;
+	
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
+		auto* rwp = &wk->work[i];
+		rwp->currentLap = -1;
+		rwp->displayLap = 0;
+		rwp->dialState = 0;
+		rwp->lastChekPoint = 2;
+		rwp->bestTotalTime = CartDataGetBestTotalTime();
+
+		for (int lap = 0; lap < 3; ++lap)
+		{
+			rwp->bestSubTotal_a[lap] = CartDataGetBestSubTotalTime(lap);
+		}
+
 		cartGoalFlagM[i] = false;
 	}
 
@@ -408,38 +403,39 @@ static void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
 		{
 			auto cpt = tp->mwp->work.b[0];
 			auto pnum = TASKWK_PLAYERID(pltwp);
-			auto racewk = (RaceWkM*)RaceManageTask_p->mwp;
-			auto wk = &racewk->racers[pnum];
+
+			auto wk = (RaceWkM*)RaceManageTask_p->mwp;
+			auto rwp = &wk->work[pnum];
 
 			if (cpt == 2)
 			{
-				if (!wk->lastChekPoint && wk->currentLap > -1)
+				if (!rwp->lastChekPoint && rwp->currentLap > -1)
 				{
-					--wk->currentLap;
+					--rwp->currentLap;
 				}
 			}
-			else if (wk->lastChekPoint == 2 && wk->currentLap < 3)
+			else if (rwp->lastChekPoint == 2 && rwp->currentLap < 3)
 			{
-				if (++wk->currentLap < 3)
+				if (++rwp->currentLap < 3)
 				{
-					if (wk->currentLap > wk->displayLap)
+					if (rwp->currentLap > rwp->displayLap)
 					{
-						wk->subTotal_a[wk->displayLap] = wk->totalIntrpt;
-						wk->displayLap = wk->currentLap;
-						racewk->timer = 180;
-						racewk->mode = RACEMD_CKPT;
+						rwp->subTotal_a[rwp->displayLap] = rwp->totalIntrpt;
+						rwp->displayLap = rwp->currentLap;
+						wk->work->timer = 180;
+						wk->work->mode = RACEMD_CKPT;
 					}
 				}
 				else
 				{
-					wk->subTotal_a[wk->displayLap] = wk->totalIntrpt;
-					wk->displayLap = 2;
+					rwp->subTotal_a[rwp->displayLap] = rwp->totalIntrpt;
+					rwp->displayLap = 2;
 					goalRaceM(pltwp, pnum);
-					if (racewk->winner == -1) racewk->winner = pnum;
+					if (wk->winner == -1) wk->winner = pnum;
 				}
 			}
 
-			wk->lastChekPoint = cpt;
+			rwp->lastChekPoint = cpt;
 		}
 
 		EntryColliList(twp);

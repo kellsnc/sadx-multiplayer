@@ -307,14 +307,6 @@ void cartCameraDemo_m(int pnum)
 		if (pnum == 0)
 		{
 			Cart_demo_flag = 0;
-
-			// Cause cartCameraDemoCheckrer doesn't work for some reason, let's do it here
-			task* mtp = RaceManageTask_p;
-			if (mtp)
-			{
-				*(Sint8*)mtp->mwp = 2;
-				*((Sint16*)mtp->mwp + 3) = 60;
-			}
 		}
 
 		camcont_wp->cammode = 1;

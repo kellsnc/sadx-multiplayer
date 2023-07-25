@@ -393,6 +393,22 @@ struct Flicky
 	FlickyData* flickydata;
 };
 
+struct RaceWk
+{
+	Sint8 mode;
+	Sint8 currentLap;
+	Sint8 displayLap;
+	Sint8 dialState;
+	Sint8 lastChekPoint;
+	Sint16 timer;
+	Sint32 totalIntrpt;
+	Sint32 lapIntrpt_a[3];
+	Sint32 subTotal_a[3];
+	Sint32 bestTotalTime;
+	Sint32 bestSubTotal_a[3];
+	Sint32 bestLapTime_a[3];
+};
+
 DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
@@ -633,12 +649,12 @@ DataArray(const SeqDataType*, AllSeqDataPtr, 0x10D7B40, 3);
 FunctionPointer(task*, GetPlayerTaskPointer, (Sint8 pno), 0x441AC0);
 FunctionPointer(void, CancelLookingAtP, (Sint8 pno), 0x441080);
 FunctionPointer(void, GM_SECall, (Sint32 se), 0x414170);
-
+FunctionPointer(Sint32, CartDataGetBestTotalTime, (), 0x4DAC90);
+FunctionPointer(Sint32, CartDataGetBestSubTotalTime, (Sint8 lap), 0x4DAB80);
 TaskFunc(drawEffectChaos0EffectB, 0x7ACCB0);
 TaskFunc(drawEffectChaos0LightParticle, 0x7ACB30);
 TaskFunc(dispEffectChaos0AttackA, 0x7AC9D0);
 TaskFunc(CircleLimit, 0x7AF300);
-
 DataPointer(char, chaos_nextmode, 0x3C5A7EC);
 DataPointer(char, chaos_reqmode, 0x3C5A7ED);
 DataPointer(char, chaos_oldmode, 0x3C5A7E1);
@@ -657,7 +673,6 @@ FunctionPointer(void, SetLookingAngleP, (uint8_t pnum, Angle3* a2), 0x441040);
 FunctionPointer(void, PResetPosition, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x43EE70);
 FunctionPointer(void, HoldOnPillarP, (Uint8 pnum, task* tp), 0x4411D0);
 FunctionPointer(void, StopPlayerLookAt, (Uint8 pnum), 0x441080);
-
 FunctionPointer(void, Knux_RunsActions, (taskwk* twp, motionwk2* mwp, playerwk* pwp), 0x478020);
 TaskFunc(dispKnuEffectChargeUpStay, 0x4C0FC0);
 FunctionPointer(void, KnuEffectDrawTsubu, (NJS_POINT3* v, float r), 0x4C0F20);
