@@ -6,6 +6,7 @@
 extern VariableHook<Bool, 0x3B2C6C0> flagCameraNoUnderWater_m;
 
 _OBJ_CAMERAPARAM* GetExternCameraParam(int pnum);
+NJS_POINT3* FollowRingData_m(int pnum, Sint32 num);
 
 NJS_POINT3* GetCameraPosition(int pnum);
 Angle3* GetCameraAngle(int pnum);

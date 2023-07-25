@@ -43,6 +43,10 @@ VariableHook<NJS_POINT3, 0x3C4ABFC> CamPathCam2Core_Pos_m;
 VariableHook<Angle3, 0x3C4ACDC> CamPathCam2Core_Angle_m;
 VariableHook<Bool, 0x3C4AC98> CamPathCam2Core_AliveFlag_m;
 
+/* AVOID */
+VariableHook<Sint32, 0x3C4AC8C> avoidMode_m;
+VariableHook<Sint32, 0x3C4ADC4> nowFrame_m;
+
 FunctionHook<void, _OBJ_CAMERAPARAM*> PathCamera1_h(0x4653E0);
 
 DataPointer(Sint32, demo_count, 0x3C4ACC0);
@@ -784,6 +788,77 @@ void __cdecl PathCamera2Core_m(_OBJ_CAMERAPARAM* pParam)
 	camcont_wp->angz = CamPathCam2Core_Angle.z;
 	CamPathCam2Core_AliveFlag_m[pnum] = TRUE;
 	CamcontSetCameraCAMSTATUS(camera_twp);
+}
+
+void __cdecl CameraAvoid_r(_OBJ_CAMERAPARAM* pParam)
+{
+	auto pnum = TASKWK_PLAYERID(playertwp[0]);
+	auto ptwp = playertwp[pnum];
+
+	auto& avoidMode = avoidMode_m[pnum];
+	auto& nowFrame = nowFrame_m[pnum];
+
+	if (avoidMode == AVOID_MODE_INIT)
+	{
+		nowFrame = 0;
+		avoidMode = AVOID_MODE_CHASE;
+	}
+	else if (avoidMode != AVOID_MODE_CHASE)
+	{
+		if (avoidMode < AVOID_MODE_KNUCKLES)
+		{
+			switch (GetCameraMode_m(pnum))
+			{
+			case CAMMD_A_AVOID:
+				SetCameraMode_m(pnum, CAMMD_A_KNUCKLES);
+				break;
+			case CAMMD_C_AVOID:
+				SetCameraMode_m(pnum, CAMMD_C_KNUCKLES);
+				break;
+			case CAMMD_COL_AVOID:
+				SetCameraMode_m(pnum, CAMMD_COL_KNUCKLES);
+				break;
+			default:
+				SetCameraMode_m(pnum, CAMMD_KNUCKLES);
+				SetAdjustMode_m(pnum, CAMADJ_RELATIVE4C);
+				break;
+			}
+		}
+	}
+
+	Float frame = (Float)nowFrame / 90.0f;
+	Float numf = 49.0f - frame * 49.0f;
+	Sint32 num = (Sint32)(njFloor(numf) + 1.0f);
+
+	NJS_VECTOR* pos_now = FollowRingData_m(pnum, num);
+	NJS_VECTOR* pos_next = FollowRingData_m(pnum, num + 1);
+
+	NJS_VECTOR pos;
+	Float inv_numf = numf - num;
+	pos.x = (pos_next->x - pos_now->x) * inv_numf + pos_now->x;
+	pos.y = (pos_next->y - pos_now->y) * inv_numf + pos_now->y;
+	pos.z = (pos_next->z - pos_now->z) * inv_numf + pos_now->z;
+
+	camcont_wp->camxpos += (pos.x - camcont_wp->camxpos) * frame + camcont_wp->camxpos;
+	camcont_wp->camypos += (pos.y - camcont_wp->camypos) * frame + camcont_wp->camypos;
+	camcont_wp->camzpos += (pos.z - camcont_wp->camzpos) * frame + camcont_wp->camzpos;
+
+	camcont_wp->tgtxpos = ptwp->pos.x;
+	camcont_wp->tgtypos = ptwp->pos.y + GetPlayerWorkPtr(pnum)->p.eyes_height;
+	camcont_wp->tgtzpos = ptwp->pos.z;
+	
+	pos.x = camcont_wp->camxpos - camcont_wp->tgtxpos;
+	pos.y = camcont_wp->camypos - camcont_wp->tgtypos;
+	pos.z = camcont_wp->camzpos - camcont_wp->tgtzpos;
+
+	if (njScalor(&pos) < 20.0f)
+	{
+		avoidMode = AVOID_MODE_KNUCKLES;
+	}
+	if (++nowFrame >= 90)
+	{
+		avoidMode = AVOID_MODE_KNUCKLES;
+	}
 }
 
 void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)

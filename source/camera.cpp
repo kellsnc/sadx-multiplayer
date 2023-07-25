@@ -864,11 +864,15 @@ void setChaseRingBuffer(int pnum)
 	}
 }
 
+NJS_POINT3* FollowRingData_m(int pnum, Sint32 num)
+{
+	auto current = CameraCurrentRingBuf_m[pnum];
+	return &CameraChaseBuffer_m[pnum][current - num + (current - num < 0 ? 50 : 0)];
+}
+
 NJS_POINT3* FollowRingData_r(Sint32 num)
 {
-	auto pnum = TASKWK_PLAYERID(playertwp[0]);
-	auto current = CameraCurrentRingBuf_m[pnum];
-	return &CameraChaseBuffer_m[pnum][current - num + (current - num < 0 ? 0x32 : 0)];
+	return FollowRingData_m(TASKWK_PLAYERID(playertwp[0]), num);
 }
 
 Bool checkfreecameraarea_m(Sint32 sw, int pnum)
@@ -1678,7 +1682,7 @@ void CameraManagerNormal_m(int pnum, Sint16 ssCameraEntry, _OBJ_CAMERAENTRY* pCa
 			return;
 		}
 
-		if (collide)
+		if (collide && pCameraEntry->scMode != 69)
 		{
 			CameraSetCamera_m(pnum, pCameraEntry->scMode, ssCameraEntry);
 		}
@@ -1840,7 +1844,7 @@ void CameraManager_m(int pnum)
 			{
 				_OBJ_CAMERAENTRY* pEntry = &pObjCameraEntry[i];
 				Sint8 modeLevel = pObjCameraMode[pEntry->scMode].scCameraLevel;
-
+				
 				if (modeLevel >= cameraLevel)
 				{
 					switch (cameraLevel)

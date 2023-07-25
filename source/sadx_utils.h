@@ -80,6 +80,14 @@ enum : __int32
 	ID_END = 0xE,
 };
 
+enum AVOID_CAMERA_MODE
+{
+	AVOID_MODE_INIT,
+	AVOID_MODE_CHASE,
+	AVOID_MODE_KNUCKLES,
+	AVOID_MODE_END,
+};
+
 struct Mass
 {
 	NJS_POINT3 trans[12];
