@@ -41,6 +41,7 @@ static void movePlayer(task* tp) // custom
 
 		if (ptwp)
 		{
+			CharColliOff(ptwp);
 			ptwp->pos.y = tp->twp->pos.y;
 		}
 	}
@@ -66,7 +67,6 @@ static void InitATask_m(task* tp)
 	if (GameState != 4 && GetStageNumber() != LevelAndActIDs_HotShelter2)
 	{
 		auto twp = tp->twp;
-
 		twp->pos = ElevatorPos[twp->counter.b[0] * 2 + 1];
 		twp->mode = MODE_OPEN;
 	}
@@ -105,6 +105,13 @@ static void ObjShelterElevator_m(task* tp)
 		if (twp->mode == MODE_NORMAL)
 		{
 			PadReadOnP(-1);
+
+			for (int i = 0; i < PLAYER_MAX; ++i)
+			{
+				auto ptwp = playertwp[i];
+				if (ptwp)
+					CharColliOn(ptwp);
+			}
 		}
 		break;
 	case MODE_NONE:
