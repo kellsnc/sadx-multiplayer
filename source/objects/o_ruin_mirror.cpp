@@ -388,10 +388,8 @@ static void __cdecl FogEnd_r(task* tp)
 		wk->other_flag = 0;
 		wk->fog_switch = 1;
 		wk->ruin_m_flag = 0;
-		GetScreenFog(i)->u8Enable = 0i8;
+		fog::ResetUserFog(i);
 	}
-
-	*GetScreenFog(0) = *(___stcFog*)FogData_LostWorld[1];
 
 	TARGET_STATIC(FogEnd)(tp);
 }
@@ -425,10 +423,12 @@ static void ChangeFogDensity_m(float dist, float density_speed, int num)
 		wk->now_dist = max_dist;
 	}
 
-	auto fog = GetScreenFog(num);
-	fog->f32StartZ = 8.0f;
-	fog->Col = 0xFF000000;
-	fog->f32EndZ = 210.0f - wk->now_dist; // newer ver, 2004 version is: 410.0f - wk->now_dist * 2.5f
+	___stcFog fog;
+	fog.f32StartZ = 8.0f;
+	fog.f32EndZ = 210.0f - wk->now_dist; // newer ver, 2004 version is: 410.0f - wk->now_dist * 2.5f
+	fog.Col = 0xFF000000;
+	fog.u8Enable = TRUE;
+	fog::SetUserFog(num, &fog);
 }
 
 static void ObjectRuinFogChange_m(task* tp)
@@ -500,7 +500,7 @@ static void ObjectRuinFogChange_m(task* tp)
 				else
 				{
 					twp->timer.b[1] = 1;
-					*GetScreenFog(i) = *(___stcFog*)FogData_LostWorld[1];
+					fog::ResetUserFog(i);
 				}
 			}
 		}

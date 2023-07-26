@@ -697,6 +697,8 @@ DataPointer(int, MRTorokkoRideFlg, 0x3C6333C);
 DataPointer(NJS_VECTOR, RidePos, 0x3C63330);
 DataArray(NJS_ACTION*, MoveAction, 0x3C63340, 3);
 DataPointer(NJS_VECTOR, XVec1, 0x111DD40);
+DataPointer(Float, oldn, 0x90A098);
+DataPointer(Float, oldf, 0x90A09C);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
