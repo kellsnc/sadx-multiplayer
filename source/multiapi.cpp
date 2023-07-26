@@ -3,6 +3,7 @@
 #include "players.h"
 #include "result.h"
 #include "camera.h"
+#include "gravity.h"
 #include "collision.h"
 #include "../include/multiapi.h"
 
@@ -146,6 +147,21 @@ int32_t multi_get_winner()
 void multi_set_winner(uint32_t pnum)
 {
 	SetWinnerMulti(pnum);
+}
+
+bool multi_get_gravity(uint32_t pnum, NJS_POINT3* v, Angle* angx, Angle* angz)
+{
+	return gravity::GetUserGravity(pnum, v, angx, angz);
+}
+
+void multi_set_gravity(uint32_t pnum, Angle angx, Angle angz)
+{
+	gravity::SetUserGravity(angx, angz, pnum);
+}
+
+void multi_reset_gravity(uint32_t pnum)
+{
+	gravity::ResetUserGravity(pnum);
 }
 
 void camera_apply(uint32_t num)

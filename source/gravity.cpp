@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "gravity.h"
 
-// Allow per-player gravity (only set up for Sonic for now)
+// Allow per-player gravity
 
 Trampoline* SetDefaultGravity_t = nullptr;
 Trampoline* SetUserGravityXZ_t = nullptr;

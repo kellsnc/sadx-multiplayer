@@ -106,6 +106,17 @@ extern "C"
 	// Set the ID of the winning player (-1 to reset)
 	API void multi_set_winner(uint32_t pnum);
 
+	// Retrieve local (per-player) gravity of the given player
+	// Returns false if the player is using the global gravity (pointers are not written to)
+	bool multi_get_gravity(uint32_t pnum, NJS_POINT3* v, Angle* angx, Angle* angz);
+
+	// Set local (per-player) gravity for the given player
+	// Once set, the player will ignore the global gravity
+	void multi_set_gravity(uint32_t pnum, Angle angx, Angle angz);
+
+	// Disables local gravity for a given player
+	void multi_reset_gravity(uint32_t pnum);
+
 	// Calculate projection matrix of a player's camera
 	API void camera_apply(uint32_t num);
 
