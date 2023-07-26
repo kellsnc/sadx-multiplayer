@@ -109,7 +109,7 @@ void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* 
 		{
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
-			camera_twp->smode = twp->pos.x > -5400.0f && twp->pos.y > -3900.0f ? 1 : 0;
+			camera_twp->smode = GetStageNumber() == 0x802 && twp->pos.x > -5400.0f && twp->pos.y > -3900.0f ? 1 : 0;
 			TARGET_DYNAMIC(PGetAccelerationSnowBoard)(twp, mwp, pwp, Max_Speed);
 			camera_twp->ang = backup;
 			camera_twp->smode = 0;
