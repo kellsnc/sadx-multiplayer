@@ -71,11 +71,11 @@ static void __cdecl GetPlayersInputData_r()
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		auto controller = per[i];
-		float lx = static_cast<float>(controller->x1 << 8); // left stick x
-		float ly = static_cast<float>(controller->y1 << 8); // left stick y
+		Float lx = (Float)(controller->x1 << 8); // left stick x
+		Float ly = (Float)(controller->y1 << 8); // left stick y
 
 		Angle ang;
-		float strk;
+		Float strk;
 
 		if (lx > 3072.0f || lx < -3072.0f || ly > 3072.0f || ly < -3072.0f)
 		{
@@ -86,15 +86,15 @@ static void __cdecl GetPlayersInputData_r()
 
 			if (cam_ang)
 			{
-				ang = -cam_ang->y - NJM_RAD_ANG(-atan2f(ly, lx));
+				ang = -cam_ang->y - -njArcTan2(ly, lx);
 			}
 			else
 			{
-				ang = NJM_RAD_ANG(-atan2f(ly, lx));
+				ang = njArcTan2(ly, lx);
 			}
 
-			double magnitude = ly * ly + lx * lx;
-			strk = static_cast<float>(sqrt(magnitude) * magnitude * 3.9187027e-14);
+			Float magnitude = ly * ly + lx * lx;
+			strk = njSqrt(magnitude) * magnitude * 3.9187027e-14;
 			if (strk > 1.0f)
 			{
 				strk = 1.0f;
