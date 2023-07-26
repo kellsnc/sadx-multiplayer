@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "gravity.h"
 #include "collision.h"
+#include "fog.h"
 #include "../include/multiapi.h"
 
 bool splitscreen_is_active()
@@ -162,6 +163,21 @@ void multi_set_gravity(uint32_t pnum, Angle angx, Angle angz)
 void multi_reset_gravity(uint32_t pnum)
 {
 	gravity::ResetUserGravity(pnum);
+}
+
+bool multi_get_fog(uint32_t pnum, ___stcFog* pFog)
+{
+	return fog::GetUserFog(pnum, pFog);
+}
+
+void multi_set_fog(uint32_t pnum, ___stcFog* pFog)
+{
+	fog::SetUserFog(pnum, pFog);
+}
+
+void multi_reset_fog(uint32_t pnum)
+{
+	fog::ResetUserFog(pnum);
 }
 
 void camera_apply(uint32_t num)

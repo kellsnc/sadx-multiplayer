@@ -3,6 +3,7 @@
 
 #include "ninja.h"
 #include "SADXStructs.h"
+#include "SADXStructsNew.h"
 #include "SADXEnums.h"
 
 #ifdef __cplusplus
@@ -108,14 +109,25 @@ extern "C"
 
 	// Retrieve local (per-player) gravity of the given player
 	// Returns false if the player is using the global gravity (pointers are not written to)
-	bool multi_get_gravity(uint32_t pnum, NJS_POINT3* v, Angle* angx, Angle* angz);
+	API bool multi_get_gravity(uint32_t pnum, NJS_POINT3* v, Angle* angx, Angle* angz);
 
 	// Set local (per-player) gravity for the given player
 	// Once set, the player will ignore the global gravity
-	void multi_set_gravity(uint32_t pnum, Angle angx, Angle angz);
+	API void multi_set_gravity(uint32_t pnum, Angle angx, Angle angz);
 
 	// Disables local gravity for a given player
-	void multi_reset_gravity(uint32_t pnum);
+	API void multi_reset_gravity(uint32_t pnum);
+
+	// Retrieve local (per-player) fog of the given player
+	// Returns false if the player is using the global fog
+	API bool multi_get_fog(uint32_t pnum, ___stcFog* pFog);
+
+	// Set local (per-player) fog for the given player
+	// Once set, the player will ignore the global fog
+	API void multi_set_fog(uint32_t pnum, ___stcFog* pFog);
+
+	// Disables local fog for a given player
+	API void multi_reset_fog(uint32_t pnum);
 
 	// Calculate projection matrix of a player's camera
 	API void camera_apply(uint32_t num);
