@@ -29,11 +29,11 @@ void KillAndWarpPlayers(char pNum)
 			if (multiplayer::IsCoopMode() && (GameMode == GameModes_Adventure_Field || GameMode == GameModes_Adventure_ActionStg))
 			{
 				ScreenFade_Start_();
-				GameState = 8;
+				ssGameMode = MD_GAME_FADEOUT_OVER;
 			}
 			else
 			{
-				SetChangeGameMode(1);
+				SetChangeGameMode(GAMEMD_CLEAR);
 			}
 			
 			TempEraseSound();
@@ -68,7 +68,15 @@ void KillAndWarpPlayers(char pNum)
 				twp->mode = 1;
 			}
 
-			pwp->item &= ~Powerups_Dead;
+			if (pwp)
+			{
+				if (pwp->equipment & Upgrades_SuperSonic)
+				{
+					SetInputP(pNum, PL_OP_NORMAL);
+				}
+
+				pwp->item = 0;
+			}
 		}
 	}
 }
