@@ -1,10 +1,11 @@
 #include "pch.h"
-#include "ObjCylinderCmn.h"
+#include "gravity.h"
 #include "e_cart.h"
 #include "result.h"
+#include "ObjCylinderCmn.h"
 
 UsercallFunc(Bool, Knux_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
-TaskHook KnuxExec_t((intptr_t)Knuckles_Main);
+TaskHook KnucklesTheEchidna_t((intptr_t)Knuckles_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
 TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
 static FunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
@@ -215,123 +216,141 @@ Bool Knux_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 	return Knux_CheckInput_t.Original(pwp, twp, mwp);
 }
 
-void Knux_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
-	switch (data1->mode)
+void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (multiplayer::IsActive())
 	{
-	case 52: //cart
-		KillPlayerInKart(data1, co2, 51, 27);
-		break;
-	case SDCannonMode:
-		if (!KnucklesCheckInput(data1, data2, co2) && (data1->flag & 3) != 0)
+		switch (twp->mode)
 		{
-			if (PCheckBreak(data1) && co2->spd.x > 0.0f)
+		case 52: //cart
+			KillPlayerInKart(twp, pwp, 51, 27);
+			break;
+		case SDCannonMode:
+			if (!KnucklesCheckInput(twp, mwp, pwp) && (twp->flag & 3) != 0)
 			{
-				data1->mode = 10;
-			}
-			if (!KnucklesCheckStop(data1, co2))
-			{
-				data1->mode = 2;
-			}
+				if (PCheckBreak(twp) && pwp->spd.x > 0.0f)
+				{
+					twp->mode = 10;
+				}
+				if (!KnucklesCheckStop(twp, pwp))
+				{
+					twp->mode = 2;
+				}
 
-			data1->ang.x = data2->ang_aim.x;
-			data1->ang.z = data2->ang_aim.z;
-			co2->mj.reqaction = 2;
-		}
-		return;
-	case SDCylStd:
-		if (KnucklesCheckInput(data1, data2, co2) || KnucklesCheckJump(data1, co2))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		Mode_SDCylStdChanges(data1, co2);
-		return;
-	case SDCylDown:
-
-		if (KnucklesCheckInput(data1, data2, co2) || KnucklesCheckJump(data1, co2))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		Mode_SDCylDownChanges(data1, co2);
-
-		return;
-	case SDCylLeft:
-		if (KnucklesCheckInput(data1, data2, co2) || KnucklesCheckJump(data1, co2))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 <= -3072)
-		{
-			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
-			{
-				co2->htp = 0;
-			}
-
-			return;
-		}
-		data1->mode = SDCylStd;
-
-		return;
-	case SDCylRight:
-		if (KnucklesCheckInput(data1, data2, co2) || KnucklesCheckJump(data1, co2))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 >= 3072)
-		{
-			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
-			{
-				co2->htp = 0;
+				twp->ang.x = mwp->ang_aim.x;
+				twp->ang.z = mwp->ang_aim.z;
+				pwp->mj.reqaction = 2;
 			}
 			return;
-		}
+		case SDCylStd:
+			if (KnucklesCheckInput(twp, mwp, pwp) || KnucklesCheckJump(twp, pwp))
+			{
+				pwp->htp = 0;
+				return;
+			}
 
-		data1->mode = SDCylStd;
-		return;
+			Mode_SDCylStdChanges(twp, pwp);
+			return;
+		case SDCylDown:
+
+			if (KnucklesCheckInput(twp, mwp, pwp) || KnucklesCheckJump(twp, pwp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			Mode_SDCylDownChanges(twp, pwp);
+
+			return;
+		case SDCylLeft:
+			if (KnucklesCheckInput(twp, mwp, pwp) || KnucklesCheckJump(twp, pwp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 <= -3072)
+			{
+				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				{
+					pwp->htp = 0;
+				}
+
+				return;
+			}
+			twp->mode = SDCylStd;
+
+			return;
+		case SDCylRight:
+			if (KnucklesCheckInput(twp, mwp, pwp) || KnucklesCheckJump(twp, pwp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 >= 3072)
+			{
+				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				{
+					pwp->htp = 0;
+				}
+				return;
+			}
+
+			twp->mode = SDCylStd;
+			return;
+		}
 	}
-
-	Knux_RunsActions_t.Original(data1, data2, co2);
+	
+	Knux_RunsActions_t.Original(twp, mwp, pwp);
 }
 
-void KnuxExec_r(task* obj)
+void KnucklesTheEchidna_m(task* tp)
 {
-	auto twp = obj->twp;
-	auto data = twp;
-	motionwk2* data2 = (motionwk2*)obj->mwp;
-	playerwk* co2 = (playerwk*)obj->mwp->work.l;
+	auto twp = tp->twp;
+	auto mwp = (motionwk2*)tp->mwp;
+	auto pwp = (playerwk*)mwp->work.ptr;
 
 	switch (twp->mode)
 	{
 	case SDCannonMode:
-		CannonModePhysics(twp, data2, co2);
+		CannonModePhysics(twp, mwp, pwp);
 		break;
 	case SDCylStd:
-		Mode_SDCylinderStd(data, co2);
+		Mode_SDCylinderStd(twp, pwp);
 		break;
 	case SDCylDown:
-		Mode_SDCylinderDown(data, co2);
+		Mode_SDCylinderDown(twp, pwp);
 		break;
 	case SDCylLeft:
-		Mode_SDCylinderLeft(data, co2);
+		Mode_SDCylinderLeft(twp, pwp);
 		break;
 	case SDCylRight:
-		Mode_SDCylinderRight(data, co2);
+		Mode_SDCylinderRight(twp, pwp);
 		break;
 	}
 
-	KnuxExec_t.Original(obj);
+	KnucklesTheEchidna_t.Original(tp);
+}
+
+void __cdecl KnucklesTheEchidna_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		gravity::SaveGlobalGravity();
+		gravity::SwapGlobalToUserGravity(TASKWK_PLAYERID(tp->twp));
+		KnucklesTheEchidna_m(tp);
+		gravity::RestoreGlobalGravity();
+	}
+	else
+	{
+		KnucklesTheEchidna_t.Original(tp);
+	}
 }
 
 void Init_KnuxPatches()
 {
-	KnuxExec_t.Hook(KnuxExec_r);
+	KnucklesTheEchidna_t.Hook(KnucklesTheEchidna_r);
 	Knux_CheckInput_t.Hook(Knux_CheckInput_r);
 	Knux_RunsActions_t.Hook(Knux_RunsActions_r);
 	KnucklesChargeEffectExe_t.Hook(KnucklesChargeEffectExe_r);

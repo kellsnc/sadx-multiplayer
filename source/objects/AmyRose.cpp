@@ -1,10 +1,11 @@
 #include "pch.h"
-#include "ObjCylinderCmn.h"
+#include "gravity.h"
 #include "e_cart.h"
 #include "result.h"
+#include "ObjCylinderCmn.h"
 
 UsercallFunc(Bool, Amy_CheckInput_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x487810, rEAX, rECX, rEDI, rESI);
-TaskHook AmyExec_t((intptr_t)Amy_Main);
+TaskHook AmyRose_t((intptr_t)Amy_Main);
 static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunsActions_t((intptr_t)0x488880);
 TaskHook AmyJiggle_t((intptr_t)0x485C50);
 TaskHook AmySkirtShape_t(0x485F40);
@@ -198,122 +199,141 @@ Bool Amy_CheckInput_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 	return Amy_CheckInput_t.Original(pwp, mwp, twp);
 }
 
-void Amy_RunsActions_r(taskwk* data1, motionwk2* data2, playerwk* co2) {
-	switch (data1->mode)
+void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (multiplayer::IsActive())
 	{
-	case 48: //cart
-		KillPlayerInKart(data1, co2, 47, 26);
-		break;
-	case SDCannonMode:
-		if (!AmyCheckInput(co2, data2, data1) && (data1->flag & 3) != 0)
+		switch (twp->mode)
 		{
-			if (PCheckBreak(data1) && co2->spd.x > 0.0f)
+		case 48: //cart
+			KillPlayerInKart(twp, pwp, 47, 26);
+			break;
+		case SDCannonMode:
+			if (!AmyCheckInput(pwp, mwp, twp) && (twp->flag & 3) != 0)
 			{
-				data1->mode = 9;
-			}
-			if (!AmyCheckStop(data1, co2))
-			{
-				data1->mode = 2;
-			}
+				if (PCheckBreak(twp) && pwp->spd.x > 0.0f)
+				{
+					twp->mode = 9;
+				}
+				if (!AmyCheckStop(twp, pwp))
+				{
+					twp->mode = 2;
+				}
 
-			data1->ang.x = data2->ang_aim.x;
-			data1->ang.z = data2->ang_aim.z;
-			co2->mj.reqaction = 2;
-		}
-		return;
-	case SDCylStd:
-		if (AmyCheckInput(co2, data2, data1) || AmyCheckJump(co2, data1, data2))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		Mode_SDCylStdChanges(data1, co2);
-		return;
-	case SDCylDown:
-
-		if (AmyCheckInput(co2, data2, data1) || AmyCheckJump(co2, data1, data2))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		Mode_SDCylDownChanges(data1, co2);
-
-		return;
-	case SDCylLeft:
-		if (AmyCheckInput(co2, data2, data1) || AmyCheckJump(co2, data1, data2))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 <= -3072)
-		{
-			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
-			{
-				co2->htp = 0;
-			}
-
-			return;
-		}
-		data1->mode = SDCylStd;
-
-		return;
-	case SDCylRight:
-		if (AmyCheckInput(co2, data2, data1) || AmyCheckJump(co2, data1, data2))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 >= 3072)
-		{
-			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
-			{
-				co2->htp = 0;
+				twp->ang.x = mwp->ang_aim.x;
+				twp->ang.z = mwp->ang_aim.z;
+				pwp->mj.reqaction = 2;
 			}
 			return;
-		}
+		case SDCylStd:
+			if (AmyCheckInput(pwp, mwp, twp) || AmyCheckJump(pwp, twp, mwp))
+			{
+				pwp->htp = 0;
+				return;
+			}
 
-		data1->mode = SDCylStd;
-		return;
+			Mode_SDCylStdChanges(twp, pwp);
+			return;
+		case SDCylDown:
+
+			if (AmyCheckInput(pwp, mwp, twp) || AmyCheckJump(pwp, twp, mwp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			Mode_SDCylDownChanges(twp, pwp);
+
+			return;
+		case SDCylLeft:
+			if (AmyCheckInput(pwp, mwp, twp) || AmyCheckJump(pwp, twp, mwp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 <= -3072)
+			{
+				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				{
+					pwp->htp = 0;
+				}
+
+				return;
+			}
+			twp->mode = SDCylStd;
+
+			return;
+		case SDCylRight:
+			if (AmyCheckInput(pwp, mwp, twp) || AmyCheckJump(pwp, twp, mwp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 >= 3072)
+			{
+				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				{
+					pwp->htp = 0;
+				}
+				return;
+			}
+
+			twp->mode = SDCylStd;
+			return;
+		}
 	}
 
-	Amy_RunsActions_t.Original(data1, data2, co2);
+	Amy_RunsActions_t.Original(twp, mwp, pwp);
 }
 
-void AmyExec_r(task* obj)
+void AmyRose_m(task* tp)
 {
-	auto data = obj->twp;
-	motionwk2* data2 = (motionwk2*)obj->mwp;
-	playerwk* co2 = (playerwk*)obj->mwp->work.l;
+	auto twp = tp->twp;
+	auto mwp = (motionwk2*)tp->mwp;
+	auto pwp = (playerwk*)mwp->work.ptr;
 
-	switch (data->mode)
+	switch (twp->mode)
 	{
 	case SDCannonMode:
-		CannonModePhysics(data, data2, co2);
+		CannonModePhysics(twp, mwp, pwp);
 		break;
 	case SDCylStd:
-		Mode_SDCylinderStd(data, co2);
+		Mode_SDCylinderStd(twp, pwp);
 		break;
 	case SDCylDown:
-		Mode_SDCylinderDown(data, co2);
+		Mode_SDCylinderDown(twp, pwp);
 		break;
 	case SDCylLeft:
-		Mode_SDCylinderLeft(data, co2);
+		Mode_SDCylinderLeft(twp, pwp);
 		break;
 	case SDCylRight:
-		Mode_SDCylinderRight(data, co2);
+		Mode_SDCylinderRight(twp, pwp);
 		break;
 	}
 
-	AmyExec_t.Original(obj);
+	AmyRose_t.Original(tp);
+}
+
+void __cdecl AmyRose_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		gravity::SaveGlobalGravity();
+		gravity::SwapGlobalToUserGravity(TASKWK_PLAYERID(tp->twp));
+		AmyRose_m(tp);
+		gravity::RestoreGlobalGravity();
+	}
+	else
+	{
+		AmyRose_t.Original(tp);
+	}
 }
 
 void Init_AmyPatches()
 {
-	AmyExec_t.Hook(AmyExec_r);
+	AmyRose_t.Hook(AmyRose_r);
 	Amy_CheckInput_t.Hook(Amy_CheckInput_r);
 	Amy_RunsActions_t.Hook(Amy_RunsActions_r);
 	AmyJiggle_t.Hook(AmyJiggle_r);

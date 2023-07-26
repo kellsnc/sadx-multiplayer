@@ -4,9 +4,10 @@
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
-#include "ObjCylinderCmn.h"
+#include "gravity.h"
 #include "e_cart.h"
 #include "result.h"
+#include "ObjCylinderCmn.h"
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 
@@ -64,91 +65,95 @@ static void E102DispTimeUpWarning_r(task* tp)
 	}
 }
 
-void E102_RunActions_r(task* tsk, motionwk2* data2, playerwk* co2) {
-	auto data1 = tsk->twp;
-
-	switch (data1->mode)
+void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
+{
+	if (multiplayer::IsActive())
 	{
-	case 53: //cart
-		KillPlayerInKart(data1, co2, 51, 69);
-		break;
-	case SDCannonMode:
-		if (!E102CheckInput(co2, data1, data2) && (data1->flag & 3) != 0)
+		auto twp = tp->twp;
+
+		switch (twp->mode)
 		{
-			if (PCheckBreak(data1) && co2->spd.x > 0.0f)
+		case 53: //cart
+			KillPlayerInKart(twp, pwp, 51, 69);
+			break;
+		case SDCannonMode:
+			if (!E102CheckInput(pwp, twp, mwp) && (twp->flag & 3) != 0)
 			{
-				data1->mode = 8;
-			}
-			if (!E102CheckStop(data1, co2))
-			{
-				data1->mode = 2;
-			}
+				if (PCheckBreak(twp) && pwp->spd.x > 0.0f)
+				{
+					twp->mode = 8;
+				}
+				if (!E102CheckStop(twp, pwp))
+				{
+					twp->mode = 2;
+				}
 
-			data1->ang.x = data2->ang_aim.x;
-			data1->ang.z = data2->ang_aim.z;
-			co2->mj.reqaction = 2;
-		}
-		return;
-	case SDCylStd:
-		if (E102CheckInput(co2, data1, data2) || E102CheckJump(co2, data1))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		Mode_SDCylStdChanges(data1, co2);
-		return;
-	case SDCylDown:
-
-		if (E102CheckInput(co2, data1, data2) || E102CheckJump(co2, data1))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		Mode_SDCylDownChanges(data1, co2);
-
-		return;
-	case SDCylLeft:
-		if (E102CheckInput(co2, data1, data2) || E102CheckJump(co2, data1))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 <= -3072)
-		{
-			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
-			{
-				co2->htp = 0;
-			}
-
-			return;
-		}
-
-		data1->mode = SDCylStd;
-		return;
-	case SDCylRight:
-		if (E102CheckInput(co2, data1, data2) || E102CheckJump(co2, data1))
-		{
-			co2->htp = 0;
-			return;
-		}
-
-		if (Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8 >= 3072)
-		{
-			if (data1->mode < SDCylStd || data1->mode > SDCylRight)
-			{
-				co2->htp = 0;
+				twp->ang.x = mwp->ang_aim.x;
+				twp->ang.z = mwp->ang_aim.z;
+				pwp->mj.reqaction = 2;
 			}
 			return;
-		}
+		case SDCylStd:
+			if (E102CheckInput(pwp, twp, mwp) || E102CheckJump(pwp, twp))
+			{
+				pwp->htp = 0;
+				return;
+			}
 
-		data1->mode = SDCylStd;
-		return;
+			Mode_SDCylStdChanges(twp, pwp);
+			return;
+		case SDCylDown:
+
+			if (E102CheckInput(pwp, twp, mwp) || E102CheckJump(pwp, twp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			Mode_SDCylDownChanges(twp, pwp);
+
+			return;
+		case SDCylLeft:
+			if (E102CheckInput(pwp, twp, mwp) || E102CheckJump(pwp, twp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 <= -3072)
+			{
+				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				{
+					pwp->htp = 0;
+				}
+
+				return;
+			}
+
+			twp->mode = SDCylStd;
+			return;
+		case SDCylRight:
+			if (E102CheckInput(pwp, twp, mwp) || E102CheckJump(pwp, twp))
+			{
+				pwp->htp = 0;
+				return;
+			}
+
+			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 >= 3072)
+			{
+				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				{
+					pwp->htp = 0;
+				}
+				return;
+			}
+
+			twp->mode = SDCylStd;
+			return;
+		}
 	}
 
-	E102_RunsActions_t.Original(tsk, data2, co2);
+	E102_RunsActions_t.Original(tp, mwp, pwp);
 }
 
 signed int E102_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
@@ -246,52 +251,47 @@ static void __cdecl E102Display_r(task* tp)
 	TARGET_STATIC(E102Display)(tp);
 }
 
-static void __cdecl E102_r(task* tp)
+static void E102_m(task* tp)
 {
-	auto data = tp->twp;
-	auto data2 = (motionwk2*)tp->mwp;
-	auto co2 = (playerwk*)tp->mwp->work.l;
+	auto twp = tp->twp;
+	auto mwp = (motionwk2*)tp->mwp;
+	auto pwp = (playerwk*)mwp->work.ptr;
 
+	auto pnum = TASKWK_PLAYERID(tp->twp);
+
+	gravity::SaveGlobalGravity();
+	gravity::SwapGlobalToUserGravity(pnum);
+
+	if (pnum >= 1)
+	{
+		auto backup = e102_hover_flag;
+		auto backup_p = e102_hover_flag_p;
+		e102_hover_flag = e102_hover_flag_m[pnum];
+		e102_hover_flag_p = e102_hover_flag_p_m[pnum];
+		E102_t.Original(tp);
+		e102_hover_flag_m[pnum] = e102_hover_flag;
+		e102_hover_flag_p_m[pnum] = e102_hover_flag_p;
+		e102_hover_flag = backup;
+		e102_hover_flag_p = backup_p;
+	}
+	else
+	{
+		E102_t.Original(tp);
+	}
+
+	gravity::RestoreGlobalGravity();
+}
+
+void __cdecl E102_r(task* tp)
+{
 	if (multiplayer::IsActive())
 	{
-		auto pnum = TASKWK_PLAYERID(tp->twp);
-
-		// Patch global variables:
-		if (pnum > 0)
-		{
-			auto backup = e102_hover_flag;
-			auto backup_p = e102_hover_flag_p;
-			e102_hover_flag = e102_hover_flag_m[pnum];
-			e102_hover_flag_p = e102_hover_flag_p_m[pnum];
-			E102_t.Original(tp);
-			e102_hover_flag_m[pnum] = e102_hover_flag;
-			e102_hover_flag_p_m[pnum] = e102_hover_flag_p;
-			e102_hover_flag = backup;
-			e102_hover_flag_p = backup_p;
-			return;
-		}
+		E102_m(tp);
 	}
-
-	switch (data->mode)
+	else
 	{
-	case SDCannonMode:
-		CannonModePhysics(data, data2, co2);
-		break;
-	case SDCylStd:
-		Mode_SDCylinderStd(data, co2);
-		break;
-	case SDCylDown:
-		Mode_SDCylinderDown(data, co2);
-		break;
-	case SDCylLeft:
-		Mode_SDCylinderLeft(data, co2);
-		break;
-	case SDCylRight:
-		Mode_SDCylinderRight(data, co2);
-		break;
+		E102_t.Original(tp);
 	}
-
-	E102_t.Original(tp);
 }
 
 static void __cdecl E102LockOnCursor_r(task* tp);

@@ -1,10 +1,12 @@
 #include "pch.h"
+#include "gravity.h"
 #include "result.h"
 #include "e_cart.h"
 
 TaskHook MilesJiggle_t((intptr_t)Tails_Jiggle_Main);
 TaskHook MilesDirectAhead_t(0x45DAD0);
 TaskHook MilesDirectAhead2_t(0x45DE20);
+TaskHook MilesTalesPrower_t(0x461700);
 UsercallFuncVoid(Miles_RunActions_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x45E5D0, rEAX, rECX, stack4);
 UsercallFunc(Bool, Miles_CheckInput_t, (playerwk* pwp, taskwk* twp, motionwk2* mwp), (pwp, twp, mwp), 0x45C100, rEAX, rEDI, rESI, stack4);
 
@@ -84,6 +86,22 @@ void Miles_RunAction_r(playerwk* co2, motionwk2* data2, taskwk* data1)
 	Miles_RunActions_t.Original(co2, data2, data1);
 }
 
+void MilesTalesPrower_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		auto pnum = TASKWK_PLAYERID(tp->twp);
+		gravity::SaveGlobalGravity();
+		gravity::SwapGlobalToUserGravity(pnum);
+		MilesTalesPrower_t.Original(tp);
+		gravity::RestoreGlobalGravity();
+	}
+	else
+	{
+		MilesTalesPrower_t.Original(tp);
+	}
+}
+
 void initMilesPatches()
 {
 	MilesJiggle_t.Hook(MilesJiggle_r);
@@ -91,4 +109,5 @@ void initMilesPatches()
 	MilesDirectAhead2_t.Hook(MilesDirectAhead2_r);
 	Miles_RunActions_t.Hook(Miles_RunAction_r);
 	Miles_CheckInput_t.Hook(Miles_CheckInput_r);
+	MilesTalesPrower_t.Hook(MilesTalesPrower_r);
 }
