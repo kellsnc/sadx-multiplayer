@@ -255,12 +255,14 @@ void camera_release_event_camera(uint32_t pnum)
 	CameraReleaseEventCamera_m(pnum);
 }
 
-colaround* multi_get_enemy_list(Uint8 pno)
+bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num)
 {
-	return GetTargetEnemyList(pno);
-}
-
-Uint16* multi_get_enemy_list_index(Uint8 pno)
-{
-	return getAelNum(pno);
+	colaround* ael = GetTargetEnemyList(pnum);
+	if (ael)
+	{
+		if (pp_ael) *pp_ael = ael;
+		if (p_num) *p_num = getAelNum(pnum);
+		return true;
+	}
+	return false;
 }

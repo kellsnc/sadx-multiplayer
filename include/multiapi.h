@@ -183,11 +183,9 @@ extern "C"
 	// Note that the vanilla function `CameraReleaseEventCmaera` will work for P1
 	API void camera_release_event_camera(uint32_t pnum);
 
-	// get Homing Attack target list 
-	API colaround* multi_get_enemy_list(Uint8 pno);
-
-	// get Homing Attack index target list 
-	API Uint16* multi_get_enemy_list_index(Uint8 pno);
+	// Get the target list and count for a specific player
+	// Return false on error (pointers no written to)
+	API bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num);
 
 #ifdef __cplusplus
 }
