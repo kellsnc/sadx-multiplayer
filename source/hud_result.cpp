@@ -52,18 +52,21 @@ static void DisplayMultiResultScreeen(taskwk* twp, int pnum)
 	float scale = min(scaleX, scaleY);
 
 	// Dim screen
-	DrawRect_Queue(screenX, screenY, screenX + 640.0f * scaleX, screenY + 480.0f * scaleY, 22048.0, static_cast<int>(twp->value.f * 30.0f) << 24, QueuedModelFlagsB_EnableZWrite);
+	late_DrawBoxFill2D(screenX, screenY, screenX + 640.0f * scaleX, screenY + 480.0f * scaleY, 22048.0, static_cast<int>(twp->value.f * 30.0f) << 24, LATE_WZ);
 
-	// Draw win/lose status
-	Spr_MRaceDisp.tlist = &MILESRACE_TEXLIST;
-	Spr_MRaceDisp.sx = Spr_MRaceDisp.sy = scale * twp->value.f;
-	Spr_MRaceDisp.tanim = &TailsRace_TEXANIM;
-	Spr_MRaceDisp.p.y = screenY + 200.0f * scaleY;
-	Spr_MRaceDisp.p.x = screenX + 320.0f * scaleX;
-
-	for (int i = 0; i < 4; ++i)
+	if (twp->value.f > 0.0f)
 	{
-		njDrawSprite2D_Queue(&Spr_MRaceDisp, (GetWinnerMulti() == pnum ? 3 : 7) + i, 22046.4f, NJD_SPRITE_ALPHA, QueuedModelFlagsB_SomeTextureThing);
+		// Draw win/lose status
+		Spr_MRaceDisp.tlist = &MILESRACE_TEXLIST;
+		Spr_MRaceDisp.sx = Spr_MRaceDisp.sy = scale * twp->value.f;
+		Spr_MRaceDisp.tanim = &TailsRace_TEXANIM;
+		Spr_MRaceDisp.p.y = screenY + 200.0f * scaleY;
+		Spr_MRaceDisp.p.x = screenX + 320.0f * scaleX;
+
+		for (int i = 0; i < 4; ++i)
+		{
+			late_DrawSprite2D(&Spr_MRaceDisp, (GetWinnerMulti() == pnum ? 3 : 7) + i, 22046.4f, NJD_SPRITE_ALPHA, LATE_LIG);
+		}
 	}
 }
 
@@ -135,11 +138,15 @@ static void __cdecl CalcTotalScoreM(task* tp)
 		{
 			if (CanShowDialog())
 			{
-				msgc_continue.Initialize(continue_texts[TextLanguage], 0, 335);
-
-				*(task**)0x3B22E28 = SetDialogTask();
-				OpenDialogCsrLet(&DialogAskContinue, 1, nullptr);
-				twp->mode = RESULT_DIAL;
+				twp->value.f -= 0.2f;
+				if (twp->value.f <= 0.0f)
+				{
+					twp->value.f = 0.0f;
+					msgc_continue.Initialize(continue_texts[TextLanguage], 0, 335);
+					*(task**)0x3B22E28 = SetDialogTask();
+					OpenDialogCsrLet(&DialogAskContinue, 1, nullptr);
+					twp->mode = RESULT_DIAL;
+				}
 			}
 			else
 			{
