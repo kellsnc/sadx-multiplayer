@@ -54,10 +54,16 @@ void KillAndWarpPlayers(char pNum)
 				SetTime2(continue_data.minutes, continue_data.second, continue_data.frame);
 			}
 
+			CameraReleaseEventCamera_m(pNum);
+
+			if (isPlayerInCart(pNum))
+			{
+				CameraSetEventCamera_m(pNum, CAMMD_CART, CAMADJ_NONE);
+			}
+
 			// Don't reset mode if player is riding something
 			if (!isPlayerInCart(pNum) && !isPlayerOnSnowBoard(pNum))
 			{
-				CameraReleaseEventCamera_m(pNum);
 				SetInputP(pNum, PL_OP_LETITGO);
 				twp->mode = 1;
 			}
