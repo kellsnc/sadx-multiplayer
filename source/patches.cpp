@@ -43,6 +43,7 @@ General patches to allow compatibility for 4+ players
 static Trampoline* PGetRotation_t = nullptr;
 static Trampoline* PGetAcceleration_t = nullptr;
 static Trampoline* PGetAccelerationSnowBoard_t = nullptr;
+static Trampoline* PGetAccelerationForBuilding_t = nullptr;
 static Trampoline* Ring_t = nullptr;
 static Trampoline* Tobitiri_t = nullptr;
 static Trampoline* EnemyDist2FromPlayer_t = nullptr;
@@ -118,6 +119,25 @@ void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* 
 	}
 
 	TARGET_DYNAMIC(PGetAccelerationSnowBoard)(twp, mwp, pwp, Max_Speed);
+}
+
+void __cdecl PGetAccelerationForBuilding_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
+{
+	if (SplitScreen::IsActive())
+	{
+		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
+
+		if (cam_ang)
+		{
+			auto backup = camera_twp->ang;
+			camera_twp->ang = *cam_ang;
+			TARGET_DYNAMIC(PGetAccelerationForBuilding)(twp, mwp, pwp);
+			camera_twp->ang = backup;
+			return;
+		}
+	}
+
+	TARGET_DYNAMIC(PGetAccelerationForBuilding)(twp, mwp, pwp);
 }
 
 void __cdecl SonicMotionCheckEdition_r(taskwk* twp)
@@ -865,6 +885,7 @@ void InitPatches()
 	PGetRotation_t = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
 	PGetAcceleration_t = new Trampoline(0x44C270, 0x44C278, PGetAcceleration_r);
 	PGetAccelerationSnowBoard_t = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
+	PGetAccelerationForBuilding_t = new Trampoline(0x448150, 0x448158, PGetAccelerationForBuilding_r);
 	SonicMotionCheckEdition.Hook(SonicMotionCheckEdition_r);
 
 	// Misc
