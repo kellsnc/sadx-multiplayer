@@ -493,16 +493,16 @@ void UpdatePlayersInfo()
 	}
 
 #ifdef _DEBUG
-	if ((PressedButtons[1] & Buttons_L) && (PressedButtons[1] & Buttons_R))
+	if ((perG[1].press & Buttons_L) && (perG[1].press & Buttons_R))
 	{
-		if (IsIngame() && playertwp[1] && playertwp[0])
+		if (ChkGameMode() && playertwp[1] && playertwp[0])
 		{
-			playertwp[1]->pos = playertwp[0]->pos;
+			TeleportPlayer(1, &playertwp[0]->pos);
 		}
 	}
 #endif
 
-	if (IsIngame())
+	if (ChkGameMode())
 	{
 		bool vs = multiplayer::IsFightMode();
 		bool coop = multiplayer::IsCoopMode();
