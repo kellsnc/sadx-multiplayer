@@ -8,6 +8,22 @@ Trampoline* e103_chkPlayerRadius_t = nullptr;
 FunctionHook <void, task*> e103_waitPlayer_t(0x4E6B90);
 UsercallFuncVoid(e103_turnBody_t, (task* a1, NJS_POINT3* a2, int a3), (a1, a2, a3), 0x4E6940, rEAX, rECX, rEDI);
 UsercallFuncVoid(e103_chkDamage_t, (task* a1), (a1), 0x4E6790, rESI);
+UsercallFuncVoid(e103_normal_t, (task* tp), (tp), 0x4E6ED0, rEAX);
+
+static void SetE103Camera(task* tp)
+{
+	auto ewp = (enemywk*)tp->mwp;
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (playertwp[i])
+		{
+			if (GetDistance(&playertwp[i]->pos, &ewp->home) < 200.0f)
+			{
+				CameraSetEventCamera_m(i, CAMMD_E103, CAMADJ_NONE);
+			}
+		}
+	}
+}
 
 #pragma region move
 static void e103_move_o(task* tp)
@@ -177,16 +193,17 @@ static void __declspec(naked) e103_chkPlayerRadius_w()
 {
 	__asm
 	{
+		push edx
 		push[esp + 04h]
 		push eax
 		call e103_chkPlayerRadius_r
 		add esp, 8
+		pop edx
 		retn
 	}
 }
 #pragma endregion
 
-#pragma region waitPlayer
 static void __cdecl e103_waitPlayer_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -202,16 +219,13 @@ static void __cdecl e103_waitPlayer_r(task* tp)
 			wk->bwk.req_action = 0;
 			*(int*)0x3C5D71C = 0;
 			wk->flag &= ~8;
+			SetE103Camera(tp);
 			if (twp->mode != 7)
 			{
 				wk->mode_old = twp->mode;
 				wk->mode_req = 7;
 			}
 			twp->smode = -1;
-		}
-		else
-		{
-			twp->smode = 0;
 		}
 
 		if (twp->smode == -1 || wk->fGroundDist < 150.0f)
@@ -228,9 +242,6 @@ static void __cdecl e103_waitPlayer_r(task* tp)
 		e103_waitPlayer_t.Original(tp);
 	}
 }
-#pragma endregion
-
-#pragma region turnBody
 
 static void __cdecl e103_turnBody_r(task* pTask, NJS_POINT3* posTarget, Angle angMax)
 {
@@ -249,26 +260,10 @@ static void __cdecl e103_turnBody_r(task* pTask, NJS_POINT3* posTarget, Angle an
 	}
 }
 
-#pragma endregion
-
-#pragma region chkDamage
-
 static void __cdecl e103_chkDamage_r(task* tp)
 {
 	auto twp = tp->twp;
 	auto ewp = (enemywk*)tp->mwp;
-
-	// Temporary camera code here
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		if (playertwp[i])
-		{
-			if (GetDistance(&playertwp[i]->pos, &ewp->home) < 200.0f && GetCameraMode_m(i) != CAMMD_KNUCKLES)
-			{
-				CameraSetEventCamera_m(i, CAMMD_KNUCKLES, CAMADJ_THREE3C);
-			}
-		}
-	}
 
 	// Teleport back if too far
 	if (GetDistance(&twp->pos, &ewp->home) > 500.0f)
@@ -276,7 +271,7 @@ static void __cdecl e103_chkDamage_r(task* tp)
 		twp->pos = ewp->home;
 	}
 
-	if (twp->mode != MODE_ATTACK && twp->mode != MODE_DEATH)
+	if (twp->mode != 6)
 	{
 		auto hit_twp = CCL_IsHitPlayer(twp);
 		if (hit_twp && TASKWK_CHARID(hit_twp) != Characters_Gamma) // allow other characters to hurt enemy
@@ -295,13 +290,29 @@ static void __cdecl e103_chkDamage_r(task* tp)
 	e103_chkDamage_t.Original(tp);
 }
 
-#pragma endregion
+static void __cdecl e103_normal_r(task* tp)
+{
+	auto twp = tp->twp;
+	auto wk = (TGT_WK*)tp->awp;
+
+	if (twp->smode == 0)
+	{
+		SetE103Camera(tp);
+		wk->bwk.req_action = 0;
+		wk->flag |= 2;
+		twp->smode = 1;
+		return;
+	}
+
+	e103_normal_t.Original(tp);
+}
 
 void InitE103Patches()
 {
 	e103_move_t = new Trampoline(0x4E6D00, 0x4E6D07, e103_move_w);
 	e103_chkPlayerRadius_t = new Trampoline(0x4E6900, 0x4E6908, e103_chkPlayerRadius_w);
+	e103_waitPlayer_t.Hook(e103_waitPlayer_r);
 	e103_turnBody_t.Hook(e103_turnBody_r);
 	e103_chkDamage_t.Hook(e103_chkDamage_r);
-	e103_waitPlayer_t.Hook(e103_waitPlayer_r);
+	e103_normal_t.Hook(e103_normal_r);
 }

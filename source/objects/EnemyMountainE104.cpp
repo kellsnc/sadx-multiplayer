@@ -7,11 +7,25 @@
 
 Trampoline* e104_move_t = nullptr;
 Trampoline* e104_waitPlayer_t = nullptr;
-FunctionHook <BOOL, task*> e104_chkPlayerRangeIn_t(0x604650);
+Trampoline* e104_chkPlayerRadius_t = nullptr;
 Trampoline* e104_turnBody_t = nullptr;
 Trampoline* e104_chkDamage_t = nullptr;
+Trampoline* e104_execMode_t = nullptr;
 
-TaskHook E104_Exec_t(E104_Main);
+static void SetE104Camera(task* tp)
+{
+	auto ewp = (enemywk*)tp->mwp;
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (playertwp[i])
+		{
+			if (GetDistance(&playertwp[i]->pos, &ewp->home) < 200.0f)
+			{
+				CameraSetEventCamera_m(i, CAMMD_E103, CAMADJ_NONE);
+			}
+		}
+	}
+}
 
 #pragma region move
 static void e104_move_o(task* tp)
@@ -131,7 +145,6 @@ static void __declspec(naked) e104_move_w()
 }
 #pragma endregion
 
-#pragma region waitPlayer
 static void __cdecl e104_waitPlayer_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -147,16 +160,13 @@ static void __cdecl e104_waitPlayer_r(task* tp)
 			wk->bwk.req_action = 0;
 			*(int*)0x3C80FB8 = 0;
 			wk->flag &= ~8;
+			SetE104Camera(tp);
 			if (twp->mode != 7)
 			{
 				wk->mode_old = twp->mode;
 				wk->mode_req = 7;
 			}
 			twp->smode = -1;
-		}
-		else
-		{
-			twp->smode = 0;
 		}
 
 		if (twp->smode == -1 || wk->fGroundDist < 150.0f)
@@ -174,26 +184,64 @@ static void __cdecl e104_waitPlayer_r(task* tp)
 		TARGET_DYNAMIC(e104_waitPlayer)(tp);
 	}
 }
-#pragma endregion
 
-#pragma region chkPlayerRangeIn
-static BOOL __cdecl e104_chkPlayerRangeIn_r(task* tp)
+#pragma region chkPlayerRadius
+static BOOL e104_chkPlayerRadius_o(task * tp, Float r)
+{
+	auto target = e104_chkPlayerRadius_t->Target();
+	BOOL rt;
+	__asm
+	{
+		push[r]
+		mov eax, [tp]
+		call target
+		mov rt, eax
+		add esp, 4
+	}
+	return rt;
+}
+
+static BOOL __cdecl e104_chkPlayerRadius_r(task* tp, Float r)
 {
 	if (multiplayer::IsActive())
 	{
 		auto twp = tp->twp;
 
-		if (IsPlayerInSphere(&tp->twp->pos, 150.0f))
+		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			twp->smode = 2;
-			ccsi_flag = 1ui8;
+			auto ptwp = playertwp[i];
+
+			if (ptwp)
+			{
+				auto x = twp->pos.x - ptwp->pos.x;
+				auto z = twp->pos.z - ptwp->pos.z;
+
+				if (x * x + z * z < r)
+				{
+					return TRUE;
+				}
+			}
 		}
 
 		return FALSE;
 	}
 	else
 	{
-		return  e104_chkPlayerRangeIn_t.Original(tp);
+		return e104_chkPlayerRadius_o(tp, r);
+	}
+}
+
+static void __declspec(naked) e104_chkPlayerRadius_w()
+{
+	__asm
+	{
+		push edx
+		push[esp + 04h]
+		push eax
+		call e104_chkPlayerRadius_r
+		add esp, 8
+		pop edx
+		retn
 	}
 }
 #pragma endregion
@@ -260,25 +308,13 @@ static void __cdecl e104_chkDamage_r(task* tp)
 	auto twp = tp->twp;
 	auto ewp = (enemywk*)tp->mwp;
 
-	// Temporary camera code here
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		if (playertwp[i])
-		{
-			if (GetDistance(&playertwp[i]->pos, &ewp->home) < 200.0f && GetCameraMode_m(i) != CAMMD_KNUCKLES)
-			{
-				CameraSetEventCamera_m(i, CAMMD_KNUCKLES, CAMADJ_THREE3C);
-			}
-		}
-	}
-
 	// Teleport back if too far
 	if (GetDistance(&twp->pos, &ewp->home) > 500.0f)
 	{
 		twp->pos = ewp->home;
 	}
 
-	if (twp->mode != MODE_ATTACK && twp->mode != MODE_DEATH)
+	if (twp->mode != 6)
 	{
 		auto hit_twp = CCL_IsHitPlayer(twp);
 		if (hit_twp && TASKWK_CHARID(hit_twp) != Characters_Gamma) // allow other characters to hurt enemy
@@ -309,11 +345,52 @@ static void __declspec(naked) e104_chkDamage_w()
 }
 #pragma endregion
 
+#pragma region execMode
+static void e104_execMode_o(task* tp)
+{
+	auto target = e104_execMode_t->Target();
+	__asm
+	{
+		mov eax, [tp]
+		call target
+	}
+}
+
+static void __cdecl e104_execMode_r(task* tp)
+{
+	auto twp = tp->twp;
+	auto wk = (TGT_WK*)tp->awp;
+	
+	if (twp->mode == 1 && twp->smode == 0) // "normal" was inlined
+	{
+		SetE104Camera(tp);
+		wk->bwk.req_action = 0;
+		wk->flag |= 2;
+		twp->smode = 1;
+		return;
+	}
+
+	e104_execMode_o(tp);
+}
+
+static void __declspec(naked) e104_execMode_w()
+{
+	__asm
+	{
+		push eax
+		call e104_execMode_r
+		pop eax
+		retn
+	}
+}
+#pragma endregion
+
 void InitE104Patches()
 {
 	e104_move_t = new Trampoline(0x6048B0, 0x6048B5, e104_move_w);
 	e104_waitPlayer_t = new Trampoline(0x6046A0, 0x6046A5, e104_waitPlayer_r);
 	e104_turnBody_t = new Trampoline(0x604480, 0x604485, e104_turnBody_w);
 	e104_chkDamage_t = new Trampoline(0x604310, 0x604316, e104_chkDamage_w);
-	e104_chkPlayerRangeIn_t.Hook(e104_chkPlayerRangeIn_r);
+	e104_execMode_t = new Trampoline(0x605400, 0x605406, e104_execMode_w);
+	e104_chkPlayerRadius_t = new Trampoline(0x566D80, 0x566D89, e104_chkPlayerRadius_w);
 }

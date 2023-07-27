@@ -49,18 +49,6 @@ enum AvaTexLdEnum : __int32
 	TENUM_NMAX_SADXPC = 30 // custom, enum is different
 };
 
-enum TGT_MODE : __int32
-{
-	MODE_WAIT_PLAYER = 0x0,
-	MODE_JUMP = 0x2,
-	MODE_HOVER = 0x3,
-	MODE_FALL = 0x4,
-	MODE_DAMAGE = 0x5,
-	MODE_ATTACK = 0x6,
-	MODE_DEATH = 0x7,
-	MODE_MAX = 0x8,
-};
-
 enum : __int32
 {
 	ID_NO_DEFINE = 0x0,
