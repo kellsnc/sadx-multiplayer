@@ -6,6 +6,7 @@
 #include "FunctionHook.h"
 #include "UsercallFunctionHandler.h"
 
+#include "objects/o_savepoint.h"
 #include "objects/ObjectItemBox.h"
 #include "objects/ObjectRocket.h"
 #include "objects/SnowBoard.h"
@@ -49,7 +50,6 @@ static Trampoline* Tobitiri_t = nullptr;
 static Trampoline* EnemyDist2FromPlayer_t = nullptr;
 static Trampoline* EnemyCalcPlayerAngle_t = nullptr;
 static Trampoline* EnemyTurnToPlayer_t = nullptr;
-static Trampoline* savepointCollision_t = nullptr;
 static Trampoline* TikalDisplay_t = nullptr;
 static Trampoline* ObjectSpringB_t = nullptr;
 static Trampoline* SpinnaDisplayer_t = nullptr;
@@ -399,82 +399,6 @@ Angle __cdecl EnemyTurnToPlayer_r(taskwk* twp, enemywk* ewp, unsigned __int8 pnu
 	else
 	{
 		return TARGET_DYNAMIC(EnemyTurnToPlayer)(twp, ewp, pnum);
-	}
-}
-
-// inlined in symbols
-float savepointGetSpeedM(taskwk* twp, int pID)
-{
-	if (!playerpwp[pID])
-	{
-		return 0.0f;
-	}
-
-	float spd = njScalor(&playerpwp[pID]->spd);
-
-	if (DiffAngle(0x4000 - EntityData1Ptrs[0]->Rotation.y, twp->ang.y) <= 0x4000)
-	{
-		return spd;
-	}
-	else
-	{
-		return -spd;
-	}
-}
-
-// Patch checkpoints to work for every players
-void __cdecl savepointCollision_r(task* tp, taskwk* twp)
-{
-	if (multiplayer::IsActive())
-	{
-		savepoint_data->tp[0]->twp->ang.x = twp->ang.x + savepoint_data->ang.x;
-		savepoint_data->tp[0]->twp->ang.y = twp->ang.y + savepoint_data->ang.y;
-		savepoint_data->tp[0]->twp->ang.z = twp->ang.z + savepoint_data->ang.z;
-		savepoint_data->tp[1]->twp->ang.x = twp->ang.x + savepoint_data->ang.x;
-		savepoint_data->tp[1]->twp->ang.y = twp->ang.y + savepoint_data->ang.y;
-		savepoint_data->tp[1]->twp->ang.z = twp->ang.z + savepoint_data->ang.z;
-
-		if (twp->mode == 1)
-		{
-			auto entity = CCL_IsHitPlayer(twp);
-
-			if (entity)
-			{
-				twp->mode = 2;
-				int pID = TASKWK_PLAYERID(entity);
-				savepoint_data->write_timer = 300;
-				savepoint_data->ang_spd.y = static_cast<Angle>((savepointGetSpeedM(twp, pID) * 10.0f) * 65536.0f * 0.0028f);
-				updateContinueData(&entity->pos, &entity->ang);
-				SetBroken(tp);
-				dsPlay_oneshot(10, 0, 0, 0);
-			}
-		}
-
-		EntryColliList(twp);
-	}
-	else
-	{
-		auto target = TARGET_DYNAMIC(savepointCollision);
-
-		__asm
-		{
-			mov esi, [twp]
-			mov edi, [tp]
-			call target
-		}
-	}
-}
-
-static void __declspec(naked) savepointCollision_w()
-{
-	__asm
-	{
-		push esi // twp
-		push edi // tp
-		call savepointCollision_r
-		pop edi // tp
-		pop esi // twp
-		retn
 	}
 }
 
@@ -869,7 +793,6 @@ void InitPatches()
 	Tobitiri_t = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);;
 	OTpRing_t.Hook(OTpRing_r);
 	PlayerVacumedRing_t.Hook(PlayerVacumedRing_r);
-	savepointCollision_t = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
 	ListGroundForDrawing_t = new Trampoline(0x43A900, 0x43A905, ListGroundForDrawing_r);
 
 	// Player
@@ -957,6 +880,7 @@ void InitPatches()
 	WriteCall((void*)0x63DFB6, CheckAnyPlayerRideOnMobileLandObjectP);
 	WriteCall((void*)0x63DFED, CheckAnyPlayerRideOnMobileLandObjectP);
 
+	PatchCheckpoint();
 	InitItemBoxPatches();
 	InitSnowBoardPatches();
 	initBossesPatches();

@@ -150,6 +150,7 @@
     <ClInclude Include="objects\ObjectItemBox.h" />
     <ClInclude Include="objects\ObjectRocket.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
+    <ClInclude Include="objects\o_savepoint.h" />
     <ClInclude Include="objects\o_sky_cannon_s.h" />
     <ClInclude Include="objects\o_sky_ocm.h" />
     <ClInclude Include="objects\SnowBoard.h" />
@@ -262,6 +263,7 @@
     <ClCompile Include="objects\o_fountain.cpp" />
     <ClCompile Include="objects\o_Mountain_MagmaCnt.cpp" />
     <ClCompile Include="objects\o_ruinSwDoor_.cpp" />
+    <ClCompile Include="objects\o_savepoint.cpp" />
     <ClCompile Include="objects\o_shat.cpp" />
     <ClCompile Include="objects\o_sky_cannon_s.cpp" />
     <ClCompile Include="objects\ObjectSkyLever.cpp" />

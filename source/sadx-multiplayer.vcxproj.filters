@@ -547,6 +547,9 @@
     <ClCompile Include="objects\o_CmnDushRing.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_savepoint.cpp">
+      <Filter>Source Files\objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -772,6 +775,9 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="objects\AI_Fight.h">
+      <Filter>Header FIles\objects</Filter>
+    </ClInclude>
+    <ClInclude Include="objects\o_savepoint.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
   </ItemGroup>

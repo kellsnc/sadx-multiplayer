@@ -405,6 +405,16 @@ struct RaceWk
 	Sint32 bestLapTime_a[3];
 };
 
+struct CUSTUM_PRINT_NUMBER
+{
+	Float loc_x;
+	Float loc_y;
+	Float scale_x;
+	Float scale_y;
+	Float add_x;
+	Float add_y;
+};
+
 DataArray(SAVE_DATA, SaveData, 0x3B2B3A8, 3);
 FunctionPointer(void, njDrawQuadTextureEx, (NJS_QUAD_TEXTURE_EX* quad), 0x77DE10);
 VoidFunc(TempEraseSound, 0x424830);
