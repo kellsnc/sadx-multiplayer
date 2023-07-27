@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "multiplayer.h"
 #include "result.h"
-#include "patches.h"
+#include "camera.h"
 
 // E104 is almost entirely a copy paste of E103
 
 Trampoline* e104_move_t = nullptr;
-Trampoline* e104_chkPlayerRadius_t = nullptr;
+Trampoline* e104_waitPlayer_t = nullptr;
 FunctionHook <BOOL, task*> e104_chkPlayerRangeIn_t(0x604650);
 Trampoline* e104_turnBody_t = nullptr;
 Trampoline* e104_chkDamage_t = nullptr;
@@ -131,61 +131,47 @@ static void __declspec(naked) e104_move_w()
 }
 #pragma endregion
 
-#pragma region chkPlayerRadius
-static BOOL e104_chkPlayerRadius_o(task* tp, float r)
-{
-	auto target = e104_chkPlayerRadius_t->Target();
-	BOOL rt;
-	__asm
-	{
-		push[r]
-		mov eax, [tp]
-		call target
-		mov rt, eax
-		add esp, 4
-	}
-	return rt;
-}
-
-static BOOL __cdecl e104_chkPlayerRadius_r(task* tp, float r)
+#pragma region waitPlayer
+static void __cdecl e104_waitPlayer_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
 		auto twp = tp->twp;
+		auto wk = (TGT_WK*)tp->awp;
 
-		for (int i = 0; i < PLAYER_MAX; ++i)
+		CheckRangeOut(tp);
+
+		if (IsPlayerInSphere(&tp->twp->pos, 150.0f) && twp->smode == 0)
 		{
-			auto ptwp = playertwp[i];
-
-			if (ptwp)
+			wk->fHitPoint = 5.0f;
+			wk->bwk.req_action = 0;
+			*(int*)0x3C80FB8 = 0;
+			wk->flag &= ~8;
+			if (twp->mode != 7)
 			{
-				auto x = twp->pos.x - ptwp->pos.x;
-				auto z = twp->pos.z - ptwp->pos.z;
-
-				if (x * x + z * z < r)
-				{
-					return TRUE;
-				}
+				wk->mode_old = twp->mode;
+				wk->mode_req = 7;
 			}
+			twp->smode = -1;
+		}
+		else
+		{
+			twp->smode = 0;
 		}
 
-		return FALSE;
+		if (twp->smode == -1 || wk->fGroundDist < 150.0f)
+		{
+			wk->flag |= 4;
+		}
+		else
+		{
+			wk->spd.y = 0.0f;
+			wk->flag &= ~4;
+		}
 	}
 	else
 	{
-		return e104_chkPlayerRadius_o(tp, r);
-	}
-}
-
-static void __declspec(naked) e104_chkPlayerRadius_w()
-{
-	__asm
-	{
-		push[esp + 04h]
-		push eax
-		call e104_chkPlayerRadius_r
-		add esp, 8
-		retn
+		TARGET_DYNAMIC(e104_waitPlayer)(tp);
 	}
 }
 #pragma endregion
@@ -272,11 +258,36 @@ static void e104_chkDamage_o(task* tp)
 static void __cdecl e104_chkDamage_r(task* tp)
 {
 	auto twp = tp->twp;
+	auto ewp = (enemywk*)tp->mwp;
+
+	// Temporary camera code here
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (playertwp[i])
+		{
+			if (GetDistance(&playertwp[i]->pos, &ewp->home) < 200.0f && GetCameraMode_m(i) != CAMMD_KNUCKLES)
+			{
+				CameraSetEventCamera_m(i, CAMMD_KNUCKLES, CAMADJ_THREE3C);
+			}
+		}
+	}
+
+	// Teleport back if too far
+	if (GetDistance(&twp->pos, &ewp->home) > 500.0f)
+	{
+		twp->pos = ewp->home;
+	}
 
 	if (twp->mode != MODE_ATTACK && twp->mode != MODE_DEATH)
 	{
-		auto hit_twp = CCL_IsHitBullet(twp);
+		auto hit_twp = CCL_IsHitPlayer(twp);
+		if (hit_twp && TASKWK_CHARID(hit_twp) != Characters_Gamma) // allow other characters to hurt enemy
+		{
+			SetWinnerMulti(TASKWK_PLAYERID(hit_twp));
+			twp->flag |= Status_Hurt;
+		}
 
+		hit_twp = CCL_IsHitBullet(twp);
 		if (hit_twp)
 		{
 			SetWinnerMulti(hit_twp->btimer); // player number is stored in btimer thanks to patch in E102.cpp
@@ -298,32 +309,11 @@ static void __declspec(naked) e104_chkDamage_w()
 }
 #pragma endregion
 
-void E104Enemy_Main_R(task* obj) {
-
-	auto data1 = obj->twp;
-	auto pNum = GetTheNearestPlayerNumber(&data1->pos);
-	auto player = playertwp[pNum];
-
-	if (player)
-		E100CheckAndSetDamage(data1, player);
-
-	if (!IsPlayerInsideSphere(&data1->pos, 300.0f) && data1->mode > 1)
-	{
-		data1->mode = 0;
-		return;
-	}
-
-	E104_Exec_t.Original(obj);
-}
-
 void InitE104Patches()
 {
 	e104_move_t = new Trampoline(0x6048B0, 0x6048B5, e104_move_w);
-	e104_chkPlayerRadius_t = new Trampoline(0x566D80, 0x566D89, e104_chkPlayerRadius_w);
+	e104_waitPlayer_t = new Trampoline(0x6046A0, 0x6046A5, e104_waitPlayer_r);
 	e104_turnBody_t = new Trampoline(0x604480, 0x604485, e104_turnBody_w);
 	e104_chkDamage_t = new Trampoline(0x604310, 0x604316, e104_chkDamage_w);
-
 	e104_chkPlayerRangeIn_t.Hook(e104_chkPlayerRangeIn_r);
-
-	E104_Exec_t.Hook(E104Enemy_Main_R);
 }
