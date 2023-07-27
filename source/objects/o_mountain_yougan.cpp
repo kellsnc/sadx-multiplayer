@@ -12,7 +12,7 @@
 #define TARGET rd_mountain_twp->scl.x
 #define SPEED rd_mountain_twp->scl.y
 
-static void Object_Mountain_Yougan_m(task* tp)
+static void __cdecl Object_Mountain_Yougan_m(task* tp)
 {
 	auto twp = tp->twp;
 
@@ -118,6 +118,7 @@ static void __cdecl Object_Mountain_Yougan_r(task* tp)
 	if (multiplayer::IsEnabled())
 	{
 		Object_Mountain_Yougan_m(tp);
+		tp->exec = Object_Mountain_Yougan_m;
 	}
 	else
 	{
