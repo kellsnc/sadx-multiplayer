@@ -3,6 +3,14 @@
 #define TASKWK_PLAYERID(a) a->counter.b[0] // Get player id from player's taskwk
 #define TASKWK_CHARID(a) a->counter.b[1] // Get character id from player's taskwk
 
+#define GET_STAGE(num) ((num) >> 8)  /* Extract stage from GetStageNumber */
+#define GET_ACT(num) ((num) & 0xFF)  /* Extract act from GetStageNumber */
+
+#define SHORT_ANG(ang) ((ang) & 0xFFFF)
+#define ROTATEX(m, ang) if (ang != 0) njRotateX(m, SHORT_ANG(ang));
+#define ROTATEY(m, ang) if (ang != 0) njRotateY(m, SHORT_ANG(ang));
+#define ROTATEZ(m, ang) if (ang != 0) njRotateZ(m, SHORT_ANG(ang));
+
 static constexpr int ADVA_MODE_MULTI = 0x8;
 
 enum AvaTexLdEnum : __int32
