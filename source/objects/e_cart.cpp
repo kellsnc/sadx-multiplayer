@@ -487,8 +487,16 @@ void setupCartStageM(task* tp, taskwk* twp, int pnum)
 		twp->pos.z += njSin(twp->ang.y) * dists[pnum];
 		cart_data->last_pos = twp->pos;
 
-		setupCartControl(tp, pnum);
-		SetInputP(pnum, PL_OP_PLACEWITHCART);
+		taskwk* ptwp = playertwp[pnum];
+		ptwp->pos.x = twp->pos.x + njSin(twp->ang.y) * 10.0f;
+		ptwp->pos.y = twp->pos.y;
+		ptwp->pos.z = twp->pos.z + njCos(twp->ang.y) * 10.0f;
+
+		if (++cart_data->start_wait >= 60)
+		{
+			setupCartControl(tp, pnum);
+			SetInputP(pnum, PL_OP_PLACEWITHCART);
+		}
 	}
 }
 
