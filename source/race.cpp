@@ -161,12 +161,12 @@ static void __cdecl execRaceM(task* tp)
 
 			if (wk->work->dialState < 4)
 			{
-				dsPlay_oneshot(701, 0, 0, 0);
+				MirenSoundPlayOneShotSE(SE_CT_READY, NULL, (VolumeInfo*)0x7E75D4);
 				wk->work->timer = 60;
 			}
 			else
 			{
-				dsPlay_oneshot(702, 0, 0, 0);
+				MirenSoundPlayOneShotSE(SE_CT_START, NULL, (VolumeInfo*)0x7E75E0);
 				wk->work->mode = RACEMD_GAME;
 				PadReadOnP(-1);
 			}
@@ -360,7 +360,7 @@ void __cdecl Rd_MiniCart_r(task* tp)
 
 static void goalRaceM(taskwk* pltwp, int pnum)
 {
-	dsPlay_oneshot(703, 0, 0, 0);
+	MirenSoundPlayOneShotSE(SE_CT_GOAL, NULL, (VolumeInfo*)0x7E75EC);
 
 	cartGoalFlagM[pnum] = true;
 
