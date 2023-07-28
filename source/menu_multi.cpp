@@ -902,6 +902,8 @@ void menu_multi_start(MultiMenuWK* wk, int act)
 	LastLevel = CurrentLevel;
 	LastAct = CurrentAct;
 	CurrentCharacter = gNextMultiMode == multiplayer::mode::coop ? menu_multiCoop_getCurCharType(backupCoopCharacter) : menu_multi_getplayerno(selected_characters[0]);
+	if (CurrentCharacter < 0) // Just in case
+		CurrentCharacter = 0;
 	CurrentLevel = level;
 	CurrentAct = act;
 	AvaStgActT stgact = { static_cast<uint8_t>(level), static_cast<uint8_t>(act) };
@@ -1076,6 +1078,7 @@ bool menu_multi_charsel_input(MultiMenuWK* wk, int i)
 	{
 		if (press & Buttons_B) // unready
 		{
+			chara_ready[i] = false;
 			sel = -1;
 			PlayMenuBackSound();
 
