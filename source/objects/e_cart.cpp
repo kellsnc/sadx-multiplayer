@@ -443,6 +443,31 @@ void cartSELoopM(task* tp, int se_no)
 	}
 }
 
+static void setupCartControl(task* tp, int pnum)
+{
+	taskwk* twp = tp->twp;
+	taskwk* pltwp = playertwp[pnum];
+
+	twp->mode = CARTMD_CTRL;
+
+	pltwp->ang.x = twp->ang.x;
+	pltwp->ang.y = 0x4000 - twp->ang.y;
+	pltwp->ang.z = twp->ang.z;
+	pltwp->pos.x = twp->pos.x;
+	pltwp->pos.y = twp->pos.y + 1.0f;
+	pltwp->pos.z = twp->pos.z;
+
+	cart_data->motion_timer = 0;
+	cart_data->ring_timer = CartOtherParam.ring_sub_timer;
+
+	// Change collision
+	cart_data->player_colli_r = pltwp->cwp->info->a;
+	pltwp->cwp->info->a = cci_cart[GetPlayerNumberM(pnum)].a;
+
+	// Tell on which cart task the player is
+	taskOfPlayerOn_m[pnum] = tp;
+}
+
 void setupCartStageM(task* tp, taskwk* twp, int pnum)
 {
 	if (CurrentLevel == LevelIDs_TwinkleCircuit)
@@ -460,20 +485,10 @@ void setupCartStageM(task* tp, taskwk* twp, int pnum)
 
 		twp->pos.x += njCos(twp->ang.y) * dists[pnum];
 		twp->pos.z += njSin(twp->ang.y) * dists[pnum];
-
 		cart_data->last_pos = twp->pos;
 
-		if (playertwp[pnum])
-		{
-			playertwp[pnum]->pos = twp->pos;
-			playertwp[pnum]->pos.x -= 10.0f;
-		}
-
-		if (++cart_data->start_wait >= 10)
-		{
-			twp->mode = CARTMD_WARP;
-			SetInputP(pnum, PL_OP_PLACEWITHCART);
-		}
+		setupCartControl(tp, pnum);
+		SetInputP(pnum, PL_OP_PLACEWITHCART);
 	}
 }
 
@@ -539,26 +554,7 @@ void cartSonicRidingCartM(task* tp, taskwk* twp, int pnum)
 	}
 	else if (fabs(pltwp->pos.x - twp->pos.x) <= 4.0f && fabs(pltwp->pos.z - twp->pos.z) <= 4.0f)
 	{
-		// Let's go
-		twp->mode = CARTMD_CTRL;
-
-		pltwp->ang.x = twp->ang.x;
-		pltwp->ang.y = 0x4000 - twp->ang.y;
-		pltwp->ang.z = twp->ang.z;
-		pltwp->pos.x = twp->pos.x;
-		pltwp->pos.y = twp->pos.y + 1.0f;
-		pltwp->pos.z = twp->pos.z;
-
-		cart_data->motion_timer = 0;
-		cart_data->ring_timer = CartOtherParam.ring_sub_timer;
-
-		// Change collision
-		cart_data->player_colli_r = pltwp->cwp->info->a;
-		pltwp->cwp->info->a = cci_cart[GetPlayerNumberM(pnum)].a;
-
-		// Tell on which cart task the player is
-		taskOfPlayerOn_m[pnum] = tp;
-
+		setupCartControl(tp, pnum);
 		CameraSetEventCamera_m(pnum, CAMMD_CART, CAMADJ_TIME);
 	}
 	else
