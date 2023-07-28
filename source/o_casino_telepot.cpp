@@ -5,7 +5,7 @@ TaskHook ObjectCasinoTelepotExec_t(0x5D10C0, ObjectCasinoTelepotExec_r);
 
 static void ObjectCasinoTelepotExec_r(task* tp)
 {
-	if (!multiplayer::IsActive())
+	if (!multiplayer::IsActive() || ObjectSelectedDebug((ObjectMaster*)tp))
 	{
 		return ObjectCasinoTelepotExec_t.Original(tp);
 	}
@@ -14,12 +14,6 @@ static void ObjectCasinoTelepotExec_r(task* tp)
 		return;
 
 	tp->disp(tp);
-
-	if (ObjectSelectedDebug((ObjectMaster*)tp))
-	{
-		ObjectCasinoTelepotExec_t.Original(tp);
-		return;
-	}
 
 	taskwk* twp = tp->twp;
 
@@ -35,6 +29,7 @@ static void ObjectCasinoTelepotExec_r(task* tp)
         {
             //Draw the player in
             njScalor(&pwp->spd);
+
             NJS_VECTOR spd = {
                 twp->pos.x - playertwp[pnum]->pos.x,
                 twp->pos.y - playertwp[pnum]->pos.y,
