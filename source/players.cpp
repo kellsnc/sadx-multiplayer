@@ -604,7 +604,7 @@ void SetPlayer_r()
 			}
 			break;
 		case Characters_Knuckles:
-			if (isCharSel && !EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
+			if (!EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
 			{
 				CreateElementalTask(2u, 6, Knuckles_KakeraGame);
 			}
