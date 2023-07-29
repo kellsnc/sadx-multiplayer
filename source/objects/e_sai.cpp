@@ -13,6 +13,7 @@ enum
 
 static task* pTask;
 
+#ifdef MULTI_NETPLAY
 static bool SaiListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
 	if (type == Netplay::PACKET_OBJECT_RHINOTANK)
@@ -57,9 +58,11 @@ static bool SaiSender(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM p
 	}
 	return false;
 }
+#endif
 
 static void __cdecl EnemySai_r(task* tp)
 {
+#ifdef MULTI_NETPLAY
 	if (tp->twp->mode != 0 && netplay.IsConnected())
 	{
 		if (netplay.GetPlayerNum() == 0)
@@ -68,6 +71,7 @@ static void __cdecl EnemySai_r(task* tp)
 			netplay.Send(Netplay::PACKET_OBJECT_RHINOTANK, SaiSender, -1, tp->twp->mode == MODE_DEAD ? true : false);
 		}
 	}
+#endif
 
 	auto backup = playertwp[0];
 	playertwp[0] = playertwp[GetClosestPlayerNum(&tp->twp->pos)];
@@ -78,5 +82,7 @@ static void __cdecl EnemySai_r(task* tp)
 void InitEnemySaiPatches()
 {
 	EnemySai_h.Hook(EnemySai_r);
+#ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_OBJECT_RHINOTANK, SaiListener);
+#endif
 }

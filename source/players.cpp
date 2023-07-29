@@ -24,7 +24,9 @@ Multiplayer manager
 
 */
 
+#ifdef MULTI_NETPLAY
 static Timer update_timer(std::chrono::steady_clock::duration(std::chrono::milliseconds(100)));
+#endif
 
 DataPointer(GM_START_POSANG*, paSonicIP_Ptr, 0x41491E);
 DataPointer(GM_START_POSANG*, paMilesIP_Ptr, 0x414925);
@@ -338,6 +340,7 @@ void RemovePlayersDamage(taskwk* twp)
 	}
 }
 
+#ifdef MULTI_NETPLAY
 static bool PlayerListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
 	auto ptwp = playertwp[pnum];
@@ -421,6 +424,7 @@ static bool PlayerSender(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNU
 		return false;
 	}
 }
+#endif
 
 void UpdatePlayersInfo()
 {
@@ -472,6 +476,7 @@ void UpdatePlayersInfo()
 		}
 	}
 
+#ifdef MULTI_NETPLAY
 	if (netplay.IsConnected())
 	{
 		auto pnum = netplay.GetPlayerNum();
@@ -530,6 +535,7 @@ void UpdatePlayersInfo()
 			}
 		}
 	}
+#endif
 }
 
 void ResetCharactersArray()
@@ -683,6 +689,7 @@ void InitPlayerPatches()
 	WriteJump(InitScore, InitScore_r);
 	WriteJump(GetRaceWinnerPlayer, GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
 
+#ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_LOCATION, PlayerListener);
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_MODE, PlayerListener);
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_SMODE, PlayerListener);
@@ -692,4 +699,5 @@ void InitPlayerPatches()
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_RINGS, PlayerListener);
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_LIVES, PlayerListener);
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_SCORE, PlayerListener);
+#endif
 }

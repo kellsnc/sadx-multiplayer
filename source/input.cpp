@@ -10,8 +10,10 @@
 
 DataPointer(bool*, pInputStatusForEachPlayer, 0x40F30C); // we get a pointer to `ucInputStatusForEachPlayer` since the input mod replaces the array
 
+#ifdef MULTI_NETPLAY
 static SONIC_INPUT net_analogs[PLAYER_MAX]{};
 static PDS_PERIPHERAL net_pers[PLAYER_MAX]{};
+#endif
 
 FunctionHook<void, Sint8> PadReadOnP_hook(0x40EF70);
 FunctionHook<void, Sint8> PadReadOffP_hook(0x40EFA0);
@@ -154,6 +156,7 @@ bool MenuBackButtonsPressedM()
 	return (GetPressedButtons() & (Buttons_X | Buttons_B));
 }
 
+#ifdef MULTI_NETPLAY
 static bool InputListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
 	switch (type)
@@ -196,6 +199,7 @@ static bool InputSender(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM
 		return false;
 	}
 }
+#endif
 
 void InitInputPatches()
 {
@@ -209,14 +213,17 @@ void InitInputPatches()
 	PadReadOffP_hook.Hook(PadReadOffP_r);
 	GetPlayersInputData_hook.Hook(GetPlayersInputData_r);
 
+#ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_INPUT_BUTTONS, InputListener);
 	netplay.RegisterListener(Netplay::PACKET_INPUT_STICK_X, InputListener);
 	netplay.RegisterListener(Netplay::PACKET_INPUT_STICK_Y, InputListener);
 	netplay.RegisterListener(Netplay::PACKET_INPUT_ANALOG, InputListener);
+#endif
 }
 
 extern "C"
 {
+#ifdef MULTI_NETPLAY
 	__declspec(dllexport) void __cdecl OnInput()
 	{
 		if (!netplay.IsConnected())
@@ -279,6 +286,7 @@ extern "C"
 			}
 		}
 	}
+#endif
 
 	__declspec(dllexport) void __cdecl OnControl()
 	{
@@ -295,6 +303,7 @@ extern "C"
 			}
 		}
 
+#ifdef MULTI_NETPLAY
 		// Update netplay analog data
 		if (netplay.IsConnected())
 		{
@@ -324,5 +333,6 @@ extern "C"
 				}
 			}
 		}
+#endif
 	}
 }

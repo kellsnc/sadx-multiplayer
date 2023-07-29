@@ -919,6 +919,7 @@ void menu_multi_request_start(MultiMenuWK* wk, int act)
 {
 	CloseDialog();
 
+#ifdef MULTI_NETPLAY
 	if (netplay.IsConnected())
 	{
 		if (netplay.GetPlayerNum() != 0)
@@ -953,6 +954,7 @@ void menu_multi_request_start(MultiMenuWK* wk, int act)
 			}
 		}
 	}
+#endif
 
 	menu_multi_start(wk, act);
 }
@@ -1975,6 +1977,7 @@ void __cdecl FreeMultiMenu()
 	}
 }
 
+#ifdef MULTI_NETPLAY
 static bool NetMenuListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
 	if (type == Netplay::PACKET_MENU_SYNC)
@@ -2058,12 +2061,16 @@ static bool NetMenuListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::
 
 	return false;
 }
+#endif
 
 void InitMultiMenu()
 {
+
+#ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_MENU_SYNC, NetMenuListener);
 	netplay.RegisterListener(Netplay::PACKET_MENU_CHAR, NetMenuListener);
 	netplay.RegisterListener(Netplay::PACKET_MENU_START, NetMenuListener);
+#endif
 
 	CreateModeFncPtrs[ADVA_MODE_EXPLAIN] = LoadMultiMenu; // Replace unused menu
 	FreeModeFncPtrs[ADVA_MODE_EXPLAIN] = FreeMultiMenu;

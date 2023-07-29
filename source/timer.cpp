@@ -4,12 +4,15 @@
 
 Timer::Timer(std::chrono::steady_clock::duration interval)
 {
+#ifdef MULTI_NETPLAY
 	m_time = std::chrono::steady_clock::now();
 	m_interval = interval;
+#endif
 }
 
 bool Timer::Finished()
 {
+#ifdef MULTI_NETPLAY
 	auto now = std::chrono::steady_clock::now();
 	auto elapsed = now - m_time;
 
@@ -18,5 +21,6 @@ bool Timer::Finished()
 		m_time = now;
 		return true;
 	}
+#endif
 	return false;
 }

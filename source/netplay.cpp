@@ -9,6 +9,7 @@
 
 bool Netplay::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
 {
+#ifdef MULTI_NETPLAY
 	if (IsConnected())
 	{
 		Packet packet = Packet(type, player, reliable);
@@ -36,12 +37,15 @@ bool Netplay::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
 			return packet.Send(m_pPeer);
 		}
 	}
+#endif
 	return false;
 }
 
 void Netplay::RegisterListener(PACKET_TYPE type, PACKET_CALL cb)
 {
+#ifdef MULTI_NETPLAY
 	listeners.push_back({ type, cb });
+#endif
 }
 
 int Netplay::GetPlayerCount()
@@ -61,7 +65,11 @@ bool Netplay::IsPlayerConnected(int pnum)
 
 bool Netplay::IsConnected()
 {
+#ifdef MULTI_NETPLAY
 	return connected;
+#else
+	return false;
+#endif
 }
 
 bool Netplay::IsServer()
@@ -71,6 +79,7 @@ bool Netplay::IsServer()
 
 void Netplay::ReadPacket(ENetEvent& event)
 {
+#ifdef MULTI_NETPLAY
 	Packet packet = Packet(event.packet);
 
 	auto header = packet.GetIndentifier();
@@ -110,10 +119,12 @@ void Netplay::ReadPacket(ENetEvent& event)
 			}
 		}
 	}
+#endif
 }
 
 void Netplay::UpdatePeers()
 {
+#ifdef MULTI_NETPLAY
 	PlayerCount = static_cast<PNUM>(m_ConnectedPeers.size() + 1);
 
 	for (size_t i = 0; i < m_ConnectedPeers.size(); ++i)
@@ -123,10 +134,12 @@ void Netplay::UpdatePeers()
 		pnum_packet.Send(m_ConnectedPeers[i]);
 		m_ConnectedPeers[i]->data = reinterpret_cast<void*>(i + 1);
 	}
+#endif
 }
 
 bool Netplay::PollMessage(PACKET_TYPE type, Packet& packet)
 {
+#ifdef MULTI_NETPLAY
 	ENetEvent event;
 	while (enet_host_service(m_pHost, &event, 1) > 0)
 	{
@@ -142,11 +155,13 @@ bool Netplay::PollMessage(PACKET_TYPE type, Packet& packet)
 			}
 		}
 	}
+#endif
 	return false;
 }
 
 void Netplay::Poll()
 {
+#ifdef MULTI_NETPLAY
 	if (!IsConnected())
 	{
 		return;
@@ -183,10 +198,12 @@ void Netplay::Poll()
 			break;
 		}
 	}
+#endif
 }
 
 bool Netplay::Create(Type type, const char* ip, unsigned __int16 port)
 {
+#ifdef MULTI_NETPLAY
 	if (m_pHost)
 	{
 		last_error = Error::AlreadyRunning;
@@ -284,11 +301,13 @@ bool Netplay::Create(Type type, const char* ip, unsigned __int16 port)
 		PRINT("Timed out");
 		Exit();
 	}
+#endif
 	return false;
 }
 
 void Netplay::Exit()
 {
+#ifdef MULTI_NETPLAY
 	if (netplay.IsConnected())
 	{
 		if (!IsServer())
@@ -344,21 +363,26 @@ void Netplay::Exit()
 		PlayerCount = 0;
 		connected = false;
 	}
+#endif
 }
 
 Netplay::Netplay()
 {
+#ifdef MULTI_NETPLAY
 	if (enet_initialize() != 0)
 	{
 		last_error = Error::InitializationFailed;
 		PRINT("An error occurred while initializing ENet");
 	}
+#endif
 }
 
 Netplay::~Netplay()
 {
+#ifdef MULTI_NETPLAY
 	Exit();
 	enet_deinitialize();
+#endif
 }
 
 Netplay netplay;

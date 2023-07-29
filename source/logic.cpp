@@ -7,6 +7,7 @@
 #include "logic.h"
 #include "config.h"
 
+#ifdef MULTI_NETPLAY
 static Timer logic_timer(std::chrono::steady_clock::duration(std::chrono::milliseconds(500)));
 
 static int netGlobalMode;
@@ -145,6 +146,7 @@ static void RestartStageWithFadeOut_r()
 	TARGET_DYNAMIC(RestartStageWithFadeOut)();
 	netplay.Send(Netplay::PACKET_LOGIC_EXIT, LogicSender, -1, true);
 }
+#endif
 
 extern "C"
 {
@@ -155,6 +157,7 @@ extern "C"
 			UpdatePlayersInfo();
 		}
 
+#ifdef MULTI_NETPLAY
 		if (netplay.IsConnected())
 		{
 			netplay.Poll();
@@ -196,12 +199,13 @@ extern "C"
 				netplay.Send(Netplay::PACKET_LOGIC_RAND, LogicSender, -1, true);
 			}
 		}
-
+#endif
 	}
 }
 
 void InitLogic()
 {
+#ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_TIMER, LogicListener);
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_CLOCK, LogicListener);
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_MODE, LogicListener);
@@ -216,4 +220,5 @@ void InitLogic()
 	SetChangeGameMode_t = new Trampoline(0x413C90, 0x413C96, SetChangeGameMode_r);
 	ChangeStageWithFadeOut_t = new Trampoline(0x4145D0, 0x4145D6, ChangeStageWithFadeOut_r);
 	RestartStageWithFadeOut_t = new Trampoline(0x414600, 0x414609, RestartStageWithFadeOut_r);
+#endif
 }
