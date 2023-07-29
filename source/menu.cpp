@@ -58,9 +58,19 @@ static void __cdecl dialog_disp_r(task* tp)
 	}
 }
 
-bool AvaGetMultiEnable()
+static bool AvaGetMultiEnable()
 {
 	return AvaGetTrialEnable();
+}
+
+static void OpenMultiModeDialog()
+{
+#ifdef MULTI_NETPLAY
+	OpenDialogCsrLet(&MainMenuMultiDialog, selected_multi_mode, NULL);
+#else
+	char csr[2] = { 1, -1 };
+	OpenDialogCsrLet(&MainMenuMultiDialog, selected_multi_mode, csr);
+#endif
 }
 
 void title_menu_sub_exec_r(TitleMenuWk* wkp)
@@ -134,7 +144,7 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 			TARGET_DYNAMIC(title_menu_sub_exec)(wkp); // first three items do not need adjusting so original is fine
 			break;
 		case 3: // Multiplayer (custom)
-			OpenDialogCsrLet(&MainMenuMultiDialog, selected_multi_mode, nullptr);
+			OpenMultiModeDialog();
 			wkp->SubMode = (TitleMenuSbMdEnum)7;
 			break;
 		case 4: // MiniGame
