@@ -35,6 +35,7 @@ public:
 	template<typename T>
 	bool read(T& data)
 	{
+#ifdef MULTI_NETPLAY
 		auto end_pos = position + sizeof(T);
 
 		if (end_pos <= m_packet->dataLength)
@@ -47,11 +48,15 @@ public:
 		{
 			return false;
 		}
+#else
+		return false;
+#endif
 	}
 
 	template<typename T>
 	bool write(const T& data)
 	{
+#ifdef MULTI_NETPLAY
 		auto end_pos = position + sizeof(T);
 
 		if (end_pos > m_packet->dataLength)
@@ -65,6 +70,9 @@ public:
 		*(T*)(m_packet->data + position) = data;
 		position = end_pos;
 		return true;
+#else
+		return false;
+#endif
 	}
 
 	template<typename T>

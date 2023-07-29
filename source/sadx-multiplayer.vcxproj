@@ -67,7 +67,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;winmm.lib;ws2_32.lib;enet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;$(SolutionDir)external\enet;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
@@ -89,7 +89,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;winmm.lib;ws2_32.lib;enet.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;winmm.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
     </Link>

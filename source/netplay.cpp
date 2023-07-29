@@ -2,6 +2,10 @@
 #include "SADXFunctions.h"
 #include "netplay.h"
 
+#ifdef MULTI_NETPLAY
+#pragma comment(lib,"enet.lib")
+#endif
+
 // Networking system
 // Listener system originally by @michael-fadely
 
