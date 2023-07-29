@@ -3,6 +3,8 @@
 #include "netplay.h"
 
 #ifdef MULTI_NETPLAY
+#pragma comment(lib,"ws2_32.lib")
+#pragma comment(lib,"winmm.lib")
 #pragma comment(lib,"enet.lib")
 #endif
 
