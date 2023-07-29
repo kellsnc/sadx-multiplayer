@@ -4,7 +4,7 @@
 #include "enet/enet.h"
 #include "packet.h"
 
-class Network
+class Netplay
 {
 public:
 	enum class Type
@@ -64,7 +64,7 @@ public:
 	};
 
 	using PNUM = int8_t;
-	using PACKET_CALL = bool(*)(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum);
+	using PACKET_CALL = bool(*)(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum);
 
 	template<typename T>
 	bool Send(PACKET_TYPE type, const T& data, PNUM player = -1, bool reliable = false)
@@ -103,8 +103,8 @@ public:
 	bool Create(Type type, const char* address, unsigned __int16 port);
 	void Exit();
 
-	Network();
-	~Network();
+	Netplay();
+	~Netplay();
 
 private:
 	enum PACKET_CHANNEL : enet_uint8
@@ -141,4 +141,4 @@ private:
 	ENetPeer* m_pPeer = nullptr;
 };
 
-extern Network network;
+extern Netplay netplay;

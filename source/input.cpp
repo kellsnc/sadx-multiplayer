@@ -2,7 +2,7 @@
 #include "SADXModLoader.h"
 #include "Trampoline.h"
 #include "splitscreen.h"
-#include "network.h"
+#include "netplay.h"
 #include "camera.h"
 
 // Everything related to inputs
@@ -154,21 +154,21 @@ bool MenuBackButtonsPressedM()
 	return (GetPressedButtons() & (Buttons_X | Buttons_B));
 }
 
-static bool InputListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+static bool InputListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
 	switch (type)
 	{
-	case Network::PACKET_INPUT_BUTTONS:
+	case Netplay::PACKET_INPUT_BUTTONS:
 		packet >> net_pers[pnum].on;
 		net_pers[pnum].on &= ~Buttons_Start;
 		return true;
-	case Network::PACKET_INPUT_STICK_X:
+	case Netplay::PACKET_INPUT_STICK_X:
 		packet >> net_pers[pnum].x1 >> net_pers[pnum].x2;
 		return true;
-	case Network::PACKET_INPUT_STICK_Y:
+	case Netplay::PACKET_INPUT_STICK_Y:
 		packet >> net_pers[pnum].y1 >> net_pers[pnum].y2;
 		return true;
-	case Network::PACKET_INPUT_ANALOG:
+	case Netplay::PACKET_INPUT_ANALOG:
 		packet >> net_analogs[pnum];
 		return true;
 	default:
@@ -176,20 +176,20 @@ static bool InputListener(Packet& packet, Network::PACKET_TYPE type, Network::PN
 	}
 }
 
-static bool InputSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+static bool InputSender(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
 	switch (type)
 	{
-	case Network::PACKET_INPUT_BUTTONS:
+	case Netplay::PACKET_INPUT_BUTTONS:
 		packet << net_pers[pnum].on;
 		return true;
-	case Network::PACKET_INPUT_STICK_X:
+	case Netplay::PACKET_INPUT_STICK_X:
 		packet << net_pers[pnum].x1 << net_pers[pnum].x2;
 		return true;
-	case Network::PACKET_INPUT_STICK_Y:
+	case Netplay::PACKET_INPUT_STICK_Y:
 		packet << net_pers[pnum].y1 << net_pers[pnum].y2;
 		return true;
-	case Network::PACKET_INPUT_ANALOG:
+	case Netplay::PACKET_INPUT_ANALOG:
 		packet << net_analogs[pnum];
 		return true;
 	default:
@@ -209,23 +209,23 @@ void InitInputPatches()
 	PadReadOffP_hook.Hook(PadReadOffP_r);
 	GetPlayersInputData_hook.Hook(GetPlayersInputData_r);
 
-	network.RegisterListener(Network::PACKET_INPUT_BUTTONS, InputListener);
-	network.RegisterListener(Network::PACKET_INPUT_STICK_X, InputListener);
-	network.RegisterListener(Network::PACKET_INPUT_STICK_Y, InputListener);
-	network.RegisterListener(Network::PACKET_INPUT_ANALOG, InputListener);
+	netplay.RegisterListener(Netplay::PACKET_INPUT_BUTTONS, InputListener);
+	netplay.RegisterListener(Netplay::PACKET_INPUT_STICK_X, InputListener);
+	netplay.RegisterListener(Netplay::PACKET_INPUT_STICK_Y, InputListener);
+	netplay.RegisterListener(Netplay::PACKET_INPUT_ANALOG, InputListener);
 }
 
 extern "C"
 {
 	__declspec(dllexport) void __cdecl OnInput()
 	{
-		if (!network.IsConnected())
+		if (!netplay.IsConnected())
 			return;
 
 		// Move first controller inputs to proper player
-		if (network.GetPlayerNum() != 0)
+		if (netplay.GetPlayerNum() != 0)
 		{
-			*per[network.GetPlayerNum()] = *per[0];
+			*per[netplay.GetPlayerNum()] = *per[0];
 			*per[0] = {};
 		}
 
@@ -236,26 +236,26 @@ extern "C"
 			auto local_per = per[i];
 			auto& net_per = net_pers[i];
 
-			if (i == network.GetPlayerNum())
+			if (i == netplay.GetPlayerNum())
 			{
 				if (local_per->press || local_per->release)
 				{
 					net_per.on = local_per->on;
-					network.Send(Network::PACKET_INPUT_BUTTONS, InputSender);
+					netplay.Send(Netplay::PACKET_INPUT_BUTTONS, InputSender);
 				}
 
 				if (local_per->x1 != net_per.x1 || local_per->x2 != net_per.x2)
 				{
 					net_per.x1 = local_per->x1;
 					net_per.x2 = local_per->x2;
-					network.Send(Network::PACKET_INPUT_STICK_X, InputSender);
+					netplay.Send(Netplay::PACKET_INPUT_STICK_X, InputSender);
 				}
 
 				if (local_per->y1 != net_per.y1 || local_per->y2 != net_per.y2)
 				{
 					net_per.y1 = local_per->y1;
 					net_per.y2 = local_per->y2;
-					network.Send(Network::PACKET_INPUT_STICK_Y, InputSender);
+					netplay.Send(Netplay::PACKET_INPUT_STICK_Y, InputSender);
 				}
 			}
 			else
@@ -295,13 +295,13 @@ extern "C"
 			}
 		}
 
-		// Update network analog data
-		if (network.IsConnected())
+		// Update netplay analog data
+		if (netplay.IsConnected())
 		{
 			// Move first controller analog to proper player
-			if (network.GetPlayerNum() != 0)
+			if (netplay.GetPlayerNum() != 0)
 			{
-				input_data[network.GetPlayerNum()] = input_data[0];
+				input_data[netplay.GetPlayerNum()] = input_data[0];
 				input_data[0] = {};
 			}
 
@@ -310,12 +310,12 @@ extern "C"
 				auto& current = input_dataG[i];
 				auto& net_analog = net_analogs[i];
 
-				if (i == network.GetPlayerNum())
+				if (i == netplay.GetPlayerNum())
 				{
 					if (current.angle != net_analog.angle || std::abs(current.stroke - net_analog.stroke) >= std::numeric_limits<float>::epsilon())
 					{
 						net_analog = current;
-						network.Send(Network::PACKET_INPUT_ANALOG, InputSender);
+						netplay.Send(Netplay::PACKET_INPUT_ANALOG, InputSender);
 					}
 				}
 				else

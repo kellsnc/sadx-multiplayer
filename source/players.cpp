@@ -2,7 +2,7 @@
 #include "SADXModLoader.h"
 #include "Trampoline.h"
 #include "VariableHook.hpp"
-#include "network.h"
+#include "netplay.h"
 #include "timer.h"
 #include "multiplayer.h"
 #include "result.h"
@@ -338,7 +338,7 @@ void RemovePlayersDamage(taskwk* twp)
 	}
 }
 
-static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+static bool PlayerListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
 	auto ptwp = playertwp[pnum];
 	auto pmwp = playermwp[pnum];
@@ -351,33 +351,33 @@ static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::P
 
 	switch (type)
 	{
-	case Network::PACKET_PLAYER_LOCATION:
+	case Netplay::PACKET_PLAYER_LOCATION:
 		packet >> ptwp->pos >> ptwp->ang >> ppwp->spd >> pmwp->spd;
 		return true;
-	case Network::PACKET_PLAYER_MODE:
+	case Netplay::PACKET_PLAYER_MODE:
 		packet >> ptwp->mode;
 		return true;
-	case Network::PACKET_PLAYER_SMODE:
+	case Netplay::PACKET_PLAYER_SMODE:
 		packet >> ptwp->smode;
 		ptwp->flag |= Status_DoNextAction;
 		return true;
-	case Network::PACKET_PLAYER_FLAG:
+	case Netplay::PACKET_PLAYER_FLAG:
 	{
 		short flag;
 		packet >> flag;
 		ptwp->flag = (ptwp->flag & ~FLAG_MASK) | (flag & FLAG_MASK);
 		return true;
 	}
-	case Network::PACKET_PLAYER_ANIM:
+	case Netplay::PACKET_PLAYER_ANIM:
 		packet >> ppwp->mj.mtnmode >> (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) >> ppwp->mj.nframe;
 		return true;
-	case Network::PACKET_PLAYER_RINGS:
+	case Netplay::PACKET_PLAYER_RINGS:
 		packet >> ssNumRing_m[pnum];
 		return true;
-	case Network::PACKET_PLAYER_LIVES:
+	case Netplay::PACKET_PLAYER_LIVES:
 		packet >> scNumPlayer_m[pnum];
 		return true;
-	case Network::PACKET_PLAYER_SCORE:
+	case Netplay::PACKET_PLAYER_SCORE:
 		packet >> EnemyScore_m[pnum];
 		return true;
 	default:
@@ -385,7 +385,7 @@ static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::P
 	}
 }
 
-static bool PlayerSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+static bool PlayerSender(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
 	auto ptwp = playertwp[pnum];
 	auto ppwp = playerpwp[pnum];
@@ -393,28 +393,28 @@ static bool PlayerSender(Packet& packet, Network::PACKET_TYPE type, Network::PNU
 
 	switch (type)
 	{
-	case Network::PACKET_PLAYER_LOCATION:
+	case Netplay::PACKET_PLAYER_LOCATION:
 		packet << ptwp->pos << ptwp->ang << ppwp->spd << pmwp->spd;
 		return true;
-	case Network::PACKET_PLAYER_MODE:
+	case Netplay::PACKET_PLAYER_MODE:
 		packet << ptwp->mode;
 		return true;
-	case Network::PACKET_PLAYER_SMODE:
+	case Netplay::PACKET_PLAYER_SMODE:
 		packet << ptwp->smode;
 		return true;
-	case Network::PACKET_PLAYER_FLAG:
+	case Netplay::PACKET_PLAYER_FLAG:
 		packet << (short)(ptwp->flag & FLAG_MASK);
 		return true;
-	case Network::PACKET_PLAYER_ANIM:
+	case Netplay::PACKET_PLAYER_ANIM:
 		packet << ppwp->mj.mtnmode << (ppwp->mj.mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction) << ppwp->mj.nframe;
 		return true;
-	case Network::PACKET_PLAYER_RINGS:
+	case Netplay::PACKET_PLAYER_RINGS:
 		packet << ssNumRing_m[pnum];
 		return true;
-	case Network::PACKET_PLAYER_LIVES:
+	case Netplay::PACKET_PLAYER_LIVES:
 		packet << scNumPlayer_m[pnum];
 		return true;
-	case Network::PACKET_PLAYER_SCORE:
+	case Netplay::PACKET_PLAYER_SCORE:
 		packet << EnemyScore_m[pnum];
 		return true;
 	default:
@@ -472,9 +472,9 @@ void UpdatePlayersInfo()
 		}
 	}
 
-	if (network.IsConnected())
+	if (netplay.IsConnected())
 	{
-		auto pnum = network.GetPlayerNum();
+		auto pnum = netplay.GetPlayerNum();
 		auto ptwp = playertwp[pnum];
 		auto ppwp = playerpwp[pnum];
 
@@ -482,28 +482,28 @@ void UpdatePlayersInfo()
 		{
 			if (update_timer.Finished())
 			{
-				network.Send(Network::PACKET_PLAYER_LOCATION, PlayerSender);
-				network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
-				network.Send(Network::PACKET_PLAYER_FLAG, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_LOCATION, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_ANIM, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_FLAG, PlayerSender);
 			}
 
 			static char last_action = 0;
 			if (last_action != ptwp->mode)
 			{
-				network.Send(Network::PACKET_PLAYER_MODE, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_MODE, PlayerSender);
 				last_action = ptwp->mode;
 			}
 
 			if (ptwp->flag & Status_DoNextAction)
 			{
-				network.Send(Network::PACKET_PLAYER_SMODE, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_SMODE, PlayerSender);
 			}
 
 			static short last_mtnmode = 0;
 			static short last_mtnaction = 0;
 			if (last_mtnmode != ppwp->mj.mtnmode || last_mtnaction != (last_mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction))
 			{
-				network.Send(Network::PACKET_PLAYER_ANIM, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_ANIM, PlayerSender);
 				last_mtnaction = (last_mtnmode == 2 ? ppwp->mj.action : ppwp->mj.reqaction);
 				last_mtnmode = ppwp->mj.mtnmode;
 			}
@@ -511,21 +511,21 @@ void UpdatePlayersInfo()
 			static int16_t old_rings = 0;
 			if (old_rings != ssNumRing_m[pnum])
 			{
-				network.Send(Network::PACKET_PLAYER_RINGS, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_RINGS, PlayerSender);
 				old_rings = ssNumRing_m[pnum];
 			}
 
 			static int8_t old_lives = 0;
 			if (old_lives != scNumPlayer_m[pnum])
 			{
-				network.Send(Network::PACKET_PLAYER_LIVES, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_LIVES, PlayerSender);
 				old_lives = scNumPlayer_m[pnum];
 			}
 
 			static int32_t old_score = 0;
 			if (old_score != EnemyScore_m[pnum])
 			{
-				network.Send(Network::PACKET_PLAYER_SCORE, PlayerSender);
+				netplay.Send(Netplay::PACKET_PLAYER_SCORE, PlayerSender);
 				old_score = EnemyScore_m[pnum];
 			}
 		}
@@ -683,13 +683,13 @@ void InitPlayerPatches()
 	WriteJump(InitScore, InitScore_r);
 	WriteJump(GetRaceWinnerPlayer, GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
 
-	network.RegisterListener(Network::PACKET_PLAYER_LOCATION, PlayerListener);
-	network.RegisterListener(Network::PACKET_PLAYER_MODE, PlayerListener);
-	network.RegisterListener(Network::PACKET_PLAYER_SMODE, PlayerListener);
-	network.RegisterListener(Network::PACKET_PLAYER_FLAG, PlayerListener);
-	network.RegisterListener(Network::PACKET_PLAYER_ANIM, PlayerListener);
+	netplay.RegisterListener(Netplay::PACKET_PLAYER_LOCATION, PlayerListener);
+	netplay.RegisterListener(Netplay::PACKET_PLAYER_MODE, PlayerListener);
+	netplay.RegisterListener(Netplay::PACKET_PLAYER_SMODE, PlayerListener);
+	netplay.RegisterListener(Netplay::PACKET_PLAYER_FLAG, PlayerListener);
+	netplay.RegisterListener(Netplay::PACKET_PLAYER_ANIM, PlayerListener);
 
-	network.RegisterListener(Network::PACKET_PLAYER_RINGS, PlayerListener);
-	network.RegisterListener(Network::PACKET_PLAYER_LIVES, PlayerListener);
-	network.RegisterListener(Network::PACKET_PLAYER_SCORE, PlayerListener);
+	netplay.RegisterListener(Netplay::PACKET_PLAYER_RINGS, PlayerListener);
+	netplay.RegisterListener(Netplay::PACKET_PLAYER_LIVES, PlayerListener);
+	netplay.RegisterListener(Netplay::PACKET_PLAYER_SCORE, PlayerListener);
 }

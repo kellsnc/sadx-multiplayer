@@ -4,7 +4,7 @@
 #include <ShellAPI.h>
 #include "multiplayer.h"
 #include "players.h"
-#include "network.h"
+#include "netplay.h"
 
 static const std::unordered_map<std::wstring, multiplayer::mode> multi_mode_map = {
 	{ L"coop", multiplayer::mode::coop },
@@ -85,7 +85,7 @@ void TestSpawn()
 
 			if (!wcstombs_s(NULL, ip, MAX_PATH, argv[i + 2], wcslen(argv[i + 2])))
 			{
-				network.Create(!wcscmp(argv[i + 1], L"host") ? Network::Type::Server : Network::Type::Client, ip, _wtoi(argv[i + 3]));
+				netplay.Create(!wcscmp(argv[i + 1], L"host") ? Netplay::Type::Server : Netplay::Type::Client, ip, _wtoi(argv[i + 3]));
 			}
 
 			i += 3;

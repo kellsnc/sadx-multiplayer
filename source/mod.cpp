@@ -19,7 +19,7 @@
 #include "forcewk.h"
 #include "gravity.h"
 #include "fog.h"
-#include "network.h"
+#include "netplay.h"
 #include "input.h"
 #include "logic.h"
 #include "collision.h"
@@ -69,7 +69,7 @@ extern "C"
 
 	__declspec(dllexport) void __cdecl OnExit()
 	{
-		network.Exit();
+		netplay.Exit();
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

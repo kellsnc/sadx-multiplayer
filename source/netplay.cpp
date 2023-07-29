@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "SADXFunctions.h"
-#include "network.h"
+#include "netplay.h"
 
 // Networking system
 // Listener system originally by @michael-fadely
 
 #define PRINT(text, ...) PrintDebug("[Multi] " text "\n", __VA_ARGS__)
 
-bool Network::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
+bool Netplay::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
 {
 	if (IsConnected())
 	{
@@ -39,37 +39,37 @@ bool Network::Send(PACKET_TYPE type, PACKET_CALL cb, PNUM player, bool reliable)
 	return false;
 }
 
-void Network::RegisterListener(PACKET_TYPE type, PACKET_CALL cb)
+void Netplay::RegisterListener(PACKET_TYPE type, PACKET_CALL cb)
 {
 	listeners.push_back({ type, cb });
 }
 
-int Network::GetPlayerCount()
+int Netplay::GetPlayerCount()
 {
 	return IsConnected() ? PlayerCount : 0;
 }
 
-int Network::GetPlayerNum()
+int Netplay::GetPlayerNum()
 {
 	return PlayerNum;
 }
 
-bool Network::IsPlayerConnected(int pnum)
+bool Netplay::IsPlayerConnected(int pnum)
 {
 	return pnum < GetPlayerCount();
 }
 
-bool Network::IsConnected()
+bool Netplay::IsConnected()
 {
 	return connected;
 }
 
-bool Network::IsServer()
+bool Netplay::IsServer()
 {
 	return m_Type == Type::Server;
 }
 
-void Network::ReadPacket(ENetEvent& event)
+void Netplay::ReadPacket(ENetEvent& event)
 {
 	Packet packet = Packet(event.packet);
 
@@ -112,7 +112,7 @@ void Network::ReadPacket(ENetEvent& event)
 	}
 }
 
-void Network::UpdatePeers()
+void Netplay::UpdatePeers()
 {
 	PlayerCount = static_cast<PNUM>(m_ConnectedPeers.size() + 1);
 
@@ -125,7 +125,7 @@ void Network::UpdatePeers()
 	}
 }
 
-bool Network::PollMessage(PACKET_TYPE type, Packet& packet)
+bool Netplay::PollMessage(PACKET_TYPE type, Packet& packet)
 {
 	ENetEvent event;
 	while (enet_host_service(m_pHost, &event, 1) > 0)
@@ -145,7 +145,7 @@ bool Network::PollMessage(PACKET_TYPE type, Packet& packet)
 	return false;
 }
 
-void Network::Poll()
+void Netplay::Poll()
 {
 	if (!IsConnected())
 	{
@@ -185,7 +185,7 @@ void Network::Poll()
 	}
 }
 
-bool Network::Create(Type type, const char* ip, unsigned __int16 port)
+bool Netplay::Create(Type type, const char* ip, unsigned __int16 port)
 {
 	if (m_pHost)
 	{
@@ -287,9 +287,9 @@ bool Network::Create(Type type, const char* ip, unsigned __int16 port)
 	return false;
 }
 
-void Network::Exit()
+void Netplay::Exit()
 {
-	if (network.IsConnected())
+	if (netplay.IsConnected())
 	{
 		if (!IsServer())
 		{
@@ -346,7 +346,7 @@ void Network::Exit()
 	}
 }
 
-Network::Network()
+Netplay::Netplay()
 {
 	if (enet_initialize() != 0)
 	{
@@ -355,10 +355,10 @@ Network::Network()
 	}
 }
 
-Network::~Network()
+Netplay::~Netplay()
 {
 	Exit();
 	enet_deinitialize();
 }
 
-Network network;
+Netplay netplay;

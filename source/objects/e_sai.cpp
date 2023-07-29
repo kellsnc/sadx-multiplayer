@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "network.h"
+#include "netplay.h"
 #include "set.h"
 
 TaskHook EnemySai_h(0x7A1380);
@@ -13,9 +13,9 @@ enum
 
 static task* pTask;
 
-static bool SaiListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+static bool SaiListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
-	if (type == Network::PACKET_OBJECT_RHINOTANK)
+	if (type == Netplay::PACKET_OBJECT_RHINOTANK)
 	{
 		uint32_t set_id;
 
@@ -39,9 +39,9 @@ static bool SaiListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM
 	return false;
 }
 
-static bool SaiSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+static bool SaiSender(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
-	if (type == Network::PACKET_OBJECT_RHINOTANK && pTask)
+	if (type == Netplay::PACKET_OBJECT_RHINOTANK && pTask)
 	{
 		auto id = GetSetID(pTask);
 		if (id >= 0)
@@ -60,12 +60,12 @@ static bool SaiSender(Packet& packet, Network::PACKET_TYPE type, Network::PNUM p
 
 static void __cdecl EnemySai_r(task* tp)
 {
-	if (tp->twp->mode != 0 && network.IsConnected())
+	if (tp->twp->mode != 0 && netplay.IsConnected())
 	{
-		if (network.GetPlayerNum() == 0)
+		if (netplay.GetPlayerNum() == 0)
 		{
 			pTask = tp;
-			network.Send(Network::PACKET_OBJECT_RHINOTANK, SaiSender, -1, tp->twp->mode == MODE_DEAD ? true : false);
+			netplay.Send(Netplay::PACKET_OBJECT_RHINOTANK, SaiSender, -1, tp->twp->mode == MODE_DEAD ? true : false);
 		}
 	}
 
@@ -78,5 +78,5 @@ static void __cdecl EnemySai_r(task* tp)
 void InitEnemySaiPatches()
 {
 	EnemySai_h.Hook(EnemySai_r);
-	network.RegisterListener(Network::PACKET_OBJECT_RHINOTANK, SaiListener);
+	netplay.RegisterListener(Netplay::PACKET_OBJECT_RHINOTANK, SaiListener);
 }

@@ -3,7 +3,7 @@
 #include "SADXModLoader.h"
 #include "GameText.hpp"
 #include "menu.h"
-#include "network.h"
+#include "netplay.h"
 #include "config.h"
 #include "input.h"
 #include "menu_multi.h"
@@ -685,7 +685,7 @@ bool menu_multi_apply_change(MultiMenuWK* wk, MD_MULTI id, int dial)
 			PlayMenuEnterSound();
 
 		if (previous == MD_MULTI_ONLINECON)
-			pcount = network.GetPlayerCount();
+			pcount = netplay.GetPlayerCount();
 
 		menu_multi_setrndcursor();
 		saved_mode = MD_MULTI_MODESEL;
@@ -834,20 +834,20 @@ bool menu_multi_apply_change(MultiMenuWK* wk, MD_MULTI id, int dial)
 
 bool menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 {
-	if (network.IsConnected())
+	if (netplay.IsConnected())
 	{
-		if (network.GetPlayerNum() != 0)
+		if (netplay.GetPlayerNum() != 0)
 			return false;
 
 		struct { int16_t id; int8_t menu; int8_t nextmenu; int8_t stat; int8_t nextstat; } data = { rand(), id, next_mode, GetDialogStat(), gNextDialogStat };
-		network.Send(Network::PACKET_MENU_SYNC, data, -1, true);
+		netplay.Send(Netplay::PACKET_MENU_SYNC, data, -1, true);
 
 		int count = 0;
 		int tries = 0;
 		while (1)
 		{
 			Packet packet;
-			if (network.PollMessage(Network::PACKET_MENU_CONFIRM, packet))
+			if (netplay.PollMessage(Netplay::PACKET_MENU_CONFIRM, packet))
 			{
 				int16_t incoming_id;
 				packet.read(incoming_id);
@@ -857,7 +857,7 @@ bool menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 				}
 			}
 
-			if (count == network.GetPlayerCount() - 1)
+			if (count == netplay.GetPlayerCount() - 1)
 			{
 				break;
 			}
@@ -919,20 +919,20 @@ void menu_multi_request_start(MultiMenuWK* wk, int act)
 {
 	CloseDialog();
 
-	if (network.IsConnected())
+	if (netplay.IsConnected())
 	{
-		if (network.GetPlayerNum() != 0)
+		if (netplay.GetPlayerNum() != 0)
 			return;
 
 		struct { int16_t id; int8_t mode; int8_t level; int8_t act; int8_t chars[4]; } data = { rand(), (int8_t)gNextMultiMode, wk->stgreq, act, { selected_characters[0], selected_characters[1], selected_characters[2], selected_characters[3] } };
-		network.Send(Network::PACKET_MENU_START, data, -1, true);
+		netplay.Send(Netplay::PACKET_MENU_START, data, -1, true);
 
 		int count = 0;
 		int tries = 0;
 		while (1)
 		{
 			Packet packet;
-			if (network.PollMessage(Network::PACKET_MENU_CONFIRM, packet))
+			if (netplay.PollMessage(Netplay::PACKET_MENU_CONFIRM, packet))
 			{
 				int16_t incoming_id;
 				packet.read(incoming_id);
@@ -942,7 +942,7 @@ void menu_multi_request_start(MultiMenuWK* wk, int act)
 				}
 			}
 
-			if (count == network.GetPlayerCount() - 1)
+			if (count == netplay.GetPlayerCount() - 1)
 			{
 				break;
 			}
@@ -1063,10 +1063,10 @@ bool menu_multi_charsel_input(MultiMenuWK* wk, int i)
 			PlayVoice(charsel_voicelist[menu_multi_getplayerno(sel)]);
 			PlayMenuEnterSound();
 
-			if (network.IsConnected())
+			if (netplay.IsConnected())
 			{
 				int8_t send_sel = sel;
-				network.Send(Network::PACKET_MENU_CHAR, send_sel, -1, true);
+				netplay.Send(Netplay::PACKET_MENU_CHAR, send_sel, -1, true);
 			}
 		}
 		else
@@ -1082,10 +1082,10 @@ bool menu_multi_charsel_input(MultiMenuWK* wk, int i)
 			sel = -1;
 			PlayMenuBackSound();
 
-			if (network.IsConnected())
+			if (netplay.IsConnected())
 			{
 				int8_t send_sel = sel;
-				network.Send(Network::PACKET_MENU_CHAR, send_sel, -1, true);
+				netplay.Send(Netplay::PACKET_MENU_CHAR, send_sel, -1, true);
 			}
 
 			return false;
@@ -1109,9 +1109,9 @@ void menu_multi_charsel(MultiMenuWK* wk)
 		}
 	}
 
-	if (network.IsConnected())
+	if (netplay.IsConnected())
 	{
-		menu_multi_charsel_input(wk, network.GetPlayerNum());
+		menu_multi_charsel_input(wk, netplay.GetPlayerNum());
 
 		int count = 0;
 		for (int i = 0; i < PLAYER_MAX; ++i)
@@ -1122,7 +1122,7 @@ void menu_multi_charsel(MultiMenuWK* wk)
 			}
 		}
 
-		if (count >= network.GetPlayerCount())
+		if (count >= netplay.GetPlayerCount())
 		{
 			menu_multi_change(wk, next_mode);
 		}
@@ -1387,7 +1387,7 @@ void menu_multi_online_serverselect(MultiMenuWK* wk)
 
 void menu_multi_online_hub(MultiMenuWK* wk)
 {
-	if (!network.IsConnected())
+	if (!netplay.IsConnected())
 	{
 		if (GameTimer % 60 == 0)
 		{
@@ -1405,24 +1405,24 @@ void menu_multi_online_hub(MultiMenuWK* wk)
 				port = 80;
 			}
 
-			network.Create(gConnectSelection == ConnectMenuSelection::Host ? Network::Type::Server : Network::Type::Client, ip.c_str(), port);
+			netplay.Create(gConnectSelection == ConnectMenuSelection::Host ? Netplay::Type::Server : Netplay::Type::Client, ip.c_str(), port);
 		}
 	}
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		player_ready[i] = network.IsPlayerConnected(i);
+		player_ready[i] = netplay.IsPlayerConnected(i);
 	}
 
 	// Return to main menu
 	if (MenuBackButtonsPressedM(0))
 	{
-		network.Exit();
+		netplay.Exit();
 		gConnectMenuMode = ConnectMenuMode::Select;
 	}
 
 	// If at least one player is there
-	if (MenuSelectButtonsPressedM() && network.IsConnected() && network.GetPlayerCount() > 1)
+	if (MenuSelectButtonsPressedM() && netplay.IsConnected() && netplay.GetPlayerCount() > 1)
 	{
 		menu_multi_change(wk, MD_MULTI_MODESEL);
 	}
@@ -1975,15 +1975,15 @@ void __cdecl FreeMultiMenu()
 	}
 }
 
-static bool NetMenuListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
+static bool NetMenuListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
-	if (type == Network::PACKET_MENU_SYNC)
+	if (type == Netplay::PACKET_MENU_SYNC)
 	{
 		if (MultiMenuTp)
 		{
 			int16_t identifier;
 			packet >> identifier;
-			network.Send(Network::PACKET_MENU_CONFIRM, identifier, pnum, true);
+			netplay.Send(Netplay::PACKET_MENU_CONFIRM, identifier, pnum, true);
 
 			if (MultiMenuTp->awp)
 			{
@@ -1998,7 +1998,7 @@ static bool NetMenuListener(Packet& packet, Network::PACKET_TYPE type, Network::
 		}
 		return true;
 	}
-	else if (type == Network::PACKET_MENU_CHAR)
+	else if (type == Netplay::PACKET_MENU_CHAR)
 	{
 		if (MultiMenuTp)
 		{
@@ -2007,7 +2007,7 @@ static bool NetMenuListener(Packet& packet, Network::PACKET_TYPE type, Network::
 
 			auto sender = packet.GetSender();
 
-			if (!(sender == 0 && network.GetPlayerNum() == 0) && sender >= 0 && sender < PLAYER_MAX)
+			if (!(sender == 0 && netplay.GetPlayerNum() == 0) && sender >= 0 && sender < PLAYER_MAX)
 			{
 				if (incoming_sel >= 0)
 				{
@@ -2027,13 +2027,13 @@ static bool NetMenuListener(Packet& packet, Network::PACKET_TYPE type, Network::
 		}
 		return true;
 	}
-	else if (type == Network::PACKET_MENU_START)
+	else if (type == Netplay::PACKET_MENU_START)
 	{
 		if (MultiMenuTp)
 		{
 			int16_t identifier;
 			packet >> identifier;
-			network.Send(Network::PACKET_MENU_CONFIRM, identifier, pnum, true);
+			netplay.Send(Netplay::PACKET_MENU_CONFIRM, identifier, pnum, true);
 
 			if (MultiMenuTp->awp)
 			{
@@ -2061,9 +2061,9 @@ static bool NetMenuListener(Packet& packet, Network::PACKET_TYPE type, Network::
 
 void InitMultiMenu()
 {
-	network.RegisterListener(Network::PACKET_MENU_SYNC, NetMenuListener);
-	network.RegisterListener(Network::PACKET_MENU_CHAR, NetMenuListener);
-	network.RegisterListener(Network::PACKET_MENU_START, NetMenuListener);
+	netplay.RegisterListener(Netplay::PACKET_MENU_SYNC, NetMenuListener);
+	netplay.RegisterListener(Netplay::PACKET_MENU_CHAR, NetMenuListener);
+	netplay.RegisterListener(Netplay::PACKET_MENU_START, NetMenuListener);
 
 	CreateModeFncPtrs[ADVA_MODE_EXPLAIN] = LoadMultiMenu; // Replace unused menu
 	FreeModeFncPtrs[ADVA_MODE_EXPLAIN] = FreeMultiMenu;

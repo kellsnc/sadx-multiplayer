@@ -130,7 +130,7 @@
     <ClInclude Include="menu_multi.h" />
     <ClInclude Include="hud_multi.h" />
     <ClInclude Include="multiplayer.h" />
-    <ClInclude Include="network.h" />
+    <ClInclude Include="netplay.h" />
     <ClInclude Include="objects\amy.h" />
     <ClInclude Include="objects\big.h" />
     <ClInclude Include="objects\BigKaeru.h" />
@@ -207,7 +207,7 @@
     <ClCompile Include="menu_multi.cpp" />
     <ClCompile Include="hud_multi.cpp" />
     <ClCompile Include="multiplayer.cpp" />
-    <ClCompile Include="network.cpp" />
+    <ClCompile Include="netplay.cpp" />
     <ClCompile Include="objects\BigKaeru.cpp" />
     <ClCompile Include="objects\BigTheCat.cpp" />
     <ClCompile Include="objects\boss-common.cpp" />

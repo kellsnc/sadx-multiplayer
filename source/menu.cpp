@@ -3,7 +3,7 @@
 #include "menu_multi.h"
 #include "menu_adventure.h"
 #include "splitscreen.h"
-#include "network.h"
+#include "netplay.h"
 
 // Menu layout with minigames
 PanelPrmType PanelPrmTitleMenu1[]
@@ -66,9 +66,9 @@ bool AvaGetMultiEnable()
 void title_menu_sub_exec_r(TitleMenuWk* wkp)
 {
 	// Make sure netplay got disconnected
-	if (network.IsConnected())
+	if (netplay.IsConnected())
 	{
-		network.Exit();
+		netplay.Exit();
 	}
 
 	// Make sure multiplayer got disabled

@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "network.h"
+#include "netplay.h"
 #include "packet.h"
 
 Packet::Packet(uint8_t identifier, int8_t to, bool reliable)
 {
 	m_packet = enet_packet_create(NULL, sizeof(identifier) + sizeof(to), reliable ? ENET_PACKET_FLAG_RELIABLE : 0);
 	m_reliable = reliable;
-	sender = network.GetPlayerNum();
+	sender = netplay.GetPlayerNum();
 	recipient = to;
 
 	int8_t address = (((((uint8_t)(sender)) << 4) & 0xF0) | ((uint8_t)(recipient + 1)) & 0x0F);

@@ -166,17 +166,17 @@
     <ClCompile Include="input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="network.cpp">
-      <Filter>Source Files\networking</Filter>
+    <ClCompile Include="netplay.cpp">
+      <Filter>Source Files\netplay</Filter>
     </ClCompile>
     <ClCompile Include="packet.cpp">
-      <Filter>Source Files\networking</Filter>
+      <Filter>Source Files\netplay</Filter>
     </ClCompile>
     <ClCompile Include="logic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="timer.cpp">
-      <Filter>Source Files\networking</Filter>
+      <Filter>Source Files\netplay</Filter>
     </ClCompile>
     <ClCompile Include="camerafunc.cpp">
       <Filter>Source Files</Filter>
@@ -669,17 +669,17 @@
     <ClInclude Include="input.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="network.h">
-      <Filter>Header FIles\networking</Filter>
+    <ClInclude Include="netplay.h">
+      <Filter>Header FIles\netplay</Filter>
     </ClInclude>
     <ClInclude Include="packet.h">
-      <Filter>Header FIles\networking</Filter>
+      <Filter>Header FIles\netplay</Filter>
     </ClInclude>
     <ClInclude Include="logic.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="timer.h">
-      <Filter>Header FIles\networking</Filter>
+      <Filter>Header FIles\netplay</Filter>
     </ClInclude>
     <ClInclude Include="camerafunc.h">
       <Filter>Header FIles</Filter>
@@ -809,12 +809,6 @@
     <Filter Include="Source Files\objects\figure">
       <UniqueIdentifier>{e38cc25c-b522-4b83-8bbb-f8b0ab72ed79}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\networking">
-      <UniqueIdentifier>{e3a1b93c-f944-426a-b922-707b7b85d8be}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\networking">
-      <UniqueIdentifier>{fbedaab8-05f5-4755-8346-ba4688365961}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header FIles\classes">
       <UniqueIdentifier>{34326808-c3dc-4006-8538-7a1a518e93d3}</UniqueIdentifier>
     </Filter>
@@ -880,6 +874,12 @@
     </Filter>
     <Filter Include="Header FIles\objects\stg08_icecap">
       <UniqueIdentifier>{b753b058-ec18-47e3-a0bb-fee83cb59d3e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\netplay">
+      <UniqueIdentifier>{e3a1b93c-f944-426a-b922-707b7b85d8be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\netplay">
+      <UniqueIdentifier>{fbedaab8-05f5-4755-8346-ba4688365961}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
