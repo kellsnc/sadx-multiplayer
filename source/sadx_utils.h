@@ -11,6 +11,8 @@
 #define ROTATEY(m, ang) if (ang != 0) njRotateY(m, SHORT_ANG(ang));
 #define ROTATEZ(m, ang) if (ang != 0) njRotateZ(m, SHORT_ANG(ang));
 
+#define CWK_FLAG_HIT 0x1
+
 static constexpr int ADVA_MODE_MULTI = 0x8;
 
 enum AvaTexLdEnum : __int32
@@ -705,6 +707,11 @@ DataArray(NJS_ACTION*, MoveAction, 0x3C63340, 3);
 DataPointer(NJS_VECTOR, XVec1, 0x111DD40);
 DataPointer(Float, oldn, 0x90A098);
 DataPointer(Float, oldf, 0x90A09C);
+DataPointer(Float, SAL_telepotsonicmovespd, 0x1E777BC);
+
+DataPointer(int, RdCasino_JumpAct, 0x3C7487C);
+
+DataPointer(int, SAL_telepotsonicrotspd, 0x1E777B8);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

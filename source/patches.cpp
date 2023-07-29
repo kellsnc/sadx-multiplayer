@@ -750,6 +750,25 @@ void FixShakeoffGarbageAction(uint8_t pnum, int action) { //This make the game c
 	return ForcePlayerAction(pnum, action);
 }
 
+uint8_t Casino_FixKnuxCheck(char index)
+{
+	if (multiplayer::IsCoopMode() && CurrentCharacter != Characters_Knuckles)
+	{
+		return Characters_Sonic;
+	}
+
+	return GetCharacterID(index);
+}
+
+//To do, re write Hand Exec function to add multi support  (5CFA00)
+void CasinoPatches()
+{
+	WriteCall((void*)0x5C060B, Casino_FixKnuxCheck);
+	WriteCall((void*)0x5C058B, Casino_FixKnuxCheck);	
+	WriteCall((void*)0x5C068B, Casino_FixKnuxCheck);
+	WriteCall((void*)0x5C441A, Casino_FixKnuxCheck);
+}
+
 void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
@@ -868,4 +887,5 @@ void InitPatches()
 	initERoboHack();
 	InitEnemySaiPatches();
 	init_AIFight_Patches();
+	CasinoPatches();
 }
