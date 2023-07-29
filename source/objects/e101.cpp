@@ -3,9 +3,9 @@
 #include "levels.h"
 #include "result.h"
 
+#ifdef MULTI_TEST
 static void __cdecl Rd_E101_r(task* tp);
 TaskHook E101_Main_t(E101_Main, Rd_E101_r);
-
 static void __cdecl Rd_E101_r(task* tp)
 {
 	if (multiplayer::IsFightMode())
@@ -26,3 +26,4 @@ static void __cdecl Rd_E101_r(task* tp)
 		E101_Main_t.Original(tp);
 	}
 }
+#endif

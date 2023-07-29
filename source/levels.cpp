@@ -974,10 +974,12 @@ void InitLevels()
 	// Remove landtable collision chunk optimisation
 	WriteData((uint8_t*)0x4E91C0, 0xC3ui8); // Ice Cap
 
+#ifdef MULTI_TEST
 	// In battle mode, boss become fighting arenas
 	Rd_Chaos2_t = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
 	Rd_Chaos4_t = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
 	Rd_Chaos6_t = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
+#endif
 
 	// Act swap fixes
 	Rd_Beach_t = new Trampoline(0x4F6D60, 0x4F6D67, Rd_Beach_r);

@@ -125,6 +125,7 @@ void __cdecl char_sel_sub_exec_r(CharSelWk* wkp)
 
 void InitAdventureMenu()
 {
+#ifdef MULTI_TEST
 	DialogPrm[DIA_TYPE_CHARSEL1].PnlPrmPtr = PanelPrmCharsel1_m;
 	DialogPrm[DIA_TYPE_CHARSEL1].CsrMax = LengthOfArray(PanelPrmCharsel1_m);
 	DialogPrm[DIA_TYPE_CHARSEL1].CsrCancel = DialogPrm[DIA_TYPE_CHARSEL1].CsrMax - 1;
@@ -141,4 +142,5 @@ void InitAdventureMenu()
 	//DialogPrm[DIA_TYPE_CHARSEL4].CsrCancel = DialogPrm[DIA_TYPE_CHARSEL4].CsrMax - 1;
 
 	char_sel_sub_exec.Hook(char_sel_sub_exec_r);
+#endif
 }

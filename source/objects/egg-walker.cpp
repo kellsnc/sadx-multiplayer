@@ -22,5 +22,7 @@ void eggWalker_r(task* tp)
 
 void initEggWalkerPatches()
 {
+#ifdef MULTI_TEST
 	eggWalker_t.Hook(eggWalker_r);
+#endif
 }

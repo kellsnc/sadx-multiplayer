@@ -201,6 +201,7 @@ void eggHornet_r(task* tp)
 
 void initEggHornetPatches()
 {
+#ifdef MULTI_TEST
 	eggHornet_t.Hook(eggHornet_r);
 
 	EH_PosPlayerCheck_t.Hook(EH_PosPlayerCheck_r);
@@ -209,4 +210,5 @@ void initEggHornetPatches()
 	SetEgm1Ud_t.Hook(setEgm1Ud_r);
 	setEgm1Missile_t.Hook(setEgm1Missile_r);
 	SetEgm1AtkRoute_t.Hook(SetEgm1AtkRoute_r);
+#endif
 }

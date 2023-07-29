@@ -591,10 +591,16 @@ void OpenModeDialog(const DialogPrmType* dial, int csr)
 		{
 			allowed = GetEachCharEnableForTrial(i);
 		}
-		else if (i == 6)
+		else if (i == 6) // Twinkle Circuit
 		{
 			allowed = true;
 		}
+#ifdef MULTI_TEST
+		else if (i == 7) // Fight
+		{
+			allowed = true;
+		}
+#endif
 
 		if (!allowed)
 		{
