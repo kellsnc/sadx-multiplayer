@@ -34,7 +34,7 @@ extern "C"
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
 		gHelperFunctions = &helperFunctions;
-		config::read(path);
+		config.read(path);
 
 		if (helperFunctions.Version >= 16)
 		{

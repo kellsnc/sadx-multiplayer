@@ -1,18 +1,23 @@
 #pragma once
 
-namespace config
+struct Config
 {
-	extern bool splitScreenEnabled;
-	extern bool indicatorEnabled;
-	extern bool infiniteLives;
+	bool mSplitScreen = true;
+	bool mIndicator = false;
 
-	namespace network
+	struct
 	{
-		extern std::string default_ip;
-		extern int default_port;
-	}
+		std::string mDefaultAddress = "localhost";
+		int mDefaultPort = 27015;
+	} netplay;
+
+	struct
+	{
+		bool mInfiniteLives[PLAYER_MAX] = {};
+		bool mInfiniteRings[PLAYER_MAX] = {};
+	} cheats;
 
 	void read(const char* path);
-}
+};
 
-void SetInfiniteLives();
+extern Config config;

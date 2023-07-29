@@ -750,43 +750,6 @@ void FixShakeoffGarbageAction(uint8_t pnum, int action) { //This make the game c
 	return ForcePlayerAction(pnum, action);
 }
 
-void RemoveAttackSolidColFlags(uint8_t pID)
-{
-	if (!playertwp[pID] || EV_MainThread_ptr || CharacterBossActive || !multiplayer::IsCoopMode())
-		return;
-
-	auto pData = playertwp[pID];
-
-	if (pData->cwp && pData->cwp->nbInfo)
-	{
-		for (int8_t i = 0; i < pData->cwp->nbInfo; i++)
-		{
-			playertwp[pID]->cwp->info[i].damage &= ~0x20u; //Remove damage on other players
-			playertwp[pID]->cwp->info[i].push &= ~0x1u; //remove push flag on other players
-		}
-	}
-}
-
-void RestorePlayerCollisionFlags(uint8_t ID)
-{
-	if (!playertwp[ID])
-		return;
-
-	auto data = playertwp[ID];
-
-	if (data->cwp)
-	{
-		if (data->cwp->nbInfo)
-		{
-			for (int8_t i = 0; i < data->cwp->nbInfo; i++)
-			{
-				playertwp[ID]->cwp->info[i].damage |= 0x20u; //Restore damage on other players
-				playertwp[ID]->cwp->info[i].push |= 0x1u; //Restore push flag on other players
-			}
-		}
-	}
-}
-
 void InitPatches()
 {
 	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);

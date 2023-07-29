@@ -174,7 +174,7 @@ static void __cdecl IndicatorP(task* tp)
 
 void CreateIndicatorP()
 {
-	if (config::indicatorEnabled == true && indicator_tp == nullptr)
+	if (config.mIndicator == true && indicator_tp == nullptr)
 	{
 		auto tp = indicator_tp = CreateElementalTask(0u, LEV_6, IndicatorP);
 		tp->disp = dispIndicatorP;

@@ -150,7 +150,10 @@ extern "C"
 {
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
-		SetInfiniteLives();
+		if (ChkGameMode())
+		{
+			UpdatePlayersInfo();
+		}
 
 		if (network.IsConnected())
 		{
@@ -194,7 +197,6 @@ extern "C"
 			}
 		}
 
-		UpdatePlayersInfo();
 	}
 }
 

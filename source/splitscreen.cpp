@@ -289,7 +289,7 @@ void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
 
 void InitSplitScreen()
 {
-	if (config::splitScreenEnabled == true)
+	if (config.mSplitScreen == true)
 	{
 		SpLoopOnlyDisplay_hook.Hook(SpLoopOnlyDisplay_r);
 		DisplayTask_hook.Hook(DisplayTask_r);

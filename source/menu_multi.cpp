@@ -666,7 +666,7 @@ bool menu_multi_apply_change(MultiMenuWK* wk, MD_MULTI id, int dial)
 				gConnectSelection = ConnectMenuSelection::Client;
 				gConnectMenuMode = ConnectMenuMode::Select;
 
-				if (address_text.empty()) address_text = "\a" + config::network::default_ip + ":" + std::to_string(config::network::default_port);
+				if (address_text.empty()) address_text = "\a" + config.netplay.mDefaultAddress + ":" + std::to_string(config.netplay.mDefaultPort);
 
 				if (address_text.size() > address_limit)
 				{

@@ -1,39 +1,39 @@
 #include "pch.h"
+#include <memory>
 #include <IniFile.hpp>
 #include "config.h"
 
-namespace config
-{
-	bool splitScreenEnabled = true;
-	bool indicatorEnabled = false;
-	bool infiniteLives = false;
+Config config;
 
-	namespace network
+void Config::read(const char* path)
+{
+	std::unique_ptr<IniFile> config(new IniFile(std::string(path) + "\\config.ini"));
+	const IniGroup* ini_general = config->getGroup("");
+
+	if (ini_general)
 	{
-		std::string default_ip("localhost");
-		int default_port = 27015;
+		mSplitScreen = ini_general->getBool("SplitScreen", mSplitScreen);
+		mIndicator = ini_general->getBool("Indicator", mIndicator);
 	}
 
-	void read(const char* path)
+	const IniGroup* ini_netplay = config->getGroup("Netplay");
+
+	if (ini_netplay)
 	{
-		const IniFile* config = new IniFile(std::string(path) + "\\config.ini");
-		const IniGroup* general = config->getGroup("");
+		netplay.mDefaultAddress = ini_netplay->getString("DefaultAddress", netplay.mDefaultAddress);
+		netplay.mDefaultPort = ini_netplay->getInt("DefaultPort", netplay.mDefaultPort);
+	}
 
-		if (general)
-		{
-			splitScreenEnabled = general->getBool("SplitScreen", splitScreenEnabled);
-			indicatorEnabled = general->getBool("Indicator", indicatorEnabled);
-			infiniteLives = general->getBool("infiniteLives", infiniteLives);
-		}
+	const IniGroup* ini_cheats = config->getGroup("Cheats");
 
-		const IniGroup* network = config->getGroup("Networking");
+	if (ini_cheats)
+	{
+#define READ_CHEAT(NAME) cheats.m##NAME##[0] = ini_cheats->getBool(###NAME "P1", false); \
+		cheats.m##NAME##[1] = ini_cheats->getBool(###NAME "P2", false); \
+		cheats.m##NAME##[2] = ini_cheats->getBool(###NAME "P3", false); \
+		cheats.m##NAME##[3] = ini_cheats->getBool(###NAME "P4", false);
 
-		if (network)
-		{
-			network::default_ip = network->getString("DefaultAddress", network::default_ip);
-			network::default_port = network->getInt("DefaultPort", network::default_port);
-		}
-
-		delete config;
+		READ_CHEAT(InfiniteLives);
+		READ_CHEAT(InfiniteRings);
 	}
 }

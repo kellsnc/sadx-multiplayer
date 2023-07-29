@@ -338,15 +338,6 @@ void RemovePlayersDamage(taskwk* twp)
 	}
 }
 
-void SetPlayerTargetable(taskwk* twp)
-{
-	if (twp->cwp)
-	{
-		twp->cwp->flag |= 0x40;
-		twp->cwp->id = 3;
-	}
-}
-
 static bool PlayerListener(Packet& packet, Network::PACKET_TYPE type, Network::PNUM pnum)
 {
 	auto ptwp = playertwp[pnum];
@@ -433,6 +424,54 @@ static bool PlayerSender(Packet& packet, Network::PACKET_TYPE type, Network::PNU
 
 void UpdatePlayersInfo()
 {
+#ifdef _DEBUG
+	if ((perG[1].press & Buttons_L) && (perG[1].press & Buttons_R))
+	{
+		if (ChkGameMode() && playertwp[1] && playertwp[0])
+		{
+			TeleportPlayer(1, &playertwp[0]->pos);
+		}
+	}
+#endif
+
+	bool coop = multiplayer::IsCoopMode();
+
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto& cheats = config.cheats;
+
+		if (cheats.mInfiniteLives[i])
+		{
+			scNumPlayer_m[i] = 99;
+		}
+
+		if (cheats.mInfiniteRings[i])
+		{
+			ssNumRing_m[i] = 999;
+		}
+
+		auto ptwp = playertwp[i];
+		if (ptwp && ptwp->cwp)
+		{
+			if (CharacterBossActive)
+			{
+				for (int col = 0; col < ptwp->cwp->nbInfo; col++)
+				{
+					ptwp->cwp->info[col].damage |= 0x20; // Restore damage
+					ptwp->cwp->info[col].push |= 0x1; // Restore push
+				}
+			}
+			else if (coop && !EV_MainThread_ptr)
+			{
+				for (int col = 0; col < ptwp->cwp->nbInfo; col++)
+				{
+					ptwp->cwp->info[col].damage &= ~0x20; // Remove damage
+					ptwp->cwp->info[col].push &= ~0x1; // Remove push
+				}
+			}
+		}
+	}
+
 	if (network.IsConnected())
 	{
 		auto pnum = network.GetPlayerNum();
@@ -488,43 +527,6 @@ void UpdatePlayersInfo()
 			{
 				network.Send(Network::PACKET_PLAYER_SCORE, PlayerSender);
 				old_score = EnemyScore_m[pnum];
-			}
-		}
-	}
-
-#ifdef _DEBUG
-	if ((perG[1].press & Buttons_L) && (perG[1].press & Buttons_R))
-	{
-		if (ChkGameMode() && playertwp[1] && playertwp[0])
-		{
-			TeleportPlayer(1, &playertwp[0]->pos);
-		}
-	}
-#endif
-
-	if (ChkGameMode())
-	{
-		bool vs = multiplayer::IsFightMode();
-		bool coop = multiplayer::IsCoopMode();
-
-		if (vs || coop)
-		{
-			for (uint8_t i = 0; i < PLAYER_MAX; ++i)
-			{
-				if (playertwp[i])
-				{
-					if (CharacterBossActive)
-					{
-						RestorePlayerCollisionFlags(i);	
-					}
-					else
-					{
-						if (vs)
-							SetPlayerTargetable(playertwp[i]);
-						else if (coop)
-							RemoveAttackSolidColFlags(i);
-					}
-				}
 			}
 		}
 	}
@@ -653,17 +655,6 @@ Bool isInDeathZone_r(taskwk* a1)
 	}
 
 	return isInDeathZone_t.Original(a1);
-}
-
-void SetInfiniteLives()
-{
-	if (config::infiniteLives && multiplayer::IsActive())
-	{
-		for (int i = 0; i < PLAYER_MAX; i++)
-		{
-			scNumPlayer_m[i] = CHAR_MAX;
-		}
-	}
 }
 
 bool DeleteJiggle(task* tp)
