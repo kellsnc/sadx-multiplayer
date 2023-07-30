@@ -1053,19 +1053,7 @@ bool menu_multi_charsel_input(MultiMenuWK* wk, int i)
 			PlayMenuBipSound();
 		}
 
-		while (enabled_characters[sel] == false)
-		{
-			if (press & Buttons_Left)
-			{
-				sel = abs(sel % 8 - 1);
-			}
-			else
-			{
-				sel = abs(sel % 8 + 1);
-			}
-		}
-
-		if (MenuSelectButtonsPressedM(i))
+		if (MenuSelectButtonsPressedM(i) && enabled_characters[sel])
 		{
 			chara_ready[i] = true;
 			PlayVoice(charsel_voicelist[menu_multi_getplayerno(sel)]);
