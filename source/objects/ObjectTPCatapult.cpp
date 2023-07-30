@@ -8,6 +8,8 @@ auto sub_622000 = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x622000
 auto rotateArms = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x621EF0, rEDI);
 auto manipulateArm = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x6220F0, rEDI);
 
+#define PNUM(twp) twp->ang.z
+
 enum : char
 {
 	MODE_INIT,
@@ -20,7 +22,7 @@ enum : char
 
 static void inhallPlayer_m(taskwk* twp)
 {
-	auto pnum = twp->id;
+	auto pnum = PNUM(twp);
 	auto ptwp = playertwp[pnum];
 
 	if (ptwp)
@@ -76,7 +78,7 @@ static void inhallPlayer_m(taskwk* twp)
 
 static void manipulateArm_m(taskwk* twp)
 {
-	auto ptwp = playertwp[GetClosestPlayerNum(&twp->pos)];
+	auto ptwp = playertwp[twp->mode > MODE_AIM ? PNUM(twp) : GetClosestPlayerNum(&twp->pos)];
 	NJS_POINT3 v = { ptwp->pos.x - twp->pos.x, 0.0f, ptwp->pos.z - twp->pos.z };
 
 	njPushMatrix(_nj_unit_matrix_);
@@ -136,6 +138,11 @@ static bool checkOnBoard_m(taskwk* twp)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
+		if (twp->mode > MODE_AIM && i != PNUM(twp))
+		{
+			continue;
+		}
+
 		auto ptwp = playertwp[i];
 
 		if (!ptwp)
@@ -152,7 +159,7 @@ static bool checkOnBoard_m(taskwk* twp)
 
 		if (fabs(v.x) < 54.27f && fabs(v.z) < 21.08f && fabs(v.y) < 50.0f)
 		{
-			twp->id = i;
+			PNUM(twp) = i;
 			return true;
 		}
 	}
@@ -168,7 +175,7 @@ static void Aim(taskwk* twp)
 	{
 		if (checkOnBoard_m(twp))
 		{
-			auto pnum = twp->id;
+			auto pnum = PNUM(twp);
 			twp->mode = MODE_3;
 			SetInputP(pnum, PL_OP_PLACEWITHSPIN);
 			SetRotationP(pnum, 0, ((NJS_ACTION*)twp->timer.ptr)->object->child->child->ang[1] + twp->ang.y + 0x8000, 0);
@@ -254,14 +261,14 @@ static void ObjectTPCatapult_m(task* tp)
 			if (!checkOnBoard_m(twp))
 			{
 				twp->mode = 2;
-				SetInputP(twp->id, PL_OP_LETITGO);
+				SetInputP(PNUM(twp), PL_OP_LETITGO);
 			}
 			break;
 		case MODE_4:
 			inhallPlayer_m(twp);
 			if (checkOnBoard_m(twp))
 			{
-				if (per[twp->id]->press & (Buttons_A | Buttons_B))
+				if (per[PNUM(twp)]->press & (Buttons_A | Buttons_B))
 				{
 					twp->mode = MODE_5;
 				}
@@ -269,26 +276,26 @@ static void ObjectTPCatapult_m(task* tp)
 			else
 			{
 				twp->mode = MODE_AIM;
-				SetInputP(twp->id, PL_OP_LETITGO);
+				SetInputP(PNUM(twp), PL_OP_LETITGO);
 			}
 			rotateArms(twp);
 			manipulateArm_m(twp);
-			SetRotationP(twp->id, 0, ((NJS_ACTION*)twp->timer.ptr)->object->child->child->ang[1] + twp->ang.y + 0x8000, 0);
+			SetRotationP(PNUM(twp), 0, ((NJS_ACTION*)twp->timer.ptr)->object->child->child->ang[1] + twp->ang.y + 0x8000, 0);
 			break;
 		case MODE_5:
-			if (checkOnBoard_m(twp) && playertwp[twp->id])
+			if (checkOnBoard_m(twp) && playertwp[PNUM(twp)])
 			{
 				NJS_POINT3 p = { twp->scl.x, 0.0f, 0.0f };
 				Angle3 ang = { 0, ((NJS_ACTION*)twp->timer.ptr)->object->child->child->ang[1] + twp->ang.y + 0x8000, 0 };
 				
-				if (TASKWK_CHARID(playertwp[twp->id]) == Characters_Sonic)
+				if (TASKWK_CHARID(playertwp[PNUM(twp)]) == Characters_Sonic)
 				{
-					SetVelocityAndRotationAndNoconTimeWithSpinDashP(twp->id, &p, &ang, 30);
+					SetVelocityAndRotationAndNoconTimeWithSpinDashP(PNUM(twp), &p, &ang, 30);
 				}
 				else
 				{
-					SetInputP(twp->id, PL_OP_LETITGO);
-					SetVelocityAndRotationAndNoconTimeP(twp->id, &p, &ang, 30);
+					SetInputP(PNUM(twp), PL_OP_LETITGO);
+					SetVelocityAndRotationAndNoconTimeP(PNUM(twp), &p, &ang, 30);
 				}
 				
 				dsPlay_oneshot(68, 0, 0, 0);
