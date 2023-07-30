@@ -165,7 +165,7 @@ struct MultiMenuWK
 	int actreq;
 };
 
-const SeqDataType BackToMultiSeqFlowData[14] = {
+SeqDataType BackToMultiSeqFlowData[14] = {
 	{ (AdvaModeEnum)ADVA_MODE_MULTI, { ADVA_MODE_TITLE_MENU, (AdvaModeEnum)ADVA_MODE_MULTI, (AdvaModeEnum)ADVA_MODE_MULTI } },
 	{ ADVA_MODE_TITLE_NEW, { ADVA_MODE_NONE, ADVA_MODE_FILE_SEL, ADVA_MODE_FILE_SEL } },
 	{ ADVA_MODE_FILE_SEL, { ADVA_MODE_TITLE_NEW, ADVA_MODE_TITLE_MENU, ADVA_MODE_TITLE_MENU } },

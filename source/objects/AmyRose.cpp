@@ -187,7 +187,7 @@ Bool Amy_CheckInput_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 			twp->ang.x = 0;
 			PClearSpeed(mwp, pwp);
 			twp->flag &= ~0x2500;
-			StopPlayerLookAt(pnum);
+			CancelLookingAtP(pnum);
 			return TRUE;
 		case PL_OP_HOLDONPILLAR:
 			if (SetCylinderNextAction(twp, mwp, pwp))
