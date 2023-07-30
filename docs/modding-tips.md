@@ -4,9 +4,21 @@
 
 Mod compatiblity is our top priority, we did everything we could to ensure compatiblity with existing mods. Some mods however may only be partially compatible if the code was not made with multiplayer in mind. To ensure that your mod is fully compatible with multiplayer, here is a list of best practices.
 
-## Using the API
+## Getting information from the multiplayer mod
 
-Obviously if you want to access things exclusive to the mod (like P2+ rings, lives, score or camera) you will need to use the API that the mod provides. See the guide [here](./using-the-api.md).
+You can access basic information using the Mod Loader API.
+
+```
+auto multi_mod = helperFunctions.Mods->find("sadx-multiplayer"); // Requires helperFunctions.Version >= 16
+if (multi_mod) // Check if the mod is loaded
+{
+    // You can now access information like the mod version, its path, etc.
+}
+```
+
+Now if you want access to more interesting things (like P2+ rings, lives, score, camera, etc.) you will need to use the API that the mod provides.
+
+You can learn about the Multiplayer API [here](./using-the-api.md).
 
 ## Working with every player
 
