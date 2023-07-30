@@ -556,6 +556,9 @@
     <ClCompile Include="o_casino_telepot.cpp">
       <Filter>Source Files\objects\stg09_casino</Filter>
     </ClCompile>
+    <ClCompile Include="objects\o_twinkle_barrel.cpp">
+      <Filter>Source Files\objects\stg03_twinkle</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
