@@ -1,0 +1,25 @@
+This is a modification for Sonic Adventure DX (Sonic Team, SEGA)
+
+This project was made by:
+- Kell
+- Sora
+
+With contributions from:
+- SoloSlacker (menu textures, main logo)
+- Broly (documentation logo)
+
+And tested by:
+- Jesus_PK
+- SoloSlacker
+- Vwp914
+- Broly
+- Kanzukiryu
+- ItsEasyActually
+- Chaorrin
+- KGL
+- Somario
+- MDTravis
+- BladeOfChaos
+- Jeff
+- alexvgz
+- Moonlight
