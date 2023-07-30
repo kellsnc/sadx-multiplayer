@@ -40,11 +40,7 @@ void KillAndWarpPlayers(char pNum)
 		}
 		else
 		{
-			if (multiplayer::IsBattleMode() || pNum == 0)
-			{
-				AddNumPlayerM(pNum, -1); // Remove one life
-			}
-
+			AddNumPlayerM(pNum, -1); // Remove one life
 			SetNumRingM(pNum, 0);
 			TeleportPlayerToStart(pNum);
 
