@@ -4,112 +4,67 @@
 
 The Multiplayer mod exports a handful of functions to allow mod developpers to access and modify useful data. With these, you can access the rings of other players, the current screen being drawn to, etc.
 
-There are two methods to get these exported functions: linking the import library (recommended) and manually retrieving the function pointers.
+There are two methods to get these exported functions: linking the import library and manually retrieving the function pointers. If you're unfamiliar with these, please read the tutorial for both methods before choosing.
 
-## Linking the import library (recommended)
+## Manual method (function pointers)
 
-You will find the import library in every release package at `api\sadx-multiplayer.lib` and the function definitions at `api\multiapi.h`. Move these files into your own project.
+This method requires setting up [function pointers](https://stackoverflow.com/a/840504) for each function you are going to use.
 
-Then open the project settings and add `sadx-multiplayer.lib` to your additional libraries. In the screenshot below, the lib was placed at the solution's root, you can always change the relative path.
-
-Then in "Delay Loaded Dlls", add `sadx-multiplayer.dll` (if you don't, people will need your mod to be loaded after the Multiplayer mod.)
-
-![Image showing the way to add a library to the "additional dependencies" list](./images/linking-library.png)
-
-Now if you include `multiapi.h` in a cpp file you can call the functions provided by the API.
-
-You may want to add a boolean to check if the multiplayer mod is loaded, otherwise your mod will crash when trying to call an API function.
-
-Somewhere outside of a function:
-```
-bool gMultiplayerModLoaded = false;
-```
-
-In your init function:
-```
-gMultiplayerModLoaded = GetModuleHandle(L"sadx-multiplayer.dll") != NULL;
-```
-
-Usage exemple:
-```
-void AddScore(uint32_t pnum, int32_t amount)
-{
-    if (gMultiplayerModLoaded)
-    {
-        multi_score_add(pnum, amount);
-    }
-    else // original behaviour if the mod is not loaded
-    {
-        if (pnum == 0)
-        {
-            EnemyBonus += amount;
-        }
-    }
-}
-```
-
-Now whenever the multiplayer mod is updated with new API function, you just have to edit the `sadx-multiplayer.lib` and `multiapi.h` and the new functions will be available to you!
-
-## Manual method
-
-The downside of this method is that you have to provide the function definition yourself which can be tedious.
-
-First, you need to get a handle to the sadx-multiplayer DLL.
-
-```
-HMODULE handle = GetModuleHandle(L"sadx-multiplayer.dll");
-```
-
-Then you can look for the function using `GetProcAddress`
-
-```
-if (handle)
-{
-    auto multi_score_add = GetProcAddress(handle, "multi_score_add");
-}
-```
-
-It's not done yet, you cannot call "multi_score_add" because your code doesn't know it's a function. We need to tell it its type.
-
-```
-auto multi_score_add = (void(*)(uint32_t pnum, int32_t amount))GetProcAddress(handle, "multi_score_add");
-```
-
-Doing this every time you want to call a function is both slow and tedious, so I recommend using global variable.
+First, find the functions you're interested in [below](#Functions) and create a global function pointer for it. We will use "multi_score_add" and "multi_score_get" in this example.
 
 ```
 void(*multi_score_add)(uint32_t pnum, int32_t amount) = nullptr;
-
-void InitializeMultiplayerAPI()
-{
-	HMODULE handle = GetModuleHandle(L"sadx-multiplayer.dll");
-
-	if (handle)
-	{
-		multi_score_add = (void(*)(uint32_t pnum, int32_t amount))GetProcAddress(handle, "multi_score_add");
-
-		// ...
-	}
-}
-
-void AddScore(uint32_t pnum, int32_t amount)
-{
-	if (multi_score_add)
-	{
-		multi_score_add(pnum, amount);
-	}
-	else // original behaviour if the mod is not loaded
-	{
-		if (pnum == 0)
-		{
-			EnemyBonus += amount;
-		}
-	}
-}
-
+int32_t(*multi_score_get)(uint32_t pnum) = nullptr;
 ```
 
-With this method, you need to add a function pointer for every function you want and get their address manually.
+Then, in your mod's Init function, we need to get a handle to the multiplayer mod and retrieve the needed functions. There are two methods to do that, the first one involves using the Mod Loader:
+
+```
+auto multi_mod = helperFunctions.Mods->find("sadx-multiplayer"); // Requires helperFunctions.Version >= 16
+if (multi_mod)
+{
+	multi_score_add = (void(*)(uint32_t pnum, int32_t amount))multi_mod->GetDllExport("multi_score_add");
+	multi_score_get = (int32_t(*)(uint32_t pnum))multi_mod->GetDllExport("multi_score_get");
+	...
+}
+```
+
+The second method involves using the Windows API:
+
+```
+HMODULE handle = GetModuleHandle(L"sadx-multiplayer.dll");
+if (handle)
+{
+	multi_score_add = (void(*)(uint32_t pnum, int32_t amount))GetProcAddress(handle, "multi_score_add");
+	multi_score_get = (int32_t(*)(uint32_t pnum))GetProcAddress(handle, "multi_score_get");
+	...
+}
+```
+
+You can now call the functions pointers, make sure they're not null
+
+```
+if (multi_score_add)
+{
+	multi_score_add(pnum, score);
+}
+```
+
+## Automatic method (import library)
+
+This method allows you to call all the API functions without function pointers, but requires some initial setup.
+
+1. In the multiplayer mod's folder, copy `sadx-multiplayer.lib` and `multiapi.h` into your project folder.
+2. Open your project settings and add `(ProjectDir)sadx-multiplayer.lib` to the additional dependencies.<br>You may adjust the relative path to where you put the files.
+3. In "Delay Loaded Dlls", add `sadx-multiplayer.dll` (if you don't, people will need your mod to be loaded after the multiplayer mod.)
+
+![Image showing the way to add a library to the "additional dependencies" list](./images/linking-library.png)
+
+Now if you include `multiapi.h` in a cpp file you can call all the functions [below](#Functions) directly.
+
+Be aware that if the multiplayer mod is not loaded, calling an API function will crash. You should check if the multiplayer mod is loaded before calling one of its function. I recommend making a global bool variable and initializing it in your mod's Init function. To check if the multiplayer mod exists you have two methods:
+* `gMultiplayerModLoaded = helperFunctions.Mods->find("sadx-multiplayer") != nullptr` (requires helperFunctions.Version >= 16)
+* `gMultiplayerModLoaded = GetModuleHandle(L"sadx-multiplayer.dll") != NULL;`
 
 ## Functions
 
@@ -230,6 +185,56 @@ Disable multiplayer mode, does not remove any loaded player.
 uint32_t multi_get_player_count();
 ```
 Get the amount of multiplayer players (and not the number of loaded characters.)
+
+**multi_get_enemy_list**
+```
+bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num);
+```
+Returns the target array for a specific player. If the list exists, it returns true and write into all pointers. On error, it returns false and does not write to any pointer. Individual pointers can be null. The count is optional as you can loop p_ael until twp is NULL.
+
+### Fog
+
+The fog system has been modified to allow per-player fog. By default, each player uses the global fog values. This is currently used for the Lost World mirror room.
+
+**multi_set_fog**
+```
+void multi_set_fog(uint32_t pnum, ___stcFog* pFog);
+```
+Enable custom fog for a specific player. The player will no longer use the global fog until you use *multi_reset_fog*.
+
+**multi_get_fog**
+```
+bool multi_get_fog(uint32_t pnum, ___stcFog* pFog);
+```
+If custom fog has been set for the given player, this returns true and writes data into pFog. If the player is using global fog, it returns false and does not write pFog. pFog can be null.
+
+**multi_reset_fog**
+```
+void multi_reset_fog(uint32_t pnum);
+```
+Disable custom fog for the given player, effectively returning to global fog.
+
+### Gravity
+
+The gravity system has been modified to allow per-player gravity. By default, each player uses the global gravity. This is currently used for the Lost World gravity panels.
+
+**multi_set_gravity**
+```
+void multi_set_gravity(uint32_t pnum, Angle angx, Angle angz);
+```
+Enable custom gravity for a specific player. The player will no longer use the global gravity until you use *multi_reset_gravity*.
+
+**multi_get_gravity**
+```
+bool multi_get_gravity(uint32_t pnum, NJS_POINT3* v, Angle* angx, Angle* angz);
+```
+If custom gravity has been set for the given player, this returns true and writes data into all pointers. If the player is using global gravity, it returns false and does not write to any pointer. Individual pointers can be null.
+
+**multi_reset_gravity**
+```
+void multi_reset_gravity(uint32_t pnum);
+```
+Disable custom gravity for the given player, effectively returning to global gravity.
 
 ### Camera
 
