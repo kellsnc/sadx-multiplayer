@@ -92,7 +92,7 @@ void SetEnemyScoreM(int pNum, int Number)
 
 void ResetNumPlayerM()
 {
-	std::fill(scNumPlayer_m.begin(), scNumPlayer_m.end(), 4);
+	std::fill(scNumPlayer_m.begin(), scNumPlayer_m.end(), *(Sint8*)0x425AF6);
 }
 
 int GetNumPlayerM(int pNum)
