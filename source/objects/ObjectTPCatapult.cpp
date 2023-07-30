@@ -276,14 +276,22 @@ static void ObjectTPCatapult_m(task* tp)
 			SetRotationP(twp->id, 0, ((NJS_ACTION*)twp->timer.ptr)->object->child->child->ang[1] + twp->ang.y + 0x8000, 0);
 			break;
 		case MODE_5:
-			if (checkOnBoard_m(twp))
+			if (checkOnBoard_m(twp) && playertwp[twp->id])
 			{
+				NJS_POINT3 p = { twp->scl.x, 0.0f, 0.0f };
+				Angle3 ang = { 0, ((NJS_ACTION*)twp->timer.ptr)->object->child->child->ang[1] + twp->ang.y + 0x8000, 0 };
+				
+				if (TASKWK_CHARID(playertwp[twp->id]) == Characters_Sonic)
 				{
-					NJS_POINT3 p = { twp->scl.x, 0.0f, 0.0f };
-					Angle3 ang = { 0, ((NJS_ACTION*)twp->timer.ptr)->object->child->child->ang[1] + twp->ang.y + 0x8000, 0 };
 					SetVelocityAndRotationAndNoconTimeWithSpinDashP(twp->id, &p, &ang, 30);
-					dsPlay_oneshot(68, 0, 0, 0);
 				}
+				else
+				{
+					SetInputP(twp->id, PL_OP_LETITGO);
+					SetVelocityAndRotationAndNoconTimeP(twp->id, &p, &ang, 30);
+				}
+				
+				dsPlay_oneshot(68, 0, 0, 0);
 			}
 			else
 			{
