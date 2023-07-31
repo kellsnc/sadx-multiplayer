@@ -23,8 +23,8 @@ Then, in your mod's Init function, we need to get a handle to the multiplayer mo
 auto multi_mod = helperFunctions.Mods->find("sadx-multiplayer"); // Requires helperFunctions.Version >= 16
 if (multi_mod)
 {
-	multi_score_add = (void(*)(uint32_t pnum, int32_t amount))multi_mod->GetDllExport("multi_score_add");
-	multi_score_get = (int32_t(*)(uint32_t pnum))multi_mod->GetDllExport("multi_score_get");
+	multi_score_add = multi_mod->GetDllExport<decltype(multi_score_add)>("multi_score_add");
+	multi_score_get = multi_mod->GetDllExport<decltype(multi_score_get)>("multi_score_get");
 	...
 }
 ```
