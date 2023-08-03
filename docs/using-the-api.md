@@ -336,41 +336,50 @@ Release an event camera for a specific player if one is running.
 ```
 bool splitscreen_is_active(void);
 ```
-Returns true is split-screen is currently running.
+Returns true if split screen is currently active (in game).
+
+**splitscreen_is_enable**
+```
+bool splitscreen_is_enable(void);
+```
+Returns true if split screen is enabled (not necessarily running).
+For example, split screen is inactive during events, menus, etc.
+
+**splitscreen_enable**
+```
+void splitscreen_enable(void);
+```
+Enable split screen (if the mod's config allows it.)
+This is done automatically when multiplayer is enabled.
+
+**splitscreen_disable**
+```
+void splitscreen_disable(void);
+```
+Disable split screen.
+This is done automatically when multiplayer is disabled. You can use this if you need to disable split screen under certain conditions. Just remember to enable it back **if** it was previously enabled (see *splitscreen_is_enable*.)
 
 **viewport_is_enabled**
 ```
 bool viewport_is_enabled(int32_tnum);
 ```
-If a specific split-screen exists on screen.
+Returns true if the given viewport / splitted-screen exists.
 
-**viewport_save**
+**viewport_set_num**
 ```
-void viewport_save(void);
+void viewport_set_num(int32_t num);
 ```
-Save the current screen ID.
+Set the viewport used for rendering models, sprites, etc. Set this to `-1` to render to the whole screen.
 
-**viewport_restore**
-```
-void viewport_restore(void);
-```
-Restore the last saved screen ID.
-
-**viewport_change**
-```
-void viewport_change(int32_t num);
-```
-Change the screen ID used for rendering. If you set this to `-1`, it will render to the whole screen.
-
-Use `viewport_save` before and `viewport_restore` after to not break the rendering queue.
+It is necessary to restore the previous viewport once you're done rendering things or you will break the queue. See *viewport_get_num*.
 
 **viewport_get_num**
 ```
-uint32_t viewport_get_num(void);
+int32_t viewport_get_num(void);
 ```
-Get the current screen being drawn to. This only works in the display subroutines of tasks, otherwise it returns the last screen that was drawn to.
+Get the current viewport being drawn to.
 
-This is useful for rendering things only on specific screens.
+Useful in the display subroutine of tasks to draw things only for specific players.
 
 **viewport_get_info**
 ```
