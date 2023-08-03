@@ -71,6 +71,11 @@ namespace SplitScreen
 
 	const ScreenRatio* GetScreenRatio(int num)
 	{
+		if (num < 0 || num >= PLAYER_MAX)
+		{
+			return nullptr;
+		}
+
 		int screenid = 0;
 		int screencount = 0;
 
