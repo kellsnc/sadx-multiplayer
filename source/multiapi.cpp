@@ -33,24 +33,14 @@ bool viewport_is_enabled(int32_t num)
 	return SplitScreen::IsScreenEnabled(num);
 }
 
-void viewport_save()
-{
-	SplitScreen::SaveViewPort();
-}
-
-void viewport_restore()
-{
-	SplitScreen::RestoreViewPort();
-}
-
-void viewport_change(int32_t num)
+void viewport_set_num(int32_t num)
 {
 	SplitScreen::ChangeViewPort(num);
 }
 
-uint32_t viewport_get_num()
+int32_t viewport_get_num()
 {
-	return SplitScreen::GetCurrentScreenNum();
+	return SplitScreen::GetCurrentViewPortNum();
 }
 
 bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h)

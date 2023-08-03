@@ -31,7 +31,7 @@ extern "C"
 	API bool splitscreen_is_active(void);
 
 	// Returns whether split screen is enabled but not necessarily active
-	// For example, splitscreen is inactive during events, menus, etc.
+	// For example, split screen is inactive during events, menus, etc.
 	API bool splitscreen_is_enabled();
 
 	// Enable split screen
@@ -42,23 +42,18 @@ extern "C"
 	// This is done automatically when multiplayer is disabled
 	API void splitscreen_disable();
 
-	// Returns whether the given screen is enabled
+	// Returns whether the given viewport is enabled
 	API bool viewport_is_enabled(int32_t num);
 
-	// Saves the current viewport
-	API void viewport_save(void);
+	// Set the viewport that the game is rendering to
+	// Pass -1 to draw to the whole screen
+	API void viewport_set_num(int32_t num);
 
-	// Restores the saved viewport
-	API void viewport_restore(void);
+	// Get the viewport that the game is rendering to
+	// Returns -1 if it is drawing to the whole screen
+	API int32_t viewport_get_num(void);
 
-	// Change the viewport to draw sprites/models into another screenspace
-	// Pass -1 to draw to whole screen
-	API void viewport_change(int32_t num);
-
-	// Returns the current screen that the game is drawing to
-	API uint32_t viewport_get_num(void);
-
-	// Get screen information as percentage of game screenspace.
+	// Get screen information as percentage of game screen space.
 	// ie. "w * HorizontalResolution" is the viewport width
 	// Returns false if no information is avaiable
 	API bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h);

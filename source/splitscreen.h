@@ -13,6 +13,7 @@ namespace SplitScreen
 	const ScreenRatio* GetScreenRatio(int num);
 	void SaveViewPort();
 	void RestoreViewPort();
+	signed int GetCurrentViewPortNum();
 	bool IsActive();
 	bool IsEnabled();
 	void Enable();
