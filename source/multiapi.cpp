@@ -13,6 +13,21 @@ bool splitscreen_is_active()
 	return SplitScreen::IsActive();
 }
 
+bool splitscreen_is_enabled()
+{
+	return SplitScreen::IsEnabled();
+}
+
+void splitscreen_enable()
+{
+	SplitScreen::Enable();
+}
+
+void splitscreen_disable()
+{
+	SplitScreen::Disable();
+}
+
 bool viewport_is_enabled(int32_t num)
 {
 	return SplitScreen::IsScreenEnabled(num);

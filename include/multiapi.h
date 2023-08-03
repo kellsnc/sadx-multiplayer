@@ -26,10 +26,23 @@ extern "C"
 {
 #endif
 
-	// Returns whether splitscreen is currently enabled
+	// Returns whether split screen is currently active (in game)
+	// If it retuns true, at least two screens are currently rendering
 	API bool splitscreen_is_active(void);
 
-	// Returns whether the given screen is enabled (ie. the player is connected)
+	// Returns whether split screen is enabled but not necessarily active
+	// For example, splitscreen is inactive during events, menus, etc.
+	API bool splitscreen_is_enabled();
+
+	// Enable split screen
+	// This is done automatically when multiplayer is enabled
+	API void splitscreen_enable();
+
+	// Disable split screen
+	// This is done automatically when multiplayer is disabled
+	API void splitscreen_disable();
+
+	// Returns whether the given screen is enabled
 	API bool viewport_is_enabled(int32_t num);
 
 	// Saves the current viewport
