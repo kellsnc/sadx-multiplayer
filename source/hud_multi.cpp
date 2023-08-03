@@ -247,7 +247,7 @@ void MultiHudLives(int num)
 
 void DisplayMultiHud(int num)
 {
-	if (MissedFrames || IsGamePaused() || !IsIngame() || CurrentLevel == LevelIDs_TwinkleCircuit || CurrentCharacter == Characters_Big)
+	if (!multiplayer::IsActive() || MissedFrames || ChkPause() || !ChkGameMode() || CurrentLevel == LevelIDs_TwinkleCircuit || CurrentCharacter == Characters_Big)
 	{
 		return;
 	}

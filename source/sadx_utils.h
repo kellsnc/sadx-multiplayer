@@ -306,6 +306,7 @@ DataPointer(Float, oldf, 0x90A09C);
 DataPointer(Float, SAL_telepotsonicmovespd, 0x1E777BC);
 DataPointer(int, RdCasino_JumpAct, 0x3C7487C);
 DataPointer(int, SAL_telepotsonicrotspd, 0x1E777B8);
+DataPointer(void*, canselEvent, 0x3B2C578);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)

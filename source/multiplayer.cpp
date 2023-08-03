@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "splitscreen.h"
 #include "multiplayer.h"
 
 namespace multiplayer
@@ -20,6 +21,7 @@ namespace multiplayer
 			gMode = md;
 			enabled = true;
 			pcount = player_count;
+			SplitScreen::Enable();
 			return true;
 		}
 		return false;
@@ -32,6 +34,7 @@ namespace multiplayer
 			enabled = false;
 			pcount = 0;
 			ResetCharactersArray();
+			SplitScreen::Disable();
 			return true;
 		}
 		return false;

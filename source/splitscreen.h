@@ -14,6 +14,9 @@ namespace SplitScreen
 	void SaveViewPort();
 	void RestoreViewPort();
 	bool IsActive();
+	bool IsEnabled();
+	void Enable();
+	void Disable();
 	unsigned int GetCurrentScreenNum();
 	bool IsScreenEnabled(int num);
 	bool ChangeViewPort(int num);

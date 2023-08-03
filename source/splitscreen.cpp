@@ -32,6 +32,7 @@ namespace SplitScreen
 {
 	unsigned int numScreen = 0;
 	signed int numViewPort, backupNumViewPort = -1;
+	bool enabled = false;
 
 	const ScreenRatio ScreenRatio2[]
 	{
@@ -75,7 +76,7 @@ namespace SplitScreen
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (i == 0 || IsScreenEnabled(i))
+			if (IsScreenEnabled(i))
 			{
 				if (i < num)
 					++screenid;
@@ -103,6 +104,7 @@ namespace SplitScreen
 
 	bool isBannedLevel()
 	{
+#ifdef MULTI_TEST
 		for (uint16_t i = 0; i < LengthOfArray(bannedLevels); i++)
 		{
 			if (GetStageNumber() == bannedLevels[i])
@@ -110,14 +112,31 @@ namespace SplitScreen
 				return true;
 			}
 		}
-
+#endif
 		return false;
 	}
 
 	bool IsActive()
 	{
-		return configSplitScreenEnabled == true && multiplayer::IsActive() && !EV_CheckCansel()
-			&& cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT && !isBannedLevel() && GameMode != GameModes_Credits;
+		return enabled && ChkGameMode() && !canselEvent && cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT && !isBannedLevel();
+	}
+
+	bool IsEnabled()
+	{
+		return enabled;
+	}
+
+	void Enable()
+	{
+		if (configSplitScreenEnabled == true)
+		{
+			enabled = true;
+		}
+	}
+
+	void Disable()
+	{
+		enabled = false;
 	}
 
 	unsigned int GetCurrentScreenNum()
@@ -127,7 +146,24 @@ namespace SplitScreen
 
 	bool IsScreenEnabled(int num)
 	{
-		return num == 0 ? true : IsActive() && playertp[num] != nullptr && num < multiplayer::GetPlayerCount();
+		if (num == 0)
+		{
+			return true;
+		}
+
+		if (!IsActive() || num < 0)
+		{
+			return false;
+		}
+
+		if (multiplayer::IsEnabled())
+		{
+			return num < multiplayer::GetPlayerCount();
+		}
+		else
+		{
+			return num < GetPlayerCount() && num < 4;
+		}
 	}
 
 	// Change the viewport (-1 is whole screen)
