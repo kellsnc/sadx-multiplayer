@@ -792,6 +792,9 @@
     <ClInclude Include="objects\o_ruin_pathcam.h">
       <Filter>Header FIles\objects\stg08_icecap</Filter>
     </ClInclude>
+    <ClInclude Include="objects\o_casino_pathcam.h">
+      <Filter>Header FIles\objects\stg09_casino</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -889,6 +892,9 @@
     </Filter>
     <Filter Include="Header FIles\netplay">
       <UniqueIdentifier>{fbedaab8-05f5-4755-8346-ba4688365961}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg09_casino">
+      <UniqueIdentifier>{c3f770f2-10af-40b1-9f4e-dbfd26c5e3f1}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -26,6 +26,7 @@
 #include "objects/flicky.h"
 
 #include "objects/o_ruin_pathcam.h"
+#include "objects/o_casino_pathcam.h"
 
 #include "objects/sonic.h"
 #include "objects//miles.h"
@@ -876,6 +877,7 @@ void InitPatches()
 	PatchFlicky();
 
 	PatchRuinPathCam();
+	PatchCasinoPathCam();
 
 	initSDIntroPatches();
 	init_SDCylinderPatches();

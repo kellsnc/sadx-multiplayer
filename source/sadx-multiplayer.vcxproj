@@ -150,6 +150,7 @@
     <ClInclude Include="objects\ObjectItemBox.h" />
     <ClInclude Include="objects\ObjectRocket.h" />
     <ClInclude Include="objects\ObjShelterKaitenKey.h" />
+    <ClInclude Include="objects\o_casino_pathcam.h" />
     <ClInclude Include="objects\o_ruin_pathcam.h" />
     <ClInclude Include="objects\o_savepoint.h" />
     <ClInclude Include="objects\o_sky_cannon_s.h" />
