@@ -798,6 +798,9 @@
     <ClInclude Include="objects\o_hw_pathcam.h">
       <Filter>Header FIles\objects\stg04_highway</Filter>
     </ClInclude>
+    <ClInclude Include="objects\o_beach_pathcam.h">
+      <Filter>Header FIles\objects\stg01_beach</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -901,6 +904,9 @@
     </Filter>
     <Filter Include="Header FIles\objects\stg04_highway">
       <UniqueIdentifier>{068bfeb0-9202-4f0f-ac87-9f78c9b48462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg01_beach">
+      <UniqueIdentifier>{bacd9dff-ad87-4280-939b-5b42a721f35a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
