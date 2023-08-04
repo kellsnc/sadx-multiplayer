@@ -121,9 +121,14 @@ namespace SplitScreen
 		return false;
 	}
 
+	static inline bool IsGameModeValid()
+	{
+		return ssGameMode == MD_GAME_MAIN || ssGameMode == MD_GAME_FADEIN || ssGameMode == MD_GAME_REINIT || ssGameMode == MD_GAME_PAUSE;
+	}
+
 	bool IsActive()
 	{
-		return enabled && ChkGameMode() && !canselEvent && cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT && !isBannedLevel();
+		return enabled && IsGameModeValid() && !canselEvent && cameraSystemWork.G_scCameraMode != CAMMD_CHAOS_STINIT && !isBannedLevel();
 	}
 
 	bool IsEnabled()
