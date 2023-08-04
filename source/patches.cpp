@@ -27,6 +27,7 @@
 
 #include "objects/o_ruin_pathcam.h"
 #include "objects/o_casino_pathcam.h"
+#include "objects/o_hw_pathcam.h"
 
 #include "objects/sonic.h"
 #include "objects//miles.h"
@@ -878,6 +879,7 @@ void InitPatches()
 
 	PatchRuinPathCam();
 	PatchCasinoPathCam();
+	PatchHighwayPathCam();
 
 	initSDIntroPatches();
 	init_SDCylinderPatches();

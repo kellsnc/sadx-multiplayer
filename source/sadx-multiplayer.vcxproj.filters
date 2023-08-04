@@ -795,6 +795,9 @@
     <ClInclude Include="objects\o_casino_pathcam.h">
       <Filter>Header FIles\objects\stg09_casino</Filter>
     </ClInclude>
+    <ClInclude Include="objects\o_hw_pathcam.h">
+      <Filter>Header FIles\objects\stg04_highway</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -895,6 +898,9 @@
     </Filter>
     <Filter Include="Header FIles\objects\stg09_casino">
       <UniqueIdentifier>{c3f770f2-10af-40b1-9f4e-dbfd26c5e3f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header FIles\objects\stg04_highway">
+      <UniqueIdentifier>{068bfeb0-9202-4f0f-ac87-9f78c9b48462}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
