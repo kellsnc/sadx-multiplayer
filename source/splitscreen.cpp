@@ -123,7 +123,7 @@ namespace SplitScreen
 
 	static inline bool IsGameModeValid()
 	{
-		return ssGameMode == MD_GAME_MAIN || ssGameMode == MD_GAME_FADEIN || ssGameMode == MD_GAME_REINIT || ssGameMode == MD_GAME_PAUSE;
+		return ssGameMode < MD_GAME_END || ssGameMode > MD_GAME_END2;
 	}
 
 	bool IsActive()
