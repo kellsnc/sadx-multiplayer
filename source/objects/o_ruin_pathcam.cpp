@@ -189,9 +189,9 @@ static BOOL CameraExec_m(taskwk* twp, taskwk* ptwp, taskwk* ctwp)
 	}
 
 	NJS_VECTOR tgtforward;
-	tgtforward.x = camwk->dir.x * pathwk->fForwardPathDist + postgt.x;
-	tgtforward.y = camwk->dir.y * pathwk->fForwardPathDist + postgt.y;
-	tgtforward.z = camwk->dir.z * pathwk->fForwardPathDist + postgt.z;
+	tgtforward.x = camwk->dir.x * -pathwk->fForwardPathDist + postgt.x;
+	tgtforward.y = camwk->dir.y * -pathwk->fForwardPathDist + postgt.y;
+	tgtforward.z = camwk->dir.z * -pathwk->fForwardPathDist + postgt.z;
 
 	NJS_POINT3 posnear_forward;
 	if (pathwk->modeflag & PATH_MODE_XZ)
@@ -387,12 +387,12 @@ static void ObjectCamPathCam_Exec_m(task* tp)
 			auto pathwk = PATHWORK(twp);
 			auto camwk = CAMWORK(twp);
 
-			NJS_POINT3 v17;
-			v17.x = (float)pathwk->fPathCameraRangeIn;
-			v17.y = camwk->frame;
-			v17.z = camwk->frame;
+			NJS_POINT3 rangein;
+			rangein.x = pathwk->fPathCameraRangeIn;
+			rangein.y = camwk->frame;
+			rangein.z = camwk->frame;
 			
-			if ((camwk->pospath || Paths_m[pnum] <= 2) && CheckRangeIn(&v17, &twp->pos, &ptwp->pos, &twp->ang))
+			if ((camwk->pospath || Paths_m[pnum] <= 2) && CheckRangeIn(&rangein, &twp->pos, &ptwp->pos, &twp->ang))
 			{
 				if (!camwk->pospath)
 				{
@@ -410,7 +410,7 @@ static void ObjectCamPathCam_Exec_m(task* tp)
 					spline_data.src = points;
 					spline_data.data_size = nbPoint;
 					spline_data.fmt = (char*)0x7EC82C;
-					spline_data.rate = 0.071428575f;
+					spline_data.rate = 0.071428575f; // 1/14
 					spline_data.dst = camwk->pospath;
 					spline_data.spline_type = 1;
 					spline_data.variety = 0;
