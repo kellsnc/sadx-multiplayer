@@ -307,6 +307,9 @@ DataPointer(Float, SAL_telepotsonicmovespd, 0x1E777BC);
 DataPointer(int, RdCasino_JumpAct, 0x3C7487C);
 DataPointer(int, SAL_telepotsonicrotspd, 0x1E777B8);
 DataPointer(void*, canselEvent, 0x3B2C578);
+FunctionPointer(Sint32, CalcSpline, (SPLINE_DATA* spline_data), 0x7AAC70);
+FunctionPointer(void*, MAlloc, (Uint32 size), 0x40B220);
+FunctionPointer(void, Free, (void* mp), 0x40B310);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -711,4 +714,63 @@ static inline signed int BigCheckInput(playerwk* a1, taskwk* a2, motionwk2* a3)
 		add esp, 4
 	}
 	return result;
+}
+
+static const void* const ScanNearPath2LPtr = (void*)0x5E4C50;
+static inline Sint32 ScanNearPath2L(Sint32 frame, Sint32 pathpitch, NJS_POINT3* postgt, NJS_POINT3* pospath, Sint32 pathnum, Float* pdismin, NJS_POINT3* posnearpath, NJS_POINT3* vecnearpath)
+{
+	Sint32 result;
+	__asm
+	{
+		push[vecnearpath]
+		push[posnearpath]
+		push[pdismin]
+		push[pathnum]
+		push[pospath]
+		push[postgt]
+		mov ecx, [pathpitch]
+		mov eax, [frame]
+		call ScanNearPath2LPtr
+		mov result, eax
+		add esp, 24
+	}
+	return result;
+}
+
+static const void* const ScanNearPath2LXZPtr = (void*)0x5C1F70;
+static inline Sint32 ScanNearPath2LXZ(Sint32 frame, Sint32 pathpitch, NJS_POINT3* postgt, NJS_POINT3* pospath, Sint32 pathnum, Float* pdismin, NJS_POINT3* posnearpath, NJS_POINT3* vecnearpath)
+{
+	Sint32 result;
+	__asm
+	{
+		push[vecnearpath]
+		push[posnearpath]
+		push[pdismin]
+		push[pathnum]
+		push[pospath]
+		push[postgt]
+		mov ecx, [pathpitch]
+		mov eax, [frame]
+		call ScanNearPath2LXZPtr
+		mov result, eax
+		add esp, 24
+	}
+	return result;
+}
+
+static const void* const CalcPathPosRangePtr = (void*)0x5E4920;
+static inline void CalcPathPosRange(pathtag* pttp, Sint32 gaptop, Sint32 gapbottom, NJS_POINT3* vecrange, NJS_POINT3* posmin, NJS_POINT3* posmax)
+{
+	Sint32 result;
+	__asm
+	{
+		push[posmax]
+		push[posmin]
+		push[gapbottom]
+		mov ebx, [vecrange]
+		mov edx, [pttp]
+		mov eax, [gaptop]
+		call CalcPathPosRangePtr
+		add esp, 12
+	}
 }

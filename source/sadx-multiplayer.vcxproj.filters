@@ -789,6 +789,9 @@
     <ClInclude Include="objects\o_savepoint.h">
       <Filter>Header FIles\objects</Filter>
     </ClInclude>
+    <ClInclude Include="objects\o_ruin_pathcam.h">
+      <Filter>Header FIles\objects\stg08_icecap</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">

@@ -25,6 +25,8 @@
 #include "objects/e_sai.h"
 #include "objects/flicky.h"
 
+#include "objects/o_ruin_pathcam.h"
+
 #include "objects/sonic.h"
 #include "objects//miles.h"
 #include "objects/knuckles.h"
@@ -872,6 +874,8 @@ void InitPatches()
 	PatchPondSkater();
 	PatchGachapon();
 	PatchFlicky();
+
+	PatchRuinPathCam();
 
 	initSDIntroPatches();
 	init_SDCylinderPatches();
