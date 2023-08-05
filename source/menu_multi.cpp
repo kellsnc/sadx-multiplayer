@@ -1053,6 +1053,9 @@ bool menu_multi_charsel_input(MultiMenuWK* wk, int i)
 			PlayMenuBipSound();
 		}
 
+		if (sel < 0 || sel > 7)
+			sel = 0;
+
 		if (MenuSelectButtonsPressedM(i) && enabled_characters[sel])
 		{
 			chara_ready[i] = true;
@@ -1179,7 +1182,7 @@ void menu_multi_coopsel(MultiMenuWK* wk)
 			}
 
 			menu_multi_change(wk, MD_MULTI_CHARSEL);
-			selected_characters[0] = stat;
+			menu_multi_setallcharacters(stat);
 			gNextDialogStat = stat;
 			backupCoopCharacter = next_mode;
 		}
@@ -1220,11 +1223,13 @@ void menu_multi_battlesel(MultiMenuWK* wk)
 		gNextDialogStat = 6;
 		next_mode = MD_MULTI_STGSEL_TC;
 		menu_multi_change(wk, MD_MULTI_CHARSEL);
+		menu_multi_setallcharacters(CharSelChara_Sonic);
 		break;
 	case 7:
 		gNextDialogStat = 7;
 		next_mode = MD_MULTI_STGSEL_VS;
 		menu_multi_change(wk, MD_MULTI_CHARSEL);
+		menu_multi_setallcharacters(CharSelChara_Sonic);
 		break;
 	case 8:
 		gNextDialogStat = 1;
