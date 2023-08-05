@@ -32,7 +32,7 @@ struct CamPathWk
 	Sint32 flag;
 };
 
-static UsercallFuncVoid(InitCamPathCam2_h, (task* tp), (tp), 0x5E5D10, rEDI);
+static UsercallFuncVoid(SetupCamPathCam2_Ruin_h, (task* tp), (tp), 0x5E5D10, rEDI);
 
 static auto CheckRangeIn = GenerateUsercallWrapper<BOOL(*)(NJS_POINT3*, NJS_POINT3*, NJS_POINT3*, Angle3*)>(rEAX, 0x6122C0, rEAX, rEDX, rECX, rESI);
 static auto Camera_PathLinearScan = GenerateUsercallWrapper<Sint32(*)(taskwk*, NJS_POINT3*, NJS_POINT3*, NJS_POINT3*, Float*)>(rEAX, 0x5E4FE0, rEAX, rECX, rEDI, rESI, stack4);
@@ -466,11 +466,11 @@ static void ObjectCamPathCam_End_m(task* tp)
 	Free(camwk);
 }
 
-static void InitCamPathCam2_r(task* tp)
+static void SetupCamPathCam2_Ruin_r(task* tp)
 {
 	if (multiplayer::IsEnabled())
 	{
-		InitCamPathCam2_h.Original(tp);
+		SetupCamPathCam2_Ruin_h.Original(tp);
 
 		// Create one task per player, it's a bit memory inefficient but easier to do
 		for (int i = 1; i < PLAYER_MAX; ++i)
@@ -480,18 +480,18 @@ static void InitCamPathCam2_r(task* tp)
 			tp2->twp->timer.w[0] = tp->twp->timer.w[0];
 			tp2->twp->timer.w[1] = i;
 			tp2->twp->counter.ptr = tp->twp->counter.ptr;
-			InitCamPathCam2_h.Original(tp2);
+			SetupCamPathCam2_Ruin_h.Original(tp2);
 			tp2->exec = ObjectCamPathCam_Exec_m;
 			tp2->dest = ObjectCamPathCam_End_m;
 		}
 	}
 	else
 	{
-		InitCamPathCam2_h.Original(tp);
+		SetupCamPathCam2_Ruin_h.Original(tp);
 	}
 }
 
 void PatchRuinPathCam()
 {
-	InitCamPathCam2_h.Hook(InitCamPathCam2_r);
+	SetupCamPathCam2_Ruin_h.Hook(SetupCamPathCam2_Ruin_r);
 }
