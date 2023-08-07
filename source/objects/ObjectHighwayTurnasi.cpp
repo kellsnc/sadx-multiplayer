@@ -68,29 +68,32 @@ static void AsiCollisionCollision_m(task* tp)
 		twp->pos = v;
 		twp->ang.y = turnasi_twp->ang.y;
 
+		if (turnasi_twp->scl.y == 5.0f)
+		{
+			twp->mode = 2;
+			twp->scl.y = 10.0f;
+			turnasi_twp->scl.y = 0.0f;
+			return;
+		}
+
 		if (turnasi_twp->scl.z != 20.0f)
 		{
-			if (turnasi_twp->scl.z != 10.0f)
+			if (twp->scl.z != 10.0f)
 			{
 				if (twp->cwp->flag & 1)
 				{
 					twp->cwp->flag &= ~1;
+
 					auto ptwp = CCL_IsHitPlayer(twp);
-
-					if (!ptwp)
+					if (ptwp)
 					{
-						ptwp = playertwp[GetClosestPlayerNum(&twp->pos)];
+						twp->btimer = TASKWK_PLAYERID(ptwp);
+						turnasi_twp->value.f = njScalor(&playerpwp[twp->btimer]->spd);
+						turnasi_twp->btimer = 10;
+						twp->scl.z = 10.0f;
+						twp->scl.x = max(-15.0f, min(15.0f, ptwp->pos.x - twp->pos.x));
+						twp->value.f = max(-15.0f, min(15.0f, ptwp->pos.z - twp->pos.z));
 					}
-
-					twp->btimer = TASKWK_PLAYERID(ptwp);
-
-					auto pwp = playerpwp[twp->btimer];
-
-					turnasi_twp->value.f = njScalor(&pwp->spd);
-					turnasi_twp->btimer = 10;
-					twp->scl.z = 10.0f;
-					twp->scl.x = max(-15.0f, min(15.0f, ptwp->pos.x - twp->pos.x));
-					twp->value.f = max(-15.0f, min(15.0f, ptwp->pos.z - twp->pos.z));
 				}
 			}
 
@@ -190,7 +193,7 @@ static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 				vel = 4.3f;
 			}
 
-			ctp->twp->ang.x = NJM_DEG_ANG(-vel);
+			ctp->twp->ang.x = -NJM_DEG_ANG(vel);
 			twp->ang.x += ctp->twp->ang.x;
 		}
 
@@ -230,7 +233,7 @@ static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 		}
 		else
 		{
-			ctp->twp->ang.x = NJM_DEG_ANG(-fabs(vel));
+			ctp->twp->ang.x = -NJM_DEG_ANG(fabs(vel));
 			twp->ang.x += ctp->twp->ang.x;
 		}
 
@@ -263,7 +266,7 @@ static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 	}
 
 	SetInputP(pnum, PL_OP_LETITGO);
-	twp->value.l = 0;
+	twp->value.f = 0.0f;
 	twp->wtimer = 0;
 	twp->scl.y = 5.0f;
 	twp->scl.z = 0.0f;
