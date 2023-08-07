@@ -5,6 +5,11 @@
 
 // Objects in Gamma's Hot Shelter that teleports player to cargo area
 
+#define PNUMS(twp) twp->ang.z
+#define ADD_PNUM(twp, pnum) PNUMS(twp) |= (1 << pnum)
+#define REMOVE_PNUM(twp, pnum) PNUMS(twp) &= ~(1 << pnum)
+#define CHECK_PNUM(twp, pnum) PNUMS(twp) & (1 << pnum)
+
 enum MD_CARGO // made up
 {
 	MDCARGO_CHECKBOUNDS,
@@ -14,6 +19,45 @@ enum MD_CARGO // made up
 	MDCARGO_TELEPORT,
 	MDCARGO_OUT
 };
+
+static void CheckPlayerGround(task* tp)
+{
+	auto twp = tp->twp;
+	
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		taskwk* ptwp = playertwp[i];
+
+		if (ptwp)
+		{
+			// Check if on board
+			if (CheckPlayerRideOnMobileLandObjectP(i, tp))
+			{
+				PadReadOffP(i);
+				ADD_PNUM(twp, i);
+			}
+			
+			// Remove if somehow got out of the train
+			if (CHECK_PNUM(twp, i))
+			{
+				if (!CheckPlayerRideOnMobileLandObjectP(i, tp) || GetDistance(&twp->pos, &ptwp->pos) > 95.0f)
+				{
+					PadReadOnP(i);
+					REMOVE_PNUM(twp, i);
+				}
+			}
+		}
+		else
+		{
+			// Remove if player doesn't exist anymore
+			if (CHECK_PNUM(twp, i))
+			{
+				PadReadOnP(i);
+				REMOVE_PNUM(twp, i);
+			}
+		}
+	}
+}
 
 static void CreateObjShelterFade(char pnum)
 {
@@ -32,15 +76,15 @@ static void Move(task* tp, float x)
 	object->pos[0] = twp->pos.x;
 	object->pos[1] = twp->pos.y;
 
-	if (twp->btimer == 0)
+	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		fwp->pos_spd.x = x;
-	}
-	else
-	{
-		if (CheckPlayerRideOnMobileLandObjectP(twp->btimer, tp))
+		if (CHECK_PNUM(twp, i))
 		{
-			playertwp[twp->btimer]->pos.x += x;
+			fwp[i].pos_spd.x = x;
+		}
+		else
+		{
+			fwp[i].pos_spd.x = 0.0f;
 		}
 	}
 }
@@ -49,25 +93,15 @@ static void ObjShelterCargostartExec_m(task* tp)
 {
 	auto twp = tp->twp;
 
+	CheckPlayerGround(tp);
+
 	switch (twp->mode)
 	{
 	case MDCARGO_CHECKBOUNDS:
-		twp->btimer = IsPlayerInSphere(&twp->pos, 95.0f) - 1;
-
-		if (twp->btimer >= 0ui16)
-		{
-			PadReadOffP(twp->btimer);
-			twp->mode = MDCARGO_CHECKGROUND;
-			twp->flag |= 1; // enables dyncol
-		}
-		else
-		{
-			twp->flag &= ~1; // disables dyncol
-		}
-
-		break;
 	case MDCARGO_CHECKGROUND:
-		if (CheckPlayerRideOnMobileLandObjectP(twp->btimer, tp))
+		MirenObjCheckCollisionP(twp, 95.0f);
+
+		if (PNUMS(twp)) // if at least one player is on it
 		{
 			// Changes made here so that the train departs faster
 			// That way it's ready in time for the next player
@@ -100,7 +134,14 @@ static void ObjShelterCargostartExec_m(task* tp)
 		{
 			twp->wtimer = 0ui16;
 			twp->mode = MDCARGO_TELEPORT;
-			CreateObjShelterFade(twp->btimer);
+
+			for (int i = 0; i < PLAYER_MAX; ++i)
+			{
+				if (CHECK_PNUM(twp, i))
+				{
+					CreateObjShelterFade(i);
+				}
+			}
 		}
 
 		twp->timer.f = min(20.0f, twp->timer.f + 0.1f);
@@ -114,9 +155,16 @@ static void ObjShelterCargostartExec_m(task* tp)
 
 		if (++twp->wtimer > 170ui16)
 		{
-			PadReadOnP(twp->btimer);
-			TeleportPlayer(twp->btimer, -48.0f, 10006.0f, -188.0f);
-			twp->btimer = 0;
+			for (int i = 0; i < PLAYER_MAX; ++i)
+			{
+				if (CHECK_PNUM(twp, i))
+				{
+					PadReadOnP(i);
+					TeleportPlayer(i, -48.0f, 10006.0f, -188.0f);
+				}
+			}
+			
+			PNUMS(twp) = 0;
 			twp->mode = MDCARGO_OUT;
 		}
 		break;
