@@ -329,43 +329,52 @@ void dsLoadStageSound_r()
 
 	if (multiplayer::IsActive())
 	{
-		// Hack sound banks if in MP
 		MDHeaderClose(bankhandle[3]);
 		MDHeaderClose(bankhandle[6]);
-		bankhandle[3] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_SONICTAILS_BANK03.dat", 1);
-		bankhandle[6] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_SONICTAILS_E_BANK06.dat", 1);
-
 		MDHeaderClose(bankhandle[8]);
 		MDHeaderClose(bankhandle[9]);
-		bankhandle[8] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_KNUCKLES_BANK03.dat", 1);
-		bankhandle[9] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_KNUCKLES_E_BANK06.dat", 1);
-		banktbl[67] = 8;
-		banktbl[13] = 9;
-
 		MDHeaderClose(bankhandle[10]);
 		MDHeaderClose(bankhandle[11]);
-		bankhandle[10] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_AMY_BANK03.dat", 1);
-		bankhandle[11] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_AMY_E_BANK06.dat", 1);
-		banktbl[65] = 10;
-		banktbl[11] = 11;
-
 		MDHeaderClose(bankhandle[12]);
 		MDHeaderClose(bankhandle[13]);
-		bankhandle[12] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_BIG_BANK03.dat", 1);
-		bankhandle[13] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_BIG_E_BANK06.dat", 1);
-		banktbl[61] = 12;
-		banktbl[7] = 13;
-
 		MDHeaderClose(bankhandle[14]);
 		MDHeaderClose(bankhandle[15]);
+
+		bankhandle[3] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_SONICTAILS_BANK03.dat", 1);
+		bankhandle[8] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_KNUCKLES_BANK03.dat", 1);
+		bankhandle[10] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_AMY_BANK03.dat", 1);
+		bankhandle[12] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_BIG_BANK03.dat", 1);
 		bankhandle[14] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\P_E102_BANK03.dat", 1);
-		bankhandle[15] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_E102_E_BANK06.dat", 1);
-		banktbl[63] = 14;
-		banktbl[9] = 15;
+
+		if (VoiceLanguage == JAPANESE)
+		{
+			bankhandle[6] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_SONICTAILS_J_BANK06.dat", 1);
+			bankhandle[9] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_KNUCKLES_J_BANK06.dat", 1);
+			bankhandle[11] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_AMY_J_BANK06.dat", 1);
+			bankhandle[13] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_BIG_J_BANK06.dat", 1);
+			bankhandle[15] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_E102_J_BANK06.dat", 1);
+		}
+		else
+		{
+			bankhandle[6] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_SONICTAILS_E_BANK06.dat", 1);
+			bankhandle[9] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_KNUCKLES_E_BANK06.dat", 1);
+			bankhandle[11] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_AMY_E_BANK06.dat", 1);
+			bankhandle[13] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_BIG_E_BANK06.dat", 1);
+			bankhandle[15] = MDHeaderOpen("SYSTEM\\SoundData\\SE\\V_E102_E_BANK06.dat", 1);
+		}
+
+		banktbl[67] = 8; // Knuckles P
+		banktbl[13] = 9; // Knuckles V
+		banktbl[65] = 10; // Amy P
+		banktbl[11] = 11; // Amy V
+		banktbl[61] = 12; // Big P
+		banktbl[7] = 13; // Big V
+		banktbl[63] = 14; // Gamma P
+		banktbl[9] = 15; // Gamma V
 	}
 	else
 	{
-		// Restore our hack if in SP
+		// Remove hacks in Singleplayer
 		if (banktbl[67] == 8)
 		{
 			banktbl[67] = 3;
