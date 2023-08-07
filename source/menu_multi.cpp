@@ -1882,6 +1882,13 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 		wk->alphaConnect = wk->alphaCharSel = wk->alphaControls = 0.0f;
 		wk->SelStg = -1;
+
+		// Fix cursor size with Dreamcast Conversion
+		if (DreamcastConversionEnabled)
+		{
+			WriteData((float**)0x00431B46, (float*)0x7DFF54);
+			WriteData((float**)0x00431B57, (float*)0x7DFF54);
+		}
 	}
 
 	// Check if our menu has to change
