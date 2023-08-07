@@ -161,7 +161,7 @@ namespace SplitScreen
 			return true;
 		}
 
-		if (!IsActive() || num < 0)
+		if (num < 0 || num >= PLAYER_MAX || !playertwp[num] || !IsActive())
 		{
 			return false;
 		}
@@ -172,7 +172,7 @@ namespace SplitScreen
 		}
 		else
 		{
-			return num < GetPlayerCount() && num < 4;
+			return true;
 		}
 	}
 
