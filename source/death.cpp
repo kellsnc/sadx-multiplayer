@@ -220,7 +220,7 @@ static void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 
 			while (dz_->character)
 			{
-				if (GetZxShadowOnFDPolygon(&carry, dz_->object))
+				if (dz_->object && GetZxShadowOnFDPolygon(&carry, dz_->object))
 				{
 					if (!carry.lower.findflag)
 					{
