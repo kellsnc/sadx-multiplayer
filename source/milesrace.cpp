@@ -13,7 +13,7 @@ used for drawing since the camera runs in slot 0)
 
 */
 
-Trampoline* DrawMoble2P_t = nullptr;
+Trampoline* late_DispMilesMeter2P_t = nullptr;
 
 DataPointer(float, AnalogRatio_High, 0x3C539E8);
 DataArray(int, AnalogTbl, 0x7E4AC4, 4);
@@ -658,44 +658,20 @@ static void Icecap_Init_m(taskwk* twp, taskwk* stwp, taskwk* mtwp)
 	SonicCtrlBuff.path_flag = pathTbl[1].flag;
 }
 
-static void __cdecl DispMilesMeter2P_m(task* tp)
+static void __cdecl late_DispMilesMeter2P_r(task* tp)
 {
 	if (SplitScreen::IsActive())
 	{
 		if (SplitScreen::GetCurrentScreenNum() == 0)
 		{
 			SplitScreen::ChangeViewPort(-1);
-			late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
+			TARGET_DYNAMIC(late_DispMilesMeter2P)(tp);
 			SplitScreen::ChangeViewPort(0);
 		}
 	}
 	else
 	{
-		late_SetFunc((void(__cdecl*)(void*))late_DispMilesMeter2P, tp, 22046.5f, QueuedModelFlagsB_EnableZWrite);
-	}
-}
-
-static void __cdecl DrawMoble2P_r(task* tp)
-{
-	if (SplitScreen::IsActive())
-	{
-		if (!MissedFrames && MRACE_EGGMOBLE_TEXLIST.textures->texaddr)
-		{
-			auto twp = tp->twp;
-			njSetTexture(&MRACE_EGGMOBLE_TEXLIST);
-			njPushMatrixEx();
-			njTranslateEx(&twp->pos);
-			njRotateY_(twp->ang.y);
-			njRotateZ_(twp->ang.z);
-			dsDrawObject((NJS_OBJECT*)0x269D214);
-			dsDrawObject(&Eggman2P_Model);
-			njPopMatrixEx();
-			DispMilesMeter2P_m(tp);
-		}
-	}
-	else
-	{
-		TARGET_DYNAMIC(DrawMoble2P)(tp);
+		TARGET_DYNAMIC(late_DispMilesMeter2P)(tp);
 	}
 }
 
@@ -765,7 +741,7 @@ static void __cdecl InitSonic2PControl_m(task* tp)
 		AnalogRatio_High = 0.6f;
 	}
 
-	tp->disp = DispMilesMeter2P_m;
+	tp->disp = (TaskFuncPtr)0x47D2E0;
 	tp->exec = Sonic2PControl_m;
 }
 
@@ -830,5 +806,5 @@ void Set_NPC_Sonic_m(int num)
 void InitMilesRace()
 {
 	WriteCall((void*)0x47D9B6, LoadMoble2PControl); // patch task level for eggman ai
-	DrawMoble2P_t = new Trampoline(0x47D5B0, 0x47D5B5, DrawMoble2P_r);
+	late_DispMilesMeter2P_t = new Trampoline(0x47C260, 0x47C267, late_DispMilesMeter2P_r);
 }
