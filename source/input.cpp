@@ -213,6 +213,13 @@ void InitInputPatches()
 	PadReadOffP_hook.Hook(PadReadOffP_r);
 	GetPlayersInputData_hook.Hook(GetPlayersInputData_r);
 
+	// Fix relevant PadReadOnP calls that pass 2 or 3 instead of -1
+	WriteData((uint8_t*)0x40C336, 0xFFui8);
+	WriteData((uint8_t*)0x40C34B, 0xFFui8);
+	WriteData((uint8_t*)0x40C378, 0xFFui8);
+	WriteData((uint8_t*)0x40C3FA, 0xFFui8);
+	WriteData((uint8_t*)0x413D0F, 0xFFui8);
+
 #ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_INPUT_BUTTONS, InputListener);
 	netplay.RegisterListener(Netplay::PACKET_INPUT_STICK_X, InputListener);
