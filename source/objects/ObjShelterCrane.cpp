@@ -32,6 +32,7 @@ static void ObjShelterCrane_m(task* tp)
 	{
 		--twp->wtimer;
 		EntryColliList(twp);
+		tp->disp(tp);
 		return;
 	}
 
