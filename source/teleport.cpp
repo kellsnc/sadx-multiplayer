@@ -66,7 +66,7 @@ void TeleportPlayer(int pnum, float x, float y, float z)
 	auto ptwp = playertwp[pnum];
 	if (ptwp)
 	{
-		ptwp->pos = { x, y, z };
+		SetPositionP(pnum, x, y, z);
 
 		// Reset mode except cart/snowboard ones
 		if (!isPlayerInCart(pnum) && !isPlayerOnSnowBoard(pnum))
