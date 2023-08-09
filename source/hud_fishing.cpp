@@ -65,6 +65,11 @@ static void __cdecl dispZankiTexturePause_r(task* tp);
 Trampoline dispZankiTexturePause_t(0x46FB00, 0x46FB05, dispZankiTexturePause_r);
 static void __cdecl dispZankiTexturePause_r(task* tp)
 {
+	if (CurrentCharacter != Characters_Big)
+	{
+		return;
+	}
+
 	if (multiplayer::IsBattleMode())
 	{
 		if (!IsGamePaused() && !loop_count && ssStageNumber != STAGE_MG_CART && HideHud >= 0 && (ulGlobalMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
