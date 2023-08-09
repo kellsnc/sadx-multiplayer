@@ -60,15 +60,17 @@ static void CheckGameClear_m(task* tp)
 
 static void __cdecl ObjectKaosEme_r(task* tp)
 {
-	auto twp = tp->twp;
-
-	if (twp->mode == 0)
+	if (multiplayer::IsActive())
 	{
-		tp->disp = ObjectKaosEmeDisp;
-	}
-	else if (twp->mode == 2)
-	{
-		CheckGameClear_m(tp);
+		switch (tp->twp->mode)
+		{
+		case 0:
+			tp->disp = ObjectKaosEmeDisp;
+			break;
+		case 2:
+			CheckGameClear_m(tp);
+			break;
+		}
 	}
 
 	TARGET_STATIC(ObjectKaosEme)(tp);
@@ -76,15 +78,17 @@ static void __cdecl ObjectKaosEme_r(task* tp)
 
 static void __cdecl ObjectKaosEmeIC_r(task* tp)
 {
-	auto twp = tp->twp;
-
-	if (twp->mode == 0)
+	if (multiplayer::IsActive())
 	{
-		tp->disp = ObjectKaosEmeDisp;
-	}
-	else if (twp->mode == 2)
-	{
-		CheckGameClear_m(tp);
+		switch (tp->twp->mode)
+		{
+		case 0:
+			tp->disp = ObjectKaosEmeDisp;
+			break;
+		case 2:
+			CheckGameClear_m(tp);
+			break;
+		}
 	}
 
 	TARGET_STATIC(ObjectKaosEmeIC)(tp);
@@ -92,15 +96,17 @@ static void __cdecl ObjectKaosEmeIC_r(task* tp)
 
 static void __cdecl ObjectKaosEmeCA_r(task* tp)
 {
-	auto twp = tp->twp;
-
-	if (twp->mode == 0)
+	if (multiplayer::IsActive())
 	{
-		tp->disp = ObjectKaosEmeDisp;
-	}
-	else if (twp->mode == 2)
-	{
-		CheckGameClear_m(tp);
+		switch (tp->twp->mode)
+		{
+		case 0:
+			tp->disp = ObjectKaosEmeDisp;
+			break;
+		case 2:
+			CheckGameClear_m(tp);
+			break;
+		}
 	}
 
 	TARGET_STATIC(ObjectKaosEmeCA)(tp);
