@@ -1,5 +1,7 @@
 #pragma once
 
+extern ADVPOS* gTestSpawnStartPos;
+
 void ResetEnemyScoreM();
 int GetEnemyScoreM(int pNum);
 void AddEnemyScoreM(int pNum, int amount);

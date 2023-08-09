@@ -41,14 +41,16 @@ DataPointer(ADVPOS**, vInitialPositionEC_C_Ptr, 0x52D861);
 DataPointer(ADVPOS**, vInitialPositionMR_Ptr, 0x5307AE);
 DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
 
-Trampoline* SetPlayerInitialPosition_t = nullptr;
-static FunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
-static FunctionHook<void> SetPlayer_t(SetPlayer);
-static FunctionHook<Bool, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
+FunctionHook<void, taskwk*> SetPlayerInitialPosition_t(0x414810);
+FunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
+FunctionHook<void> SetPlayer_t(SetPlayer);
+FunctionHook<Bool, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
 
 VariableHook<int16_t, 0x3B0F0E4> ssNumRing_m;
 VariableHook<int8_t, 0x3B0EF34> scNumPlayer_m;
 VariableHook<int32_t, 0x3B0F104> EnemyScore_m;
+
+ADVPOS* gTestSpawnStartPos = nullptr;
 
 static bool isCharSel = false;
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
@@ -187,94 +189,101 @@ void ResetNumRingP(int pNum)
 
 void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 {
+	if (gTestSpawnStartPos)
+	{
+		Angle3 angy = { 0, gTestSpawnStartPos->angy, 0 };
+		updateContinueData(&gTestSpawnStartPos->pos, &angy);
+		delete gTestSpawnStartPos;
+		gTestSpawnStartPos = nullptr;
+	}
+
 	if (CheckContinueData())
 	{
 		SetTime2(RestartLevel.Minute, RestartLevel.Second, RestartLevel.Frame);
 		*pos = continue_data.pos;
 		*ang = continue_data.ang;
+		return;
 	}
-	else
+
+	if (FieldStartPos)
 	{
-		if (FieldStartPos)
+		*pos = FieldStartPos->Position;
+		*ang = { 0, FieldStartPos->YRot, 0 };
+		FieldStartPos = nullptr;
+		return;
+	}
+
+	if (isInHubWorld())
+	{
+		ADVPOS* adpos;
+
+		// Adv Field:
+		switch (ssStageNumber)
 		{
-			*pos = FieldStartPos->Position;
-			*ang = { 0, FieldStartPos->YRot, 0 };
-			FieldStartPos = nullptr;
+		default:
+		case LevelIDs_StationSquare:
+		case 27:
+		case 28:
+			adpos = &vInitialPositionSS_Ptr[ssActNumber][GetLevelEntranceID()];
+			break;
+		case LevelIDs_EggCarrierOutside:
+			adpos = &vInitialPositionEC_AB_Ptr[ssActNumber][GetLevelEntranceID()];
+			break;
+		case LevelIDs_EggCarrierInside:
+			adpos = &vInitialPositionEC_C_Ptr[ssActNumber][GetLevelEntranceID()];
+			break;
+		case LevelIDs_MysticRuins:
+			adpos = &vInitialPositionMR_Ptr[ssActNumber][GetLevelEntranceID()];
+			break;
+		case LevelIDs_Past:
+			adpos = &vInitialPositionPast_Ptr[ssActNumber][GetLevelEntranceID()];
+			break;
 		}
-		else if (isInHubWorld())
+
+		*pos = adpos->pos;
+		*ang = { 0, adpos->angy, 0 };
+		return;
+	}
+
+	GM_START_POSANG* stpos;
+
+	switch (CurrentCharacter)
+	{
+	default:
+	case Characters_Sonic:
+		stpos = paSonicIP_Ptr;
+		break;
+	case Characters_Tails:
+		stpos = paMilesIP_Ptr;
+		break;
+	case Characters_Knuckles:
+		stpos = paKnucklesIP_Ptr;
+		break;
+	case Characters_Amy:
+		stpos = paAmyIP_Ptr;
+		break;
+	case Characters_Gamma:
+		stpos = paE102IP_Ptr;
+		break;
+	case Characters_Big:
+		stpos = paBigIP_Ptr;
+		break;
+	}
+
+	while (stpos->stage != STAGE_NUMBER)
+	{
+		if (stpos->stage == ssStageNumber && stpos->act == ssActNumber)
 		{
-			ADVPOS* adpos;
-
-			// Adv Field:
-			switch (ssStageNumber)
-			{
-			default:
-			case LevelIDs_StationSquare:
-			case 27:
-			case 28:
-				adpos = &vInitialPositionSS_Ptr[ssActNumber][GetLevelEntranceID()];
-				break;
-			case LevelIDs_EggCarrierOutside:
-				adpos = &vInitialPositionEC_AB_Ptr[ssActNumber][GetLevelEntranceID()];
-				break;
-			case LevelIDs_EggCarrierInside:
-				adpos = &vInitialPositionEC_C_Ptr[ssActNumber][GetLevelEntranceID()];
-				break;
-			case LevelIDs_MysticRuins:
-				adpos = &vInitialPositionMR_Ptr[ssActNumber][GetLevelEntranceID()];
-				break;
-			case LevelIDs_Past:
-				adpos = &vInitialPositionPast_Ptr[ssActNumber][GetLevelEntranceID()];
-				break;
-			}
-
-			*pos = adpos->pos;
-			*ang = { 0, adpos->angy, 0 };
-		}
-		else
-		{
-			GM_START_POSANG* stpos;
-
-			switch (CurrentCharacter)
-			{
-			default:
-			case Characters_Sonic:
-				stpos = paSonicIP_Ptr;
-				break;
-			case Characters_Tails:
-				stpos = paMilesIP_Ptr;
-				break;
-			case Characters_Knuckles:
-				stpos = paKnucklesIP_Ptr;
-				break;
-			case Characters_Amy:
-				stpos = paAmyIP_Ptr;
-				break;
-			case Characters_Gamma:
-				stpos = paE102IP_Ptr;
-				break;
-			case Characters_Big:
-				stpos = paBigIP_Ptr;
-				break;
-			}
-
-			while (stpos->stage != CurrentLevel || stpos->act != CurrentAct)
-			{
-				if (stpos->stage == LevelIDs_Invalid)
-				{
-					*pos = { 0.0f, 0.0f, 0.0f };
-					*ang = { 0, 0, 0 };
-
-					return;
-				}
-				++stpos;
-			}
-	
 			*pos = continue_data.pos = stpos->p;
 			*ang = continue_data.ang = { 0, stpos->angy, 0 };
-			SetRestartData(pos, (Rotation3*)ang);
+			updateContinueData(pos, ang);
+			return;
 		}
+		++stpos;
 	}
+
+	*pos = { 0.0f, 0.0f, 0.0f };
+	*ang = { 0, 0, 0 };
 }
 
 void SetPlayerInitialPosition_r(taskwk* twp)
@@ -285,7 +294,7 @@ void SetPlayerInitialPosition_r(taskwk* twp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(SetPlayerInitialPosition)(twp);
+		SetPlayerInitialPosition_t.Original(twp);
 	}
 }
 
@@ -678,7 +687,7 @@ void InitPlayerPatches()
 {
 	isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
 
-	SetPlayerInitialPosition_t = new Trampoline(0x414810, 0x414815, SetPlayerInitialPosition_r);
+	SetPlayerInitialPosition_t.Hook(SetPlayerInitialPosition_r);
 	DamegeRingScatter_t.Hook(DamegeRingScatter_r);
 	SetPlayer_t.Hook(SetPlayer_r);
 	isInDeathZone_t.Hook(isInDeathZone_r);

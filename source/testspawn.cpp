@@ -82,6 +82,34 @@ void TestSpawn()
 			SetCurrentCharacter(3, parse_character_id(argv[++i]));
 		}
 
+		if (!wcscmp(argv[i], L"--position") || !wcscmp(argv[i], L"-p"))
+		{
+			if (i + 3 >= argc)
+			{
+				continue;
+			}
+
+			if (!gTestSpawnStartPos)
+			{
+				gTestSpawnStartPos = new ADVPOS();
+			}
+
+			const float x = std::stof(argv[++i]);
+			const float y = std::stof(argv[++i]);
+			const float z = std::stof(argv[++i]);
+			gTestSpawnStartPos->pos = { x, y, z };
+		}
+
+		if (!wcscmp(argv[i], L"--rotation") || !wcscmp(argv[i], L"-r"))
+		{
+			if (gTestSpawnStartPos)
+			{
+				gTestSpawnStartPos->angy = _wtoi(argv[++i]);
+			}
+		}
+		
+
+#ifdef MULTI_NETPLAY
 		if (!wcscmp(argv[i], L"--net"))
 		{
 			char ip[MAX_PATH];
@@ -95,6 +123,7 @@ void TestSpawn()
 
 			i += 3;
 		}
+#endif
 	}
 
 	LocalFree(argv);
