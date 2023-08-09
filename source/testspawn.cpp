@@ -62,6 +62,11 @@ void TestSpawn()
 			i += 2;
 		}
 
+		if (!wcscmp(argv[i], L"-p1"))
+		{
+			SetCurrentCharacter(0, parse_character_id(argv[++i]));
+		}
+
 		if (!wcscmp(argv[i], L"-p2"))
 		{
 			SetCurrentCharacter(1, parse_character_id(argv[++i]));
