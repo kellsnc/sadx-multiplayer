@@ -1547,7 +1547,7 @@ static void fishingLureCtrl_m(task* tp)
 	}
 
 	// Custom win method for battle mode
-	if (etc->Big_Sakana_Weight >= 4000)
+	if (multiplayer::IsBattleMode() && etc->Big_Sakana_Weight >= 2000)
 	{
 		SetWinnerMulti(pnum);
 		SetFinishAction();
