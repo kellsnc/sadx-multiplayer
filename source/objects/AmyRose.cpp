@@ -12,8 +12,19 @@ TaskHook AmySkirtShape_t(0x485F40);
 TaskHook AmyEyeTracker_t(0x486410);
 TaskHook AmyBirdExe_t(0x4C63F0);
 TaskHook LoadAmyBird_t(0x4C6790);
+FunctionHook<void> AmySetRoboConChecker_t(0x486A40);
 
 task* AmyBirdM[PLAYER_MAX] = { 0 };
+
+void AmySetRoboConChecker_r()
+{
+	// Do not spawn Zero in non Amy layouts
+	if (CurrentCharacter != Characters_Amy)
+	{
+		return;
+	}
+	AmySetRoboConChecker_t.Original();
+}
 
 void AmyBird_Del(task* obj)
 {
@@ -339,7 +350,7 @@ void Init_AmyPatches()
 	AmyJiggle_t.Hook(AmyJiggle_r);
 	AmySkirtShape_t.Hook(AmySkirtShape_r);
 	AmyEyeTracker_t.Hook(AmyEyeTracker_r);
-
 	LoadAmyBird_t.Hook(Init_AmyBird);
 	AmyBirdExe_t.Hook(AmyBird_Main_r);
+	AmySetRoboConChecker_t.Hook(AmySetRoboConChecker_r);
 }
