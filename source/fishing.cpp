@@ -1766,15 +1766,15 @@ static void fishingLureCtrl_m(task* tp)
 		{
 			etc->Big_Fish_Flag |= LUREFLAG_CANCEL;
 
-			CameraReleaseCollisionCamera();
+			CameraReleaseCollisionCamera_m(pnum);
 			if (GetStageNumber() == LevelAndActIDs_HotShelter1)
 			{
-				CameraSetEventCameraFunc(CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
+				CameraSetEventCameraFunc_m(pnum, CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
 				setCatchCameraPos_m(twp, pnum);
 			}
 			else
 			{
-				CameraSetEventCameraFunc(CameraFishing, CAMADJ_NONE, CDM_LOOKAT);
+				CameraSetEventCameraFunc_m(pnum, CameraFishing, CAMADJ_NONE, CDM_LOOKAT);
 				setCameraReturn_m(twp, pnum);
 
 				if (checkturipoint2())
@@ -1791,7 +1791,7 @@ static void fishingLureCtrl_m(task* tp)
 			etc->Big_Fish_Flag &= ~LUREFLAG_HOOK;
 
 			CameraReleaseCollisionCamera_m(pnum);
-			CameraSetEventCameraFunc(CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
+			CameraSetEventCameraFunc_m(pnum, CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
 			setCatchCameraPos_m(twp, pnum);
 		}
 
@@ -1871,8 +1871,8 @@ static void fishingLureCtrl_m(task* tp)
 			{
 				if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 				{
-					CameraReleaseEventCamera();
-					CameraSetEventCameraFunc(CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
+					CameraReleaseEventCamera_m(pnum);
+					CameraSetEventCameraFunc_m(pnum, CameraFishingCatch, CAMADJ_NONE, CDM_LOOKAT);
 					setCatchCameraPos_m(twp, pnum);
 					etc->Big_Fish_Flag |= LUREFLAG_RELEASE;
 				}
