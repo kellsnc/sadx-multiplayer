@@ -58,7 +58,7 @@ static void setDirKaeru2_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
 		twp->value.w[0] = 120;
 		mwp->ang_aim.y ^= 0x8000u;
 
-		if (njRandom() < 0.15)
+		if (njRandom() < 0.15f)
 		{
 			dsPlay_oneshot_v(853, 0, 0, 0, twp->pos.x, twp->pos.y, twp->pos.z);
 			twp->wtimer = 120i16;
@@ -67,6 +67,17 @@ static void setDirKaeru2_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
 			VibShot(KAERU_PNUM(twp), 4);
 		}
 	}
+
+	Angle angy = twp->ang.y;
+	if (SHORT_ANG(angy - mwp->ang_aim.y) <= 0x8000u)
+	{
+		angy -= 0x100;
+	}
+	else
+	{
+		angy += 0x100;
+	}
+	twp->ang.y = SHORT_ANG(angy);
 }
 
 bool chkAngLimit_m(taskwk* twp, motionwk* mwp, NJS_POINT3* next_pos)
@@ -74,50 +85,57 @@ bool chkAngLimit_m(taskwk* twp, motionwk* mwp, NJS_POINT3* next_pos)
 	auto pnum = KAERU_PNUM(twp);
 	auto ptwp = playertwp[pnum];
 
-	if (ptwp)
+	if (!ptwp)
 	{
-		__int16 ang = 0x4000 - NJM_RAD_ANG(atan2(next_pos->x - ptwp->pos.x, next_pos->z - ptwp->pos.x));
-		auto diffang = SubAngle(ptwp->ang.y, ang);
-
-		if (diffang <= 0x1555u || diffang >= 0x8000u)
-		{
-			if (diffang >= 0xEAAAu || diffang <= 0x8000u)
-			{
-				if (GetDistance(next_pos, &ptwp->pos))
-				{
-					return true;
-				}
-			}
-			else
-			{
-				mwp->ang_aim.y = ptwp->ang.y + 0x8000;
-				return false;
-			}
-		}
-
-		mwp->ang_aim.y = ptwp->ang.y + 0x8000;
 		return false;
 	}
 
-	return false;
+	Angle angy = 0x4000 - njArcTan2(next_pos->x - ptwp->pos.x, next_pos->z - ptwp->pos.x);
+	Angle diffang = SHORT_ANG(angy - ptwp->ang.y);
+
+	if (diffang <= 0x1555u || diffang >= 0x8000u)
+	{
+		if (diffang >= 0xEAAAu || diffang <= 0x8000u)
+		{
+			if (GetDistance(next_pos, &ptwp->pos) <= 300.0f)
+			{
+				return true;
+			}
+			else
+			{
+				mwp->ang_aim.y = SHORT_ANG(ptwp->ang.y + 0x8000);
+				return false;
+			}
+		}
+		else
+		{
+			mwp->ang_aim.y = SHORT_ANG(ptwp->ang.y - 0x471C);
+			return false;
+		}
+	}
+	else
+	{
+		mwp->ang_aim.y = SHORT_ANG(ptwp->ang.y - 0x471C);
+		return false;
+	}
 }
 
 void setDirKaeru3_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
 {
 	if (etc->Big_Lure_Ptr)
 	{
-		mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(-atan2(twp->pos.x - etc->Big_Lure_Ptr->twp->pos.x, twp->pos.z - etc->Big_Lure_Ptr->twp->pos.z));
+		mwp->ang_aim.y = -0x4000 - -njArcTan2(twp->pos.x - etc->Big_Lure_Ptr->twp->pos.x, twp->pos.z - etc->Big_Lure_Ptr->twp->pos.z);
 
-		if ((twp->ang.y - mwp->ang_aim.y) <= 0x8000u)
+		Angle angy = twp->ang.y;
+		if (SHORT_ANG(angy - mwp->ang_aim.y) <= 0x8000u)
 		{
-			twp->ang.y -= 0x80;
+			angy -= 0x80;
 		}
 		else
 		{
-			twp->ang.y += 0x80;
+			angy += 0x80;
 		}
-
-		twp->ang.y &= 0x0000FFFF;
+		twp->ang.y = SHORT_ANG(angy);
 	}
 }
 
@@ -164,7 +182,7 @@ static void moveFishingKaeru_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
 		v.x *= 2.0f;
 
 		njPushMatrix(_nj_unit_matrix_);
-		njRotateY_(twp->ang.y);
+		ROTATEY(0, twp->ang.y);
 		njCalcVector(0, &v, &mwp->spd);
 		njPopMatrixEx();
 
@@ -209,9 +227,9 @@ static void moveCatchingKaeru_m(taskwk* twp, int pnum)
 	auto ppwp = playerpwp[pnum];
 	auto ptwp = playertwp[pnum];
 	njPushMatrix(_nj_unit_matrix_);
-	njRotateZ_(ptwp->ang.z);
-	njRotateX_(ptwp->ang.x);
-	njRotateY_(0x8000 - LOWORD(ptwp->ang.y));
+	ROTATEZ(0, ptwp->ang.z);
+	ROTATEX(0, ptwp->ang.x);
+	ROTATEY(0, 0x8000 - ptwp->ang.y);
 	NJS_POINT3 v;
 	v.x = ppwp->righthand_pos.x;
 	v.y = ppwp->righthand_pos.y + ppwp->p.center_height;
@@ -246,7 +264,7 @@ bool chkLureKaeru_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
 	NJS_POINT3 v2 = { -1.0f, 0.0f, 0.0f };
 
 	njPushMatrix(_nj_unit_matrix_);
-	njRotateY_(twp->ang.y);
+	ROTATEY(0, twp->ang.y);
 	njCalcVector(0, &v2, &v2);
 	njPopMatrixEx();
 

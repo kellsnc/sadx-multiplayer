@@ -106,7 +106,7 @@ static bool moveEscapeSakana_m(task* tp)
 	NJS_POINT3 v = { -0.3f, 0.0f, 0.0f };
 
 	njPushMatrix(_nj_unit_matrix_);
-	njRotateY_(twp->ang.y);
+	ROTATEY(0, twp->ang.y);
 	njCalcVector(0, &v, &mwp->spd);
 	njPopMatrixEx();
 
@@ -132,10 +132,10 @@ static void setDirSakanaTurn_m(task* tp)
 	if (--twp->value.w[0] <= 0)
 	{
 		twp->mode = MODE_FISHING;
-		twp->value.w[0] = (short)((njRandom() + 1.0) * 60.0);
+		twp->value.w[0] = (Sint16)((njRandom() + 1.0f) * 60.0f);
 		mwp->ang_aim.y = etc->Big_Lure_Ptr->mwp->ang_aim.y + 0x8000;
 
-		if (njRandom() >= 0.5)
+		if (njRandom() >= 0.5f)
 		{
 			mwp->ang_aim.y -= 0x3000;
 		}
@@ -144,7 +144,7 @@ static void setDirSakanaTurn_m(task* tp)
 			mwp->ang_aim.y += 0x3000;
 		}
 
-		if (((mwp->weight - 600.0f) * 0.000125f + (etc->Big_Fishing_Timer >= 900 ? 0.0f : 0.2f)) < njRandom())
+		if (((mwp->weight - 600.0f) / 8000.0f + (etc->Big_Fishing_Timer >= 900 ? 0.0f : 0.2f)) < njRandom())
 		{
 			etc->Big_Fish_Flag &= ~LUREFLAG_ESCAPE;
 			VibShot(pnum, 5);
@@ -160,16 +160,16 @@ static void setDirSakanaTurn_m(task* tp)
 		setActionPointer(tp, 2);
 	}
 
-	if ((twp->ang.y - mwp->ang_aim.y) >= 0)
+	Angle angy = twp->ang.y;
+	if (angy - mwp->ang_aim.y >= 0)
 	{
-		twp->ang.y -= 0x200;
+		angy -= 0x200;
 	}
 	else
 	{
-		twp->ang.y += 0x200;
+		angy += 0x200;
 	}
-
-	twp->ang.y &= 0x0000FFFF;
+	twp->ang.y = SHORT_ANG(angy);
 
 	CalcHookPos_m(etc, &twp->pos);
 
@@ -192,14 +192,16 @@ static void setDirSakana2_m(task* tp)
 			chkAngLimit_m(twp, mwp, &twp->pos);
 		}
 
-		if (twp->ang.y - mwp->ang_aim.y >= 0)
+		Angle angy = twp->ang.y;
+		if (angy - mwp->ang_aim.y >= 0)
 		{
-			twp->ang.y -= 0x100;
+			angy -= 0x100;
 		}
 		else
 		{
-			twp->ang.y += 0x100;
+			angy += 0x100;
 		}
+		twp->ang.y = SHORT_ANG(angy);
 	}
 	else
 	{
@@ -208,28 +210,20 @@ static void setDirSakana2_m(task* tp)
 			twp->mode = MODE_FISHING;
 		}
 
-		twp->value.w[0] = (short)((njRandom() + 1.0) * 60.0);
-		mwp->ang_aim.y = etc->Big_Lure_Ptr->mwp->ang_aim.y + 0x8000;
-
-		if (twp->ang.y - mwp->ang_aim.y >= 0)
-		{
-			mwp->ang_aim.y -= 0x100;
-		}
-		else
-		{
-			mwp->ang_aim.y += 0x100;
-		}
-
+		twp->value.w[0] = (Sint16)((njRandom() + 1.0f) * 60.0f);
+		
+		Angle aimy = etc->Big_Lure_Ptr->mwp->ang_aim.y;
 		if (njRandom() >= 0.5f)
 		{
-			mwp->ang_aim.y -= 0x3000;
+			aimy -= 0x3000;
 		}
 		else
 		{
-			mwp->ang_aim.y += 0x3000;
+			aimy += 0x3000;
 		}
+		mwp->ang_aim.y = SHORT_ANG(aimy);
 
-		if (((double)(mwp->weight - 600.0f) * 0.000125 + (etc->Big_Fishing_Timer >= 900 ? 0.0 : 0.2)) < njRandom())
+		if (((mwp->weight - 600.0f) / 8000.0f + (etc->Big_Fishing_Timer >= 900 ? 0.0f : 0.2f)) < njRandom())
 		{
 			VibShot(pnum, 5);
 		}
@@ -260,7 +254,7 @@ static void moveFishingSakana_m(task* tp)
 		}
 
 		njPushMatrix(_nj_unit_matrix_);
-		njRotateY_(twp->ang.y);
+		ROTATEY(0, twp->ang.y);
 		njCalcVector(0, &v, &mwp->spd);
 		njPopMatrixEx();
 
@@ -268,7 +262,7 @@ static void moveFishingSakana_m(task* tp)
 		if (MSetPosition(&pos, &mwp->spd, 0, 5.5f) && mwp->spd.y > 0.0f)
 		{
 			twp->value.w[0] = 64;
-			mwp->ang_aim.y = (mwp->ang_aim.y + 0x8000);
+			mwp->ang_aim.y = SHORT_ANG(mwp->ang_aim.y + 0x8000);
 			if (twp->mode == MODE_FISHING)
 			{
 				twp->mode = MODE_TURN;
@@ -337,19 +331,19 @@ static bool chkRetStart_m(task* tp)
 	{
 		orig_tp = tp;
 	}
+	
+	mwp->ang_aim.y = -0x4000 - -njArcTan2(twp->pos.x - orig_tp->twp->pos.x, twp->pos.z - orig_tp->twp->pos.z);
 
-	mwp->ang_aim.y = -0x4000 - NJM_RAD_ANG(-atan2(twp->pos.x - orig_tp->twp->pos.x, twp->pos.z - orig_tp->twp->pos.z));
-
-	if ((twp->ang.y - mwp->ang_aim.y) <= 0x8000u)
+	Angle angy = twp->ang.y;
+	if (SHORT_ANG(angy - mwp->ang_aim.y) <= 0x8000u)
 	{
-		twp->ang.y -= 0x80;
+		angy -= 0x80;
 	}
 	else
 	{
-		twp->ang.y += 0x80;
+		angy += 0x80;
 	}
-
-	twp->ang.y &= 0x0000FFFF;
+	twp->ang.y = SHORT_ANG(angy);
 
 	mwp->spd.z = 0.0f;
 	mwp->spd.y = 0.0f;
@@ -400,9 +394,9 @@ static void moveCatchingSakana_m(task* tp)
 	if (ptwp)
 	{
 		njPushMatrix(_nj_unit_matrix_);
-		njRotateZ_(ptwp->ang.z);
-		njRotateX_(ptwp->ang.x);
-		njRotateY_(0x8000 - ptwp->ang.y);
+		ROTATEZ(0, ptwp->ang.z);
+		ROTATEX(0, ptwp->ang.x);
+		ROTATEY(0, 0x8000 - ptwp->ang.y);
 
 		auto ppwp = playerpwp[pnum];
 		NJS_VECTOR v;
@@ -507,18 +501,17 @@ static void BigSakana_m(task* tp)
 		break;
 	case MODE_RETANG:
 	{
-		auto angdiff = SubAngle(mwp->ang_aim.y, twp->ang.y);
-
+		Angle angy = twp->ang.y;
+		Angle angdiff = SHORT_ANG(angy - mwp->ang_aim.y);
 		if (angdiff <= 0x8000)
 		{
-			twp->ang.y -= 0x80;
+			angy -= 0x80;
 		}
 		else
 		{
-			twp->ang.y += 0x80;
+			angy += 0x80;
 		}
-
-		twp->ang.y &= 0x0000FFFF;
+		twp->ang.y = SHORT_ANG(angy);
 
 		mwp->spd.x = 0.0f;
 		mwp->spd.y = 0.0f;
