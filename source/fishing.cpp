@@ -392,6 +392,8 @@ static void setDustTextureCtrl_m(NJS_POINT3* pos, Angle ang, int pnum)
 #pragma endregion
 
 #pragma region fishingLureCtrl
+static void setLureReturn_m(taskwk* twp, BIGETC* etc, int pnum);
+
 static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* vec_p, int pnum)
 {
 	if (etc->Big_Lure_Ptr && etc->Big_Fish_Ptr)
@@ -553,6 +555,8 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 				{
 					CreateBigDisplayFishWeight_m((int)etc->Big_Fish_Ptr->mwp->weight, 999, pnum);
 				}
+
+				setLureReturn_m(twp, etc, pnum); // Needed in multiplayer since the stage is not restarted on death
 			}
 		}
 	}
