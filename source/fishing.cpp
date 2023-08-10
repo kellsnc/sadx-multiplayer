@@ -808,7 +808,7 @@ static void setLureSpd_D_m(motionwk* mwp, BIGETC* etc)
 	if (etc->Big_Fish_Flag & LUREFLAG_COL)
 		mwp->spd.y = 0.0f;
 
-	dsStop_num(845);
+	dsStop_num(SE_B_REEL);
 }
 
 static void setLureSpd_S_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* rod_pos_p, int pnum)
@@ -821,8 +821,8 @@ static void setLureSpd_S_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* 
 
 	if (((_reel_angle ^ etc->reel_angle) >> 8) & 0x80u)
 	{
-		dsStop_num(845);
-		dsPlay_oneshot(845, 0, 0, 0);
+		dsStop_num(SE_B_REEL);
+		dsPlay_oneshot(SE_B_REEL, 0, 0, 0);
 	}
 
 	if (etc->reel_length > etc->reel_length_d)
@@ -866,8 +866,8 @@ static void setLureSpd_L_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* 
 
 	if (((_reel_angle ^ etc->reel_angle) >> 8) & 0x80u)
 	{
-		dsStop_num(845);
-		dsPlay_oneshot(845, 0, 0, 0);
+		dsStop_num(SE_B_REEL);
+		dsPlay_oneshot(SE_B_REEL, 0, 0, 0);
 	}
 
 	if (etc->reel_length > etc->reel_length_d)
@@ -1050,7 +1050,8 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 		}
 	}
 
-	if (((etc->Big_Fish_Flag & LUREFLAG_ESCAPE) || !(etc->Big_Fish_Flag & LUREFLAG_SWING)) && (etc->Big_Fish_Flag & LUREFLAG_HIT) && !(AttackButtons & pper->on) && !(JumpButtons & pper->on))
+	if (etc->Big_Lure_Ptr && ((etc->Big_Fish_Flag & LUREFLAG_ESCAPE) || !(etc->Big_Fish_Flag & LUREFLAG_SWING) && (etc->Big_Fish_Flag & LUREFLAG_HIT)
+		&& (perG[pnum].off & AttackButtons) == AttackButtons && (perG[pnum].off & JumpButtons) == JumpButtons))
 	{
 		if (etc->Big_Fish_Ptr && etc->Big_Fish_Ptr->mwp)
 		{
@@ -1112,13 +1113,13 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 
 			if (!(pper->on & AttackButtons) && !(pper->on & JumpButtons))
 			{
-				dsStop_num(845);
+				dsStop_num(SE_B_REEL);
 			}
 		}
 	}
 	else
 	{
-		if (etc->Big_Fish_Flag & LUREFLAG_SWING)
+		if (etc->Big_Lure_Ptr && etc->Big_Fish_Flag & LUREFLAG_SWING)
 		{
 			setLureSpd_Swing_m(twp, mwp, etc, rod_pos, pnum);
 		}
@@ -1132,6 +1133,7 @@ static void MoveFishingLureSink_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_P
 			}
 			else if (buttons <= 1 || buttons > 3)
 			{
+				dsStop_num(SE_B_REEL);
 				setLureSpd_D_m(mwp, etc);
 			}
 			else
@@ -1522,7 +1524,7 @@ static void setLureSetup_m(task* tp, BIGETC* etc)
 	etc->reel_length = 0.0f;
 	if (etc->Big_Fish_Flag & 1)
 		BGM_Replay();
-	dsStop_num(845);
+	dsStop_num(SE_B_REEL);
 }
 
 static void fishingLureCtrl_m(task* tp)
@@ -1805,7 +1807,7 @@ static void fishingLureCtrl_m(task* tp)
 			{
 				etc->Big_Fish_Flag &= ~LUREFLAG_FISH;
 				twp->mode = MODE_LURE_RETURN;
-				dsStop_num(845);
+				dsStop_num(SE_B_REEL);
 			}
 		}
 		else
