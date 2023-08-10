@@ -2,6 +2,7 @@
 #include "result.h"
 #include "hud_result.h"
 #include "splitscreen.h"
+#include "camerafunc.h"
 #include "teleport.h"
 #include "milesrace.h"
 #include "result.h"
@@ -137,12 +138,12 @@ static void __cdecl SetFinishAction_r()
 			MovePlayersToWinnerPos(&playertwp[0]->pos);
 			Load_DelayedSound_BGM(75);
 			multiplayer::IsBattleMode() ? PlayCharaResultSound(GetWinnerMulti()) : PlayCharaResultSound(0);
-			SetLocalPathCamera(&pathtag_s_camera, 3, 720);
-
+			
 			for (int i = 0; i < 8; ++i)
 			{
 				if (playertwp[i])
 				{
+					SetLocalPathCamera_m(&pathtag_s_camera, 3, 720, i);
 					ForcePlayerAction(i, PL_OP_PLACEWITHKIME);
 				}
 			}

@@ -52,6 +52,17 @@ FunctionHook<void, _OBJ_CAMERAPARAM*> PathCamera1_h(0x4653E0);
 
 DataPointer(Sint32, demo_count, 0x3C4ACC0);
 
+struct CameraLocalPathData
+{
+	pathtag* ptp;
+	Sint8 mode;
+	Sint32 timer;
+	Uint16 point;
+	Sint8 path_switch;
+};
+
+CameraLocalPathData cameraLocalPathData[PLAYER_MAX];
+
 CAM_ANYPARAM* GetCamAnyParam(int pnum)
 {
 	return &CamAnyParam_m[pnum];
@@ -1274,6 +1285,130 @@ void __cdecl AdjustThreePoint_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_AD
 	{
 		CameraCollisitonCheckAdj(&pTaskWork->pos, &pOldTaskWork->pos);
 	}
+}
+
+void __cdecl CameraLocalPath_m(_OBJ_CAMERAPARAM* pParam)
+{
+	auto pnum = TASKWK_PLAYERID(playertwp[0]);
+	auto ptwp = playertwp[pnum];
+	auto data = &cameraLocalPathData[pnum];
+
+	if (!pParam->ulTimer)
+	{
+		data->point = 0;
+		data->path_switch = 1;
+	}
+
+	++data->point;
+
+	float onpos;
+	BOOL onpath = SCPathPntnmbToOnpos(data->ptp, data->point, &onpos);
+
+	switch (data->mode)
+	{
+	case 0:
+		if (!onpath)
+		{
+			if (data->path_switch == 1)
+			{
+				CameraReleaseEventCamera_m(pnum);
+				data->path_switch = 0;
+			}
+			return;
+		}
+		break;
+	case 1:
+	case 2:
+		if (!onpath)
+		{
+			--data->point;
+			onpath = SCPathPntnmbToOnpos(data->ptp, data->point, &onpos);
+		}
+		break;
+	case 3:
+		if (pParam->ulTimer >= data->timer)
+		{
+			if (data->path_switch == 1)
+			{
+				CameraReleaseEventCamera_m(pnum);
+				data->path_switch = 0;
+			}
+			return;
+		}
+
+		if (!onpath)
+		{
+			--data->point;
+			onpath = SCPathPntnmbToOnpos(data->ptp, data->point, &onpos);
+		}
+		break;
+	case 4:
+		if (pParam->ulTimer >= data->timer)
+		{
+			if (data->path_switch == 1)
+			{
+				CameraReleaseEventCamera_m(pnum);
+				data->path_switch = 0;
+			}
+			return;
+		}
+
+		if (!onpath)
+		{
+			--data->point;
+			onpath = SCPathPntnmbToOnpos(data->ptp, data->point, &onpos);
+		}
+		break;
+	default:
+		if (data->path_switch == 1)
+		{
+			CameraReleaseEventCamera_m(pnum);
+			data->path_switch = 0;
+		}
+		return;
+	}
+
+	if (onpath)
+	{
+		pathinfo pi;
+		pi.onpathpos = onpos;
+		GetStatusOnPath(data->ptp, &pi);
+
+		NJS_VECTOR pos = { pi.xpos, pi.ypos, pi.zpos };
+		njPushMatrix(nj_unit_matrix_);
+		ROTATEY(0, 0x8000 - ptwp->ang.y);
+		njCalcVector(0, &pos, &pos);
+		pi.xpos = pos.x;
+		pi.ypos = pos.y;
+		pi.zpos = pos.z;
+		njPopMatrix(1);
+
+		camcont_wp->camxpos = playermwp[pnum]->spd.x + ptwp->pos.x + pi.xpos;
+		camcont_wp->camypos = playermwp[pnum]->spd.y + ptwp->pos.y + pi.ypos;
+		camcont_wp->camzpos = playermwp[pnum]->spd.z + ptwp->pos.z + pi.zpos;
+
+		NJS_VECTOR eye_vec = { 0.0f, playerpwp[pnum]->p.eyes_height, 0.0f };
+		PConvertVector_P2G(ptwp, &eye_vec);
+		camcont_wp->tgtxpos = playermwp[pnum]->spd.x + ptwp->pos.x + eye_vec.x;
+		camcont_wp->tgtypos = playermwp[pnum]->spd.y + ptwp->pos.y + eye_vec.y;
+		camcont_wp->tgtzpos = playermwp[pnum]->spd.z + ptwp->pos.z + eye_vec.z;
+	}
+}
+
+void SetLocalPathCamera_m(pathtag* ptp, Sint32 mode, Sint32 timer, int pnum)
+{
+	if (pnum < 0 || pnum >= PLAYER_MAX)
+	{
+		return;
+	}
+
+	CameraSetEventCameraFunc_m(pnum, CameraLocalPath_m, CAMADJ_NONE, CDM_LOOKAT);
+
+	auto data = &cameraLocalPathData[pnum];
+	data->ptp = ptp;
+	data->mode = mode;
+	data->timer = timer;
+	data->point = 0;
 }
 
 void PatchCameraFuncs()
