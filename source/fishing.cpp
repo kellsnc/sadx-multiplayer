@@ -943,7 +943,7 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 				twp->ang.z = mwp->ang_aim.z + 0x1000;
 
 				if (ppwp->mj.nframe == 15.0f)
-					etc->Big_Fish_Flag |= 0x1000u;
+					etc->Big_Fish_Flag |= LUREFLAG_REEL;
 
 				return;
 			}
@@ -972,7 +972,7 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 				twp->ang.z = mwp->ang_aim.z + 0x1000;
 
 				if (ppwp->mj.nframe == 15.0f)
-					etc->Big_Fish_Flag |= 0x1000u;
+					etc->Big_Fish_Flag |= LUREFLAG_REEL;
 
 				return;
 			}
@@ -1556,6 +1556,11 @@ static void fishingLureCtrl_m(task* tp)
 	NJS_POINT3 rod_pos;
 	NJS_POINT3 line_pos;
 	CalcRodPos_m(ptwp, ppwp, &rod_pos);
+
+	if (etc->Big_Lure_Ptr)
+	{
+		etc->Big_Fish_Flag &= ~(LUREFLAG_REEL | LUREFLAG_COL);
+	}
 
 	switch (twp->mode)
 	{
