@@ -417,7 +417,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 		{
 			if (etc->reel_tension_add > 0.0f)
 			{
-				etc->reel_tension_add - 0.001f;
+				etc->reel_tension_add -= 0.001f;
 			}
 
 			etc->reel_tension_aim = 0.2f;
@@ -435,7 +435,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 			}
 			else if (etc->reel_tension_add > 0.0f)
 			{
-				etc->reel_tension_add - 0.001f;
+				etc->reel_tension_add -= 0.001f;
 			}
 
 			if ((etc->Big_Fish_Flag & LUREFLAG_SWING) && etc->reel_tension_add > 0.0f)
@@ -641,7 +641,7 @@ static void setLureCameraPos_m(taskwk* twp, BIGETC* etc, int pnum)
 		NJS_VECTOR v;
 		Float dist;
 
-		if (etc->Big_Fish_Flag & LUREFLAG_HIT)
+		if (etc->Big_Fish_Ptr && etc->Big_Fish_Flag & LUREFLAG_HIT)
 		{
 			v = etc->Big_Fish_Ptr->twp->pos;
 			njSubVector(&v, &twp->pos);
@@ -1228,7 +1228,7 @@ static void moveFishingRotX_m(taskwk* twp, motionwk* mwp, BIGETC* etc, int pnum)
 	auto ptwp = playertwp[pnum];
 	auto pper = per[pnum];
 
-	mwp->ang_aim.y = 0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - ptwp->pos.x, twp->pos.z - ptwp->pos.z));
+	mwp->ang_aim.y = 0x4000 - njArcTan2(twp->pos.x - ptwp->pos.x, twp->pos.z - ptwp->pos.z);
 
 	if (etc->Big_Fish_Flag & LUREFLAG_HIT)
 	{
@@ -1262,9 +1262,9 @@ static void moveFishingRotX_m(taskwk* twp, motionwk* mwp, BIGETC* etc, int pnum)
 		else
 		{
 			twp->ang.x += 0x80;
-			if (twp->ang.x > 0x180)
+			if (twp->ang.x > 0x1800)
 			{
-				twp->ang.x = 0x180;
+				twp->ang.x = 0x1800;
 			}
 		}
 	}
@@ -1305,19 +1305,27 @@ static void moveFishingRotX_m(taskwk* twp, motionwk* mwp, BIGETC* etc, int pnum)
 				max = 0x1400;
 			}
 
-			if (twp->ang.x > max && twp->ang.x < max + 0x3000)
+			Angle angx = twp->ang.x;
+			Angle aimx = mwp->ang_aim.x;
+
+			if (angx > max && angx < max + 0x3000)
 			{
-				mwp->ang_aim.x = 0x10000 - max;
-				twp->ang.x -= min;
+				aimx = 0x10000 - max;
 			}
-			if (twp->ang.x > 0xD000 - max && twp->ang.x < 0x10000 - max)
+			if (angx > 0xD000 - max && angx < 0x10000 - max)
 			{
-				mwp->ang_aim.x = max;
-				twp->ang.x -= min;
+				aimx = max;
 			}
-			if (mwp->ang_aim.x < 0x8000)
+
+			if (aimx < 0x8000)
 			{
-				twp->ang.x += min;
+				mwp->ang_aim.x = aimx;
+				twp->ang.x = SHORT_ANG(min + angx);
+			}
+			else
+			{
+				mwp->ang_aim.x = aimx;
+				twp->ang.x = SHORT_ANG(angx - min);
 			}
 		}
 	}
@@ -1336,27 +1344,27 @@ static void moveFishingRotZ_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT
 		v.y = rod_pos->y - twp->pos.y;
 		v.z = rod_pos->z - twp->pos.z;
 		njUnitVector(&v);
-		mwp->ang_aim.z = NJM_RAD_ANG(-asinf(v.y));
+		mwp->ang_aim.z = SHORT_ANG(-njArcSin(v.y));
 	}
 
-	Angle range = twp->ang.z - mwp->ang_aim.z;
+	Angle angz = twp->ang.z;
+	Angle range = SHORT_ANG(angz - mwp->ang_aim.z);
 
-	if (range >= 0x8000)
+	if (range < 0x8000)
 	{
-		if (range > 0x8000)
-		{
-			twp->ang.z += 128;
-		}
+		angz -= 128;
 	}
-	else
+	else if(range > 0x8000u)
 	{
-		twp->ang.z -= 128;
+		angz += 128;
 	}
 
-	if (range < 128 || range > 0xFF80)
+	if (range < 0x80 || range > 0xFF80)
 	{
-		twp->ang.z = range;
+		angz = mwp->ang_aim.z;
 	}
+
+	twp->ang.z = SHORT_ANG(angz);
 }
 
 static bool ReturnFishingLure_m(taskwk* twp, motionwk* mwp, NJS_POINT3* rod_pos)
@@ -1995,7 +2003,7 @@ static void fishingCursorCtrl_m(task* tp)
 		setCameraFishingTgt_m(tp, pnum);
 		MoveFishingCursor_m(tp, pnum);
 
-		ptwp->ang.y = 0x4000 - NJM_RAD_ANG(atan2f(twp->pos.x - ptwp->pos.x, twp->pos.z - ptwp->pos.z));
+		ptwp->ang.y = 0x4000 - njArcTan2(twp->pos.x - ptwp->pos.x, twp->pos.z - ptwp->pos.z);
 		playermwp[pnum]->ang_aim.y = ptwp->ang.y;
 	}
 
