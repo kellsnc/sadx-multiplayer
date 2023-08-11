@@ -51,3 +51,15 @@ Once in the multiplayer menu, choose between:
 * Battle: the character type is forced, you can hit your opponents and access Twinkle Circuit.
 
 Then choose the gameplay type and level to play together!
+
+### Free Camera
+
+Individual players are able to switch their camera mode by holding L+R and then pressing Y.
+
+### Fishing with Big
+
+Lure a fish until it bites and when it does, move the left stick around.
+
+Objectives:
+* In co-op mode you must catch Froggy
+* In battle mode, the first one to reach 2000g wins
