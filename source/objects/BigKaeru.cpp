@@ -520,8 +520,7 @@ static void BigKaeru_m(task* tp)
 			break;
 		}
 
-		// Only catch if the player is swinging or if it's a small fish
-		if ((etc->Big_Fish_Flag & LUREFLAG_SWING) || twp->scl.y == 0.0f)
+		if (etc->Big_Fish_Flag & LUREFLAG_SWING)
 		{
 			etc->Big_Fishing_Timer = 0;
 
