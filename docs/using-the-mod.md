@@ -24,6 +24,7 @@ You can also configure the mod manually by creating/editing `config.ini` in the 
 Here is a config file with all the options and their default values:
 ```
 SplitScreen=True ; Enable split screen in multiplayer.
+HorizontalLayout=False ; Split screen horizontally in two-player mode.
 Indicator=False ; Enable positional indicators in multiplayer.
 
 [Cheats]

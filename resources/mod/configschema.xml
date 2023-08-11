@@ -5,6 +5,9 @@
       <Property name="SplitScreen" type="bool" defaultvalue="True" display="Enable Split Screen">
         <HelpText>Toggle split screen in multiplayer.</HelpText>
       </Property>
+      <Property name="HorizontalLayout" type="bool" defaultvalue="False" display="Horizontal Layout">
+        <HelpText>Split screen horizontally in two-player mode.</HelpText>
+      </Property>
       <Property name="Indicator" type="bool" defaultvalue="False" display="Enable Indicators">
         <HelpText>Toggle player position indicators.</HelpText>
       </Property>

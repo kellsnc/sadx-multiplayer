@@ -34,6 +34,12 @@ namespace SplitScreen
 	signed int numViewPort, backupNumViewPort = -1;
 	bool enabled = false;
 
+	const ScreenRatio ScreenRatio2H[]
+	{
+		{ 0.0f, 0.0f, 1.0f, 0.5f },
+		{ 0.0f, 0.5f, 1.0f, 0.5f }
+	};
+
 	const ScreenRatio ScreenRatio2[]
 	{
 		{ 0.0f, 0.0f, 0.5f, 1.0f },
@@ -341,6 +347,12 @@ void InitSplitScreen()
 		DisplayTask_hook.Hook(DisplayTask_r);
 		LoopTask_hook.Hook(LoopTask_r);
 		njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+
+		if (config.mHorizontalLayout == true)
+		{
+			SplitScreen::ScreenRatios[0] = SplitScreen::ScreenRatio2H;
+			SplitScreen::ScreenRatios[1] = SplitScreen::ScreenRatio2H;
+		}
 
 		DrawQueue_Init();
 	}

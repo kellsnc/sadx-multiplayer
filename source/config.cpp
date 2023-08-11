@@ -13,6 +13,7 @@ void Config::read(const char* path)
 	if (ini_general)
 	{
 		mSplitScreen = ini_general->getBool("SplitScreen", mSplitScreen);
+		mHorizontalLayout = ini_general->getBool("HorizontalLayout", mHorizontalLayout);
 		mIndicator = ini_general->getBool("Indicator", mIndicator);
 	}
 

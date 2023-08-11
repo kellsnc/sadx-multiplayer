@@ -3,6 +3,7 @@
 struct Config
 {
 	bool mSplitScreen = true;
+	bool mHorizontalLayout = false;
 	bool mIndicator = false;
 
 	struct
