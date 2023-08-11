@@ -307,6 +307,11 @@ static void DrawFishingMeter_Screen(int pnum, float _reel_length_d, float _reel_
 
 void DrawFishingMeter(int pnum, float _reel_length_d, float _reel_tension, Angle _reel_angle)
 {
+	if (ChkPause())
+	{
+		return;
+	}
+
 	njSetTexture(&FISHING_TEXLIST);
 
 	if (SplitScreen::IsActive())
