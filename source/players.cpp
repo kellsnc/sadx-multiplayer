@@ -56,6 +56,7 @@ static bool isCharSel = false;
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
 static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack | Status_LightDash;
+FunctionHook<int> GetRaceWinnerPlayer_t(GetRaceWinnerPlayer);
 
 TaskFuncPtr charfuncs[] = {
 	SonicTheHedgehog,
@@ -659,7 +660,7 @@ int GetRaceWinnerPlayer_r()
 		}
 	}
 
-	return RaceWinnerPlayer;
+	return GetRaceWinnerPlayer_t.Original();
 }
 
 Bool isInDeathZone_r(taskwk* a1)
@@ -696,7 +697,7 @@ void InitPlayerPatches()
 	WriteJump(ResetNumRing, ResetNumRingM);
 	WriteJump(InitActionScore, ResetEnemyScoreM);
 	WriteJump(InitScore, InitScore_r);
-	WriteJump(GetRaceWinnerPlayer, GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
+	GetRaceWinnerPlayer_t.Hook(GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
 
 #ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_LOCATION, PlayerListener);
