@@ -956,7 +956,8 @@ void InitLevels()
 	// Ice Cap breath generator
 	WriteData((uint8_t*)0x4E91AE, (uint8_t)PLAYER_MAX);
 
-	WriteCall((void*)0x61CB77, PatchGetPlayerCharacterName); //fix Amy character check
+	// Twinkle Park - fix Amy character check
+	WriteCall((void*)0x61CB77, PatchGetPlayerCharacterName); 
 
 	// Speed Highway Act 2 skybox
 	WriteData((taskwk***)0x610765, &camera_twp);
