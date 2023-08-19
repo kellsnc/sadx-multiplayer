@@ -902,6 +902,16 @@ void __cdecl Casino_StartPos_r(Uint8 pno, float x, float y, float z)
 	}
 }
 
+int __cdecl PatchGetPlayerCharacterName(char index)
+{
+	if (multiplayer::IsActive())
+	{
+		return CurrentCharacter;
+	}
+
+	return GetCharacterID(index);
+}
+
 void InitLevels()
 {
 	// Patch start positions
@@ -945,6 +955,8 @@ void InitLevels()
 
 	// Ice Cap breath generator
 	WriteData((uint8_t*)0x4E91AE, (uint8_t)PLAYER_MAX);
+
+	WriteCall((void*)0x61CB77, PatchGetPlayerCharacterName); //fix Amy character check
 
 	// Speed Highway Act 2 skybox
 	WriteData((taskwk***)0x610765, &camera_twp);
