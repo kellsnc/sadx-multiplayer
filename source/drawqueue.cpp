@@ -52,21 +52,21 @@ void DrawQueueItem_SetDrawParams(LATE_RQ_T* data)
 		}
 	}
 
-	// Light
-	auto light_type = data->rq.typ >> 6;
-	if (light_type != -1)
+	// Palette
+	int palette = data->rq.typ >> 6;
+	if (palette != -1)
 	{
 		if (data->rq.no & 0x8000)
 		{
 			_nj_constant_attr_or_ |= NJD_FLAG_IGNORE_LIGHT | NJD_FLAG_IGNORE_SPECULAR;
-			light_type = 0;
+			palette = 0;
 		}
 
-		if (light_type != lig_curGjPaletteNo___)
+		if (palette != lig_curGjPaletteNo___)
 		{
-			___dsSetPalette(light_type);
+			___dsSetPalette(palette * 2);
 		}
-
+		
 		ScaleVectorThing_Restore();
 	}
 
