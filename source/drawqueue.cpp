@@ -96,11 +96,11 @@ void DrawQueueItem_SetDrawParams(LATE_RQ_T* data)
 
 void DrawQueueItem_SetViewPort(LATE_RQ_T* data)
 {
-	signed int viewport = (BYTEn(data->rq.ctrl3dFlg, 3) & ~0x80) - 1;
+	int viewport = (BYTEn(data->rq.ctrl3dFlg, 3) & ~0x80) - 1;
 
 	if (SplitScreen::ChangeViewPort(viewport))
 	{
-		ApplyMultiCamera(viewport);
+		ApplyMultiCamera(viewport < 0 ? 0 : viewport);
 	}
 }
 
@@ -115,6 +115,8 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 
 	DrawQueueItem_SetViewPort(data); // <- custom
 	DrawQueueItem_SetDrawParams(data);
+
+	auto perspective = _nj_screen_.dist;
 
 	switch (data->rq.typ & 0xF)
 	{
@@ -220,6 +222,8 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 		DrawShapeMotion(data->shpmot.obj, data->shpmot.mot, data->shpmot.shp, data->shpmot.frm, (LATE)data->shpmot.flgs, data->shpmot.clpScl, data->shpmot.drwMdl);
 		break;
 	}
+
+	_nj_screen_.dist = perspective;
 }
 
 void __cdecl late_exec_r()
