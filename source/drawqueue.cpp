@@ -67,7 +67,7 @@ void DrawQueueItem_SetDrawParams(LATE_RQ_T* data)
 			___dsSetPalette(palette * 2);
 		}
 		
-		ScaleVectorThing_Restore();
+		lig_setLight4gjpalNo(palette);
 	}
 
 	// Texture
@@ -281,11 +281,11 @@ void __cdecl late_exec_r()
 
 		if (lig_curGjPaletteNo___ != _lig_curGjPaletteNo___)
 		{
-			___dsSetPalette(_lig_curGjPaletteNo___);
-			lig_resetGjPaletteNo___(_lig_curGjPaletteNo___);
+			___dsSetPalette(_lig_curGjPaletteNo___ * 2);
 		}
 
-		ScaleVectorThing_Restore();
+		lig_resetGjPaletteNo___(_lig_curGjPaletteNo___);
+		lig_setLight4gjpalNo(_lig_curGjPaletteNo___);
 		njSetZCompare(1);
 		njSetZUpdateMode(1);
 		_nj_control_3d_flag_ = __nj_control_3d_flag_;
