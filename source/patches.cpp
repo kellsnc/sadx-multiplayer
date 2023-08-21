@@ -64,6 +64,7 @@ static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7
 UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
 UsercallFunc(signed int, PlayerVacumedRing_t, (taskwk* a1), (a1), 0x44FA90, rEAX, rEDI);
 static Trampoline* OGate2_Main_t = nullptr;
+FunctionHook<void, taskwk*> PPlayADXAsWaiting_t(0x442360); //idle
 
 TaskHook OTpRing_t((intptr_t)OTpRing);
 
@@ -769,9 +770,123 @@ uint8_t Casino_FixKnuxCheck(char index)
 void CasinoPatches()
 {
 	WriteCall((void*)0x5C060B, Casino_FixKnuxCheck);
-	WriteCall((void*)0x5C058B, Casino_FixKnuxCheck);	
+	WriteCall((void*)0x5C058B, Casino_FixKnuxCheck);
 	WriteCall((void*)0x5C068B, Casino_FixKnuxCheck);
 	WriteCall((void*)0x5C441A, Casino_FixKnuxCheck);
+}
+
+//make idle voice works for other players
+void __cdecl PPlayADXAsWaiting_r(taskwk* pTwp)
+{
+	if (!multiplayer::IsActive() || !pTwp || !pTwp->counter.b[0])
+	{
+		return PPlayADXAsWaiting_t.Original(pTwp);
+	}
+
+	const uint8_t charID = pTwp->counter.b[1];
+	const Sint16 act = ssActNumber;
+	auto lvlID = (ssActNumber | (ssStageNumber << 8)) >> 8;
+
+	if (EV_CheckCansel())
+		return;
+
+	if (charID == Characters_Amy && lvlID == LevelIDs_EggCarrierInside && act == 2)
+	{
+		lvlID = 0;
+	}
+
+	__int16* voiceList = plADXNamePlayingAsWaiting[lvlID];
+	int voiceID = 0;
+
+	switch (charID)
+	{
+	case Characters_Sonic:
+		voiceID = lvlID != 19 ? 390 : 396;
+		break;
+	case Characters_Tails:
+		voiceID = 391;
+		break;
+	case Characters_Knuckles:
+		voiceID = 392;
+		break;
+	case Characters_Amy:
+		voiceID = 393;
+		break;
+	case Characters_Gamma:
+		voiceID = 394;
+		break;
+	case Characters_Big:
+		voiceID = 395;
+		break;
+	default:
+		voiceID = ssActNumber;
+		break;
+	}
+
+	if (voiceList)
+	{
+		if (njRandom() >= 0.5f)
+		{
+			int curVoice = *voiceList;
+			int16_t* curLevelVoiceList = nullptr;
+
+			if (*voiceList != -1)
+			{
+				while (1)
+				{
+					curLevelVoiceList = voiceList + 1;
+					int16_t index = *curLevelVoiceList;
+
+					if (curVoice == charID)
+					{
+						break;
+					}
+
+					curVoice = curLevelVoiceList[index + 1];
+					voiceList = &curLevelVoiceList[index + 1];
+
+					if (curVoice == -1)
+					{
+						PlayVoice(voiceID);
+						return;
+					}
+				}
+
+				int16_t v9 = *curLevelVoiceList;
+				int16_t* index = curLevelVoiceList + 1;
+
+				if (v9 == 1)
+				{
+					PlayVoice(*index);
+					return;
+				}
+
+				int v13 = (njRandom() * v9);
+
+				if (IsLevelChaoGarden())
+				{
+					if (v13 == v9)
+					{
+						v13--;
+					}
+				}
+				else
+				{
+					v13 = ssAct;
+				}
+
+				int v15 = v9 - 1;
+				if (v15 < v13)
+				{
+					v13 = v15;
+				}
+
+				voiceID = index[v13];
+			}
+		}
+	}
+
+	PlayVoice(voiceID);
 }
 
 void InitPatches()
@@ -788,6 +903,7 @@ void InitPatches()
 	PGetAccelerationSnowBoard_t = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
 	PGetAccelerationForBuilding_t = new Trampoline(0x448150, 0x448158, PGetAccelerationForBuilding_r);
 	SonicMotionCheckEdition.Hook(SonicMotionCheckEdition_r);
+	PPlayADXAsWaiting_t.Hook(PPlayADXAsWaiting_r); //patch idle voice multiplayer
 
 	// Misc
 	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
