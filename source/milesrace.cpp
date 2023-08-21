@@ -628,7 +628,7 @@ static void Icecap_Init_m(taskwk* twp, taskwk* stwp, taskwk* mtwp)
 	auto pnum = TASKWK_PLAYERID(stwp);
 	twp->mode = 1;
 
-	SetInputP(twp->id, PL_OP_SNOWBOARDING);
+	SetInputP(pnum, PL_OP_SNOWBOARDING);
 	stwp->ang = mtwp->ang;
 
 	VecTemp0.x = 0.0f;
