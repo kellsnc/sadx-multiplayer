@@ -35,9 +35,9 @@ void DrawQueueItem_SetDrawParams(LATE_RQ_T* data)
 	_nj_control_3d_flag_ = data->rq.ctrl3dFlg;
 	_nj_constant_attr_and_ = data->rq.atrAnd;
 	_nj_constant_attr_or_ = data->rq.atrOr | NJD_FLAG_DOUBLE_SIDE;
-
-	// Fog
-	if ((data->rq.typ & QueuedModelFlags_FogEnabled))
+	
+	// No fog for "easy" draw mode
+	if (data->rq.typ & (LATE_EASY << 4))
 	{
 		if (gu8FogEnbale == FALSE)
 		{
@@ -52,36 +52,36 @@ void DrawQueueItem_SetDrawParams(LATE_RQ_T* data)
 		}
 	}
 
-	// Light
-	auto light_type = data->rq.typ >> 6;
-	if (light_type != -1)
+	// Palette
+	int palette = data->rq.typ >> 6;
+	if (palette != -1)
 	{
 		if (data->rq.no & 0x8000)
 		{
 			_nj_constant_attr_or_ |= NJD_FLAG_IGNORE_LIGHT | NJD_FLAG_IGNORE_SPECULAR;
-			light_type = 0;
+			palette = 0;
 		}
 
-		if (light_type != lig_curGjPaletteNo___)
+		if (palette != lig_curGjPaletteNo___)
 		{
-			___dsSetPalette(light_type);
+			___dsSetPalette(palette * 2);
 		}
-
-		ScaleVectorThing_Restore();
+		
+		lig_setLight4gjpalNo(palette);
 	}
 
 	// Texture
-	CurrentTexList = data->rq.texLst;
-	if (!VerifyTexList(data->rq.texLst))
+	njds_texList = data->rq.texLst;
+	if (!isTextureNG(data->rq.texLst))
 	{
 		Direct3D_SetTexList(data->rq.texLst);
 	}
 
 	// Depth
-	Direct3D_SetZFunc(3u);
-	if ((data->rq.typ & QueuedModelFlags_ZTestWrite) != 0)
+	njSetZCompare(3);
+	if (data->rq.typ & (LATE_WZ << 4))
 	{
-		njSetZUpdateMode(1u);
+		njSetZUpdateMode(1);
 	}
 	else
 	{
@@ -96,11 +96,11 @@ void DrawQueueItem_SetDrawParams(LATE_RQ_T* data)
 
 void DrawQueueItem_SetViewPort(LATE_RQ_T* data)
 {
-	signed int viewport = (BYTEn(data->rq.ctrl3dFlg, 3) & ~0x80) - 1;
+	int viewport = (BYTEn(data->rq.ctrl3dFlg, 3) & ~0x80) - 1;
 
 	if (SplitScreen::ChangeViewPort(viewport))
 	{
-		ApplyMultiCamera(viewport);
+		ApplyMultiCamera(viewport < 0 ? 0 : viewport);
 	}
 }
 
@@ -116,14 +116,16 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 	DrawQueueItem_SetViewPort(data); // <- custom
 	DrawQueueItem_SetDrawParams(data);
 
+	auto perspective = _nj_screen_.dist;
+	
 	switch (data->rq.typ & 0xF)
 	{
-	case QueuedModelType_BasicModel:
+	case LATE_TYP_MDL:
 		njSetTexture(data->rq.texLst);
 		njSetMatrix(0, data->obj.mtx);
 		DrawModelThing((NJS_MODEL_SADX*)data->rq.etc);
 		break;
-	case QueuedModelType_Sprite2D:
+	case LATE_TYP_S2D:
 		if (!isTextureNG(data->s2d.spr.tlist))
 		{
 			njSetScreenDist_(0x31C7);
@@ -131,7 +133,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 			njDrawSprite2D_DrawNow(&data->s2d.spr, no, data->s2d.pri > -1.0f ? -1.0f : data->s2d.pri, data->s2d.atr);
 		}
 		break;
-	case QueuedModelType_Sprite3D:
+	case LATE_TYP_S3D:
 		if (!isTextureNG(data->s3d.spr.tlist))
 		{
 			njSetScreenDist_(0x31C7);
@@ -139,7 +141,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 			njDrawSprite3D_DrawNow(&data->s3d.spr, no, data->s3d.atr);
 		}
 		break;
-	case QueuedModelType_Line3D:
+	case LATE_TYP_LIN3D:
 		if (data->po3d.atr & NJD_USE_TEXTURE && data->rq.texLst)
 		{
 			njSetTextureNum_(data->po3d.texNum);
@@ -148,7 +150,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 		njSetMatrix(0, data->po3d.mtx);
 		njDrawLine3D(&data->po3d.p3c, no, data->po3d.atr);
 		break;
-	case QueuedModelType_3DLinesMaybe:
+	case LATE_TYP_TRI3D:
 		if (data->po3d.atr & NJD_USE_TEXTURE && data->rq.texLst)
 		{
 			njSetTextureNum_(data->po3d.texNum);
@@ -157,7 +159,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 		njSetMatrix(0, data->po3d.mtx);
 		njDrawTriangle3D(&data->po3d.p3c, no, data->po3d.atr);
 		break;
-	case QueuedModelType_2DLinesMaybe:
+	case LATE_TYP_POLY2D:
 		if (data->po2d.atr & NJD_USE_TEXTURE && data->rq.texLst)
 		{
 			njSetTextureNum_(data->po2d.texNum);
@@ -166,7 +168,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 		njSetMatrix(0, data->po2d.mtx);
 		___SAnjDrawPolygon2D(&data->po2d.p2c, no, data->po2d.pri > -1.0f ? -1.0f : data->po2d.pri, data->po2d.atr);
 		break;
-	case QueuedModelType_3DTriFanThing:
+	case LATE_TYP_POLY3D:
 		if (data->po3d.atr & NJD_USE_TEXTURE && data->rq.texLst)
 		{
 			njSetTextureNum_(data->po3d.texNum);
@@ -175,38 +177,38 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 		njSetMatrix(0, data->po3d.mtx);
 		njDrawPolygon3D(&data->po3d.p3c, no, data->po3d.atr);
 		break;
-	case QueuedModelType_ActionPtr:
+	case LATE_TYP_ACT:
 		njSetMatrix(0, data->act.mtx);
 		DrawAction(data->act.act, data->act.frm, LATE_MAT, 0.0f, DrawModelThing);
 		break;
-	case QueuedModelType_Rect:
+	case LATE_TYP_BOX2D:
 		njSetScreenDist_(0x31C7);
 		ds_DrawBoxFill2D(data->box2d.x, data->box2d.y, data->box2d.x2, data->box2d.y2, data->box2d.pri, data->box2d.argb);
 		break;
-	case QueuedModelType_Object:
+	case LATE_TYP_OBJ:
 		njSetTexture(data->rq.texLst);
 		njSetMatrix(0, data->obj.mtx);
 		dsDrawObject((NJS_OBJECT*)data->rq.etc);
 		break;
-	case QueuedModelType_Action:
+	case LATE_TYP_ACTLNK:
 		njSetMatrix(0, data->act.mtx);
 		DrawActionB(data->act.act, data->act.frm, 0, 0.0f, DrawModelThing);
 		break;
-	case QueuedModelType_Callback:
+	case LATE_TYP_FUNC:
 		if (data->func.fnc)
 		{
 			njSetMatrix(0, data->func.mtx);
 			njSetZCompare(1);
 			njSetZUpdateMode(1);
-			(data->func.fnc)(data->func.arg);
+			data->func.fnc(data->func.arg);
 		}
 		break;
-	case QueuedModelType_TextureMemList:
+	case LATE_TYP_DRAWTEX:
 		njSetScreenDist_(0x31C7);
 		njSetMatrix(0, data->tex.mtx);
 		njDrawTextureMemList(data->tex.vtx, data->tex.num, data->tex.ind, data->tex.tf);
 		break;
-	case QueuedModelType_Line2D:
+	case LATE_TYP_LIN2D:
 		if (data->po2d.atr & NJD_USE_TEXTURE && data->rq.texLst)
 		{
 			njSetTextureNum_(data->po2d.texNum);
@@ -215,11 +217,13 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 		njSetMatrix(0, data->po2d.mtx);
 		njDrawLine2D(&data->po2d.p2c, no, data->po2d.pri > -1.0f ? -1.0f : data->po2d.pri, data->po2d.atr);
 		break;
-	case QueuedModelType_MotionThing:
+	case LATE_TYP_SHPMOT:
 		njSetMatrix(0, data->shpmot.mtx);
 		DrawShapeMotion(data->shpmot.obj, data->shpmot.mot, data->shpmot.shp, data->shpmot.frm, (LATE)data->shpmot.flgs, data->shpmot.clpScl, data->shpmot.drwMdl);
 		break;
 	}
+
+	_nj_screen_.dist = perspective;
 }
 
 void __cdecl late_exec_r()
@@ -228,7 +232,7 @@ void __cdecl late_exec_r()
 	{
 		NJS_MATRIX orig_matrix;
 		njGetMatrix(orig_matrix);
-		Direct3D_SetZFunc(3u);
+		njSetZCompare(3);
 
 		if (loop_count || late_execMode)
 		{
@@ -254,9 +258,7 @@ void __cdecl late_exec_r()
 		ResetMaterial();
 
 		if (lig_curGjPaletteNo___)
-		{
 			___dsSetPalette(0);
-		}
 
 		for (int i = 0; i < 2048; ++i)
 		{
@@ -274,14 +276,10 @@ void __cdecl late_exec_r()
 		njSetMatrix(0, orig_matrix);
 		njds_texList = 0;
 		___njSetConstantMaterial(&cur_argb);
-
 		if (lig_curGjPaletteNo___ != _lig_curGjPaletteNo___)
-		{
-			___dsSetPalette(_lig_curGjPaletteNo___);
-			lig_resetGjPaletteNo___(_lig_curGjPaletteNo___);
-		}
-
-		ScaleVectorThing_Restore();
+			___dsSetPalette(_lig_curGjPaletteNo___ * 2);
+		lig_resetGjPaletteNo___(_lig_curGjPaletteNo___);
+		lig_setLight4gjpalNo(_lig_curGjPaletteNo___);
 		njSetZCompare(1);
 		njSetZUpdateMode(1);
 		_nj_control_3d_flag_ = __nj_control_3d_flag_;
@@ -304,7 +302,7 @@ void __cdecl late_exec_r()
 	}
 }
 
-LATE_RQ* __cdecl late_setOdr_o(__int16 no, int sz, QueuedModelType odr, QueuedModelFlagsB flgs)
+LATE_RQ* late_setOdr_o(Sint32 no, Sint32 sz, Sint32 odr, Sint32 flgs)
 {
 	const auto late_setOdr_ptr = late_setOdr_t->Target();
 
@@ -315,7 +313,7 @@ LATE_RQ* __cdecl late_setOdr_o(__int16 no, int sz, QueuedModelType odr, QueuedMo
 		push dword ptr[flgs]
 		push dword ptr[odr]
 		push[sz]
-		movzx ax, [no]
+		mov eax, [no]
 		call late_setOdr_ptr
 		add esp, 12
 		mov result, eax
@@ -324,7 +322,7 @@ LATE_RQ* __cdecl late_setOdr_o(__int16 no, int sz, QueuedModelType odr, QueuedMo
 	return result;
 }
 
-static LATE_RQ* late_setOdr_r(__int16 no, int sz, QueuedModelType odr, QueuedModelFlagsB flgs)
+LATE_RQ* __cdecl late_setOdr_r(Sint32 no, Sint32 sz, Sint32 odr, Sint32 flgs)
 {
 	auto rq = late_setOdr_o(no, sz, odr, flgs);
 
@@ -336,14 +334,13 @@ static LATE_RQ* late_setOdr_r(__int16 no, int sz, QueuedModelType odr, QueuedMod
 	return rq;
 }
 
-static void __declspec(naked) late_setOdr_w()
+void __declspec(naked) late_setOdr_w()
 {
 	__asm
 	{
 		push[esp + 0Ch] // flgs
 		push[esp + 0Ch] // odr
 		push[esp + 0Ch] // sz
-		movzx eax, ax
 		push eax
 		call late_setOdr_r
 		add esp, 16

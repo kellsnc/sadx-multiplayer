@@ -2,6 +2,7 @@
 #include "config.h"
 #include "multiplayer.h"
 #include "splitscreen.h"
+#include "menu_multi.h"
 #include "hud_multi.h"
 #include "hud_indicator.h"
 
@@ -33,19 +34,6 @@ static const NJS_TEXANIM INDICATOR_TEXANIMS[]{
 
 static NJS_SPRITE INDICATOR_SPRITE = { {0.0f, 0.0f, 0.0f}, 1.0f, 1.0f, 0, &CON_MULTI_TEXLIST, (NJS_TEXANIM*)INDICATOR_TEXANIMS };
 
-static const NJS_ARGB colors[] = {
-	{ 1.000f, 0.000f, 0.000f, 1.000f }, // Sonic
-	{ 1.000f, 0.500f, 0.000f, 0.000f }, // Eggman
-	{ 1.000f, 1.000f, 0.804f, 0.000f }, // Tails
-	{ 1.000f, 1.000f, 0.063f, 0.000f }, // Knuckles
-	{ 1.000f, 1.000f, 0.545f, 0.322f }, // Tikal
-	{ 1.000f, 1.000f, 0.545f, 0.741f }, // Amy
-	{ 1.000f, 0.545f, 0.545f, 0.545f }, // Gamma
-	{ 1.000f, 0.451f, 0.192f, 0.804f }, // Big
-	{ 1.000f, 0.000f, 1.000f, 1.000f }, // Metal Sonic
-	{ 0.750f, 0.500f, 0.500f, 0.500f }  // CPU
-};
-
 static void drawSprite(int tex, NJD_SPRITE attr)
 {
 	late_DrawSprite2D(&INDICATOR_SPRITE, tex, 22048.0f, attr, LATE_MAT);
@@ -65,7 +53,7 @@ static void dispIndicatorNum(int pnum, float screenX, float screenY, float scree
 	pos.y += ppwp->p.height;
 	njCalcPoint(nullptr, &pos, &pos); // get camera space position
 
-	bool behind = pos.z <= 0.0f;
+	const bool behind = pos.z <= 0.0f;
 	auto m = _nj_screen_.dist / pos.z; // projection
 
 	if (behind)
@@ -106,21 +94,29 @@ static void dispIndicatorNum(int pnum, float screenX, float screenY, float scree
 	INDICATOR_SPRITE.p.y = new_y + screenY;
 	INDICATOR_SPRITE.sx = INDICATOR_SPRITE.sy = scale;
 
-	// Set rendering colour
-	___njSetConstantMaterial(CheckPadReadModeP((unsigned char)pnum) ? (NJS_ARGB*)&colors[TASKWK_CHARID(ptwp)] : (NJS_ARGB*)&colors[9]);
+	const bool IsCPU = ptwp->id == 2;
 
-	const bool isVisible = pos.x < margin_right&& pos.x > margin_left && pos.y < margin_bottom&& pos.y > margin_top;
-	if (isVisible)
+	// Set rendering colour
+	if (IsCPU)
+	{
+		SetMaterial(0.750f, 0.500f, 0.500f, 0.500f);
+	}
+	else
+	{
+		___njSetConstantMaterial(&CursorColors[pnum]);
+	}
+	
+	// If on screen or on the sides
+	if (pos.x < margin_right && pos.x > margin_left && pos.y < margin_bottom && pos.y > margin_top)
 	{
 		drawSprite(indicator_tex::arrow, NJD_SPRITE_COLOR | NJD_SPRITE_ALPHA);
 	}
 	else
 	{
-		INDICATOR_SPRITE.ang = NJM_RAD_ANG(atan2(pos.y - new_y, pos.x - new_x)) - 0x4000; // rotate clamped arrow toward real position
+		INDICATOR_SPRITE.ang = njArcTan2(pos.y - new_y, pos.x - new_x) - 0x4000; // rotate clamped arrow toward real position
 		drawSprite(indicator_tex::arrow_border, NJD_SPRITE_COLOR | NJD_SPRITE_ALPHA | NJD_SPRITE_ANGLE);
 	}
 
-	const bool IsCPU = ptwp->id == 2;
 	drawSprite(IsCPU ? indicator_tex::cpu_1 : indicator_tex::p, NJD_SPRITE_COLOR | NJD_SPRITE_ALPHA);
 	drawSprite(IsCPU ? indicator_tex::cpu_2 : indicator_tex::numbers + pnum, NJD_SPRITE_COLOR | NJD_SPRITE_ALPHA);
 }

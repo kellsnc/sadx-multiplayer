@@ -59,6 +59,28 @@ enum AvaTexLdEnum : __int32
 	TENUM_NMAX_SADXPC = 30 // custom, enum is different
 };
 
+enum
+{
+	LATE_TYP_MDL = 0x1,
+	LATE_TYP_S2D = 0x2,
+	LATE_TYP_S3D = 0x3,
+	LATE_TYP_LIN3D = 0x4,
+	LATE_TYP_TRI3D = 0x5,
+	LATE_TYP_POLY2D = 0x6,
+	LATE_TYP_POLY3D = 0x7,
+	LATE_TYP_ACT = 0x8,
+	LATE_TYP_BOX2D = 0x9,
+	LATE_TYP_OBJ = 0xA,
+	LATE_TYP_ACTLNK = 0xB,
+	LATE_TYP_FUNC = 0xC,
+	LATE_TYP_DRAWTEX = 0xD,
+	LATE_TYP_LIN2D = 0xE,
+	LATE_TYP_SHPMOT = 0xF,
+	LATE_TYP_MSK = 0xF,
+	LATE_TYP_WZF = 0x10,
+	LATE_TYP_FOG = 0x20,
+};
+
 enum AVOID_CAMERA_MODE
 {
 	AVOID_MODE_INIT,
@@ -310,6 +332,7 @@ DataPointer(void*, canselEvent, 0x3B2C578);
 FunctionPointer(Sint32, CalcSpline, (SPLINE_DATA* spline_data), 0x7AAC70);
 FunctionPointer(void*, MAlloc, (Uint32 size), 0x40B220);
 FunctionPointer(void, Free, (void* mp), 0x40B310);
+FunctionPointer(void, lig_setLight4gjpalNo, (Sint32 no), 0x411F30);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
