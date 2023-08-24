@@ -260,29 +260,61 @@ void __cdecl SpLoopOnlyDisplay_r()
 	}
 }
 
-// Draw every task in subscreen
-static void DrawScreen(int num)
+static void DispTask_m(int level)
+{
+	if (level == 8)
+	{
+		level = 7;
+	}
+
+	task* current = btp[level];
+
+	if (current)
+	{
+		do
+		{
+			if (current->exec != FreeTask && current->exec != DestroyTask)
+			{
+				if (current->disp)
+					current->disp(current);
+				if (current->ctp)
+					DispChildrenTask(current);
+			}
+			current = current->next;
+		} while (current);
+	}
+}
+
+static void DisplayTask_m(int num)
 {
 	if (SplitScreen::IsScreenEnabled(num) && SplitScreen::ChangeViewPort(num))
 	{
 		SplitScreen::numScreen = num;
-		DisplayTask_hook.Original();
+
+		ResetMaterial();
+		DispTask_m(8);
+		for (int i = 0; i < 7; ++i)
+		{
+			DispTask_m(i);
+		}
+
 		DisplayMultiHud(num);
 	}
 }
 
-// DisplayTask run every task displays
+// DisplayTask displays every task
 void __cdecl DisplayTask_r()
 {
 	if (SplitScreen::IsActive())
 	{
-		// If multiplayer is enabled, split screen:
+		// If split screen is active, draw each screen:
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			DrawScreen(i);
+			DisplayTask_m(i);
 		}
 
+		SplitScreen::numScreen = 0;
 		SplitScreen::ChangeViewPort(-1);
 	}
 	else
@@ -293,7 +325,7 @@ void __cdecl DisplayTask_r()
 	}
 }
 
-// LoopTask run every task execs
+// LoopTask runs every task
 void __cdecl LoopTask_r()
 {
 	if (SplitScreen::IsActive())
@@ -307,7 +339,7 @@ void __cdecl LoopTask_r()
 
 		for (int i = 1; i < PLAYER_MAX; ++i)
 		{
-			DrawScreen(i);
+			DisplayTask_m(i);
 		}
 
 		SplitScreen::numScreen = 0;

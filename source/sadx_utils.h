@@ -334,6 +334,8 @@ FunctionPointer(void*, MAlloc, (Uint32 size), 0x40B220);
 FunctionPointer(void, Free, (void* mp), 0x40B310);
 FunctionPointer(void, lig_setLight4gjpalNo, (Sint32 no), 0x411F30);
 DataArray(__int16*, plADXNamePlayingAsWaiting, 0x915CC8, 43);
+DataArray(task*, btp, 0x3ABDBC4, 8);
+FunctionPointer(void, DispChildrenTask, (task* tp), 0x40B130);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
