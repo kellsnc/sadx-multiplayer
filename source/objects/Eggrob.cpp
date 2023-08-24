@@ -274,7 +274,7 @@ static task* Eggrob_GenerateEggrob_m(erctrlstr* cmd)
 
 		if (ptwp && GetDistance(&ptwp->pos, &twp->pos) < 100.0f)
 		{
-			RumbleA(i, 0);
+			VibShot(i, 0);
 		}
 	}
 

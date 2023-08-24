@@ -29,7 +29,7 @@ static void inhallPlayer_m(taskwk* twp)
 	{
 		NJS_POINT3 v = { ptwp->pos.x - twp->pos.x, ptwp->pos.y - twp->pos.y, ptwp->pos.z - twp->pos.z };
 		njPushMatrix(_nj_unit_matrix_);
-		njRotateY_(-twp->ang.y);
+		ROTATEY(0, -twp->ang.y);
 		njCalcVector(0, &v, &v);
 		njPopMatrixEx();
 
@@ -65,14 +65,14 @@ static void inhallPlayer_m(taskwk* twp)
 		}
 
 		njPushMatrix(_nj_unit_matrix_);
-		njRotateY_(twp->ang.y);
+		ROTATEY(0, twp->ang.y);
 		njCalcVector(0, &v, &v);
 		njPopMatrixEx();
 		ptwp->pos.x = v.x + twp->pos.x;
 		ptwp->pos.y = v.y + twp->pos.y;
 		ptwp->pos.z = v.z = twp->pos.z;
 		dsPlay_timer_v(69, (int)twp, 1, 0, 2, twp->pos.x, twp->pos.y, twp->pos.z);
-		VibShot(0, 4);
+		VibShot(pnum, 4);
 	}
 }
 

@@ -324,7 +324,7 @@ void cartCharactorCollisionM(taskwk* twp, int pnum)
 				if ((twp->flag & Status_Hurt) != 0)
 				{
 					cart_data->vitality = 0;
-					RumbleA(0, 0);
+					VibShot(pnum, 0);
 				}
 			}
 			else if ((twp->flag & Status_Hurt) != 0 && (ptwp->flag & Status_Ground) == 0)

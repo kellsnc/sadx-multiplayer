@@ -64,7 +64,7 @@ static void ObjectCasinoTelepotExec_r(task* tp)
         if (twp->cwp->flag & CWK_FLAG_HIT)
         {
             pwp->nocontimer = 3;
-            VibShot(2, 0);
+            VibShot(pnum, 0);
             dsPlay_timer(SE_CA_TRANS, (Sint32)twp, 1, 0, 5);
             SetVelocityP(pnum, 0.0f, 0.0f, 0.0f);
             pwp->acc.y += pwp->p.weight + 0.1f; //Make the player float.

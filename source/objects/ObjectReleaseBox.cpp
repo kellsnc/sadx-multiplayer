@@ -61,7 +61,7 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 					}
 
 					twp->mode = 2;
-					VibShot((char)parent_twp->btimer, 0);
+					VibShot(parent_twp->btimer, 0);
 				}
 			}
 		}
