@@ -431,7 +431,7 @@ const char* stg_confirm_texts[]{
 	"\aDo you want to play this stage?",
 	"\aVoulez-vous jouer à ce niveau ?",
 	"\a¿Quieres jugar este nivel?",
-	"\aDo you want to play this stage?"
+	"\aMöchten sie diese Ebene spielen?"
 };
 
 const char* press_start_texts[]{
@@ -439,7 +439,7 @@ const char* press_start_texts[]{
 	"\aPress start to join",
 	"\aAppuyez sur entrer pour joindre",
 	"\aPulsa start para unirte",
-	"\aPress start to join"
+	"\aStart drücken zum beitreten"
 };
 
 static constexpr size_t address_limit = 32;
