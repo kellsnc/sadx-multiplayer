@@ -438,7 +438,7 @@ const char* press_start_texts[]{
 	"\aPress start to join",
 	"\aPress start to join",
 	"\aAppuyez sur entrer pour joindre",
-	"\aPresiona start para unirte",
+	"\aPulsa start para unirte",
 	"\aPress start to join"
 };
 
