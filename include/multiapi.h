@@ -195,6 +195,11 @@ extern "C"
 	// Return false on error (pointers no written to)
 	API bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num);
 
+	// Change text added by the multiplayer mod
+	// "stage_confirm" = "\aDo you want to play this stage?"
+	// "press_start" = "\aPress start to join"
+	API void multi_replace_text(const char* name, uint32_t language, const char* text);
+
 #ifdef __cplusplus
 }
 #endif

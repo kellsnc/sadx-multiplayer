@@ -6,6 +6,7 @@
 #include "gravity.h"
 #include "collision.h"
 #include "fog.h"
+#include "menu_multi.h"
 #include "../include/multiapi.h"
 
 bool splitscreen_is_active()
@@ -270,4 +271,21 @@ bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num)
 		return true;
 	}
 	return false;
+}
+
+void multi_replace_text(const char* name, uint32_t language, const char* text)
+{
+	if (!name || !text || language > 4)
+	{
+		return;
+	}
+
+	if (!strcmp(name, "stage_confirm"))
+	{
+		stg_confirm_texts[language] = text;
+	}
+	else if (!strcmp(name, "press_start"))
+	{
+		press_start_texts[language] = text;
+	}
 }
