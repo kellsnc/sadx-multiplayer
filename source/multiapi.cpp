@@ -273,6 +273,18 @@ bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num)
 	return false;
 }
 
+bool multi_get_ring_list(uint32_t pnum, colaround** pp_arl, Uint16* p_num)
+{
+	colaround* arl = GetTargetRingList(pnum);
+	if (arl)
+	{
+		if (pp_arl) *pp_arl = arl;
+		if (p_num) *p_num = getArlNum(pnum);
+		return true;
+	}
+	return false;
+}
+
 void multi_replace_text(const char* name, uint32_t language, const char* text)
 {
 	if (!name || !text || language > 4)

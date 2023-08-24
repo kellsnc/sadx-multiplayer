@@ -191,9 +191,13 @@ extern "C"
 	// Note that the vanilla function `CameraReleaseEventCmaera` will work for P1
 	API void camera_release_event_camera(uint32_t pnum);
 
-	// Get the target list and count for a specific player
+	// Get the target enemy list and count for a specific player
 	// Return false on error (pointers no written to)
 	API bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num);
+
+	// Get the target ring list and count for a specific player
+	// Return false on error (pointers no written to)
+	API bool multi_get_ring_list(uint32_t pnum, colaround** pp_arl, Uint16* p_num);
 
 	// Change text added by the multiplayer mod
 	// "stage_confirm" = "\aDo you want to play this stage?"

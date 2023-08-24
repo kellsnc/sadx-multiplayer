@@ -306,14 +306,24 @@ colaround* GetTargetEnemyList(Uint8 pno)
 	return pno < PLAYER_MAX ? around_enemy_list_p[pno] : nullptr;
 }
 
+colaround* GetTargetRingList(Uint8 pno)
+{
+	return pno < PLAYER_MAX ? around_ring_list_p[pno] : nullptr;
+}
+
 Bool __cdecl PCheckTargetEnemy_r(Uint8 pno)
 {
-	return pno < PLAYER_MAX&& around_enemy_list_p[pno]->twp != nullptr;
+	return pno < PLAYER_MAX && around_enemy_list_p[pno]->twp != nullptr;
 }
 
 Uint16 __cdecl getAelNum(Uint8 pno)
 {
 	return pno < PLAYER_MAX ? *ael_num_p[pno] : 0;
+}
+
+Uint16 __cdecl getArlNum(Uint8 pno)
+{
+	return pno < PLAYER_MAX ? *arl_num_p[pno] : 0;
 }
 
 void __cdecl LockingOnTargetEnemy_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
