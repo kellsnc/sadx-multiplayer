@@ -136,6 +136,18 @@ void multi_set_winner(uint32_t pnum);
 ```
 Set the player that will be declared as the winner when the result screen appears (battle mode.)
 
+**multi_get_enemy_list**
+```
+bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num);
+```
+Retrieve array of nearby enemies for the given player. If the list exists, it returns true and write into provided pointers. On error, it returns false and does not write to any pointer. The count is optional as you can loop p_ael until twp is NULL.
+
+**multi_get_ring_list**
+```
+bool multi_get_ring_list(uint32_t pnum, colaround** pp_arl, Uint16* p_num);
+```
+Retrieve array of nearby rings for the given player. If the list exists, it returns true and write into provided pointers. On error, it returns false and does not write to any pointer. The count is optional as you can loop p_arl until twp is NULL.
+
 ### System
 
 **multi_is_enabled**
@@ -185,12 +197,6 @@ Disable multiplayer mode, does not remove any loaded player.
 uint32_t multi_get_player_count();
 ```
 Get the amount of multiplayer players (and not the number of loaded characters.)
-
-**multi_get_enemy_list**
-```
-bool multi_get_enemy_list(uint32_t pnum, colaround** pp_ael, Uint16* p_num);
-```
-Returns the target array for a specific player. If the list exists, it returns true and write into all pointers. On error, it returns false and does not write to any pointer. Individual pointers can be null. The count is optional as you can loop p_ael until twp is NULL.
 
 ### Fog
 
@@ -330,7 +336,7 @@ void camera_release_event_camera(uint32_t pnum);
 ```
 Release an event camera for a specific player if one is running.
 
-### Split-screen
+### Split screen
 
 **splitscreen_is_active**
 ```
@@ -386,3 +392,16 @@ Useful in the display subroutine of tasks to draw things only for specific playe
 bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h);
 ```
 Get the information of a specific split-screen. Returns true if the operation succeeded and values were written to. False otherwise.
+
+### Menu / UI
+
+**multi_replace_text**
+```
+void multi_replace_text(const char* name, uint32_t language, const char* text);
+```
+
+Change text added by the multiplayer mod. The `\a` prefix centers text. This can be useful for translation mods.
+
+List of added strings:
+* "stage_confirm" = "\aDo you want to play this stage?"
+* "press_start" = "\aPress start to join"
