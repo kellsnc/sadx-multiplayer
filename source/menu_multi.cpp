@@ -427,7 +427,7 @@ const AvaTexLdEnum AvaTexLdListForMulti[]{
 };
 
 const char* stg_confirm_texts[]{
-	"\aDo you want to play this stage?",
+	"\a\202\261\202\314\203\130\203\145\201\133\203\127\202\360\203\166\203\214\203\103\202\265\202\334\202\267\202\251\201\110",
 	"\aDo you want to play this stage?",
 	"\aVoulez-vous jouer à ce niveau ?",
 	"\a¿Quieres jugar este nivel?",
@@ -435,7 +435,7 @@ const char* stg_confirm_texts[]{
 };
 
 const char* press_start_texts[]{
-	"\aPress start to join",
+	"\a\203\130\203\136\201\133\203\147\202\360\211\237\202\265\202\304\216\121\211\301\202\267\202\351\202\255\202\276\202\263\202\242",
 	"\aPress start to join",
 	"\aAppuyez sur entrer pour joindre",
 	"\aPulsa start para unirte",
