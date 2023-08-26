@@ -7,6 +7,9 @@ This project was made by:
 With contributions from:
 - SoloSlacker (menu textures, main logo)
 - Broly (documentation logo)
+- Jesus_PK (Spanish)
+- Air (German)
+- kawaiikaorichan (Japanese)
 
 And tested by:
 - Jesus_PK
