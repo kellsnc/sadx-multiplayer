@@ -307,43 +307,39 @@ BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 		{
 			auto pID = TASKWK_PLAYERID(hit_twp);
 
-			ewp->flag |= 0x1000u;
+			ewp->flag |= 0x1000;
 			AddEnemyScoreM(pID, 10);
 
-			if ((twp->cwp->hit_cwp->info[twp->cwp->hit_num].attr & 0x1000) != 0)
+			if (twp->cwp->hit_cwp->info[twp->cwp->hit_num].attr & 0x1000)
 			{
-				ewp->flag |= 0x800u;
+				ewp->flag |= 0x800;
 				ewp->velo.y = 0.7f;
 			}
 			else
 			{
-				ewp->flag &= ~0x400u;
+				ewp->flag &= ~0x400;
 				EnemyBumpPlayer(pID);
 			}
-
-			return TRUE;
 		}
 
 		hit_twp = CCL_IsHitBullet(twp);
 
 		if (hit_twp)
 		{
-			ewp->flag |= 0x1000u;
-			AddEnemyScoreM(hit_twp->btimer, 10);
+			ewp->flag |= 0x1000;
+			AddEnemyScoreM(hit_twp->btimer, 10); // we put the player id in btimer
 
-			if ((twp->cwp->hit_cwp->info[twp->cwp->hit_num].attr & 0x1000) != 0)
+			if (twp->cwp->hit_cwp->info[twp->cwp->hit_num].attr & 0x1000)
 			{
-				ewp->flag |= 0x800u;
+				ewp->flag |= 0x800;
 			}
 			else
 			{
-				ewp->flag &= ~0x400u;
+				ewp->flag &= ~0x400;
 			}
-
-			return TRUE;
 		}
 
-		return FALSE;
+		return TRUE;
 	}
 	else
 	{
