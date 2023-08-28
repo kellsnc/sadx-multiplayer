@@ -2,34 +2,73 @@
 #include "gravity.h"
 #include "e_cart.h"
 #include "result.h"
+#include "collision.h"
 #include "ObjCylinderCmn.h"
+#include "knuckles.h"
 
-UsercallFunc(Bool, Knux_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
-TaskHook KnucklesTheEchidna_t((intptr_t)Knuckles_Main);
-static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
+UsercallFunc(taskwk*, KnucklesGetNearEnemyTWP_t, (taskwk* twp), (twp), 0x4756C0, rEAX, rEBX);
 TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
-static FunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
+FunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
 TaskHook KnucklesJiggle_t(0x473CE0);
 TaskHook KnuxEyeTracker_t(0x475260);
+UsercallFunc(Bool, Knux_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
+FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
+TaskHook KnucklesTheEchidna_t((intptr_t)Knuckles_Main);
 
-static void __cdecl KnuxEyeTracker_r(task* tp)
+static taskwk* KnucklesGetNearEnemyTWP_m(taskwk* twp)
 {
-	if (DeleteJiggle(tp))
+	auto ael = GetTargetEnemyList(TASKWK_PLAYERID(twp));
+
+	taskwk* tgt_twp = NULL;
+	Float tgt_dist = 160000.0f;
+	Angle tgt_ang;
+
+	if (ael->twp)
 	{
-		return;
+		do
+		{
+			CCL_INFO* cinfo = ael->twp->cwp->info;
+			NJS_VECTOR center = cinfo->center;
+			if (!(cinfo->attr & 0x20))
+			{
+				njAddVector(&center, &ael->twp->pos);
+			}
+			njSubVector(&center, &twp->pos);
+			if (DiffAngle(twp->ang.y, njArcTan2(center.z, center.x)) <= 0x7FFF && tgt_dist > ael->dist)
+			{
+				tgt_twp = ael->twp;
+				tgt_dist = ael->dist;
+				tgt_ang = njArcTan2(center.z, center.x);
+			}
+			++ael;
+		}
+		while (ael->twp);
+
+		if (tgt_twp)
+		{
+			twp->ang.y = AdjustAngle(twp->ang.y, tgt_ang, 0x1000);
+			KnuEffectHormTubePut(twp);
+		}
+
+		if (tgt_dist <= 225.0f)
+		{
+			SetEffectSpray(&twp->pos, NULL);
+		}
 	}
 
-	KnuxEyeTracker_t.Original(tp);
+	return tgt_twp;
 }
 
-static void __cdecl KnucklesJiggle_r(task* tp)
+static taskwk* __cdecl KnucklesGetNearEnemyTWP_r(taskwk* twp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive())
 	{
-		return;
+		return KnucklesGetNearEnemyTWP_m(twp);
 	}
-
-	KnucklesJiggle_t.Original(tp);
+	else
+	{
+		return KnucklesGetNearEnemyTWP_t.Original(twp);
+	}
 }
 
 void __cdecl KnuEffectPutChargeComp_r(NJS_VECTOR* position, float alpha)
@@ -168,6 +207,26 @@ void __cdecl KnucklesChargeEffectExe_r(task* tp)
 		tp->disp = KnucklesChargeEffectDisp;
 		KnuEffectPutChargeComp(&PlayerData->cwp->info->center, (njSin(twp->btimer << 10) + 1.0f) * 0.5f);
 	}
+}
+
+static void __cdecl KnuxEyeTracker_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	KnuxEyeTracker_t.Original(tp);
+}
+
+static void __cdecl KnucklesJiggle_r(task* tp)
+{
+	if (DeleteJiggle(tp))
+	{
+		return;
+	}
+
+	KnucklesJiggle_t.Original(tp);
 }
 
 Bool Knux_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
@@ -350,12 +409,12 @@ void __cdecl KnucklesTheEchidna_r(task* tp)
 
 void Init_KnuxPatches()
 {
-	KnucklesTheEchidna_t.Hook(KnucklesTheEchidna_r);
-	Knux_CheckInput_t.Hook(Knux_CheckInput_r);
-	Knux_RunsActions_t.Hook(Knux_RunsActions_r);
+	KnucklesGetNearEnemyTWP_t.Hook(KnucklesGetNearEnemyTWP_r);
 	KnucklesChargeEffectExe_t.Hook(KnucklesChargeEffectExe_r);
-
-	KnuEffectPutChargeComp_t.Hook(KnuEffectPutChargeComp_r); //add support DC Conv
+	KnuEffectPutChargeComp_t.Hook(KnuEffectPutChargeComp_r);
 	KnucklesJiggle_t.Hook(KnucklesJiggle_r);
 	KnuxEyeTracker_t.Hook(KnuxEyeTracker_r);
+	Knux_CheckInput_t.Hook(Knux_CheckInput_r);
+	Knux_RunsActions_t.Hook(Knux_RunsActions_r);
+	KnucklesTheEchidna_t.Hook(KnucklesTheEchidna_r);
 }

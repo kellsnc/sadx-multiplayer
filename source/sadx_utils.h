@@ -337,6 +337,8 @@ DataArray(__int16*, plADXNamePlayingAsWaiting, 0x915CC8, 43);
 DataArray(task*, btp, 0x3ABDBC4, 8);
 FunctionPointer(void, DispChildrenTask, (task* tp), 0x40B130);
 FunctionPointer(Sint32, GetRivalPlayerNumber, (Sint8 pno), 0x441BF0);
+FunctionPointer(void, KnuEffectHormTubePut, (taskwk* twp), 0x4C14F0);
+FunctionPointer(void, SetEffectSpray, (NJS_POINT3* pos, NJS_POINT3* vec), 0x4C1C20);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
