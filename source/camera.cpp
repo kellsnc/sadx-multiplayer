@@ -2219,7 +2219,7 @@ void InitCamera()
 	WriteJump((void*)0x434600, cameraModeInit_r);
 	WriteJump((void*)0x434680, AddCameraStage_r);
 	WriteJump((void*)0x437220, FollowRingData_r);
-
+	
 	WriteCall((void*)0x45ED73, CameraReleaseEventCamera_PlayerHack);
 	WriteCall((void*)0x45EEC4, CameraReleaseEventCamera_PlayerHack);
 	WriteCall((void*)0x45F686, CameraReleaseEventCamera_PlayerHack);
@@ -2234,6 +2234,7 @@ void InitCamera()
 	WriteCall((void*)0x49289E, CameraReleaseEventCamera_PlayerHack);
 	WriteCall((void*)0x492EE0, CameraReleaseEventCamera_PlayerHack);
 	WriteJump((void*)0x4987C0, CameraReleaseEventCamera_PlayerHack);
+	WriteCall((void*)0x47212B, CameraSetEventCamera_PlayerHack);
 	WriteCall((void*)0x478962, CameraSetEventCamera_PlayerHack);
 	WriteCall((void*)0x45EE82, CameraSetEventCameraFunc_PlayerHack);
 	WriteCall((void*)0x460591, CameraSetEventCameraFunc_PlayerHack);
@@ -2246,6 +2247,6 @@ void InitCamera()
 	WriteCall((void*)0x469065, CameraSetEventCameraFunc_Hack);
 	WriteCall((void*)0x469225, CameraSetEventCameraFunc_Hack);
 	WriteCall((void*)0x548017, CameraSetEventCamera_AllPlayers);
-
+	
 	PatchCameraFuncs();
 }
