@@ -6,6 +6,8 @@
 #include "ObjCylinderCmn.h"
 #include "knuckles.h"
 
+FunctionHook<void> KnuEffectPutCharge0_t(0x4C2210);
+FunctionHook<void> KnuEffectPutCharge1_t(0x4C2260);
 UsercallFunc(taskwk*, KnucklesGetNearEnemyTWP_t, (taskwk* twp), (twp), 0x4756C0, rEAX, rEBX);
 TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
 FunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
@@ -14,6 +16,91 @@ TaskHook KnuxEyeTracker_t(0x475260);
 UsercallFunc(Bool, Knux_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
 FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
 TaskHook KnucklesTheEchidna_t((intptr_t)Knuckles_Main);
+
+static void __cdecl dispKnuEffectChargeScl_m(task* tp)
+{
+	taskwk* twp = tp->twp;
+	taskwk* ptwp = playertwp[twp->btimer];
+
+	if (!ptwp || loop_count)
+	{
+		return;
+	}
+
+	KNUCKLES_OBJECTS[47]->basicdxmodel->mats[0].attr_texId = 2;
+	Float scl = (twp->scl.z - twp->scl.y) * twp->timer.f + twp->scl.y;
+	SetMaterial((twp->counter.f - twp->value.f) * twp->timer.f + twp->value.f, 1.0f, 1.0f, 1.0f);
+	njPushMatrix(0);
+	njTranslateV(0, &ptwp->cwp->info->center);
+	njScale(0, scl, scl, scl);
+	njSetTexture(&KNU_EFF_TEXLIST);
+	late_DrawObject(KNUCKLES_OBJECTS[47], LATE_LIG);
+	njPopMatrix(1);
+	ResetMaterial();
+}
+
+static void __cdecl KnuEffectChargeScl_m(task* tp)
+{
+	taskwk* twp = tp->twp;
+	taskwk* ptwp = playertwp[twp->btimer];
+
+	if (ptwp)
+	{
+		twp->timer.f += twp->scl.x;
+
+		if (twp->timer.f < 1.0f)
+		{
+			dispKnuEffectChargeScl_m(tp);
+			return;
+		}
+	}
+
+	FreeTask(tp);
+}
+
+static void __cdecl KnuEffectPutCharge0_r()
+{
+	if (!multiplayer::IsActive())
+	{
+		KnuEffectPutCharge0_t.Original();
+		return;
+	}
+
+	task* tp = CreateElementalTask(0x2, LEV_6, KnuEffectChargeScl_m);
+	if (tp)
+	{
+		taskwk* twp = tp->twp;
+		tp->disp = dispKnuEffectChargeScl_m;
+		twp->scl.x = 0.055555552f; // 1/18
+		twp->scl.y = 6.0f;
+		twp->scl.z = 1.2f;
+		twp->value.f = 0.0f;
+		twp->counter.f = -1.0f;
+		twp->btimer = TASKWK_PLAYERID(gpCharTwp);
+	}
+}
+
+static void __cdecl KnuEffectPutCharge1_r()
+{
+	if (!multiplayer::IsActive())
+	{
+		KnuEffectPutCharge1_t.Original();
+		return;
+	}
+
+	task* tp = CreateElementalTask(0x2, LEV_6, KnuEffectChargeScl_m);
+	if (tp)
+	{
+		taskwk* twp = tp->twp;
+		tp->disp = dispKnuEffectChargeScl_m;
+		twp->scl.x = 0.041666668f; // 1/24
+		twp->scl.y = 0.6f;
+		twp->scl.z = 4.5f;
+		twp->value.f = 0.0f;
+		twp->counter.f = -1.0f;
+		twp->btimer = TASKWK_PLAYERID(gpCharTwp);
+	}
+}
 
 static taskwk* KnucklesGetNearEnemyTWP_m(taskwk* twp)
 {
@@ -409,6 +496,8 @@ void __cdecl KnucklesTheEchidna_r(task* tp)
 
 void Init_KnuxPatches()
 {
+	KnuEffectPutCharge0_t.Hook(KnuEffectPutCharge0_r);
+	KnuEffectPutCharge1_t.Hook(KnuEffectPutCharge1_r);
 	KnucklesGetNearEnemyTWP_t.Hook(KnucklesGetNearEnemyTWP_r);
 	KnucklesChargeEffectExe_t.Hook(KnucklesChargeEffectExe_r);
 	KnuEffectPutChargeComp_t.Hook(KnuEffectPutChargeComp_r);
