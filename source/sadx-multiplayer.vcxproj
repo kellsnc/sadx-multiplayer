@@ -201,6 +201,7 @@
     <ClCompile Include="objects\albhv_dakko.cpp" />
     <ClCompile Include="objects\alo_fruit.cpp" />
     <ClCompile Include="objects\alo_obake_head.cpp" />
+    <ClCompile Include="objects\alo_xybutton.cpp" />
     <ClCompile Include="objects\al_camera.cpp" />
     <ClCompile Include="objects\al_minimal.cpp" />
     <ClCompile Include="objects\e101.cpp" />

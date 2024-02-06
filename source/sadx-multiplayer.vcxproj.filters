@@ -577,6 +577,9 @@
     <ClCompile Include="objects\al_minimal.cpp">
       <Filter>Source Files\objects\chao</Filter>
     </ClCompile>
+    <ClCompile Include="objects\alo_xybutton.cpp">
+      <Filter>Source Files\objects\chao</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
