@@ -562,6 +562,18 @@
     <ClCompile Include="objects\o_windy_rotateobj.cpp">
       <Filter>Source Files\objects\stg02_windy</Filter>
     </ClCompile>
+    <ClCompile Include="objects\alo_obake_head.cpp">
+      <Filter>Source Files\objects\chao</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\alo_fruit.cpp">
+      <Filter>Source Files\objects\chao</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\albhv_dakko.cpp">
+      <Filter>Source Files\objects\chao</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\al_minimal.cpp">
+      <Filter>Source Files\objects\chao</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -910,6 +922,9 @@
     </Filter>
     <Filter Include="Header FIles\objects\stg01_beach">
       <UniqueIdentifier>{bacd9dff-ad87-4280-939b-5b42a721f35a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\objects\chao">
+      <UniqueIdentifier>{b5270be9-68fe-4ae8-b50e-0422f75b68ae}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

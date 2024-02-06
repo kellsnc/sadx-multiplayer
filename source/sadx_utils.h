@@ -11,6 +11,17 @@
 #define ROTATEY(m, ang) if (ang != 0) njRotateY(m, SHORT_ANG(ang));
 #define ROTATEZ(m, ang) if (ang != 0) njRotateZ(m, SHORT_ANG(ang));
 
+#define TWK_FLAG_CCL_DMG    0x4    /* Has been touched by a CCL collision inflicting damage */
+#define TWK_FLAG_CCL_HIT    0x8    /* Has been touched by a CCL collision */
+#define TWK_FLAG_CCL_BELOW  0x10   /* Currently below another collision */
+#define TWK_FLAG_CCL_ABOVE  0x20   /* Currently above another collision */
+#define TWK_FLAG_MOVE       0x40   /* Movable system */
+#define TWK_FLAG_COL_ACTIVE 0x100  /* The geometry collision can run */
+#define TWK_FLAG_HELD       0x1000 /* Is being held */
+#define TWK_FLAG_OCC_M      0x2000 /* OCC: use "mesh" draw variant */
+#define TWK_FLAG_OCC_WZ     0x4000 /* OCC: queue model with LATE_WZ flag */
+#define TWK_FLAG_OCC_NWZ    0x8000 /* OCC: queue model without LATE_WZ flag */
+
 #define CWK_FLAG_HIT 0x1
 
 static constexpr int ADVA_MODE_MULTI = 0x8;

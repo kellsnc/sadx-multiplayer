@@ -261,3 +261,15 @@ bool isOnePlayerSpecifiedChar(char charID)
 	}
 	return false;
 }
+
+int GetHoldingPlayerId(task* htp)
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		if (playerpwp[i] && playerpwp[i]->htp == htp)
+		{
+			return i;
+		}
+	}
+	return 0;
+}

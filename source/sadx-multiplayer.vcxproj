@@ -198,6 +198,10 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="logic.cpp" />
     <ClCompile Include="menu_adventure.cpp" />
+    <ClCompile Include="objects\albhv_dakko.cpp" />
+    <ClCompile Include="objects\alo_fruit.cpp" />
+    <ClCompile Include="objects\alo_obake_head.cpp" />
+    <ClCompile Include="objects\al_minimal.cpp" />
     <ClCompile Include="objects\e101.cpp" />
     <ClCompile Include="objects\e101r.cpp" />
     <ClCompile Include="objects\extra.cpp" />
