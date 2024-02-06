@@ -47,6 +47,11 @@ void __cdecl E102AddSeconds_r(int seconds)
 	}
 }
 
+static Bool __cdecl GammaTickTimePatch()
+{
+	return IsCountingDown() ? Characters_Gamma : Characters_Sonic;
+}
+
 static void E102DispTimeUpWarning_r(task* tp)
 {
 	if (IsCountingDown())
@@ -359,4 +364,5 @@ void initGammaPatch()
 	E102DispTimeUpWarning_t.Hook(E102DispTimeUpWarning_r);
 	WriteCall((void*)0x49FD54, E102AddSeconds_r);
 	WriteCall((void*)0x47FC17, E102TimeOverHook);
+	WriteCall((void*)0x426081, GammaTickTimePatch);
 }

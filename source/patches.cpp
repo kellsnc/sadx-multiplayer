@@ -648,16 +648,6 @@ static void __cdecl InitTime_r()
 	InitTimer_r();
 }
 
-static int __cdecl GammaTickTimePatch()
-{
-	if (!isOnePlayerSpecifiedChar(Characters_Gamma))
-	{
-		return Characters_Sonic;
-	}
-
-	return multiplayer::IsBattleMode() ? 0 : CurrentCharacter;
-}
-
 bool CheckAnyPlayerRideOnMobileLandObjectP(unsigned __int8 pno, task* ttp)
 {
 	if (multiplayer::IsActive())
@@ -952,10 +942,9 @@ void InitPatches()
 	WriteCall((void*)0x4AB41A, dsCheckViewV_r); // EnemySaru
 	WriteCall((void*)0x7AA307, dsCheckViewV_r); // EnemyPondSkater
 
-	// Normal timer for Gamma in multiplayer
+	// Normal start timer for Gamma in multiplayer
 	WriteJump((void*)0x425FF0, InitTimer_r);
 	WriteJump((void*)0x427F10, InitTime_r);
-	WriteCall((void*)0x426081, GammaTickTimePatch);
 
 	// Patch CheckPlayerRideOnMobileLandObjectP occurences that don't need full rewrites
 	WriteCall((void*)0x4CB36C, CheckAnyPlayerRideOnMobileLandObjectP); // Switch
