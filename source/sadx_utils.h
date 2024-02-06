@@ -11,6 +11,11 @@
 #define ROTATEY(m, ang) if (ang != 0) njRotateY(m, SHORT_ANG(ang));
 #define ROTATEZ(m, ang) if (ang != 0) njRotateZ(m, SHORT_ANG(ang));
 
+#define IM_MOTIONWK 0x1
+#define IM_TASKWK   0x2
+#define IM_FORCEWK  0x4
+#define IM_ANYWK    0x8
+
 #define TWK_FLAG_CCL_DMG    0x4    /* Has been touched by a CCL collision inflicting damage */
 #define TWK_FLAG_CCL_HIT    0x8    /* Has been touched by a CCL collision */
 #define TWK_FLAG_CCL_BELOW  0x10   /* Currently below another collision */
@@ -24,7 +29,34 @@
 
 #define CWK_FLAG_HIT 0x1
 
+#define TWK_FLAG_MOVE_FLOOR 0x1
+
+#define MOVE_FLAG_1          0x1    /* ? */
+#define MOVE_FLAG_4          0x4    /* ? */
+#define MOVE_FLAG_CHECK_STOP 0x8    /* Auto-assign stop flag if the chao is not moving */
+#define MOVE_FLAG_STOP       0x10   /* Is not moving, disables collision check with world */
+#define MOVE_FLAG_100        0x100  /* ? */
+#define MOVE_FLAG_200        0x200  /* ? */
+#define MOVE_FLAG_FLOOR      0x400  /* On ground */
+#define MOVE_FLAG_WALL       0x800  /* Hit a wall */
+#define MOVE_FLAG_1000       0x1000 /* ? */
+#define MOVE_FLAG_WATER      0x2000 /* Colliding with water */
+#define MOVE_FLAG_WALL_FRONT 0x4000 /* Front has hit a wall (colli info in FrontWall) */
+
 static constexpr int ADVA_MODE_MULTI = 0x8;
+
+enum {
+	PLNO_SONIC,
+	PLNO_EGGMAN,
+	PLNO_TAILS,
+	PLNO_KNUCKLES,
+	PLNO_TIKAL,
+	PLNO_AMY,
+	PLNO_E102,
+	PLNO_BIG,
+	PLNO_METAL_SONIC,
+	NB_PLNO
+};
 
 enum AvaTexLdEnum : __int32
 {
@@ -328,7 +360,7 @@ DataPointer(pathtag, pathtag_s_camera, 0x919BF4);
 TaskFunc(E101_Main, 0x567fd0);
 TaskFunc(E103_Main, 0x4e7e90);
 TaskFunc(E104_Main, 0x605A90);
-FastcallFunctionPointer(void, Past_InitBgAct, (int a2, task* tp), 0x541D80);
+FastcallFunctionPointer(void, InitBgAct, (int a2, task* tp), 0x541D80);
 TaskFunc(Past_Disp, 0x541E00);
 DataPointer(int, MRTorokkoRideFlg, 0x3C6333C);
 DataPointer(NJS_VECTOR, RidePos, 0x3C63330);
@@ -350,6 +382,25 @@ FunctionPointer(void, DispChildrenTask, (task* tp), 0x40B130);
 FunctionPointer(Sint32, GetRivalPlayerNumber, (Sint8 pno), 0x441BF0);
 FunctionPointer(void, KnuEffectHormTubePut, (taskwk* twp), 0x4C14F0);
 FunctionPointer(void, SetEffectSpray, (NJS_POINT3* pos, NJS_POINT3* vec), 0x4C1C20);
+FunctionPointer(Sint32, GetPlayerCharacterName, (Uint8 pno), 0x441970);
+FunctionPointer(Bool, OnEdit, (task* tp), 0x4F88A0);
+FunctionPointer(void, SeqChangeStage, (Sint32 stg, Sint32 act), 0x412D80);
+FunctionPointer(void, SeqClrFlag, (Sint32 no), 0x412D10);
+FunctionPointer(void, CCL_Enable, (taskwk* twp, int no), 0x41C213);
+FunctionPointer(void, CCL_Disable, (taskwk* twp, int no), 0x41C220);
+FunctionPointer(Bool, ALW_CommunicationOff, (task* tp), 0x71A520);
+FunctionPointer(Bool, ALW_IsHeld, (task* tp), 0x71A320);
+DataPointer(Float, CamPosItpRatio, 0x33D0D48);
+DataPointer(Float, CamPosItpRatioY, 0x33D0D4C);
+DataPointer(Float, CamPosMaxSpd, 0x33D0D50);
+DataPointer(Float, ChaoCameraWaterOffsetY, 0x33D0D54);
+FunctionPointer(void, AL_DetectCollisionStandard, (task* tp), 0x73FE10);
+FunctionPointer(MOVE_WORK*, MOV_Init, (task* tp), 0x73FE70);
+FunctionPointer(void, MOV_SetGravity, (task* tp, Float g), 0x740040);
+FunctionPointer(bool, IsSonicShakingTree, (taskwk* twp), 0x494810);
+FunctionPointer(bool, IsKnucklesShakingTree, (taskwk* twp), 0x4767E0);
+FunctionPointer(bool, IsAmyShakingTree, (taskwk* twp), 0x487250);
+FunctionPointer(bool, IsE102ShakingTree, (taskwk* twp), 0x48CE50);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
