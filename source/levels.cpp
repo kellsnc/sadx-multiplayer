@@ -25,6 +25,12 @@ Trampoline* dispBgSnow_t = nullptr;
 Trampoline* dispBgHighway_t = nullptr;
 Trampoline* dispBgTwinkle_t = nullptr;
 
+Trampoline* Bg_MysticRuin_t = nullptr;
+Trampoline* Bg_Past_t = nullptr;
+
+UsercallFunc(Bool, CollisionSceneChangerSS_CheckCollision_t, (taskwk* a1), (a1), 0x640550, rEAX, rESI);
+UsercallFuncVoid(ObjectMysticRuinTorokko_ExecATask_t, (task* tp), (tp), 0x53D830, rEAX);
+
 VoidFunc(HighwayMaskBlock, 0x60FEE0); // real name: "checkCamera"
 FunctionPointer(void, TwinkleMaskBlock, (taskwk* twp), 0x60FEE0); // real name: "checkCamera"
 DataPointer(NJS_OBJECT, object_s1_nbg1_nbg1, 0x26A0EC0);
@@ -35,13 +41,6 @@ DataPointer(int, ring_kiran, 0x38D8D64);
 
 static auto setTPFog = GenerateUsercallWrapper<void (*)(unsigned __int8 mode)>(noret, 0x61CAC0, rAL);
 static auto RdRuinInit = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5E1670, rEDI);
-
-TaskHook SkyBox_MysticRuins_Load_t((intptr_t)SkyBox_MysticRuins_Load);
-TaskHook SkyBox_Past_Load_t((intptr_t)SkyBox_Past_Load);
-
-UsercallFunc(Bool, SS_CheckCollision_t, (taskwk* a1), (a1), 0x640550, rEAX, rESI);
-UsercallFuncVoid(cartMRLogic_t, (task* tp), (tp), 0x53D830, rEAX);
-TaskHook OCScenechg_t((intptr_t)OCScenechg);
 
 void MultiArena(task* tp)
 {
@@ -526,30 +525,19 @@ static void __cdecl Create_Mountain_Cloud()
 	CreateElementalTask(2u, LEV_1, (TaskFuncPtr)0x601230); // load task into slot 1 instead of 0 (to not run before the camera)
 }
 
-void SetAllPlayersInitialPosition(taskwk* data)
-{
-	if (multiplayer::IsActive())
-	{
-		TeleportPlayersToStart();
-	}
-	else
-	{
-		SetPlayerInitialPosition(data);
-	}
-}
-
-void __cdecl SkyBox_MysticRuins_Load_r(task* tp)
+void __cdecl Bg_MysticRuin_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return SkyBox_MysticRuins_Load_t.Original(tp);
+		TARGET_DYNAMIC(Bg_MysticRuin)(tp);
+		return;
 	}
 
 	auto twp = tp->twp;
 
 	switch (twp->mode)
 	{
-	case 0: //fix race issue
+	case 0:
 		SkyBox_MysticRuins_TimeOfDayLightDirection((ObjectMaster*)tp);
 		twp->mode++;
 		break;
@@ -572,7 +560,7 @@ void __cdecl SkyBox_MysticRuins_Load_r(task* tp)
 			twp->mode = 3;
 		}
 		break;
-	case 3: //fix act transition using wrong tex
+	case 3:
 		SkyBox_MysticRuins_TimeOfDayLightDirection((ObjectMaster*)tp);
 		twp->mode = 2;
 		break;
@@ -581,11 +569,12 @@ void __cdecl SkyBox_MysticRuins_Load_r(task* tp)
 	}
 }
 
-void __cdecl SkyBox_Past_Load_r(task* tp)
+void __cdecl Bg_Past_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return SkyBox_Past_Load_t.Original(tp);
+		TARGET_DYNAMIC(Bg_Past)(tp);
+		return;
 	}
 
 	auto twp = tp->twp;
@@ -593,7 +582,7 @@ void __cdecl SkyBox_Past_Load_r(task* tp)
 	switch (twp->mode)
 	{
 	case 0:
-		Past_InitBgAct(0, tp);
+		InitBgAct(0, tp);
 		twp->mode++;
 		break;
 	case 1:
@@ -617,7 +606,7 @@ void __cdecl SkyBox_Past_Load_r(task* tp)
 		}
 		break;
 	case 3:
-		Past_InitBgAct(0, tp);
+		InitBgAct(0, tp);
 		twp->mode = 2;
 		break;
 	default:
@@ -625,28 +614,27 @@ void __cdecl SkyBox_Past_Load_r(task* tp)
 	}
 }
 
-Bool SS_CheckCollision_r(taskwk* twp)
+Bool __cdecl CollisionSceneChangerSS_CheckCollision_r(taskwk* twp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return SS_CheckCollision_t.Original(twp);
+		return CollisionSceneChangerSS_CheckCollision_t.Original(twp);
 	}
 
-	NJS_POINT3 posDiff{ 0 };
-	Float v5 = 0.0f;
-	NJS_POINT3 posOut{ 0 };
+	NJS_POINT3 ppos;
 
 	int pnum = GetTheNearestPlayerNumber(&twp->pos);
-	GetPlayerPosition(pnum, 0, &posOut, 0);
-	posDiff.x = posOut.x - twp->pos.x;
-	posDiff.z = posOut.z - twp->pos.z;
+	GetPlayerPosition(pnum, 0, &ppos, 0);
 
-	if (fabs(posOut.y - (twp->pos.y + twp->timer.f) + 10.0f) <= twp->timer.f)
+	Float x = ppos.x - twp->pos.x;
+	Float z = ppos.z - twp->pos.z;
+
+	if (fabs(ppos.y - (twp->pos.y + twp->timer.f) + 10.0f) <= twp->timer.f)
 	{
-		Angle v1 = -twp->ang.y;
-		v5 = njSin(v1);
-		Float cosRes = njCos(v1);
-		if (fabs(v5 * posDiff.z + cosRes * posDiff.x) < twp->counter.f && fabs(cosRes * posDiff.z - v5 * posDiff.x) < twp->value.f)
+		Float sin = njSin(-twp->ang.y);
+		Float cos = njCos(-twp->ang.y);
+		if (fabs(sin * z + cos * x) < twp->counter.f &&
+			fabs(cos * z - sin * x) < twp->value.f)
 		{
 			return TRUE;
 		}
@@ -655,155 +643,58 @@ Bool SS_CheckCollision_r(taskwk* twp)
 	return FALSE;
 }
 
-void cartMRLogic_r(task* tp)
+void __cdecl ObjectMysticRuinTorokko_ExecATask_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return cartMRLogic_t.Original(tp);
+		ObjectMysticRuinTorokko_ExecATask_t.Original(tp);
+		return;
 	}
 
 	taskwk* twp = tp->twp;
+	colliwk* cwp = twp->cwp;
 
 	if (!twp)
+	{
 		return;
+	}
 
-	const int pnum = GetTheNearestPlayerNumber(&twp->pos);
-
+	auto pnum = GetTheNearestPlayerNumber(&twp->pos);
 	taskwk* pData = playertwp[pnum];
 
 	if (!pData)
+	{
 		return;
-
-	NJS_POINT3 a3;
-
-	if (twp->smode)
-	{
-		if (twp->smode == 1)
-		{
-			playertwp[pnum]->pos.x = twp->pos.x;
-			playertwp[pnum]->pos.y = twp->pos.y + 5.4f;
-			playertwp[pnum]->pos.z = twp->pos.z;
-
-			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
-			{
-				ForcePlayerAction(i, 12);
-				RotatePlayer(i, twp->ang.y + 0x4000);
-				Float diff = 3.0f;
-				if (i != pnum)
-					PositionPlayer(i, pData->pos.x, pData->pos.y, pData->pos.z + diff + i);
-			}
-
-			twp->value.f -= 0.8f;
-			if (twp->value.f <= 0.0f)
-			{
-				njPushMatrix(nj_unit_matrix_);
-				njTranslateV(0, &twp->pos);
-				int v8 = twp->ang.y;
-				if (v8)
-				{
-					njRotateY(0, v8);
-				}
-				njInvertMatrix(0);
-				njCalcPoint(0, &pData->pos, &RidePos);
-				njPopMatrix(1u);
-				MRTorokkoRideFlg = 1;
-				twp->value.l = 0;
-				dsPlay_oneshot(589, 0, 0, 0);
-				twp->smode = 2;
-			}
-		}
-		else if (twp->smode == 2)
-		{
-			pData = playertwp[0];
-			njPushMatrix(nj_unit_matrix_);
-			CalcMMMatrix(0, MoveAction[twp->timer.w[1]], twp->value.f, 0, 0);
-			SetInstancedMatrix(0, 0);
-			njCalcPoint(0, &RidePos, &pData->pos);
-			njCalcVector(0, &XVec1, &a3);
-			float diff = 5.0f;
-			for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
-			{
-				if (i != 0)
-					PositionPlayer(i, pData->pos.x, pData->pos.y, pData->pos.z + diff + i);
-				RotatePlayer(i, 0x4000 - (atan2(-a3.z, a3.x) * 65536.0 * -0.1591549762031479));
-			}
-			njPopMatrix(1u);
-			twp->value.f += 0.1;
-			twp->timer.w[0] += 4096;
-			int v4 = twp->timer.w[1];
-			float v22 = MoveAction[v4]->motion->nbFrame - 1.0f;
-			if (twp->value.f >= v22)
-			{
-				twp->value.f = v22;
-			}
-			dsPlay_timer(590, 0, 1, 0, 2);
-			if (++twp->wtimer == 120)
-			{
-				int timerW1 = twp->timer.w[1];
-				if (timerW1)
-				{
-					if (timerW1 == 2)
-					{
-						SetLevelEntrance(2);
-						j_SetNextLevelAndAct_CutsceneMode(0x21u, 0);
-						camerahax_adventurefields();
-					}
-					else if (timerW1 == 1)
-					{
-						SetLevelEntrance(0);
-						j_SetNextLevelAndAct_CutsceneMode(0x29u, 0);
-						camerahax_adventurefields();
-					}
-				}
-				else
-				{
-
-					if (GetCharacterID(0) == 6)
-					{
-						ClearEventFlag((EventFlags)48u);
-					}
-					SetLevelEntrance(0);
-					j_SetNextLevelAndAct_CutsceneMode(0x21u, 2u);
-					camerahax_adventurefields();
-				}
-			}
-		}
 	}
-	else
-	{
 
+	NJS_POINT3 pos;
+
+	switch (twp->smode)
+	{
+	case 0:
 		njPushMatrix(nj_unit_matrix_);
 		njTranslateV(0, &twp->pos);
-		int angY = twp->ang.y;
-
-		njRotateY_(angY);
-
+		ROTATEY(0, twp->ang.y);
 		njInvertMatrix(0);
-		njCalcPoint(0, &pData->pos, &a3);
+		njCalcPoint(0, &pData->pos, &pos);
 		njPopMatrix(1u);
-		colliwk* cwp = twp->cwp;
+
 		if (cwp)
 		{
-			CCL_INFO* v12 = cwp->info;
-			unsigned int v13 = v12[3].attr;
-			unsigned int v14 = v12[2].attr;
-			unsigned int v15 = v12[1].attr;
-			bool collisionCheck = (a3.z - -0.14892) * (a3.z - -0.14892) + (a3.x - -1.25203) * (a3.x - -1.25203) < 36.0;
-
-			if (collisionCheck)
+			if ((pos.z - -0.14892) * (pos.z - -0.14892) + (pos.x - -1.25203) * (pos.x - -1.25203) < 36.0)
 			{
-				v12[1].attr |= 0x10;
-				v12[2].attr |= 0x10;
-				v12[3].attr |= 0x10;
-				v12[4].attr |= 0x10;
+				cwp->info[1].attr |= 0x10;
+				cwp->info[2].attr |= 0x10;
+				cwp->info[3].attr |= 0x10;
+				cwp->info[4].attr |= 0x10;
 				twp->btimer = 0;
 			}
 			else
 			{
-				v12[1].attr &= 0xFFFFFFEF;
-				v12[2].attr &= 0xFFFFFFEF;
-				v12[3].attr &= 0xFFFFFFEF;
-				v12[4].attr &= 0xFFFFFFEF;
+				cwp->info[1].attr &= ~0x10;
+				cwp->info[2].attr &= ~0x10;
+				cwp->info[3].attr &= ~0x10;
+				cwp->info[4].attr &= ~0x10;
 				twp->btimer = 1;
 			}
 		}
@@ -811,23 +702,23 @@ void cartMRLogic_r(task* tp)
 		{
 			twp->btimer = 0;
 		}
-		colliwk* Cwp = twp->cwp;
-		if (Cwp && (Cwp->flag & 2) != 0 && (Cwp->hit_cwp->mytask == playertp[pnum]) && !Cwp->my_num && !Cwp->hit_num)
+
+		if (cwp && (cwp->flag & 2) && cwp->hit_cwp->mytask == playertp[pnum] && cwp->my_num == 0 && cwp->hit_num == 0)
 		{
-			if (twp->flag & 1)
+			if (twp->flag & 0x1 && twp->btimer == 0)
 			{
-				if (!twp->btimer)
+				if (++twp->wtimer >= 2)
 				{
-					if (++twp->wtimer >= 2)
+					for (int i = 0; i < PLAYER_MAX; i++)
 					{
-						for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+						if (playertwp[i])
 						{
-							ForcePlayerAction(i, 12);
+							SetInputP(i, PL_OP_PLACEON);
 							RotatePlayer(i, twp->ang.y + 0x4000);
 						}
-						twp->btimer = 1;
-						twp->smode = 1;
 					}
+					twp->btimer = 1;
+					twp->smode = 1;
 				}
 			}
 		}
@@ -836,64 +727,111 @@ void cartMRLogic_r(task* tp)
 			twp->btimer = 0;
 			twp->wtimer = 0;
 		}
+		break;
+	case 1:
+		playertwp[pnum]->pos.x = twp->pos.x;
+		playertwp[pnum]->pos.y = twp->pos.y + 5.4f;
+		playertwp[pnum]->pos.z = twp->pos.z;
+
+		for (int i = 0; i < PLAYER_MAX; i++)
+		{
+			if (playertwp[i])
+			{
+				SetInputP(i, PL_OP_PLACEON);
+				RotatePlayer(i, twp->ang.y + 0x4000);
+				if (i != pnum)
+					PositionPlayer(i, pData->pos.x, pData->pos.y, pData->pos.z + 3.0f * (float)i);
+			}
+		}
+
+		twp->value.f -= 0.8f;
+		if (twp->value.f <= 0.0f)
+		{
+			njPushMatrix(nj_unit_matrix_);
+			njTranslateV(0, &twp->pos);
+			ROTATEY(0, twp->ang.y);
+			njInvertMatrix(0);
+			njCalcPoint(0, &pData->pos, &RidePos);
+			njPopMatrix(1u);
+			MRTorokkoRideFlg = 1;
+			twp->value.l = 0;
+			dsPlay_oneshot(589, 0, 0, 0);
+			twp->smode = 2;
+		}
+		break;
+	case 2:
+		pData = playertwp[0];
+		njPushMatrix(nj_unit_matrix_);
+		CalcMMMatrix(0, MoveAction[twp->timer.w[1]], twp->value.f, 0, 0);
+		SetInstancedMatrix(0, 0);
+		njCalcPoint(0, &RidePos, &pData->pos);
+		njCalcVector(0, &XVec1, &pos);
+		for (int i = 0; i < PLAYER_MAX; i++)
+		{
+			if (playertwp[i])
+			{
+				if (i != 0)
+					PositionPlayer(i, pData->pos.x, pData->pos.y, pData->pos.z + 5.0f * (float)i);
+				RotatePlayer(i, 0x4000 - -njArcTan2(-pos.z, pos.x));
+			}
+		}
+		njPopMatrix(1u);
+
+		twp->value.f += 0.1f;
+		twp->timer.w[0] += 0x1000;
+		if (twp->value.f >= (float)MoveAction[twp->timer.w[1]]->motion->nbFrame - 1.0f)
+		{
+			twp->value.f = (float)MoveAction[twp->timer.w[1]]->motion->nbFrame - 1.0f;
+		}
+
+		dsPlay_timer(590, 0, 1, 0, 2);
+		if (++twp->wtimer == 120)
+		{
+			switch (twp->timer.w[1])
+			{
+			case 0:
+				if (GetPlayerCharacterName(0) == Characters_Gamma)
+					SeqClrFlag(48);
+				SetEntranceNumber(0);
+				SeqChangeStage(LevelIDs_MysticRuins, 2);
+				InitFreeCamera();
+				break;
+			case 1:
+				SetEntranceNumber(0);
+				SeqChangeStage(LevelIDs_MRGarden, 0);
+				InitFreeCamera();
+				break;
+			case 2:
+				SetEntranceNumber(2);
+				SeqChangeStage(LevelIDs_MysticRuins, 0);
+				InitFreeCamera();
+				break;
+			}
+		}
+		break;
 	}
 
 	if (CheckCollisionP(&twp->pos, 50.0f))
 	{
-		twp->flag |= 1u;
+		twp->flag |= 0x1;
 	}
 	else
 	{
-		twp->flag &= 0xFEu;
+		twp->flag &= ~0x1;
 	}
 }
 
-void __cdecl OCScenechg_r(task* tp)
-{
-	if (!multiplayer::IsActive())
-	{
-		return OCScenechg_t.Original(tp);
-	}
-
-	taskwk* twp = tp->twp;
-
-	if (!CheckRangeOut(tp))
-	{
-		if (ObjectSelectedDebug((ObjectMaster*)tp))
-		{
-			OCScenechg_t.Original(tp);
-		}
-		else if (CheckCollisionCylinderP(&twp->pos, twp->scl.x, twp->scl.y) > 0)
-		{
-			if (twp->ang.x)
-			{
-				if (twp->ang.x == 1)
-				{
-					SetLevelEntrance(0);
-					camerahax_adventurefields();
-					j_SetNextLevelAndAct_CutsceneMode(0x22u, 0);
-				}
-			}
-			else
-			{
-				SetLevelEntrance(0);
-				camerahax_adventurefields();
-				j_SetNextLevelAndAct_CutsceneMode(0x22u, 1u);
-			}
-
-			DeadOut(tp);
-		}
-	}
-}
-
-void __cdecl Casino_StartPos_r(Uint8 pno, float x, float y, float z)
+void __cdecl Casino_StartPos_r(Uint8 pno, Float x, Float y, Float z)
 {
 	if (multiplayer::IsActive())
 	{
 		NJS_POINT3 pos = { x, y, z };
-		for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
-		{		
-			TeleportPlayerArea(i, &pos, 5.0f);
+		for (int i = 0; i < PLAYER_MAX; i++)
+		{
+			if (playertwp[i])
+			{
+				TeleportPlayerArea(i, &pos, 5.0f);
+			}
 		}
 	}
 	else
@@ -902,14 +840,26 @@ void __cdecl Casino_StartPos_r(Uint8 pno, float x, float y, float z)
 	}
 }
 
-int __cdecl PatchGetPlayerCharacterName(char index)
+void SetAllPlayersInitialPosition(taskwk* data)
+{
+	if (multiplayer::IsActive())
+	{
+		TeleportPlayersToStart();
+	}
+	else
+	{
+		SetPlayerInitialPosition(data);
+	}
+}
+
+Sint32 __cdecl PatchGetPlayerCharacterName(Uint8 pno)
 {
 	if (multiplayer::IsActive())
 	{
 		return CurrentCharacter;
 	}
 
-	return GetCharacterID(index);
+	return GetPlayerCharacterName(pno);
 }
 
 void InitLevels()
@@ -925,16 +875,6 @@ void InitLevels()
 	WriteCall((void*)0x5EDD27, SetAllPlayersInitialPosition); // Sky Deck
 	WriteCall((void*)0x5602F1, SetAllPlayersInitialPosition); // Perfect Chaos
 
-	//casino start pos
-	WriteCall((void*)0x5C0D67, Casino_StartPos_r);
-	WriteCall((void*)0x5C0D9B, Casino_StartPos_r);
-	WriteCall((void*)0x5C0DCB, Casino_StartPos_r);
-	WriteCall((void*)0x5C0E19, Casino_StartPos_r);
-	//don't teleport players to pinball, nobody can move
-	//WriteCall((void*)0x5C0E77, Casino_StartPos_r);	
-	//WriteCall((void*)0x5C0EF1, Casino_StartPos_r);
-
-
 	// Patch Skyboxes (display function managing mode)
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Emerald Coast
 	WriteData((void**)0x4DDBFE, (void*)0x4DDB60); // Windy Valley
@@ -942,7 +882,9 @@ void InitLevels()
 	WriteData((void**)0x610A7E, (void*)0x6109E0); // Speed Highway
 	WriteData((void**)0x5E1FCE, (void*)0x5E1F30); // Lost World
 	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Ice Cap
-
+	Bg_MysticRuin_t = new Trampoline(0x530670, 0x530676, Bg_MysticRuin_r);
+	Bg_Past_t = new Trampoline(0x542030, 0x542036, Bg_Past_r);
+	
 	// Emerald Coast Bridge
 	WriteData<2>((void*)0x501B66, 0x90ui8);
 	WriteData<2>((void*)0x501B12, 0x90ui8);
@@ -1000,18 +942,22 @@ void InitLevels()
 	Rd_Mountain_t = new Trampoline(0x601550, 0x601558, Rd_Mountain_r);
 	Rd_Twinkle_t = new Trampoline(0x61D150, 0x61D155, Rd_Twinkle_r);
 	Rd_Ruin_t = new Trampoline(0x5E18B0, 0x5E18B5, Rd_Ruin_r);
-
-	// Hub world swap fixes
-	SS_CheckCollision_t.Hook(SS_CheckCollision_r);
-	cartMRLogic_t.Hook(cartMRLogic_r);
-	OCScenechg_t.Hook(OCScenechg_r);
+	
+	// Casino area positions
+	WriteCall((void*)0x5C0D67, Casino_StartPos_r);
+	WriteCall((void*)0x5C0D9B, Casino_StartPos_r);
+	WriteCall((void*)0x5C0DCB, Casino_StartPos_r);
+	WriteCall((void*)0x5C0E19, Casino_StartPos_r);
+	//WriteCall((void*)0x5C0E77, Casino_StartPos_r); // pinball
+	//WriteCall((void*)0x5C0EF1, Casino_StartPos_r); // pinball
 
 	// Move landtable mask flag to display for multiplayer compatibility
 	dispBgSnow_t = new Trampoline(0x4E9950, 0x4E9955, dispBgSnow_r);
 	dispBgHighway_t = new Trampoline(0x610570, 0x610575, dispBgHighway_r);
 	dispBgTwinkle_t = new Trampoline(0x61D1F0, 0x61D1F5, dispBgTwinkle_r);
 
-	// fix skybox using wrong act for display (race issue)
-	SkyBox_MysticRuins_Load_t.Hook(SkyBox_MysticRuins_Load_r);
-	SkyBox_Past_Load_t.Hook(SkyBox_Past_Load_r);
+	// Hub world swap fixes
+	CollisionSceneChangerSS_CheckCollision_t.Hook(CollisionSceneChangerSS_CheckCollision_r); // Station Square
+	ObjectMysticRuinTorokko_ExecATask_t.Hook(ObjectMysticRuinTorokko_ExecATask_r); // Mystic Ruin minecarts
+	WriteData((uint8_t*)0x54575C, 0x7Dui8); // Past
 }

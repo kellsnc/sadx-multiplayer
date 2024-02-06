@@ -706,20 +706,19 @@ void initBossesPatches()
 	initEggWalkerPatches();
 }
 
-void __cdecl SetTime2_r(char minute, char second, char frame)
+void __cdecl SetTimeFrame_r(Sint8 minutes, Sint8 second, Sint8 frame)
 {
 	if (multiplayer::IsActive() && GameState == 15)
 		return;
 
-	TimeMinutes = minute,
-		TimeSeconds = second;
+	TimeMinutes = minutes,
+	TimeSeconds = second;
 	TimeFrames = frame;
-	return;
 }
 
-void __cdecl OGate2_Main_r(task* obj)
+void __cdecl OGate2_Main_r(task* tp)
 {
-	auto twp = obj->twp;
+	auto twp = tp->twp;
 
 	//if none of the player is Amy 
 	if (!isOnePlayerSpecifiedChar(Characters_Amy))
@@ -728,37 +727,25 @@ void __cdecl OGate2_Main_r(task* obj)
 			twp->mode = 2; //force the door to open
 	}
 
-	TaskFunc(origin, OGate2_Main_t->Target());
-	origin(obj);
+	TARGET_DYNAMIC(OGate2_Main)(tp);
 }
 
-void FixShakeoffGarbageAction(uint8_t pnum, int action) { //This make the game crashes as Tails.
-
-	if (multiplayer::IsActive())
+void __cdecl FixShakeoffGarbageAction(Uint8 pno, Uint8 mode)
+{
+	if (!multiplayer::IsActive())
 	{
-		return;
+		SetInputP(pno, mode);
 	}
-
-	return ForcePlayerAction(pnum, action);
 }
 
-uint8_t Casino_FixKnuxCheck(char index)
+Sint32 __cdecl Casino_FixKnuxCheck(Uint8 pno)
 {
 	if (multiplayer::IsCoopMode() && CurrentCharacter != Characters_Knuckles)
 	{
 		return Characters_Sonic;
 	}
 
-	return GetCharacterID(index);
-}
-
-//To do, re write Hand Exec function to add multi support  (5CFA00)
-void CasinoPatches()
-{
-	WriteCall((void*)0x5C060B, Casino_FixKnuxCheck);
-	WriteCall((void*)0x5C058B, Casino_FixKnuxCheck);
-	WriteCall((void*)0x5C068B, Casino_FixKnuxCheck);
-	WriteCall((void*)0x5C441A, Casino_FixKnuxCheck);
+	return GetPlayerCharacterName(pno);
 }
 
 //make idle voice works for other players
@@ -895,8 +882,8 @@ void InitPatches()
 	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
 	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
 	WriteData((uint8_t*)0x500017, (uint8_t)PLAYER_MAX); // Patch launch ramp EC for 8 players
-	WriteJump((void*)0x4265F0, SetTime2_r); //don't reset time with death in multiplayer
-	WriteCall((void*)0x5C5906, FixShakeoffGarbageAction);
+	WriteCall((void*)0x44EE0A, SetTimeFrame_r); // Don't reset time with death in multiplayer
+	WriteCall((void*)0x5C5906, FixShakeoffGarbageAction); // This make the game crashes as Tails.
 
 	// Score patches
 	EnemyCheckDamage_t.Hook(EnemyCheckDamage_r);
@@ -968,6 +955,12 @@ void InitPatches()
 	WriteCall((void*)0x63DFB6, CheckAnyPlayerRideOnMobileLandObjectP);
 	WriteCall((void*)0x63DFED, CheckAnyPlayerRideOnMobileLandObjectP);
 
+	// Casino knuckles checks
+	WriteCall((void*)0x5C060B, Casino_FixKnuxCheck);
+	WriteCall((void*)0x5C058B, Casino_FixKnuxCheck);
+	WriteCall((void*)0x5C068B, Casino_FixKnuxCheck);
+	WriteCall((void*)0x5C441A, Casino_FixKnuxCheck);
+
 	PatchCheckpoint();
 	InitItemBoxPatches();
 	InitSnowBoardPatches();
@@ -998,5 +991,4 @@ void InitPatches()
 	initERoboHack();
 	InitEnemySaiPatches();
 	init_AIFight_Patches();
-	CasinoPatches();
 }
