@@ -203,35 +203,6 @@ taskwk* __cdecl CCL_IsHitPlayer_r(taskwk* twp)
 	return CCL_IsHitPlayer_h.Original(twp);
 }
 
-int __cdecl CheckCollisionP_r(NJS_POINT3* vp, Float d)
-{
-	return IsPlayerInSphere(vp, d);
-}
-
-int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, Float r, Float h)
-{
-	for (int i = 0; i < PLAYER_MAX; ++i)
-	{
-		auto twp = playertwp[i];
-
-		if (twp)
-		{
-			NJS_VECTOR v = twp->pos;
-			njSubVector(&v, vp);
-
-			if (v.x * v.x + v.z * v.z - r * r <= 0.0f)
-			{
-				if (fabsf(v.y) <= h)
-				{
-					return i + 1;
-				}
-			}
-		}
-	}
-
-	return 0;
-}
-
 void __cdecl CCL_CheckHoming_r(taskwk* twp1, taskwk* twp2, Float dist2)
 {
 	if (multiplayer::IsActive())
@@ -887,8 +858,8 @@ void InitCollisionPatches()
 	WriteData((size_t*)0x43B688, LengthOfArray(ri_landentry_buf_ex));
 
 	// Simple bound checking
-	WriteJump(CheckCollisionP, CheckCollisionP_r);
-	WriteJump(CheckCollisionCylinderP, CheckCollisionCylinderP_r);
+	WriteData((uint8_t*)0x4418B8, (uint8_t)PLAYER_MAX); // CheckCollisionP
+	WriteData((uint8_t*)0x441956, (uint8_t)(PLAYER_MAX - 1)); // CheckCollisionCylinderP
 
 	// Fix mistake with CCL_IsHitPlayer
 	CCL_IsHitPlayer_h.Hook(CCL_IsHitPlayer_r);
