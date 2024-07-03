@@ -373,7 +373,6 @@ DataPointer(int, RdCasino_JumpAct, 0x3C7487C);
 DataPointer(int, SAL_telepotsonicrotspd, 0x1E777B8);
 DataPointer(void*, canselEvent, 0x3B2C578);
 FunctionPointer(Sint32, CalcSpline, (SPLINE_DATA* spline_data), 0x7AAC70);
-FunctionPointer(void*, MAlloc, (Uint32 size), 0x40B220);
 FunctionPointer(void, Free, (void* mp), 0x40B310);
 FunctionPointer(void, lig_setLight4gjpalNo, (Sint32 no), 0x411F30);
 DataArray(__int16*, plADXNamePlayingAsWaiting, 0x915CC8, 43);
