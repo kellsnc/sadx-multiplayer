@@ -5,6 +5,7 @@
 #include "camera.h"
 #include "gravity.h"
 #include "collision.h"
+#include "hud_itembox.h"
 #include "fog.h"
 #include "menu_multi.h"
 #include "../include/multiapi.h"
@@ -300,4 +301,9 @@ void multi_replace_text(const char* name, uint32_t language, const char* text)
 	{
 		press_start_texts[language] = text;
 	}
+}
+
+void multi_hud_itembox(uint32_t pnum, uint32_t id)
+{
+	EntryItemBoxPanel_m(id, pnum);
 }

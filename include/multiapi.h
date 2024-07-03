@@ -204,6 +204,9 @@ extern "C"
 	// "press_start" = "\aPress start to join"
 	API void multi_replace_text(const char* name, uint32_t language, const char* text);
 
+	// Add collected item on correct screen hud
+	API void multi_hud_itembox(uint32_t pnum, uint32_t id);
+
 #ifdef __cplusplus
 }
 #endif
