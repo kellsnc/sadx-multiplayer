@@ -524,7 +524,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 			{
 				etc->reel_tension += 0.011764705f; // 1 / 85
 			}
-			else if (diff < 0.02f)
+			else if (diff < -0.02f)
 			{
 				etc->reel_tension -= 0.011764705f; // 1 / 85
 			}
@@ -532,7 +532,7 @@ static void calcTension_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POINT3* v
 			{
 				etc->reel_tension += 0.0011764707f; // 1 / 850
 			}
-			else if (diff < 0.002f)
+			else if (diff < -0.002f)
 			{
 				etc->reel_tension -= 0.0011764707f; // 1 / 850
 			}
@@ -641,7 +641,7 @@ static void setLureCameraPos_m(taskwk* twp, BIGETC* etc, int pnum)
 		NJS_VECTOR v;
 		Float dist;
 
-		if (etc->Big_Fish_Ptr && etc->Big_Fish_Flag & LUREFLAG_HIT)
+		if (etc->Big_Fish_Ptr && !(etc->Big_Fish_Flag & LUREFLAG_HIT))
 		{
 			v = etc->Big_Fish_Ptr->twp->pos;
 			njSubVector(&v, &twp->pos);

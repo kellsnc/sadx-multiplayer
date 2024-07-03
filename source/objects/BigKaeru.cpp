@@ -344,7 +344,7 @@ bool chkFishPtr_m(task* tp)
 			{
 				if (etc->Big_Fish_Ptr == tp)
 				{
-					if (!CHKLUREFREE(etc) && dist < 100.0f)
+					if (!CHKLUREFREE(etc) || dist < 100.0f)
 					{
 						KAERU_PNUM(twp) = i;
 						return true;
