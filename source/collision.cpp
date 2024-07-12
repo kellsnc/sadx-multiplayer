@@ -209,9 +209,9 @@ int __cdecl CheckCollisionCylinderP_r(NJS_POINT3* vp, Float r, Float h)
 	{
 		auto twp = playertwp[i];
 
-		if (twp && twp->cwp)
+		if (twp)
 		{
-			NJS_VECTOR v = twp->cwp->info->center;
+			NJS_VECTOR v = twp->pos;
 			v.x -= vp->x;
 			v.y -= vp->y;
 			v.z -= vp->z;

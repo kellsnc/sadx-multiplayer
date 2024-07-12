@@ -959,5 +959,5 @@ void InitLevels()
 	// Hub world swap fixes
 	CollisionSceneChangerSS_CheckCollision_t.Hook(CollisionSceneChangerSS_CheckCollision_r); // Station Square
 	ObjectMysticRuinTorokko_ExecATask_t.Hook(ObjectMysticRuinTorokko_ExecATask_r); // Mystic Ruin minecarts
-	WriteData((uint8_t*)0x54575C, 0x7Dui8); // Past
+	WriteData((uint8_t*)0x54575C, 0x7Cui8); // Past
 }
