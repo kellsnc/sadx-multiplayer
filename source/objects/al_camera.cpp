@@ -49,7 +49,7 @@ struct AL_CAMERA_WORK {
 VariableHook<task*, 0x3CDC684> pCamTask_m;
 DataArray(AL_CAMERA_WORK, AL_CameraWork, 0x3CDC1A0, 8);
 
-Bool AL_NormalCameraCheckSwingingTree_m(int pnum)
+Bool AL_NormalCameraCheckSwingingTree_m(Sint32 pnum)
 {
 	switch (GetPlayerCharacterName(pnum))
 	{
@@ -66,6 +66,7 @@ Bool AL_NormalCameraCheckSwingingTree_m(int pnum)
 	case PLNO_E102:
 		return IsE102ShakingTree(playertwp[pnum]);
 	}
+	return FALSE;
 }
 
 void AL_NormalCameraExecutor(task* tp)
