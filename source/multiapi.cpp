@@ -192,7 +192,7 @@ void camera_apply(uint32_t num)
 	ApplyMultiCamera(num);
 }
 
-bool camera_get_pos(uint32_t num, NJS_POINT3* pos)
+NJS_POINT3* camera_get_pos(uint32_t num)
 {
 	return GetCameraPosition(num);
 }
