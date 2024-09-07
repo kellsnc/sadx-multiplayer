@@ -976,9 +976,9 @@ void InitPatches()
 	PatchCasinoPathCam();
 	PatchHighwayPathCam();
 	PatchBeachPathCam();
-
+	
 	initSDIntroPatches();
-	init_SDCylinderPatches();
+
 	PatchSkyDeckOCM();
 	init_SwDoorPatch();
 	initSonicPatch();

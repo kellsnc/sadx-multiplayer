@@ -174,7 +174,7 @@ void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd);
 FunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0, dsHangPoleCom_r);
 void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd)
 {
-	if (!multiplayer::IsActive)
+	if (!multiplayer::IsActive())
 	{
 		dsHangPoleCom_h.Original(tp, rotspd);
 		return;
@@ -271,8 +271,4 @@ void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd)
 			}
 		}
 	}
-}
-
-void init_SDCylinderPatches()
-{
 }
