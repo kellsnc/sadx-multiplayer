@@ -1959,7 +1959,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 void __cdecl LoadMultiMenu(ModeSelPrmType* prmp)
 {
-	SetStageNumber(1, 0);
+	SetStageNumber(0, 0); //make lantern engine reload palette properly
 	auto tp = MultiMenuTp = CreateElementalTask(0, LEV_4, MultiMenuExec_Main);
 
 	auto wk = (MultiMenuWK*)AllocateArray(1, sizeof(MultiMenuWK));
