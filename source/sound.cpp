@@ -203,6 +203,10 @@ int __cdecl dsGetVolume_r(int ii)
 		auto se = &sebuf[ii];
 
 		auto pnum = GetClosestPlayerNum(&se->pos);
+
+		if (pnum < 0)
+			return dsGetVolume_o(ii);
+
 		auto cam_pos = GetCameraPosition(pnum);
 		float dist = GetDistance(&se->pos, cam_pos ? cam_pos : &playertwp[pnum]->pos);
 
@@ -266,6 +270,9 @@ static bool dsDolbySound_r()
 		if (se->mode & 0x4000 && twp)
 		{
 			auto pnum = GetClosestPlayerNum(&twp->pos);
+			if (pnum < 0)
+				continue;
+
 			NJS_VECTOR v = playertwp[pnum]->pos;
 			njSubVector(&v, &twp->pos);
 			auto cam_ang = GetCameraAngle(pnum);

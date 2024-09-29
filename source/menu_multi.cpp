@@ -840,6 +840,7 @@ bool menu_multi_apply_change(MultiMenuWK* wk, MD_MULTI id, int dial)
 
 bool menu_multi_change(MultiMenuWK* wk, MD_MULTI id)
 {
+
 	if (netplay.IsConnected())
 	{
 		if (netplay.GetPlayerNum() != 0)
@@ -1154,6 +1155,7 @@ void menu_multi_coopsel(MultiMenuWK* wk)
 	{
 		if (stat == MultiMenuCoopSelDialog.CsrCancel)
 		{
+			SetStageNumber(0, 0);
 			gNextDialogStat = 0;
 			menu_multi_change(wk, MD_MULTI_MODESEL);
 		}
@@ -1192,6 +1194,7 @@ void menu_multi_coopsel(MultiMenuWK* wk)
 void menu_multi_battlesel(MultiMenuWK* wk)
 {
 	auto stat = GetDialogStat();
+
 
 	switch (stat)
 	{
@@ -1232,6 +1235,7 @@ void menu_multi_battlesel(MultiMenuWK* wk)
 		menu_multi_setallcharacters(CharSelChara_Sonic);
 		break;
 	case 8:
+		SetStageNumber(0, 0); 
 		gNextDialogStat = 1;
 		menu_multi_change(wk, MD_MULTI_MODESEL);
 		break;
@@ -1852,6 +1856,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 	// Check if our menu is ready
 	if (seqwk->Mode == ADVA_MODE_MULTI && wk->Stat == ADVA_STAT_REQWAIT)
 	{
+		SetStageNumber(1, 0);
 		PlayMenuMusicID(MusicIDs_JingleE);
 		LoadPVM("AVA_MULTI", &AVA_MULTI_TEXLIST);
 		AvaLoadTexForEachMode(ADVA_MODE_MULTI);
@@ -1872,6 +1877,7 @@ void __cdecl MultiMenuExec_Main(task* tp)
 		}
 		else
 		{
+			SetStageNumber(0, 0);
 			multiplayer::Disable();
 			gNextDialogStat = 0;
 			menu_multi_change(wk, saved_mode);
@@ -1959,7 +1965,6 @@ void __cdecl MultiMenuExec_Main(task* tp)
 
 void __cdecl LoadMultiMenu(ModeSelPrmType* prmp)
 {
-	SetStageNumber(0, 0); //make lantern engine reload palette properly
 	auto tp = MultiMenuTp = CreateElementalTask(0, LEV_4, MultiMenuExec_Main);
 
 	auto wk = (MultiMenuWK*)AllocateArray(1, sizeof(MultiMenuWK));
