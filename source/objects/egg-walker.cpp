@@ -1,8 +1,10 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "bosses.h"
 #include "levels.h"
 
-static FunctionHook<void, task*> eggWalker_t(0x576650);
+FastFunctionHook<void, task*> eggWalker_t(0x576650);
 
 static const int timeLimit = 600;
 

@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 
 TaskFunc(dispTPCoaster, 0x5F45C0);
 
@@ -12,7 +14,7 @@ enum {
 };
 
 void __cdecl execTPCoaster_r(task* tp);
-TaskHook execTPCoaster_h(0x61D6E0, execTPCoaster_r);
+FastFunctionHook<void, task*> execTPCoaster_h(0x61D6E0, execTPCoaster_r);
 void __cdecl execTPCoaster_r(task* tp)
 {
 	taskwk* twp = tp->twp;

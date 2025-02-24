@@ -1,8 +1,9 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 
 static void ObjectCasinoTelepotExec_r(task* tp);
-TaskHook ObjectCasinoTelepotExec_t(0x5D10C0, ObjectCasinoTelepotExec_r);
-
+FastFunctionHook<void, task*> ObjectCasinoTelepotExec_t(0x5D10C0, ObjectCasinoTelepotExec_r);
 static void ObjectCasinoTelepotExec_r(task* tp)
 {
 	if (!multiplayer::IsActive() || ObjectSelectedDebug((ObjectMaster*)tp))

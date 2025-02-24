@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "netplay.h"
 #include "timer.h"
@@ -41,10 +41,10 @@ DataPointer(ADVPOS**, vInitialPositionEC_C_Ptr, 0x52D861);
 DataPointer(ADVPOS**, vInitialPositionMR_Ptr, 0x5307AE);
 DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
 
-FunctionHook<void, taskwk*> SetPlayerInitialPosition_t(0x414810);
-FunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
-FunctionHook<void> SetPlayer_t(SetPlayer);
-FunctionHook<Bool, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
+FastFunctionHook<void, taskwk*> SetPlayerInitialPosition_t(0x414810);
+FastFunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
+FastFunctionHook<void> SetPlayer_t(SetPlayer);
+FastFunctionHook<Bool, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
 
 VariableHook<int16_t, 0x3B0F0E4> ssNumRing_m;
 VariableHook<int8_t, 0x3B0EF34> scNumPlayer_m;
@@ -56,7 +56,7 @@ static bool isCharSel = false;
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
 static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack | Status_LightDash;
-FunctionHook<int> GetRaceWinnerPlayer_t(GetRaceWinnerPlayer);
+FastFunctionHook<int> GetRaceWinnerPlayer_t(GetRaceWinnerPlayer);
 
 TaskFuncPtr charfuncs[] = {
 	SonicTheHedgehog,

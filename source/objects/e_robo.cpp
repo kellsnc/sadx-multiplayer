@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "utils.h"
 #include "multiplayer.h"
 
@@ -28,7 +29,7 @@ Trampoline RoboDisplayer_t(0x4A4DA0, 0x4A4DA7, RoboDisplayer_r);
 Trampoline RoboHearSound_t(0x4A5190, 0x4A5195, RoboHearSound_w);
 Trampoline RoboSearchPlayer_t(0x4A51F0, 0x4A51F8, RoboSearchPlayer_w);
 
-UsercallFuncVoid(RoboSwing_t, (taskwk* twp, enemywk* ewp), (twp, ewp), 0x4A5840, rECX, rEAX);
+FastUsercallHookPtr<void(*)(taskwk* twp, enemywk* ewp), noret, rECX, rEAX> RoboSwing_t(0x4A5840);
 
 static auto RoboCombo = GenerateUsercallWrapper<void(*)(enemywk* wk, taskwk* ewp)>(noret, 0x4A4AA0, rEAX, rECX);
 

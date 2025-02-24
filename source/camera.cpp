@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "splitscreen.h"
 #include "camerafunc.h"
@@ -19,9 +19,9 @@ struct CameraLocation
 	Angle3 ang;
 };
 
-Trampoline* CameraPause_t = nullptr;
-Trampoline* cameraDisplay_t = nullptr;
-Trampoline* Camera_t = nullptr;
+FastFunctionHook<void, task*> CameraPause_Hook(0x4373D0);
+FastFunctionHook<void, task*> cameraDisplay_Hook(0x4370F0);
+FastFunctionHook<void, task*> Camera_Hook(0x438090);
 
 VariableHook<_camcontwk, 0x3B2C660> cameraControlWork_m;
 VariableHook<_CameraSystemWork, 0x3B2CAD8> cameraSystemWork_m;
@@ -778,7 +778,7 @@ void __cdecl cameraDisplay_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(cameraDisplay)(tp);
+		cameraDisplay_Hook.Original(tp);
 	}
 }
 
@@ -790,7 +790,7 @@ void __cdecl CameraPause_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(CameraPause)(tp);
+		CameraPause_Hook.Original(tp);
 	}
 }
 
@@ -1944,7 +1944,7 @@ void __cdecl Camera_r(task* tp)
 {
 	if (!SplitScreen::IsActive())
 	{
-		return TARGET_DYNAMIC(Camera)(tp);
+		return Camera_Hook.Original(tp);
 	}
 
 	auto twp = tp->twp;
@@ -2202,9 +2202,9 @@ void ResetPerspective_m(int pnum)
 
 void InitCamera()
 {
-	Camera_t = new Trampoline(0x438090, 0x438097, Camera_r);
-	CameraPause_t = new Trampoline(0x4373D0, 0x4373D7, CameraPause_r);
-	cameraDisplay_t = new Trampoline(0x4370F0, 0x4370F5, cameraDisplay_r);
+	Camera_Hook.Hook(Camera_r);
+	CameraPause_Hook.Hook(CameraPause_r);
+	cameraDisplay_Hook.Hook(cameraDisplay_r);
 
 	WriteJump((void*)0x434870, InitFreeCamera_r);
 	WriteJump((void*)0x434880, ResetFreeCamera_r);

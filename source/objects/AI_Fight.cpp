@@ -1,7 +1,9 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "patches.h"
 
-static FunctionHook<void, int> LoadCharacterBoss_t(LoadCharacterBoss);
+FastFunctionHook<void, int> LoadCharacterBoss_t(LoadCharacterBoss);
 
 static uint8_t aiPAD = 7;
 

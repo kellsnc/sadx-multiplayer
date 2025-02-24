@@ -1,10 +1,13 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "UsercallFunctionHandler.h"
 
-UsercallFuncVoid(execFountain, (taskwk* twp), (twp), 0x61B8B0, rESI);
-UsercallFuncVoid(expandAndConstrict, (taskwk* twp), (twp), 0x61B800, rESI);
+UsercallFunction<void, taskwk*> execFountain(0x61B8B0, rESI);
+UsercallFunction<void, taskwk*> expandAndConstrict(0x61B800, rESI);
+
+//UsercallFuncVoid(execFountain, (taskwk* twp), (twp), 0x61B8B0, rESI);
+//UsercallFuncVoid(expandAndConstrict, (taskwk* twp), (twp), 0x61B800, rESI);
 
 static void pushUp_m(task* tp, int pnum)
 {
@@ -73,7 +76,7 @@ static void ObjectFountain_m(task* tp)
 }
 
 static void ObjectFoutain_r(task* tp);
-TaskHook ObjectFoutain_h(0x61BDC0, ObjectFoutain_r);
+FastFunctionHook<void, task*> ObjectFoutain_h(0x61BDC0, ObjectFoutain_r);
 static void ObjectFoutain_r(task* tp)
 {
 	auto twp = tp->twp;

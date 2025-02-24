@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "players.h"
 
 #define CHSEL_SMD_COOP CHSEL_SMD_MAX
 
-UsercallFuncVoid(char_sel_sub_exec, (CharSelWk* wkp), (wkp), 0x511570, rESI);
+FastUsercallHookPtr<void(*)(CharSelWk* wkp), noret, rESI> char_sel_sub_exec(0x511570);
 
 // Game, instruction, cancel (Unfinished stories)
 PanelPrmType PanelPrmCharsel1_m[]

@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 
-static FunctionHook<void, task*> PondExecutor_hook(0x7AA870);
-static FunctionHook<void, task*> PondDisplayer_hook(0x7AA3D0);
+FastFunctionHook<void, task*> PondExecutor_hook(0x7AA870);
+FastFunctionHook<void, task*> PondDisplayer_hook(0x7AA3D0);
 
 static void __cdecl PondDisplayer_r(task* tp)
 {

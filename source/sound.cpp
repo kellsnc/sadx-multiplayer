@@ -1,8 +1,7 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "Trampoline.h"
-#include "UsercallFunctionHandler.h"
 #include "camera.h"
 #include "multiplayer.h"
 #include "sadx_utils.h"
@@ -10,7 +9,7 @@
 #include "splitscreen.h"
 #include "utils.h"
 
-FunctionHook<void> dsLoadStageSound_h(0x424C80);
+FastFunctionHook<void> dsLoadStageSound_h(0x424C80);
 
 Trampoline* dsGetVolume_t = nullptr;
 Trampoline* dsPlay_timer_v_t = nullptr;

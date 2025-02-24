@@ -1,9 +1,11 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "players.h"
 
-static FunctionHook<void, int> EV_Load2_t(EV_Load2);
+FastFunctionHook<void, int> EV_Load2_t(EV_Load2);
+FastFunctionHook<void, int> EV_InitPlayer_t(EV_InitPlayer);
 static char backupMode = 0;
-static FunctionHook<void, int> EV_InitPlayer_t(EV_InitPlayer);
 
 static int bannedCutscene[] = { 0x2 };
 void EV_Load2_r(int no)

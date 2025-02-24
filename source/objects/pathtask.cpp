@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "camera.h"
 #include "camerafunc.h"
@@ -11,11 +11,11 @@ static void __cdecl PathworkSeeingPath_Sky_r(task* tp);
 static void __cdecl PathworkLaddering_r(task* tp);
 static void __cdecl PathworkGoWithHangingDownFromBars_r(task* tp);
 
-TaskHook PathworkCamera_h(0x4BBB90, PathworkCamera_r);
-TaskHook PathworkSeeingPath_h(0x4BB1F0, PathworkSeeingPath_r);
-TaskHook PathworkSeeingPath_Sky_h(0x5F16C0, PathworkSeeingPath_Sky_r);
-TaskHook PathworkLaddering_h(0x4BB830, PathworkLaddering_r);
-TaskHook PathworkGoWithHangingDownFromBars_h(0x4BB520, PathworkGoWithHangingDownFromBars_r);
+FastFunctionHook<void, task*> PathworkCamera_h(0x4BBB90, PathworkCamera_r);
+FastFunctionHook<void, task*> PathworkSeeingPath_h(0x4BB1F0, PathworkSeeingPath_r);
+FastFunctionHook<void, task*> PathworkSeeingPath_Sky_h(0x5F16C0, PathworkSeeingPath_Sky_r);
+FastFunctionHook<void, task*> PathworkLaddering_h(0x4BB830, PathworkLaddering_r);
+FastFunctionHook<void, task*> PathworkGoWithHangingDownFromBars_h(0x4BB520, PathworkGoWithHangingDownFromBars_r);
 
 // Fix PathworkCamera, a path task only used for Red Mountain
 

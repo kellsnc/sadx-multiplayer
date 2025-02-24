@@ -1,8 +1,9 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 
 static void Shat_Exec_r(task* tp);
-TaskHook Shat_Exec_t(0x5CD540, Shat_Exec_r);
-
+FastFunctionHook<void, task*> Shat_Exec_t(0x5CD540, Shat_Exec_r);
 static void Shat_Exec_r(task* tp)
 {
 	auto twp = tp->twp;

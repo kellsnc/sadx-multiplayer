@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "sadx_utils.h"
 #include "gravity.h"
 #include "result.h"
@@ -9,12 +11,12 @@
 #define HOMING_TIMER1(pwp) (pwp->free.sw[2])
 #define HOMING_TIMER2(pwp) (pwp->free.sw[3])
 
-FunctionHook<void, taskwk*, motionwk2*, playerwk*> SonicHomingOnRings_t(0x492AB0);
-FunctionHook<taskwk*, taskwk*, playerwk*> SonicCheckLSSTargetEnemy_t(0x492710);
-TaskHook SonicDirectAhead_t((intptr_t)0x493C70);
-TaskHook SonicJiggle_t((intptr_t)Sonic_Jiggle_Main);
-UsercallFunc(Bool, Sonic_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x495FA0, rEAX, rEAX, rEDI, stack4);
-TaskHook SonicTheHedgehog_t(0x49A9B0);
+FastFunctionHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp)> SonicHomingOnRings_t(0x492AB0);
+FastFunctionHookPtr<taskwk*(*)(taskwk* twp, playerwk* pwp)> SonicCheckLSSTargetEnemy_t(0x492710);
+FastFunctionHookPtr<TaskFuncPtr> SonicDirectAhead_t((intptr_t)0x493C70);
+FastFunctionHookPtr<TaskFuncPtr> SonicJiggle_t(0x4937B0);
+FastUsercallHookPtr<Bool(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), rEAX, rEAX, rEDI, stack4> Sonic_CheckInput_hook(0x495FA0);
+FastFunctionHookPtr<TaskFuncPtr> SonicTheHedgehog_t(0x49A9B0);
 
 static void SonicHomingOnRings_m(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
@@ -187,7 +189,7 @@ static Bool Sonic_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return Sonic_CheckInput_t.Original(pwp, twp, mwp);
+			return Sonic_CheckInput_hook.Original(pwp, twp, mwp);
 		}
 
 		switch (twp->smode)
@@ -213,7 +215,7 @@ static Bool Sonic_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 		}
 	}
 	
-	return Sonic_CheckInput_t.Original(pwp, twp, mwp);
+	return Sonic_CheckInput_hook.Original(pwp, twp, mwp);
 }
 
 static void __cdecl SonicTheHedgehog_r(task* tp)
@@ -238,6 +240,6 @@ void initSonicPatch()
 	SonicCheckLSSTargetEnemy_t.Hook(SonicCheckLSSTargetEnemy_r);
 	SonicDirectAhead_t.Hook(SonicDirectAhead_r);
 	SonicJiggle_t.Hook(SonicJiggle_r);
-	Sonic_CheckInput_t.Hook(Sonic_CheckInput_r);
+	Sonic_CheckInput_hook.Hook(Sonic_CheckInput_r);
 	SonicTheHedgehog_t.Hook(SonicTheHedgehog_r);
 }

@@ -1,18 +1,20 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "gravity.h"
 #include "e_cart.h"
 #include "result.h"
 #include "ObjCylinderCmn.h"
 
-UsercallFunc(Bool, Amy_CheckInput_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x487810, rEAX, rECX, rEDI, rESI);
-TaskHook AmyRose_t((intptr_t)Amy_Main);
-static FunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunsActions_t((intptr_t)0x488880);
-TaskHook AmyJiggle_t((intptr_t)0x485C50);
-TaskHook AmySkirtShape_t(0x485F40);
-TaskHook AmyEyeTracker_t(0x486410);
-TaskHook AmyBirdExe_t(0x4C63F0);
-TaskHook LoadAmyBird_t(0x4C6790);
-FunctionHook<void> AmySetRoboConChecker_t(0x486A40);
+FastUsercallHookPtr<Bool(*)(playerwk* pwp, motionwk2* mwp, taskwk* twp), rEAX, rECX, rEDI, rESI> Amy_CheckInput_t(0x487810);
+FastFunctionHook<void, task*> AmyRose_t((intptr_t)Amy_Main);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunsActions_t((intptr_t)0x488880);
+FastFunctionHook<void, task*> AmyJiggle_t((intptr_t)0x485C50);
+FastFunctionHook<void, task*> AmySkirtShape_t(0x485F40);
+FastFunctionHook<void, task*> AmyEyeTracker_t(0x486410);
+FastFunctionHook<void, task*> AmyBirdExe_t(0x4C63F0);
+FastFunctionHook<void, task*> LoadAmyBird_t(0x4C6790);
+FastFunctionHook<void> AmySetRoboConChecker_t(0x486A40);
 
 task* AmyBirdM[PLAYER_MAX] = { 0 };
 

@@ -1,7 +1,9 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 
 void ObjectSkydeck_cannon_s_Exec_r(task* a1);
-TaskHook ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0, ObjectSkydeck_cannon_s_Exec_r);
+FastFunctionHook<void, task*> ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0, ObjectSkydeck_cannon_s_Exec_r);
 static char PInCannon[PLAYER_MAX];
 
 void isPlayerinCannon(taskwk* data)

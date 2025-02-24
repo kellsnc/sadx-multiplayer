@@ -17,9 +17,8 @@ struct IUnknown;
 #include "SADXModLoader.h"
 #include "Trampoline.h"
 #include "IniFile.hpp"
-#include "UsercallFunctionHandler.h"
-#include "FunctionHook.h"
 
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 
 #include "mod.h"

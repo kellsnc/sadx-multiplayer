@@ -1,16 +1,18 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "gravity.h"
 #include "result.h"
 #include "e_cart.h"
 
-TaskHook MilesJiggle_t((intptr_t)Tails_Jiggle_Main);
-TaskHook MilesDirectAhead_t(0x45DAD0);
-TaskHook MilesDirectAhead2_t(0x45DE20);
-TaskHook MilesTalesPrower_t(0x461700);
-UsercallFuncVoid(Miles_RunActions_t, (playerwk* a1, motionwk2* a2, taskwk* a3), (a1, a2, a3), 0x45E5D0, rEAX, rECX, stack4);
-UsercallFunc(Bool, Miles_CheckInput_t, (playerwk* pwp, taskwk* twp, motionwk2* mwp), (pwp, twp, mwp), 0x45C100, rEAX, rEDI, rESI, stack4);
+FastFunctionHook<void, task*> MilesJiggle_t((intptr_t)Tails_Jiggle_Main);
+FastFunctionHook<void, task*> MilesDirectAhead_t(0x45DAD0);
+FastFunctionHook<void, task*> MilesDirectAhead2_t(0x45DE20);
+FastFunctionHook<void, task*> MilesTalesPrower_t(0x461700);
+FastUsercallHookPtr<void(*)(playerwk* pwp, motionwk2* mwp, taskwk* twp), noret, rEAX, rECX, stack4> Miles_RunActions_t(0x45E5D0);
+FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> Miles_CheckInput_t(0x45C100);
 
-static Bool Miles_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
+static Bool Miles_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -19,7 +21,7 @@ static Bool Miles_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return Miles_CheckInput_t.Original(pwp, twp, mwp);
+			return Miles_CheckInput_t.Original(twp, pwp, mwp);
 		}
 
 		switch (twp->smode)
@@ -41,7 +43,7 @@ static Bool Miles_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 		}
 	}
 	
-	return Miles_CheckInput_t.Original(pwp, twp, mwp);
+	return Miles_CheckInput_t.Original(twp, pwp, mwp);
 }
 
 static void __cdecl MilesDirectAhead2_r(task* tp)

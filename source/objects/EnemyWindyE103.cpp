@@ -1,14 +1,15 @@
 #include "pch.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "result.h"
 #include "camera.h"
 
-Trampoline* e103_move_t = nullptr;
-Trampoline* e103_chkPlayerRadius_t = nullptr;
-FunctionHook <void, task*> e103_waitPlayer_t(0x4E6B90);
-UsercallFuncVoid(e103_turnBody_t, (task* a1, NJS_POINT3* a2, int a3), (a1, a2, a3), 0x4E6940, rEAX, rECX, rEDI);
-UsercallFuncVoid(e103_chkDamage_t, (task* a1), (a1), 0x4E6790, rESI);
-UsercallFuncVoid(e103_normal_t, (task* tp), (tp), 0x4E6ED0, rEAX);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> e103_move_t(0x4E6D00);
+FastUsercallHookPtr<Bool(*)(task* tp, Float r), rEAX, rEAX, stack4> e103_chkPlayerRadius_t(0x4E6900);
+FastFunctionHook<void, task*> e103_waitPlayer_t(0x4E6B90);
+FastUsercallHookPtr<void(*)(task*, NJS_POINT3*, int), noret, rEAX, rECX, rEDI> e103_turnBody_t(0x4E6940);
+FastUsercallHookPtr<void(*)(task* tp), noret, rESI> e103_chkDamage_t(0x4E6790);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> e103_normal_t(0x4E6ED0);
 
 static void SetE103Camera(task* tp)
 {
@@ -26,16 +27,6 @@ static void SetE103Camera(task* tp)
 }
 
 #pragma region move
-static void e103_move_o(task* tp)
-{
-	auto target = e103_move_t->Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
-
 static void e103_move_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -127,39 +118,12 @@ static void __cdecl e103_move_r(task* tp)
 	}
 	else
 	{
-		e103_move_o(tp);
-	}
-}
-
-static void __declspec(naked) e103_move_w()
-{
-	__asm
-	{
-		push eax
-		call e103_move_r
-		pop eax
-		retn
+		e103_move_t.Original(tp);
 	}
 }
 #pragma endregion
 
-#pragma region chkPlayerRadius
-static BOOL e103_chkPlayerRadius_o(task* tp, float r)
-{
-	auto target = e103_chkPlayerRadius_t->Target();
-	BOOL rt;
-	__asm
-	{
-		push[r]
-		mov eax, [tp]
-		call target
-		mov rt, eax
-		add esp, 4
-	}
-	return rt;
-}
-
-static BOOL __cdecl e103_chkPlayerRadius_r(task* tp, float r)
+static Bool __cdecl e103_chkPlayerRadius_r(task* tp, float r)
 {
 	if (multiplayer::IsActive())
 	{
@@ -185,24 +149,9 @@ static BOOL __cdecl e103_chkPlayerRadius_r(task* tp, float r)
 	}
 	else
 	{
-		return e103_chkPlayerRadius_o(tp, r);
+		return e103_chkPlayerRadius_t.Original(tp, r);
 	}
 }
-
-static void __declspec(naked) e103_chkPlayerRadius_w()
-{
-	__asm
-	{
-		push edx
-		push[esp + 04h]
-		push eax
-		call e103_chkPlayerRadius_r
-		add esp, 8
-		pop edx
-		retn
-	}
-}
-#pragma endregion
 
 static void __cdecl e103_waitPlayer_r(task* tp)
 {
@@ -309,8 +258,8 @@ static void __cdecl e103_normal_r(task* tp)
 
 void InitE103Patches()
 {
-	e103_move_t = new Trampoline(0x4E6D00, 0x4E6D07, e103_move_w);
-	e103_chkPlayerRadius_t = new Trampoline(0x4E6900, 0x4E6908, e103_chkPlayerRadius_w);
+	e103_move_t.Hook(e103_move_r);
+	e103_chkPlayerRadius_t.Hook(e103_chkPlayerRadius_r);
 	e103_waitPlayer_t.Hook(e103_waitPlayer_r);
 	e103_turnBody_t.Hook(e103_turnBody_r);
 	e103_chkDamage_t.Hook(e103_chkDamage_r);

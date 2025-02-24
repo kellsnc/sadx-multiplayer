@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <UsercallFunctionHandler.h>
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 
 // Almost entirely a copy of EnemyWindyTgtMissile

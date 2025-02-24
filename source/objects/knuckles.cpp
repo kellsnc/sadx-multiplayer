@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "gravity.h"
 #include "e_cart.h"
 #include "result.h"
@@ -6,16 +8,16 @@
 #include "ObjCylinderCmn.h"
 #include "knuckles.h"
 
-FunctionHook<void> KnuEffectPutCharge0_t(0x4C2210);
-FunctionHook<void> KnuEffectPutCharge1_t(0x4C2260);
-UsercallFunc(taskwk*, KnucklesGetNearEnemyTWP_t, (taskwk* twp), (twp), 0x4756C0, rEAX, rEBX);
-TaskHook KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
-FunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
-TaskHook KnucklesJiggle_t(0x473CE0);
-TaskHook KnuxEyeTracker_t(0x475260);
-UsercallFunc(Bool, Knux_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x476970, rEAX, rEDI, rESI, stack4);
-FunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
-TaskHook KnucklesTheEchidna_t((intptr_t)Knuckles_Main);
+FastFunctionHook<void> KnuEffectPutCharge0_t(0x4C2210);
+FastFunctionHook<void> KnuEffectPutCharge1_t(0x4C2260);
+FastUsercallHookPtr<taskwk*(*)(taskwk* twp), rEAX, rEBX> KnucklesGetNearEnemyTWP_t(0x4756C0);
+FastFunctionHook<void, task*> KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
+FastFunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
+FastFunctionHook<void, task*> KnucklesJiggle_t(0x473CE0);
+FastFunctionHook<void, task*> KnuxEyeTracker_t(0x475260);
+FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> Knux_CheckInput_t(0x476970);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
+FastFunctionHook<void, task*> KnucklesTheEchidna_t((intptr_t)Knuckles_Main);
 
 static void __cdecl dispKnuEffectChargeScl_m(task* tp)
 {
@@ -316,7 +318,7 @@ static void __cdecl KnucklesJiggle_r(task* tp)
 	KnucklesJiggle_t.Original(tp);
 }
 
-Bool Knux_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
+Bool Knux_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -325,7 +327,7 @@ Bool Knux_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return Knux_CheckInput_t.Original(pwp, twp, mwp);
+			return Knux_CheckInput_t.Original(twp, pwp, mwp);
 		}
 
 		switch (twp->smode)
@@ -359,7 +361,7 @@ Bool Knux_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 		}
 	}
 	
-	return Knux_CheckInput_t.Original(pwp, twp, mwp);
+	return Knux_CheckInput_t.Original(twp, pwp, mwp);
 }
 
 void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)

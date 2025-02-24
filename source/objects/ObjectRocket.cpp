@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "camera.h"
 
-static FunctionHook<void, task*> ObjectRocket_Wait_t(0x4CA1F0);
-static FunctionHook<void, task*> ObjectRocket_Hold_V_t(0x4C9C60);
-UsercallFuncVoid(ObjectRocket_Hold_H, (task* tp), (tp), 0x4C9BC0, rEDX);
+FastFunctionHook<void, task*> ObjectRocket_Wait_t(0x4CA1F0);
+FastFunctionHook<void, task*> ObjectRocket_Hold_V_t(0x4C9C60);
+FastUserpurgeHookPtr<void(*)(task* tp), noret, rEDX> ObjectRocket_Hold_H(0x4C9BC0);
 
 static void __cdecl ObjectRocket_Hold_V_r(task* tp)
 {

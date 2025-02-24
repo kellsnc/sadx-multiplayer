@@ -5,12 +5,12 @@
 
 // E104 is almost entirely a copy paste of E103
 
-Trampoline* e104_move_t = nullptr;
-Trampoline* e104_waitPlayer_t = nullptr;
-Trampoline* e104_chkPlayerRadius_t = nullptr;
-Trampoline* e104_turnBody_t = nullptr;
-Trampoline* e104_chkDamage_t = nullptr;
-Trampoline* e104_execMode_t = nullptr;
+FastFunctionHookPtr<TaskFuncPtr> e104_waitPlayer_t(0x6046A0);
+FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> e104_move_t(0x6048B0);
+FastUsercallHookPtr<void(*)(task* pTask, NJS_POINT3* posTarget, Angle angMax), noret, rECX, rEAX, rEDI> e104_turnBody_t(0x604480);
+FastUsercallHookPtr<TaskFuncPtr, noret, rESI> e104_chkDamage_t(0x604310);
+FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> e104_execMode_t(0x605400);
+FastUsercallHookPtr<Bool(*)(task* tp, Float r), noret, rEAX, stack4> e104_chkPlayerRadius_t(0x566D80);
 
 static void SetE104Camera(task* tp)
 {
@@ -24,17 +24,6 @@ static void SetE104Camera(task* tp)
 				CameraSetEventCamera_m(i, CAMMD_E103, CAMADJ_NONE);
 			}
 		}
-	}
-}
-
-#pragma region move
-static void e104_move_o(task* tp)
-{
-	auto target = e104_move_t->Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
 	}
 }
 
@@ -129,21 +118,9 @@ static void __cdecl e104_move_r(task* tp)
 	}
 	else
 	{
-		e104_move_o(tp);
+		e104_move_t.Original(tp);
 	}
 }
-
-static void __declspec(naked) e104_move_w()
-{
-	__asm
-	{
-		push eax
-		call e104_move_r
-		pop eax
-		retn
-	}
-}
-#pragma endregion
 
 static void __cdecl e104_waitPlayer_r(task* tp)
 {
@@ -181,24 +158,8 @@ static void __cdecl e104_waitPlayer_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(e104_waitPlayer)(tp);
+		e104_waitPlayer_t.Original(tp);
 	}
-}
-
-#pragma region chkPlayerRadius
-static BOOL e104_chkPlayerRadius_o(task * tp, Float r)
-{
-	auto target = e104_chkPlayerRadius_t->Target();
-	BOOL rt;
-	__asm
-	{
-		push[r]
-		mov eax, [tp]
-		call target
-		mov rt, eax
-		add esp, 4
-	}
-	return rt;
 }
 
 static BOOL __cdecl e104_chkPlayerRadius_r(task* tp, Float r)
@@ -227,35 +188,7 @@ static BOOL __cdecl e104_chkPlayerRadius_r(task* tp, Float r)
 	}
 	else
 	{
-		return e104_chkPlayerRadius_o(tp, r);
-	}
-}
-
-static void __declspec(naked) e104_chkPlayerRadius_w()
-{
-	__asm
-	{
-		push edx
-		push[esp + 04h]
-		push eax
-		call e104_chkPlayerRadius_r
-		add esp, 8
-		pop edx
-		retn
-	}
-}
-#pragma endregion
-
-#pragma region turnBody
-static void e104_turnBody_o(task* pTask, NJS_POINT3* posTarget, Angle angMax)
-{
-	auto target = e104_turnBody_t->Target();
-	__asm
-	{
-		mov eax, [angMax]
-		mov eax, [posTarget]
-		mov ecx, [pTask]
-		call target
+		return e104_chkPlayerRadius_t.Original(tp, r);
 	}
 }
 
@@ -267,39 +200,12 @@ static void __cdecl e104_turnBody_r(task* pTask, NJS_POINT3* posTarget, Angle an
 
 		if (ptwp)
 		{
-			e104_turnBody_o(pTask, &ptwp->pos, angMax);
+			e104_turnBody_t.Original(pTask, &ptwp->pos, angMax);
 		}
 	}
 	else
 	{
-		e104_turnBody_o(pTask, posTarget, angMax);
-	}
-}
-
-static void __declspec(naked) e104_turnBody_w()
-{
-	__asm
-	{
-		push edi
-		push eax
-		push ecx
-		call e104_turnBody_r
-		pop ecx
-		pop eax
-		pop edi
-		retn
-	}
-}
-#pragma endregion
-
-#pragma region chkDamage
-static void e104_chkDamage_o(task* tp)
-{
-	auto target = e104_chkDamage_t->Target();
-	__asm
-	{
-		mov esi, [tp]
-		call target
+		e104_turnBody_t.Original(pTask, posTarget, angMax);
 	}
 }
 
@@ -330,30 +236,7 @@ static void __cdecl e104_chkDamage_r(task* tp)
 		}
 	}
 
-	e104_chkDamage_o(tp);
-}
-
-static void __declspec(naked) e104_chkDamage_w()
-{
-	__asm
-	{
-		push esi
-		call e104_chkDamage_r
-		pop esi
-		retn
-	}
-}
-#pragma endregion
-
-#pragma region execMode
-static void e104_execMode_o(task* tp)
-{
-	auto target = e104_execMode_t->Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
+	e104_chkDamage_t.Original(tp);
 }
 
 static void __cdecl e104_execMode_r(task* tp)
@@ -370,27 +253,15 @@ static void __cdecl e104_execMode_r(task* tp)
 		return;
 	}
 
-	e104_execMode_o(tp);
+	e104_execMode_t.Original(tp);
 }
-
-static void __declspec(naked) e104_execMode_w()
-{
-	__asm
-	{
-		push eax
-		call e104_execMode_r
-		pop eax
-		retn
-	}
-}
-#pragma endregion
 
 void InitE104Patches()
 {
-	e104_move_t = new Trampoline(0x6048B0, 0x6048B5, e104_move_w);
-	e104_waitPlayer_t = new Trampoline(0x6046A0, 0x6046A5, e104_waitPlayer_r);
-	e104_turnBody_t = new Trampoline(0x604480, 0x604485, e104_turnBody_w);
-	e104_chkDamage_t = new Trampoline(0x604310, 0x604316, e104_chkDamage_w);
-	e104_execMode_t = new Trampoline(0x605400, 0x605406, e104_execMode_w);
-	e104_chkPlayerRadius_t = new Trampoline(0x566D80, 0x566D89, e104_chkPlayerRadius_w);
+	e104_move_t.Hook(e104_move_r);
+	e104_waitPlayer_t.Hook(e104_waitPlayer_r);
+	e104_turnBody_t.Hook(e104_turnBody_r);
+	e104_chkDamage_t.Hook(e104_chkDamage_r);
+	e104_execMode_t.Hook(e104_execMode_r);
+	e104_chkPlayerRadius_t.Hook(e104_chkPlayerRadius_r);
 }

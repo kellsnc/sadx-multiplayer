@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
 
 // Minimal stack hud
 
 void __cdecl ExtraDisplayExecutor_r(task* tp);
-TaskHook ExtraDisplayExecutor_h(0x46B330, ExtraDisplayExecutor_r);
+FastFunctionHook<void, task*> ExtraDisplayExecutor_h(0x46B330, ExtraDisplayExecutor_r);
 void __cdecl ExtraDisplayExecutor_r(task* tp)
 {
 	if (tp->twp->mode != 0)

@@ -580,6 +580,9 @@
     <ClCompile Include="objects\alo_xybutton.cpp">
       <Filter>Source Files\objects\chao</Filter>
     </ClCompile>
+    <ClCompile Include="FastFunctionHook.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -822,6 +825,12 @@
     <ClInclude Include="objects\o_beach_pathcam.h">
       <Filter>Header FIles\objects\stg01_beach</Filter>
     </ClInclude>
+    <ClInclude Include="FastFunctionHook.hpp">
+      <Filter>Header FIles\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="hde32.h">
+      <Filter>Header FIles\classes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -931,6 +940,9 @@
     </Filter>
     <Filter Include="Source Files\objects\chao">
       <UniqueIdentifier>{b5270be9-68fe-4ae8-b50e-0422f75b68ae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\classes">
+      <UniqueIdentifier>{a87a1ec8-1c52-4395-8bf3-e110f7cea8f5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

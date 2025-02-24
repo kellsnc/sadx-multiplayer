@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "UsercallFunctionHandler.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "sadx_utils.h"
 
-UsercallFuncVoid(Flicky_detectAim, (Flicky* __this, taskwk* twp), (__this, twp), 0x4D8A10, rEDI, rESI);
+FastUsercallHookPtr<void(*)(Flicky* __this, taskwk* twp), noret, rEDI, rESI> Flicky_detectAim(0x4D8A10);
 
 void Flicky_detectAim_r(Flicky* __this, taskwk* twp)
 {

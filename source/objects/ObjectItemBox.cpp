@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "sadx_utils.h"
 #include "splitscreen.h"
 #include "hud_itembox.h"
@@ -6,7 +8,7 @@
 
 Trampoline* ObjectItemboxNormal_t = nullptr;
 Trampoline* itembox_airCollisitonBefore_t = nullptr;
-TaskHook ItemBoxAir_t((intptr_t)ItemBoxAir_Main);
+FastFunctionHook<void, task*> ItemBoxAir_t((intptr_t)ItemBoxAir_Main);
 
 static bool CheckHitByPlayerOrBullet(taskwk* twp)
 {

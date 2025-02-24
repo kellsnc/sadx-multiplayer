@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "splitscreen.h"
 #include "sadx_utils.h"
@@ -48,7 +49,7 @@ VariableHook<Bool, 0x3C4AC98> CamPathCam2Core_AliveFlag_m;
 VariableHook<Sint32, 0x3C4AC8C> avoidMode_m;
 VariableHook<Sint32, 0x3C4ADC4> nowFrame_m;
 
-FunctionHook<void, _OBJ_CAMERAPARAM*> PathCamera1_h(0x4653E0);
+FastFunctionHook<void, _OBJ_CAMERAPARAM*> PathCamera1_h(0x4653E0);
 
 DataPointer(Sint32, demo_count, 0x3C4ACC0);
 

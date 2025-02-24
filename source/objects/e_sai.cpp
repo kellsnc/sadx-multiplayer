@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "netplay.h"
 #include "set.h"
 
-TaskHook EnemySai_h(0x7A1380);
+FastFunctionHook<void, task*> EnemySai_h(0x7A1380);
 
 enum
 {

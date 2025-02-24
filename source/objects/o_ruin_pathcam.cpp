@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
-#include "UsercallFunctionHandler.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
 #include "camera.h"
@@ -32,7 +31,7 @@ struct CamPathWk
 	Sint32 flag;
 };
 
-static UsercallFuncVoid(SetupCamPathCam2_Ruin_h, (task* tp), (tp), 0x5E5D10, rEDI);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEDI> SetupCamPathCam2_Ruin_h(0x5E5D10);
 
 static auto CheckRangeIn = GenerateUsercallWrapper<BOOL(*)(NJS_POINT3*, NJS_POINT3*, NJS_POINT3*, Angle3*)>(rEAX, 0x6122C0, rEAX, rEDX, rECX, rESI);
 static auto Camera_PathLinearScan = GenerateUsercallWrapper<Sint32(*)(taskwk*, NJS_POINT3*, NJS_POINT3*, NJS_POINT3*, Float*)>(rEAX, 0x5E4FE0, rEAX, rECX, rEDI, rESI, stack4);

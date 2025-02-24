@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "gravity.h"
 #include "camera.h"
@@ -7,11 +9,11 @@
 #include "result.h"
 #include "ObjCylinderCmn.h"
 
-TaskHook BigTheCat_t((intptr_t)Big_Main);
-Trampoline* BigChkMode_t = nullptr; //doesn't want to work with FuncHook for some weird reason
-UsercallFunc(Bool, Big_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x48D400, rEAX, rEAX, rEDI, stack4);
-TaskHook Big_Jiggle_t((intptr_t)0x48C720);
-TaskHook BigEyeTracker_t(0x48E2E0);
+FastFunctionHook<void, task*> BigTheCat_t((intptr_t)Big_Main);
+FastUsercallHookPtr<void(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), noret, rEAX, stack4, stack4> BigChkMode_t(0x48E640);
+FastUsercallHookPtr<Bool(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), rEAX, rEAX, rEDI, stack4> Big_CheckInput_t(0x48D400);
+FastFunctionHook<void, task*> Big_Jiggle_t((intptr_t)0x48C720);
+FastFunctionHook<void, task*> BigEyeTracker_t(0x48E2E0);
 
 void __cdecl BigEyeTracker_r(task* tp)
 {
@@ -151,24 +153,6 @@ Bool Big_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 	return Big_CheckInput_t.Original(pwp, twp, mwp);
 }
 
-#pragma region CHK MODE
-
-BOOL BigChkMode_o(taskwk* twp, motionwk2* mwp, playerwk* pwp)
-{
-	auto target = BigChkMode_t->Target();
-	signed int result;
-	__asm
-	{
-		push[mwp]
-		push[twp]
-		mov eax, [pwp]
-		call target
-		add esp, 8
-		mov result, eax
-	}
-	return result;
-}
-
 void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 {
 	if (multiplayer::IsActive())
@@ -238,24 +222,8 @@ void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 		}
 	}
 
-	BigChkMode_o(twp, mwp, pwp);
+	BigChkMode_t.Original(pwp, twp, mwp);
 }
-
-void __declspec(naked) BigChkMode_jmp()
-{
-	__asm
-	{
-		push[esp + 08h] // mwp
-		push[esp + 08h] // twp
-		push eax // pwp
-		call BigChkMode_r
-		pop eax
-		add esp, 8
-		retn
-	}
-}
-
-#pragma endregion
 
 void BigTheCat_m(task* tp)
 {
@@ -327,7 +295,7 @@ void Init_BigPatches()
 {
 	BigTheCat_t.Hook(BigTheCat_r);
 	Big_CheckInput_t.Hook(Big_CheckInput_r);
-	BigChkMode_t = new Trampoline(0x48E640, 0x48E645, BigChkMode_jmp);
+	BigChkMode_t.Hook(BigChkMode_r);
 	Big_Jiggle_t.Hook(Big_Jiggle_r);
 	BigEyeTracker_t.Hook(BigEyeTracker_r);
 }

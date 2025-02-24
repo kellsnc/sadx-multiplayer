@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "UsercallFunctionHandler.h"
+#include "FastFunctionHook.hpp"
 #include "splitscreen.h"
 #include "teleport.h"
 #include "result.h"
@@ -28,8 +28,8 @@ Trampoline* dispBgTwinkle_t = nullptr;
 Trampoline* Bg_MysticRuin_t = nullptr;
 Trampoline* Bg_Past_t = nullptr;
 
-UsercallFunc(Bool, CollisionSceneChangerSS_CheckCollision_t, (taskwk* a1), (a1), 0x640550, rEAX, rESI);
-UsercallFuncVoid(ObjectMysticRuinTorokko_ExecATask_t, (task* tp), (tp), 0x53D830, rEAX);
+FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rESI> CollisionSceneChangerSS_CheckCollision_t(0x640550);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> ObjectMysticRuinTorokko_ExecATask_t(0x53D830);
 
 VoidFunc(HighwayMaskBlock, 0x60FEE0); // real name: "checkCamera"
 FunctionPointer(void, TwinkleMaskBlock, (taskwk* twp), 0x60FEE0); // real name: "checkCamera"

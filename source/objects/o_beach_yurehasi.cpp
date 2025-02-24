@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "camera.h"
 
 static void ObjectBeachYurehasiExec_m(task* tp)
@@ -78,7 +78,7 @@ static void ObjectBeachYurehasiExec_m(task* tp)
 }
 
 static void __cdecl ObjectBeachYurehasiExec_r(task* tp); // "Exec"
-TaskHook ObjectBeachYurehasiExec_h(0x501BC0, ObjectBeachYurehasiExec_r);
+FastFunctionHook<void, task*> ObjectBeachYurehasiExec_h(0x501BC0, ObjectBeachYurehasiExec_r);
 static void __cdecl ObjectBeachYurehasiExec_r(task* tp)
 {
 	if (multiplayer::IsActive())

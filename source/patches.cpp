@@ -3,8 +3,7 @@
 #include "splitscreen.h"
 #include "objects/bosses.h"
 
-#include "FunctionHook.h"
-#include "UsercallFunctionHandler.h"
+#include "FastFunctionHook.hpp"
 
 #include "objects/o_savepoint.h"
 #include "objects/ObjectItemBox.h"
@@ -59,14 +58,14 @@ static Trampoline* TikalDisplay_t = nullptr;
 static Trampoline* ObjectSpringB_t = nullptr;
 static Trampoline* SpinnaDisplayer_t = nullptr;
 static Trampoline* ListGroundForDrawing_t = nullptr;
-static FunctionHook<int, taskwk*, enemywk*> EnemyCheckDamage_t((intptr_t)OhNoImDead);
-static FunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
-UsercallFuncVoid(SonicMotionCheckEdition, (taskwk* twp), (twp), 0x492170, rESI);
-UsercallFunc(signed int, PlayerVacumedRing_t, (taskwk* a1), (a1), 0x44FA90, rEAX, rEDI);
+FastFunctionHook<int, taskwk*, enemywk*> EnemyCheckDamage_t((intptr_t)OhNoImDead);
+FastFunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
+FastUsercallHookPtr<void(*)(taskwk* twp), noret, rESI> SonicMotionCheckEdition(0x492170);
+FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rEDI> PlayerVacumedRing_t(0x44FA90);
 static Trampoline* OGate2_Main_t = nullptr;
-FunctionHook<void, taskwk*> PPlayADXAsWaiting_t(0x442360); //idle
+FastFunctionHook<void, taskwk*> PPlayADXAsWaiting_t(0x442360); //idle
 
-TaskHook OTpRing_t((intptr_t)OTpRing);
+FastFunctionHook<void, task*> OTpRing_t((intptr_t)OTpRing);
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {

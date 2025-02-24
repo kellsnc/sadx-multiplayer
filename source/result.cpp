@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "result.h"
 #include "hud_result.h"
 #include "splitscreen.h"
@@ -7,8 +9,8 @@
 #include "milesrace.h"
 #include "result.h"
 
-static FunctionHook<void> SetFinishAction_t(SetFinishAction);
-static FunctionHook<void, task*> CalcTotalScore_t((intptr_t)0x42BCC0);
+FastFunctionHook<void> SetFinishAction_t(SetFinishAction);
+FastFunctionHook<void, task*> CalcTotalScore_t((intptr_t)0x42BCC0);
 
 static int gBattleResult = 0;
 

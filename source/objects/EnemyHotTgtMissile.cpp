@@ -1,5 +1,5 @@
 #include "pch.h"
-#include <UsercallFunctionHandler.h>
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 
 //static auto chkDamage = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5AC700, rEAX);

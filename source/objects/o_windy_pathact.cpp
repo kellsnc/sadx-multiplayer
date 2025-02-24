@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 
 void __cdecl PathworkGoneWithTheWind_r(task* tp);
-TaskHook PathworkGoneWithTheWind_h(0x4DF020, PathworkGoneWithTheWind_r);
+FastFunctionHook<void, task*> PathworkGoneWithTheWind_h(0x4DF020, PathworkGoneWithTheWind_r);
 void __cdecl PathworkGoneWithTheWind_r(task* tp)
 {
 	auto twp = tp->twp;

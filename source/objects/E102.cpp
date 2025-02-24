@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
@@ -14,10 +14,10 @@ DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 VariableHook<char, 0x3C53C40> e102_hover_flag_m;
 VariableHook<char, 0x3C53C41> e102_hover_flag_p_m;
 
-static FunctionHook<void, task*, motionwk2*, playerwk*> E102_RunsActions_t((intptr_t)0x481460);
-UsercallFunc(signed int, E102_CheckInput_t, (playerwk* a1, taskwk* a2, motionwk2* a3), (a1, a2, a3), 0x480870, rEAX, rEDI, rESI, stack4);
-TaskHook E102_t((intptr_t)0x483430);
-TaskHook E102DispTimeUpWarning_t(0x4C51D0);
+FastFunctionHook<void, task*, motionwk2*, playerwk*> E102_RunsActions_t((intptr_t)0x481460);
+FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> E102_CheckInput_t(0x480870);
+FastFunctionHook<void, task*> E102_t((intptr_t)0x483430);
+FastFunctionHook<void, task*> E102DispTimeUpWarning_t(0x4C51D0);
 
 bool IsCountingDown()
 {
@@ -161,7 +161,7 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 	E102_RunsActions_t.Original(tp, mwp, pwp);
 }
 
-signed int E102_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
+signed int E102_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -170,7 +170,7 @@ signed int E102_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return E102_CheckInput_t.Original(pwp, twp, mwp);
+			return E102_CheckInput_t.Original(twp, pwp, mwp);
 		}
 
 		switch (twp->smode)
@@ -203,7 +203,7 @@ signed int E102_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 		}
 	}
 
-	return E102_CheckInput_t.Original(pwp, twp, mwp);
+	return E102_CheckInput_t.Original(twp, pwp, mwp);
 }
 
 static void __cdecl E102Display_r(task* tp);

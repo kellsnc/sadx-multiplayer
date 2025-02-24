@@ -1,8 +1,9 @@
 #include "pch.h"
 #include <d3d8types.h>
 #include <d3d8.h>
-#include <SADXModLoader.h>
-#include <Trampoline.h>
+#include "SADXModLoader.h"
+#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "config.h"
 #include "hud_multi.h"
 #include "d3d8vars.h"
@@ -19,10 +20,10 @@ Series of hacks to make splitscreen possible
 
 */
 
-FunctionHook<void> SpLoopOnlyDisplay_hook(0x456CD0);
-FunctionHook<void> DisplayTask_hook(0x40B540);
-FunctionHook<void> LoopTask_hook(0x40B170);
-Trampoline* njDrawQuadTextureEx_t = nullptr;
+FastFunctionHook<void> SpLoopOnlyDisplay_hook(0x456CD0);
+FastFunctionHook<void> DisplayTask_hook(0x40B540);
+FastFunctionHook<void> LoopTask_hook(0x40B170);
+FastFunctionHook<void, NJS_QUAD_TEXTURE_EX*> njDrawQuadTextureEx_hook(0x77DE10);
 
 void __cdecl DisplayTask_r();
 
@@ -368,7 +369,7 @@ void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
 		quad->vy2 *= ratio->h;
 	}
 
-	TARGET_DYNAMIC(njDrawQuadTextureEx)(quad);
+	njDrawQuadTextureEx_hook.Original(quad);
 }
 
 void InitSplitScreen()
@@ -378,7 +379,7 @@ void InitSplitScreen()
 		SpLoopOnlyDisplay_hook.Hook(SpLoopOnlyDisplay_r);
 		DisplayTask_hook.Hook(DisplayTask_r);
 		LoopTask_hook.Hook(LoopTask_r);
-		njDrawQuadTextureEx_t = new Trampoline(0x77DE10, 0x77DE18, njDrawQuadTextureEx_r);
+		njDrawQuadTextureEx_hook.Hook(njDrawQuadTextureEx_r);
 
 		if (config.mHorizontalLayout == true)
 		{

@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "camera.h"
 #include "teleport.h"
 
@@ -7,10 +9,10 @@ static void __cdecl KillHimByFallingDownP_r(int pno);
 static void __cdecl KillPlayerFallingDownStageP_r(task* tp);
 static void __cdecl BreathCounterP_r(task* tp);
 
-static FunctionHook<void, int> KillHimP_t(KillHimP, KillHimP_r);
-static FunctionHook<void, int> KillHimByFallingDownP_t(KillHimByFallingDownP, KillHimByFallingDownP_r);
-TaskHook KillPlayerFallingDownStageP_t(0x44AE80, KillPlayerFallingDownStageP_r);
-TaskHook BreathCounterP_t(0x446B10, BreathCounterP_r);
+FastFunctionHook<void, int> KillHimP_t(KillHimP, KillHimP_r);
+FastFunctionHook<void, int> KillHimByFallingDownP_t(KillHimByFallingDownP, KillHimByFallingDownP_r);
+FastFunctionHook<void, task*> KillPlayerFallingDownStageP_t(0x44AE80, KillPlayerFallingDownStageP_r);
+FastFunctionHook<void, task*> BreathCounterP_t(0x446B10, BreathCounterP_r);
 
 void __cdecl GamePlayerMissedFree(task* tp)
 {

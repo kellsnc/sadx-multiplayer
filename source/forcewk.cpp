@@ -1,12 +1,12 @@
 #include "pch.h"
-#include "UsercallFunctionHandler.h"
+#include "FastFunctionHook.hpp"
 
 // The force worker (what moves player on moving geometry collisions) is hardcoded for 2 players
 // We patch if for 4 players
 
 static constexpr size_t memsize = 0x1C * PLAYER_MAX;
 
-static UsercallFuncVoid(PSSGCollisionForceWorkEffect_t, (playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp), (pwp, vec, twp, cp), 0x43CA40, rEAX, rECX, rESI, stack4);
+FastUsercallHookPtr<void(*)(playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp), noret, rEAX, rECX, rESI, stack4> PSSGCollisionForceWorkEffect_t(0x43CA40);
 
 static void __cdecl PSSGCollisionForceWorkEffect_r(playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp)
 {

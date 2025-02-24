@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "camera.h"
 #include "camerafunc.h"
 #include "splitscreen.h"
@@ -7,14 +9,14 @@
 
 static const int timeLimit = 300;
 
-static FunctionHook<void, taskwk*, chaoswk*> turnToPlayer_t(0x7AE660);
-static FunctionHook<void, task*> chaos0_t(0x548640);
-static FunctionHook<void, task*> Bg_Chaos0_t(0x545DF0);
+FastFunctionHook<void, taskwk*, chaoswk*> turnToPlayer_t(0x7AE660);
+FastFunctionHook<void, task*> chaos0_t(0x548640);
+FastFunctionHook<void, task*> Bg_Chaos0_t(0x545DF0);
+FastUsercallHookPtr<Angle(*)(chaoswk* cwk), rEAX, rEDI> setApartTargetPos_t(0x546460);
+FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp), noret, rECX, rESI> chaos0Pole_t(0x547260);
+FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp, bosswk* bwk), noret, rEDI, rESI, stack4> chaos0Punch_t(0x546790);
 
 UsercallFuncVoid(SetChaos0LandFlags, (BOOL flag), (flag), 0x5485E0, rEDX);
-UsercallFunc(Angle, setApartTargetPos_t, (chaoswk* cwk), (cwk), 0x546460, rEAX, rEDI);
-UsercallFuncVoid(chaos0Pole_t, (chaoswk* cwk, taskwk* data), (cwk, data), 0x547260, rECX, rESI);
-UsercallFuncVoid(chaos0Punch_t, (chaoswk* cwk, taskwk* data, bosswk* bwk), (cwk, data, bwk), 0x546790, rEDI, rESI, stack4);
 
 //Patches Chaos effects to make them display on other player screens, it is done by manually setting a disp function that is lacking in vanilla.
 

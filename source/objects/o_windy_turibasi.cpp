@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "sadx_utils.h"
 
 TaskFunc(ObjectTuribasiDisplayer, 0x7A6240);
@@ -31,7 +31,7 @@ void __cdecl ObjectWindyTuribasiDisplayerE102(task* tp)
 }
 
 void __cdecl ObjectWindyTuriBrokenE102(task* tp);
-TaskHook ObjectWindyTuriBrokenE102_h(0x4E0FC0, ObjectWindyTuriBrokenE102);
+FastFunctionHook<void, task*> ObjectWindyTuriBrokenE102_h(0x4E0FC0, ObjectWindyTuriBrokenE102);
 void __cdecl ObjectWindyTuriBrokenE102(task* tp)
 {
 	ObjectWindyTuriBrokenE102_h.Original(tp);

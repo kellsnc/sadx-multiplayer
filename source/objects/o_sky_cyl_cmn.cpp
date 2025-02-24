@@ -1,7 +1,12 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "sadx_utils.h"
+
+UsercallFunc(BOOL, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
+
+void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd);
+FastFunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0, dsHangPoleCom_r);
 
 signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* co2)
 {
@@ -168,10 +173,6 @@ void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2)
 	return;
 }
 
-UsercallFunc(BOOL, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
-
-void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd);
-FunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0, dsHangPoleCom_r);
 void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd)
 {
 	if (!multiplayer::IsActive)

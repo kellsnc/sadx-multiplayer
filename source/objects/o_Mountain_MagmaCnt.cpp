@@ -1,9 +1,9 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 
 void __cdecl Magmacnt_Main_r(task* obj);
-
-TaskHook Magmacnt_Main_t(0x608730, Magmacnt_Main_r);
-
+FastFunctionHook<void, task*> Magmacnt_Main_t(0x608730, Magmacnt_Main_r);
 void __cdecl Magmacnt_Main_r(task* tp)
 {
 	auto twp = tp->twp;

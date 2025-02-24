@@ -1,15 +1,17 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "bosses.h"
 #include "levels.h"
 
-TaskHook eggHornet_t(0x572010);
-static FunctionHook<int> EH_PosPlayerCheck_t(0x573310);
-static FunctionHook<int, taskwk*> EH_GetVsPlayerAng_t(0x573160);
+FastFunctionHook<void, task*> eggHornet_t(0x572010);
+FastFunctionHook<int> EH_PosPlayerCheck_t(0x573310);
+FastFunctionHook<int, taskwk*> EH_GetVsPlayerAng_t(0x573160);
 
-UsercallFuncVoid(SetEgm1MoveRoute_t, (task* tp, taskwk* data, bossextwk* egm), (tp, data, egm), 0x5733E0, rECX, rEAX, rESI);
-UsercallFuncVoid(SetEgm1Ud_t, (task* tp), (tp), 0x5736D0, rEAX);
-UsercallFuncVoid(setEgm1Missile_t, (taskwk* data), (data), 0x573730, rEAX);
-UsercallFuncVoid(SetEgm1AtkRoute_t, (bossextwk* egm, taskwk* data), (egm, data), 0x5735B0, rECX, rEAX);
+FastUsercallHookPtr<void(*)(task* tp, taskwk* data, bossextwk* egm), noret, rECX, rEAX, rESI> SetEgm1MoveRoute_t(0x5733E0);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> SetEgm1Ud_t(0x5736D0);
+FastUsercallHookPtr<void(*)(taskwk* twp), noret, rEAX> setEgm1Missile_t(0x573730);
+FastUsercallHookPtr<void(*)(bossextwk* egm, taskwk* twp), noret, rECX, rEAX> SetEgm1AtkRoute_t(0x5735B0);
 
 static const int timeLimit = 400;
 

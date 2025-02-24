@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "sadx_utils.h"
 #include "utils.h"
@@ -12,8 +12,8 @@ FunctionPointer(Bool, CreateChkDashPlayer, (task* tp, Sint32 pl_num, Float dist)
 void ChkDashPlayer_r(task* tp);
 Bool InitCmnDushRing_r(task* tp);
 
-FunctionHook<void, task*> ChkDashPlayer_h(0x7A2500, ChkDashPlayer_r);
-FunctionHook<Bool, task*> InitCmnDushRing_h(0x7A2660, InitCmnDushRing_r);
+FastFunctionHook<void, task*> ChkDashPlayer_h(0x7A2500, ChkDashPlayer_r);
+FastFunctionHook<Bool, task*> InitCmnDushRing_h(0x7A2660, InitCmnDushRing_r);
 
 // The original code checks for all player despite being a per-player subtask
 void ChkDashPlayer_m(task* tp)

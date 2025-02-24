@@ -1,12 +1,11 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "UsercallFunctionHandler.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 
 // Crabs in Final Egg 3
 
-UsercallFuncVoid(chk_mode_Hook, (taskwk* twp, gachamotionwk* mwp, task* tp), (twp, mwp, tp), 0x5B00A0, rECX, rEAX, stack4);
-UsercallFuncVoid(GachaCheckColli_Hook, (taskwk* twp, gachamotionwk* mwp), (twp, mwp), 0x5AFA20, rESI, rEDI);
+FastUsercallHookPtr<void(*)(taskwk* twp, gachamotionwk* mwp, task* tp), noret, rECX, rEAX, stack4> chk_mode_Hook(0x5B00A0);
+FastUsercallHookPtr<void(*)(taskwk* twp, gachamotionwk* mwp), noret, rESI, rEDI> GachaCheckColli_Hook(0x5AFA20);
 
 void chk_mode_r(taskwk* twp, gachamotionwk* mwp, task* tp)
 {

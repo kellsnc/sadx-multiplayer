@@ -1,8 +1,10 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 
 //patch multiple cannon in SD to make every player bounce on them
 void dsHangPoleCom_r(taskwk* a1);
-static FunctionHook<void, taskwk*> dsHangPoleCom_t((intptr_t)0x5FE570, dsHangPoleCom_r);
+FastFunctionHook<void, taskwk*> dsHangPoleCom_t((intptr_t)0x5FE570, dsHangPoleCom_r);
 
 void dsHangPoleCom_r(taskwk* a1)
 {

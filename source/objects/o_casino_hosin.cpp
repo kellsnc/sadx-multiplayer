@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 
 // Casinopolis object that sends the player in a parabolic manner with smoke effects (cannons, barrel)
@@ -60,7 +60,7 @@ void ExecHosin_m(task* tp)
 }
 
 void __cdecl ExecHosin_r(task* tp);
-TaskHook ExecHosin_h(0x5C5400, ExecHosin_r);
+FastFunctionHook<void, task*> ExecHosin_h(0x5C5400, ExecHosin_r);
 void __cdecl ExecHosin_r(task* tp)
 {
 	if (multiplayer::IsActive())

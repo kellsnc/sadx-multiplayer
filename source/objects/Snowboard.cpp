@@ -1,9 +1,9 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "FunctionHook.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 
-FunctionHook<void, task*> SetPlayerSnowBoard_Hook(0x4E9660);
+FastFunctionHook<void, task*> SetPlayerSnowBoard_Hook(0x4E9660);
 
 static void SetPlayerSnowBoard_m()
 {
