@@ -321,7 +321,7 @@ static void ObjectTPCatapult_m(task* tp)
 }
 
 static void __cdecl ObjectTPCatapult_r(task* tp);
-Trampoline ObjectTPCatapult_t(0x6223C0, 0x6223C8, ObjectTPCatapult_r);
+FastFunctionHookPtr<decltype(&ObjectTPCatapult_r)> ObjectTPCatapult_t(0x6223C0, ObjectTPCatapult_r);
 static void __cdecl ObjectTPCatapult_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -330,6 +330,6 @@ static void __cdecl ObjectTPCatapult_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectTPCatapult)(tp);
+		ObjectTPCatapult_t.Original(tp);
 	}
 }

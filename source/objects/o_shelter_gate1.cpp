@@ -20,7 +20,7 @@ static bool CheckCollisionCylinder(NJS_POINT3* pt, NJS_POINT3* vp, float r, floa
 }
 
 static void __cdecl execShelterGate1_r(task* tp); // "ExecATask"
-Trampoline execShelterGate1_t(0x5A1F70, 0x5A1F78, execShelterGate1_r);
+FastFunctionHookPtr<decltype(&execShelterGate1_r)> execShelterGate1_t(0x5A1F70, execShelterGate1_r);
 static void __cdecl execShelterGate1_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == MODE_NORMAL)
@@ -48,6 +48,6 @@ static void __cdecl execShelterGate1_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(execShelterGate1)(tp);
+		execShelterGate1_t.Original(tp);
 	}
 }

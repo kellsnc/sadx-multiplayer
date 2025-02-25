@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "utils.h"
 #include "multiplayer.h"
@@ -14,9 +14,9 @@ static void __cdecl ObjectSkydeck_Wall_r(task* tp);
 static void __cdecl RdSkydeckWind_r(__int16 act);
 static void __cdecl Skydeck_EggcarrierCtrl_r(__int16 act);
 
-Trampoline ObjectSkydeck_Wall_t(0x5EF2B0, 0x5EF2B5, ObjectSkydeck_Wall_r);
-Trampoline RdSkydeckWind_t(0x5EF300, 0x5EF309, RdSkydeckWind_r);
-Trampoline Skydeck_EggcarrierCtrl_t(0x5ECA80, 0x5ECA87, Skydeck_EggcarrierCtrl_r);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_Wall_r)> ObjectSkydeck_Wall_t(0x5EF2B0, ObjectSkydeck_Wall_r);
+FastFunctionHookPtr<decltype(&RdSkydeckWind_r)> RdSkydeckWind_t(0x5EF300, RdSkydeckWind_r);
+FastFunctionHookPtr<decltype(&Skydeck_EggcarrierCtrl_r)> Skydeck_EggcarrierCtrl_t(0x5ECA80, Skydeck_EggcarrierCtrl_r);
 
 static void Skydeck_EggcarrierCtrl_m(__int16 act)
 {
@@ -183,7 +183,7 @@ static void __cdecl Skydeck_EggcarrierCtrl_r(__int16 act)
 	}
 	else
 	{
-		TARGET_STATIC(Skydeck_EggcarrierCtrl)(act);
+		Skydeck_EggcarrierCtrl_t.Original(act);
 	}
 }
 
@@ -282,7 +282,7 @@ static void __cdecl RdSkydeckWind_r(__int16 act)
 	}
 	else
 	{
-		TARGET_STATIC(RdSkydeckWind)(act);
+		RdSkydeckWind_t.Original(act);
 	}
 }
 
@@ -300,6 +300,6 @@ static void __cdecl ObjectSkydeck_Wall_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectSkydeck_Wall)(tp);
+		ObjectSkydeck_Wall_t.Original(tp);
 	}
 }

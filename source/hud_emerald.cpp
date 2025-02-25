@@ -3,8 +3,8 @@
 #include "splitscreen.h"
 #include "hud_emerald.h"
 
-Trampoline* Knuckles_KakeraGameExec_t = nullptr;
-Trampoline* Knuckles_KakeraGamePutRadar1C_t = nullptr;
+FastFunctionHook<void, task*> Knuckles_KakeraGameExec_t(0x475E50);
+FastFunctionHook<void, task*> Knuckles_KakeraGamePutRadar1C_t(0x475A70);
 
 void DrawBattleEmeRadar(int pnum, int scalors)
 {
@@ -73,12 +73,12 @@ void __cdecl Knuckles_KakeraGameExec_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		TARGET_DYNAMIC(Knuckles_KakeraGameExec)(tp);
+		Knuckles_KakeraGameExec_t.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		TARGET_DYNAMIC(Knuckles_KakeraGameExec)(tp);
+		Knuckles_KakeraGameExec_t.Original(tp);
 	}
 }
 
@@ -88,17 +88,17 @@ void __cdecl Knuckles_KakeraGamePutRadar1C_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		TARGET_DYNAMIC(Knuckles_KakeraGamePutRadar1C)(tp);
+		Knuckles_KakeraGamePutRadar1C_t.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		TARGET_DYNAMIC(Knuckles_KakeraGamePutRadar1C)(tp);
+		Knuckles_KakeraGamePutRadar1C_t.Original(tp);
 	}
 }
 
 void InitEmeraldRadar()
 {
-	Knuckles_KakeraGameExec_t = new Trampoline(0x475E50, 0x475E55, Knuckles_KakeraGameExec_r);
-	Knuckles_KakeraGamePutRadar1C_t = new Trampoline(0x475A70, 0x475A75, Knuckles_KakeraGamePutRadar1C_r);
+	Knuckles_KakeraGameExec_t.Hook(Knuckles_KakeraGameExec_r);
+	Knuckles_KakeraGamePutRadar1C_t.Hook(Knuckles_KakeraGamePutRadar1C_r);
 }

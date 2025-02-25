@@ -48,7 +48,7 @@ static void ObjectEmeraldPRegular_m(task* tp)
 }
 
 static void __cdecl ObjectEmeraldPRegular_r(task* tp);
-Trampoline ObjectEmeraldPRegular_t(0x4A2FD0, 0x4A2FDA, ObjectEmeraldPRegular_r);
+FastFunctionHookPtr<decltype(&ObjectEmeraldPRegular_r)> ObjectEmeraldPRegular_t(0x4A2FD0, ObjectEmeraldPRegular_r);
 static void __cdecl ObjectEmeraldPRegular_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -57,6 +57,6 @@ static void __cdecl ObjectEmeraldPRegular_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectEmeraldPRegular)(tp);
+		ObjectEmeraldPRegular_t.Original(tp);
 	}
 }

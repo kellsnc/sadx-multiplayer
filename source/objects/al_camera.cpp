@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "sadx_utils.h"
 #include "utils.h"
 #include "multiplayer.h"
@@ -284,10 +284,10 @@ task* AL_CreateNormalCameraTask_m(int pnum)
 }
 
 void AL_CreateNormalCameraTask_r();
-Trampoline AL_CreateNormalCameraTask_t(0x0072A570, 0x0072A575, AL_CreateNormalCameraTask_r);
+FastFunctionHookPtr<decltype(&AL_CreateNormalCameraTask_r)> AL_CreateNormalCameraTask_t(0x0072A570, AL_CreateNormalCameraTask_r);
 void AL_CreateNormalCameraTask_r()
 {
-	TARGET_STATIC(AL_CreateNormalCameraTask)();
+	AL_CreateNormalCameraTask_t.Original();
 
 	if (multiplayer::IsActive())
 	{
@@ -320,10 +320,10 @@ void ALCAM_ModeSystem_m(_OBJ_CAMERAPARAM* pParam)
 }
 
 void ALCAM_CreateCameraManager_r();
-Trampoline ALCAM_CreateCameraManager_t(0x0072A750, 0x0072A755, ALCAM_CreateCameraManager_r);
+FastFunctionHookPtr<decltype(&ALCAM_CreateCameraManager_r)> ALCAM_CreateCameraManager_t(0x0072A750, ALCAM_CreateCameraManager_r);
 void ALCAM_CreateCameraManager_r()
 {
-	TARGET_STATIC(ALCAM_CreateCameraManager)();
+	ALCAM_CreateCameraManager_t.Original();
 	if (multiplayer::IsActive())
 	{
 		for (int i = 1; i < PLAYER_MAX; ++i)

@@ -90,7 +90,7 @@ static void execObject_m(task* tp)
 }
 
 static void __cdecl ObjectCartStopper_execObject_r(task* tp);
-Trampoline ObjectCartStopper_execObject_t(0x7B13D0, 0x7B13D5, ObjectCartStopper_execObject_r);
+FastFunctionHookPtr<decltype(&ObjectCartStopper_execObject_r)> ObjectCartStopper_execObject_t(0x7B13D0, ObjectCartStopper_execObject_r);
 static void __cdecl ObjectCartStopper_execObject_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -99,6 +99,6 @@ static void __cdecl ObjectCartStopper_execObject_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectCartStopper_execObject)(tp);
+		ObjectCartStopper_execObject_t.Original(tp);
 	}
 }

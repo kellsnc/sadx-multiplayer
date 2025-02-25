@@ -48,7 +48,7 @@ static void  EffectSkyScope_m(task* tp)
 }
 
 static void __cdecl EffectSkyScope_r(task* tp);
-Trampoline EffectSkyScope_t(0x5F1AA0, 0x5F1AA6, EffectSkyScope_r);
+FastFunctionHookPtr<decltype(&EffectSkyScope_r)> EffectSkyScope_t(0x5F1AA0, EffectSkyScope_r);
 static void __cdecl EffectSkyScope_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -57,6 +57,6 @@ static void __cdecl EffectSkyScope_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(EffectSkyScope)(tp);
+		EffectSkyScope_t.Original(tp);
 	}
 }

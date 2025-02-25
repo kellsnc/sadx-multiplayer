@@ -169,7 +169,7 @@ static void ObjShelterCrane_m(task* tp)
 }
 
 static void __cdecl ObjShelterCrane_r(task* tp);
-Trampoline ObjShelterCrane_t(0x5A5110, 0x5A5118, ObjShelterCrane_r);
+FastFunctionHookPtr<decltype(&ObjShelterCrane_r)> ObjShelterCrane_t(0x5A5110, ObjShelterCrane_r);
 static void __cdecl ObjShelterCrane_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -178,6 +178,6 @@ static void __cdecl ObjShelterCrane_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterCrane)(tp);
+		ObjShelterCrane_t.Original(tp);
 	}
 }

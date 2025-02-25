@@ -13,11 +13,11 @@ static void __cdecl ObjShelterTunnelscrollDisp_r(task* tp); // "Disp"
 static void __cdecl ObjShelterTunnelcolExec_r(task* tp); // "Exec"
 static void __cdecl TunnelManagerExec_r(task* tp); // "Exec"
 
-Trampoline ObjShelterFadeDisp_t(0x5ABB80, 0x5ABB85, ObjShelterFadeDisp_r);
-Trampoline ObjShelterTunnelscrollExec_t(0x5AC3B0, 0x5AC3B5, ObjShelterTunnelscrollExec_r);
-Trampoline ObjShelterTunnelscrollDisp_t(0x5AC2F0, 0x5AC2F5, ObjShelterTunnelscrollDisp_r);
-Trampoline ObjShelterTunnelcolExec_t(0x5AC050, 0x5AC055, ObjShelterTunnelcolExec_r);
-Trampoline TunnelManagerExec_t(0x59AD50, 0x59AD57, TunnelManagerExec_r);
+FastFunctionHookPtr<decltype(&ObjShelterFadeDisp_r)> ObjShelterFadeDisp_t(0x5ABB80, ObjShelterFadeDisp_r);
+FastFunctionHookPtr<decltype(&ObjShelterTunnelscrollExec_r)> ObjShelterTunnelscrollExec_t(0x5AC3B0, ObjShelterTunnelscrollExec_r);
+FastFunctionHookPtr<decltype(&ObjShelterTunnelscrollDisp_r)> ObjShelterTunnelscrollDisp_t(0x5AC2F0, ObjShelterTunnelscrollDisp_r);
+FastFunctionHookPtr<decltype(&ObjShelterTunnelcolExec_r)> ObjShelterTunnelcolExec_t(0x5AC050, ObjShelterTunnelcolExec_r);
+FastFunctionHookPtr<decltype(&TunnelManagerExec_r)> TunnelManagerExec_t(0x59AD50, TunnelManagerExec_r);
 
 #pragma region ObjShelterFade
 static void ObjShelterFadeDisp_m(task* tp)
@@ -60,7 +60,7 @@ static void __cdecl ObjShelterFadeDisp_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterFadeDisp)(tp);
+		ObjShelterFadeDisp_t.Original(tp);
 	}
 }
 
@@ -84,7 +84,7 @@ static void __cdecl ObjShelterTunnelscrollDisp_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(ObjShelterTunnelscrollDisp)(tp);
+	ObjShelterTunnelscrollDisp_t.Original(tp);
 }
 
 static void ObjShelterTunnelscrollExec_m(task* tp)
@@ -127,7 +127,7 @@ static void __cdecl ObjShelterTunnelscrollExec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterTunnelscrollExec)(tp);
+		ObjShelterTunnelscrollExec_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -162,7 +162,7 @@ static void __cdecl ObjShelterTunnelcolExec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterTunnelcolExec)(tp);
+		ObjShelterTunnelcolExec_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -285,7 +285,7 @@ void __cdecl TunnelManagerExec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterTunnelscrollExec)(tp);
+		ObjShelterTunnelscrollExec_t.Original(tp);
 	}
 }
 #pragma endregion

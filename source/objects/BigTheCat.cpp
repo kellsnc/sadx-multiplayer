@@ -36,7 +36,7 @@ void __cdecl Big_Jiggle_r(task* tp)
 }
 
 void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp);
-Trampoline bigActMissSet_t(0x48CD50, 0x48CD55, bigActMissSet_r);
+FastFunctionHookPtr<decltype(&bigActMissSet_r)> bigActMissSet_t(0x48CD50, bigActMissSet_r);
 void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (multiplayer::IsActive())
@@ -61,12 +61,12 @@ void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	}
 	else
 	{
-		TARGET_STATIC(bigActMissSet)(twp, mwp, pwp);
+		bigActMissSet_t.Original(twp, mwp, pwp);
 	}
 }
 
 void __cdecl sub_48CDE0_r();
-Trampoline sub_48CDE0_t(0x48CDE0, 0x48CDE5, sub_48CDE0_r);
+FastFunctionHookPtr<decltype(&sub_48CDE0_r)> sub_48CDE0_t(0x48CDE0, sub_48CDE0_r);
 void __cdecl sub_48CDE0_r()
 {
 	if (multiplayer::IsActive())
@@ -84,12 +84,12 @@ void __cdecl sub_48CDE0_r()
 	}
 	else
 	{
-		TARGET_STATIC(sub_48CDE0)();
+		sub_48CDE0_t.Original();
 	}
 }
 
 void __cdecl sub_48CE10_r();
-Trampoline sub_48CE10_t(0x48CE10, 0x48CE17, sub_48CE10_r);
+FastFunctionHookPtr<decltype(&sub_48CE10_r)> sub_48CE10_t(0x48CE10, sub_48CE10_r);
 void __cdecl sub_48CE10_r()
 {
 	if (multiplayer::IsActive())
@@ -108,7 +108,7 @@ void __cdecl sub_48CE10_r()
 	}
 	else
 	{
-		TARGET_STATIC(sub_48CE10)();
+		sub_48CE10_t.Original();
 	}
 }
 

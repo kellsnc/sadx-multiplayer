@@ -207,7 +207,7 @@ signed int E102_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 }
 
 static void __cdecl E102Display_r(task* tp);
-Trampoline E102Display_t(0x47FD50, 0x47FD57, E102Display_r);
+FastFunctionHookPtr<decltype(&E102Display_r)> E102Display_t(0x47FD50, E102Display_r);
 static void __cdecl E102Display_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -253,7 +253,7 @@ static void __cdecl E102Display_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(E102Display)(tp);
+	E102Display_t.Original(tp);
 }
 
 static void E102_m(task* tp)
@@ -300,15 +300,15 @@ void __cdecl E102_r(task* tp)
 }
 
 static void __cdecl E102LockOnCursor_r(task* tp);
-Trampoline E102LockOnCursor_t(0x4CF090, 0x4CF097, E102LockOnCursor_r);
+FastFunctionHookPtr<decltype(&E102LockOnCursor_r)> E102LockOnCursor_t(0x4CF090, E102LockOnCursor_r);
 static void __cdecl E102LockOnCursor_r(task* tp)
 {
 	e102_work_ptr = (E102WK*)tp->awp[1].work.ul[0];
-	TARGET_STATIC(E102LockOnCursor)(tp);
+	E102LockOnCursor_t.Original(tp);
 }
 
 static void __cdecl E102Beam_r(task* tp);
-Trampoline E102Beam_t(0x4C40B0, 0x4C40B5, E102Beam_r);
+FastFunctionHookPtr<decltype(&E102Beam_r)> E102Beam_t(0x4C40B0, E102Beam_r);
 static void __cdecl E102Beam_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -323,11 +323,11 @@ static void __cdecl E102Beam_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(E102Beam)(tp);
+	E102Beam_t.Original(tp);
 }
 
 static void __cdecl E102AddSecTotalNewDisplay_r(task* tp);
-Trampoline E102AddSecTotalNewDisplay_t(0x49FDA0, 0x49FDA5, E102AddSecTotalNewDisplay_r);
+FastFunctionHookPtr<decltype(&E102AddSecTotalNewDisplay_r)> E102AddSecTotalNewDisplay_t(0x49FDA0, E102AddSecTotalNewDisplay_r);
 static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
 {
 	if (IsCountingDown())
@@ -336,23 +336,23 @@ static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
 		{
 			SplitScreen::SaveViewPort();
 			SplitScreen::ChangeViewPort(-1);
-			TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+			E102AddSecTotalNewDisplay_t.Original(tp);
 			SplitScreen::RestoreViewPort();
 		}
 		else
 		{
-			TARGET_STATIC(E102AddSecTotalNewDisplay)(tp);
+			E102AddSecTotalNewDisplay_t.Original(tp);
 		}
 	}
 }
 
 static void __cdecl E102AddSecTotalNew_r(task* tp);
-Trampoline E102AddSecTotalNew_t(0x49FF10, 0x49FF16, E102AddSecTotalNew_r);
+FastFunctionHookPtr<decltype(&E102AddSecTotalNew_r)> E102AddSecTotalNew_t(0x49FF10, E102AddSecTotalNew_r);
 static void __cdecl E102AddSecTotalNew_r(task* tp)
 {
 	if (IsCountingDown())
 	{
-		TARGET_STATIC(E102AddSecTotalNew)(tp);
+		E102AddSecTotalNew_t.Original(tp);
 	}
 }
 

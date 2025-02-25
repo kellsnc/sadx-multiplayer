@@ -5,18 +5,8 @@
 
 // Moving platforms in Final Egg
 
-static void Ukishima_ExecATask_w();
-Trampoline Ukishima_ExecATask_t(0x5B7950, 0x5B7955, Ukishima_ExecATask_w);
-
-static void Ukishima_ExecATask_o(task* tp)
-{
-	auto target = Ukishima_ExecATask_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
+static void __cdecl Ukishima_ExecATask_r(task* tp);
+FastUsercallHookPtr<decltype(&Ukishima_ExecATask_r), noret, rEAX> Ukishima_ExecATask_t(0x5B7950, Ukishima_ExecATask_r);
 
 static void ExecATask_m(task* tp)
 {
@@ -67,17 +57,6 @@ static void __cdecl Ukishima_ExecATask_r(task* tp)
 	}
 	else
 	{
-		Ukishima_ExecATask_o(tp);
-	}
-}
-
-static void __declspec(naked) Ukishima_ExecATask_w()
-{
-	__asm
-	{
-		push eax
-		call Ukishima_ExecATask_r
-		pop eax
-		retn
+		Ukishima_ExecATask_t.Original(tp);
 	}
 }

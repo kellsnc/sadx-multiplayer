@@ -5,11 +5,11 @@
 
 #define SQUARE(x)((x) * (x))
 
-Trampoline* ProcessStatusTable_t = nullptr;
-Trampoline* CheckRangeWithR_t = nullptr;
-Trampoline* CheckRangeOutWithR_t = nullptr;
-Trampoline* SDCheckRangeOutWithR_t = nullptr;
-Trampoline* LoadSetFile_t = nullptr;
+FastFunctionHook<void> ProcessStatusTable_t(0x46BCE0);
+FastFunctionHook<Bool, task*, float> CheckRangeWithR_t(0x46BFA0);
+FastFunctionHook<Bool, task*, float> CheckRangeOutWithR_t(0x46C010);
+FastFunctionHook<Bool, task*, float> SDCheckRangeOutWithR_t(0x5EDB10);
+FastUsercallHookPtr<void(*)(Uint32 u32SetType, const char* pcFileName), noret, rECX, stack4> LoadSetFile_t(0x422930);
 
 DataPointer(OBJ_CONDITION*, pObjStatusEntry, 0x46B817); // Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
 
@@ -206,11 +206,11 @@ void __cdecl ProcessStatusTable_r()
 	}
 	else
 	{
-		TARGET_DYNAMIC(ProcessStatusTable)();
+		ProcessStatusTable_t.Original();
 	}
 }
 
-BOOL CheckRangeWithR_m(task* tp, float fRange)
+Bool CheckRangeWithR_m(task* tp, float fRange)
 {
 	if ((tp->ocp && (tp->ocp->ssCondition & 8)) || fRange == 0.0f)
 	{
@@ -226,7 +226,7 @@ BOOL CheckRangeWithR_m(task* tp, float fRange)
 }
 
 // Check object deletion for every player
-BOOL __cdecl CheckRangeWithR_r(task* tp, float fRange)
+Bool __cdecl CheckRangeWithR_r(task* tp, float fRange)
 {
 	if (multiplayer::IsActive())
 	{
@@ -234,12 +234,12 @@ BOOL __cdecl CheckRangeWithR_r(task* tp, float fRange)
 	}
 	else
 	{
-		return TARGET_DYNAMIC(CheckRangeWithR)(tp, fRange);
+		return CheckRangeWithR_t.Original(tp, fRange);
 	}
 }
 
 // Check object deletion for every player
-BOOL __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
+Bool __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
 {
 	if (multiplayer::IsActive())
 	{
@@ -253,12 +253,12 @@ BOOL __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
 	}
 	else
 	{
-		return TARGET_DYNAMIC(CheckRangeOutWithR)(tp, fRange);
+		return CheckRangeOutWithR_t.Original(tp, fRange);
 	}
 }
 
 // Check object deletion for every player, but in Sky Deck
-BOOL __cdecl SDCheckRangeOutWithR_r(task* tp, float fRange)
+Bool __cdecl SDCheckRangeOutWithR_r(task* tp, float fRange)
 {
 	if (multiplayer::IsActive())
 	{
@@ -272,32 +272,18 @@ BOOL __cdecl SDCheckRangeOutWithR_r(task* tp, float fRange)
 	}
 	else
 	{
-		return TARGET_DYNAMIC(SDCheckRangeOutWithR)(tp, fRange);
+		return SDCheckRangeOutWithR_t.Original(tp, fRange);
 	}
 }
 
-// Load Multiplayer version of setfiles:
-
-void __cdecl LoadSetFile_o(unsigned int u32SetType, const char* pcFileName)
-{
-	const auto LoadSetFile_ptr = LoadSetFile_t->Target();
-
-	__asm
-	{
-		push[pcFileName]
-		mov ecx, u32SetType
-		call LoadSetFile_ptr
-		add esp, 4
-	}
-}
-
-void __cdecl LoadSetFile_r(unsigned int u32SetType, const char* pcFileName)
+// Load Multiplayer version of setfiles.
+void __cdecl LoadSetFile_r(Uint32 u32SetType, const char* pcFileName)
 {
 	if (multiplayer::IsActive())
 	{
 		std::string temp = (std::string)"M" + (std::string)pcFileName;
 
-		LoadSetFile_o(u32SetType, temp.c_str());
+		LoadSetFile_t.Original(u32SetType, temp.c_str());
 
 		// If loaded properly exit, otherwise run original behaviour
 		if (SetFiles[u32SetType])
@@ -306,27 +292,14 @@ void __cdecl LoadSetFile_r(unsigned int u32SetType, const char* pcFileName)
 		}
 	}
 
-	LoadSetFile_o(u32SetType, pcFileName);
-}
-
-static void __declspec(naked) LoadSetFile_j()
-{
-	__asm
-	{
-		push[esp + 04h]
-		push ecx
-		call LoadSetFile_r
-		pop ecx
-		add esp, 4
-		retn
-	}
+	LoadSetFile_t.Original(u32SetType, pcFileName);
 }
 
 void InitSET()
 {
-	ProcessStatusTable_t = new Trampoline(0x46BCE0, 0x46BCE5, ProcessStatusTable_r);
-	CheckRangeWithR_t = new Trampoline(0x46BFA0, 0x46BFA7, CheckRangeWithR_r);
-	CheckRangeOutWithR_t = new Trampoline(0x46C010, 0x46C018, CheckRangeOutWithR_r);
-	SDCheckRangeOutWithR_t = new Trampoline(0x5EDB10, 0x5EDB18, SDCheckRangeOutWithR_r);
-	LoadSetFile_t = new Trampoline(0x422930, 0x422938, LoadSetFile_j);
+	ProcessStatusTable_t.Hook(ProcessStatusTable_r);
+	CheckRangeWithR_t.Hook(CheckRangeWithR_r);
+	CheckRangeOutWithR_t.Hook(CheckRangeOutWithR_r);
+	SDCheckRangeOutWithR_t.Hook(SDCheckRangeOutWithR_r);
+	LoadSetFile_t.Hook(LoadSetFile_r);
 }

@@ -118,7 +118,7 @@ static void ObjectBaloon_m(task* tp)
 }
 
 static void __cdecl ObjectBaloon_r(task* tp);
-Trampoline ObjectBaloon_t(0x7A21C0, 0x7A21C6, ObjectBaloon_r);
+FastFunctionHookPtr<decltype(&ObjectBaloon_r)> ObjectBaloon_t(0x7A21C0, ObjectBaloon_r);
 static void __cdecl ObjectBaloon_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -127,6 +127,6 @@ static void __cdecl ObjectBaloon_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectBaloon)(tp);
+		ObjectBaloon_t.Original(tp);
 	}
 }

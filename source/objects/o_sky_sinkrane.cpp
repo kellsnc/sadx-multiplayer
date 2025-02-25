@@ -3,22 +3,11 @@
 #include "utils.h"
 #include "multiplayer.h"
 
-static void execSkySinkRane_w();
-static void AirLiftSleep_w();
+static void __cdecl execSkySinkRane_r(task* tp);
+static void __cdecl AirLiftSleep_r(task* tp);
 
-Trampoline execSkySinkRane_t(0x5F5E50, 0x5F5E55, execSkySinkRane_w);
-Trampoline AirLiftSleep_t(0x4AA430, 0x4AA436, AirLiftSleep_w);
-
-#pragma region execSkySinkRane
-static void execSkySinkRane_o(task* tp)
-{
-	auto target = execSkySinkRane_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
+FastUsercallHookPtr<decltype(&execSkySinkRane_r), noret, rEAX> execSkySinkRane_t(0x5F5E50, execSkySinkRane_r);
+FastUsercallHookPtr<decltype(&AirLiftSleep_r), noret, rEDI> AirLiftSleep_t(0x4AA430, AirLiftSleep_r);
 
 static void __cdecl execSkySinkRane_r(task* tp)
 {
@@ -43,7 +32,7 @@ static void __cdecl execSkySinkRane_r(task* tp)
 	}
 	else
 	{
-		execSkySinkRane_o(tp);
+		execSkySinkRane_t.Original(tp);
 	}
 }
 
@@ -55,18 +44,6 @@ static void __declspec(naked) execSkySinkRane_w()
 		call execSkySinkRane_r
 		pop eax
 		retn
-	}
-}
-#pragma endregion
-
-#pragma region AirLiftSleep
-static void AirLiftSleep_o(task* tp)
-{
-	auto target = AirLiftSleep_t.Target();
-	__asm
-	{
-		mov edi, [tp]
-		call target
 	}
 }
 
@@ -118,18 +95,6 @@ static void __cdecl AirLiftSleep_r(task* tp)
 	}
 	else
 	{
-		AirLiftSleep_o(tp);
+		AirLiftSleep_t.Original(tp);
 	}
 }
-
-static void __declspec(naked) AirLiftSleep_w()
-{
-	__asm
-	{
-		push edi
-		call AirLiftSleep_r
-		pop edi
-		retn
-	}
-}
-#pragma endregion

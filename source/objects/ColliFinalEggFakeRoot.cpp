@@ -36,7 +36,7 @@ static void ColliFinalEggFakeRoot_m(task* tp)
 }
 
 static void __cdecl ColliFinalEggFakeRoot_r(task* tp);
-Trampoline ColliFinalEggFakeRoot_t(0x5B07A0, 0x5B07A8, ColliFinalEggFakeRoot_r);
+FastFunctionHookPtr<decltype(&ColliFinalEggFakeRoot_r)> ColliFinalEggFakeRoot_t(0x5B07A0, ColliFinalEggFakeRoot_r);
 static void __cdecl ColliFinalEggFakeRoot_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -45,6 +45,6 @@ static void __cdecl ColliFinalEggFakeRoot_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ColliFinalEggFakeRoot)(tp);
+		ColliFinalEggFakeRoot_t.Original(tp);
 	}
 }

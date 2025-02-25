@@ -93,7 +93,7 @@ static void execShelterKaitenashiba_m(task* tp)
 }
 
 static void __cdecl execShelterKaitenashiba_r(task* tp); // "Exec"
-Trampoline execShelterKaitenashiba_t(0x59CB40, 0x59CB48, execShelterKaitenashiba_r);
+FastFunctionHookPtr<decltype(&execShelterKaitenashiba_r)> execShelterKaitenashiba_t(0x59CB40, execShelterKaitenashiba_r);
 static void __cdecl execShelterKaitenashiba_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -102,6 +102,6 @@ static void __cdecl execShelterKaitenashiba_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(execShelterKaitenashiba)(tp);
+		execShelterKaitenashiba_t.Original(tp);
 	}
 }

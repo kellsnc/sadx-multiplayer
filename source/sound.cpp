@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "Trampoline.h"
 #include "camera.h"
 #include "multiplayer.h"
 #include "sadx_utils.h"
@@ -9,13 +8,17 @@
 #include "splitscreen.h"
 #include "utils.h"
 
-FastFunctionHook<void> dsLoadStageSound_h(0x424C80);
+int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z);
+int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z, float rad);
+int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, float z);
+void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float rad, taskwk* pTaskwk);
 
-Trampoline* dsGetVolume_t = nullptr;
-Trampoline* dsPlay_timer_v_t = nullptr;
-Trampoline* dsPlay_timer_vq_t = nullptr;
-Trampoline* dsPlay_oneshot_v_t = nullptr;
-Trampoline* dsPlay_Dolby_timer_vq_t = nullptr;
+FastFunctionHook<void> dsLoadStageSound_h(0x424C80);
+FastUsercallHookPtr<int(*)(int), rEAX, rEAX> dsGetVolume_t(0x4244A0);
+FastFunctionHookPtr<decltype(&dsPlay_timer_v_r)> dsPlay_timer_v_t(0x424000);
+FastFunctionHookPtr<decltype(&dsPlay_timer_vq_r)> dsPlay_timer_vq_t(0x424100);
+FastFunctionHookPtr<decltype(&dsPlay_oneshot_v_r)> dsPlay_oneshot_v_t(0x424FC0);
+FastFunctionHookPtr<decltype(&dsPlay_Dolby_timer_vq_r)> dsPlay_Dolby_timer_vq_t(0x4249E0);
 
 int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z)
 {
@@ -52,7 +55,7 @@ int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, 
 	}
 	else
 	{
-		return TARGET_DYNAMIC(dsPlay_timer_v)(tone, id, pri, volofs, timer, x, y, z);
+		return dsPlay_timer_v_t.Original(tone, id, pri, volofs, timer, x, y, z);
 	}
 }
 
@@ -92,7 +95,7 @@ int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x,
 	}
 	else
 	{
-		return TARGET_DYNAMIC(dsPlay_timer_vq)(tone, id, pri, volofs, timer, x, y, z, rad);
+		return dsPlay_timer_vq_t.Original(tone, id, pri, volofs, timer, x, y, z, rad);
 	}
 }
 
@@ -131,7 +134,7 @@ int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, 
 	}
 	else
 	{
-		return TARGET_DYNAMIC(dsPlay_oneshot_v)(tone, id, pri, volofs, x, y, z);
+		return dsPlay_oneshot_v_t.Original(tone, id, pri, volofs, x, y, z);
 	}
 }
 
@@ -182,21 +185,8 @@ void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, f
 	}
 	else
 	{
-		TARGET_DYNAMIC(dsPlay_Dolby_timer_vq)(tone, id, pri, volofs, timer, rad, pTaskwk);
+		dsPlay_Dolby_timer_vq_t.Original(tone, id, pri, volofs, timer, rad, pTaskwk);
 	}
-}
-
-static int dsGetVolume_o(int ii)
-{
-	auto tgt = dsGetVolume_t->Target();
-	int r;
-	__asm
-	{
-		mov eax, [ii]
-		call tgt
-		mov r, eax
-	}
-	return r;
 }
 
 /// <summary>
@@ -245,18 +235,7 @@ int __cdecl dsGetVolume_r(int ii)
 	}
 	else
 	{
-		return dsGetVolume_o(ii);
-	}
-}
-
-static void __declspec(naked) dsGetVolume_w()
-{
-	__asm
-	{
-		push eax
-		call dsGetVolume_r
-		add esp, 4
-		retn
+		return dsGetVolume_t.Original(ii);
 	}
 }
 
@@ -414,11 +393,11 @@ void dsLoadStageSound_r()
 /// </summary>
 void InitSoundPatches()
 {
-	dsGetVolume_t = new Trampoline(0x4244A0, 0x4244A7, dsGetVolume_w);
-	dsPlay_timer_v_t = new Trampoline(0x424000, 0x424005, dsPlay_timer_v_r);
-	dsPlay_timer_vq_t = new Trampoline(0x424100, 0x424105, dsPlay_timer_vq_r);
-	dsPlay_oneshot_v_t = new Trampoline(0x424FC0, 0x424FC5, dsPlay_oneshot_v_r);
-	dsPlay_Dolby_timer_vq_t = new Trampoline(0x4249E0, 0x4249E5, dsPlay_Dolby_timer_vq_r);
+	dsGetVolume_t.Hook(dsGetVolume_r);
+	dsPlay_timer_v_t.Hook(dsPlay_timer_v_r);
+	dsPlay_timer_vq_t.Hook(dsPlay_timer_vq_r);
+	dsPlay_oneshot_v_t.Hook(dsPlay_oneshot_v_r);
+	dsPlay_Dolby_timer_vq_t.Hook(dsPlay_Dolby_timer_vq_r);
 	WriteJump((void*)0x4253B1, dsDolbySound_w); // Mid-function hook because the original function was inlined
 
 	dsLoadStageSound_h.Hook(dsLoadStageSound_r);

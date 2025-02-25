@@ -2,7 +2,7 @@
 #include "multiplayer.h"
 
 static void __cdecl ObjectFinalEggRainbowDoor_r(task* tp);
-Trampoline ObjectFinalEggRainbowDoor_t(0x5B0910, 0x5B0916, ObjectFinalEggRainbowDoor_r);
+FastFunctionHookPtr<decltype(&ObjectFinalEggRainbowDoor_r)> ObjectFinalEggRainbowDoor_t(0x5B0910, ObjectFinalEggRainbowDoor_r);
 static void __cdecl ObjectFinalEggRainbowDoor_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == 1)
@@ -20,6 +20,6 @@ static void __cdecl ObjectFinalEggRainbowDoor_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectFinalEggRainbowDoor)(tp);
+		ObjectFinalEggRainbowDoor_t.Original(tp);
 	}
 }

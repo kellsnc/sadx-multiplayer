@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "splitscreen.h"
 #include "fog.h"
 
-Trampoline* ___njFogEnable_t = nullptr;
+FastFunctionHook<void> ___njFogEnable_t(0x411AF0);
 
 namespace fog
 {
@@ -117,11 +117,11 @@ static void __cdecl ___njFogEnable_r()
 	}
 	else
 	{
-		TARGET_DYNAMIC(___njFogEnable)();
+		___njFogEnable_t.Original();
 	}
 }
 
 void InitFogPatches()
 {
-	___njFogEnable_t = new Trampoline(0x411AF0, 0x411AF5, ___njFogEnable_r);
+	___njFogEnable_t.Hook(___njFogEnable_r);
 }

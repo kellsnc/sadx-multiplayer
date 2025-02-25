@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "camera.h"
 #include "camerafunc.h"
@@ -266,7 +266,7 @@ static void ObjectCasinoCrashSoniczoExec_m(task* tp)
 }
 
 static void __cdecl ObjectCasinoCrashSoniczoExec_r(task* tp);
-Trampoline ObjectCasinoCrashSoniczoExec_t(0x5C3900, 0x5C3905, ObjectCasinoCrashSoniczoExec_r);
+FastFunctionHookPtr<decltype(&ObjectCasinoCrashSoniczoExec_r)> ObjectCasinoCrashSoniczoExec_t(0x5C3900, ObjectCasinoCrashSoniczoExec_r);
 static void __cdecl ObjectCasinoCrashSoniczoExec_r(task* tp)
 {
 	if (multiplayer::IsEnabled())
@@ -275,6 +275,6 @@ static void __cdecl ObjectCasinoCrashSoniczoExec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectCasinoCrashSoniczoExec)(tp);
+		ObjectCasinoCrashSoniczoExec_t.Original(tp);
 	}
 }

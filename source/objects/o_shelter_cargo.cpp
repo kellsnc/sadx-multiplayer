@@ -27,7 +27,7 @@ static void ExecC_m(task* tp)
 }
 
 static void ObjShelterCargoExecC_r(task* tp); // "ExecC"
-Trampoline ObjShelterCargoExecC_t(0x59C4D0, 0x59C4D5, ObjShelterCargoExecC_r);
+FastFunctionHookPtr<decltype(&ObjShelterCargoExecC_r)> ObjShelterCargoExecC_t(0x59C4D0, ObjShelterCargoExecC_r);
 static void ObjShelterCargoExecC_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -36,6 +36,6 @@ static void ObjShelterCargoExecC_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterCargoExecC)(tp);
+		ObjShelterCargoExecC_t.Original(tp);
 	}
 }

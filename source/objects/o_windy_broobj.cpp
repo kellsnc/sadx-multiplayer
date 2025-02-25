@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "utils.h"
 
 static void Exec_m(task* tp)
@@ -52,7 +52,7 @@ static void Exec_m(task* tp)
 }
 
 static void __cdecl ObjectWindyBrokenObj_Exec_r(task* tp);
-Trampoline ObjectWindyBrokenObj_Exec_t(0x4E2970, 0x4E2975, ObjectWindyBrokenObj_Exec_r);
+FastFunctionHookPtr<decltype(&ObjectWindyBrokenObj_Exec_r)> ObjectWindyBrokenObj_Exec_t(0x4E2970, ObjectWindyBrokenObj_Exec_r);
 static void __cdecl ObjectWindyBrokenObj_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -61,6 +61,6 @@ static void __cdecl ObjectWindyBrokenObj_Exec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectWindyBrokenObj_Exec)(tp);
+		ObjectWindyBrokenObj_Exec_t.Original(tp);
 	}
 }

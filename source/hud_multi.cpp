@@ -2,10 +2,10 @@
 #include "hud_multi.h"
 #include "splitscreen.h"
 
-Trampoline* DisplayScore_t = nullptr;
-Trampoline* DisplayTimer_t = nullptr;
-Trampoline* LoadTextureForEachGameMode_t = nullptr;
-Trampoline* ReleaseTextureForEachGameMode_t = nullptr;
+FastFunctionHook<void> DisplayScore_t(0x425F90);
+FastFunctionHook<void> DisplayTimer_t(0x427F50);
+FastFunctionHook<void, int> LoadTextureForEachGameMode_t(0x4212E0);
+FastFunctionHook<void> ReleaseTextureForEachGameMode_t(0x420F40);
 
 NJS_TEXNAME CON_MULTI_TEXNAME[18]{};
 NJS_TEXLIST CON_MULTI_TEXLIST = { arrayptrandlength(CON_MULTI_TEXNAME) };
@@ -91,13 +91,13 @@ static int ringtimer[PLAYER_MAX]{};
 void LoadTextureForEachGameMode_r(int gamemode)
 {
 	LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
-	TARGET_DYNAMIC(LoadTextureForEachGameMode)(gamemode);
+	LoadTextureForEachGameMode_t.Original(gamemode);
 }
 
 void ReleaseTextureForEachGameMode_r()
 {
 	njReleaseTexture(&CON_MULTI_TEXLIST);
-	TARGET_DYNAMIC(ReleaseTextureForEachGameMode)();
+	ReleaseTextureForEachGameMode_t.Original();
 }
 
 void DrawWaitScreen(int num)
@@ -322,7 +322,7 @@ void __cdecl DisplayScore_r()
 {
 	if (!multiplayer::IsActive())
 	{
-		TARGET_DYNAMIC(DisplayScore)();
+		DisplayScore_t.Original();
 	}
 }
 
@@ -330,14 +330,14 @@ void __cdecl DisplayTimer_r()
 {
 	if (!multiplayer::IsActive())
 	{
-		TARGET_DYNAMIC(DisplayTimer)();
+		DisplayTimer_t.Original();
 	}
 }
 
 void MultiHudInit()
 {
-	DisplayScore_t = new Trampoline(0x425F90, 0x425F95, DisplayScore_r);
-	DisplayTimer_t = new Trampoline(0x427F50, 0x427F55, DisplayTimer_r);
-	LoadTextureForEachGameMode_t = new Trampoline(0x4212E0, 0x4212E5, LoadTextureForEachGameMode_r);
-	ReleaseTextureForEachGameMode_t = new Trampoline(0x420F40, 0x420F45, ReleaseTextureForEachGameMode_r);
+	DisplayScore_t.Hook(DisplayScore_r);
+	DisplayTimer_t.Hook(DisplayTimer_r);
+	LoadTextureForEachGameMode_t.Hook(LoadTextureForEachGameMode_r);
+	ReleaseTextureForEachGameMode_t.Hook(ReleaseTextureForEachGameMode_r);
 }

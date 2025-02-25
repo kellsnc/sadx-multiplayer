@@ -39,8 +39,8 @@ DataPointer(CCL_INFO, seabass_colli_tbl, 0x173BAF0);
 static void __cdecl SakanaGenerater_r(task* tp);
 static void __cdecl BigSakana_r(task* tp);
 
-Trampoline SakanaGenerater_t(0x597660, 0x597666, SakanaGenerater_r);
-Trampoline BigSakana_t(0x597010, 0x597015, BigSakana_r);
+FastFunctionHookPtr<decltype(&SakanaGenerater_r)> SakanaGenerater_t(0x597660, SakanaGenerater_r);
+FastFunctionHookPtr<decltype(&BigSakana_r)> BigSakana_t(0x597010, BigSakana_r);
 
 static bool FishingEnabled()
 {
@@ -698,7 +698,7 @@ static void __cdecl BigSakana_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(BigSakana)(tp);
+		BigSakana_t.Original(tp);
 	}
 }
 
@@ -768,6 +768,6 @@ static void __cdecl SakanaGenerater_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(SakanaGenerater)(tp);
+		SakanaGenerater_t.Original(tp);
 	}
 }

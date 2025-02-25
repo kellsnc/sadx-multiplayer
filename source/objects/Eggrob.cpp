@@ -21,14 +21,14 @@ static void __cdecl Eggrob_LockOnCursor_r(task* tp);
 static void __cdecl Eggrob_BeamZanzo_r(task* tp);
 static void __cdecl Eggrob_BeamKonseki_r(task* tp);
 
-Trampoline ERSC_CommonExec_t(0x7B0640, 0x7B064A, ERSC_CommonExec_r);
-Trampoline AmyERobApperChecker_t(0x486980, 0x486985, AmyERobApperChecker_r);
-Trampoline ERobStart_t(0x4B3EB0, 0x4B3EB5, ERobStart_r);
-Trampoline EggRob_t(0x4D2960, 0x4D296A, EggRob_r);
-Trampoline Eggrob_Display_t(0x4CFB70, 0x4CFB75, Eggrob_Display_r);
-Trampoline Eggrob_LockOnCursor_t(0x4D01B0, 0x4D01B8, Eggrob_LockOnCursor_r);
-Trampoline Eggrob_BeamZanzo_t(0x4CFEE0, 0x4CFEE8, Eggrob_BeamZanzo_r);
-Trampoline Eggrob_BeamKonseki_t(0x4D00E0, 0x4D00E6, Eggrob_BeamKonseki_r);
+FastFunctionHookPtr<decltype(&ERSC_CommonExec_r)> ERSC_CommonExec_t(0x7B0640, ERSC_CommonExec_r);
+FastFunctionHookPtr<decltype(&AmyERobApperChecker_r)> AmyERobApperChecker_t(0x486980, AmyERobApperChecker_r);
+FastFunctionHookPtr<decltype(&ERobStart_r)> ERobStart_t(0x4B3EB0, ERobStart_r);
+FastFunctionHookPtr<decltype(&EggRob_r)> EggRob_t(0x4D2960, EggRob_r);
+FastFunctionHookPtr<decltype(&Eggrob_Display_r)> Eggrob_Display_t(0x4CFB70, Eggrob_Display_r);
+FastFunctionHookPtr<decltype(&Eggrob_LockOnCursor_r)> Eggrob_LockOnCursor_t(0x4D01B0, Eggrob_LockOnCursor_r);
+FastFunctionHookPtr<decltype(&Eggrob_BeamZanzo_r)> Eggrob_BeamZanzo_t(0x4CFEE0, Eggrob_BeamZanzo_r);
+FastFunctionHookPtr<decltype(&Eggrob_BeamKonseki_r)> Eggrob_BeamKonseki_t(0x4D00E0, Eggrob_BeamKonseki_r);
 
 DataPointer(task*, er_tp, 0x3C5815C);
 DataPointer(mtnjvwk, er_mwk, 0x3C5C658);
@@ -64,7 +64,7 @@ static void __cdecl Eggrob_BeamKonseki_r(task* tp)
 		tp->disp = Eggrob_BeamKonseki_disp;
 	}
 
-	TARGET_STATIC(Eggrob_BeamKonseki)(tp);
+	Eggrob_BeamKonseki_t.Original(tp);
 }
 
 static void __cdecl Eggrob_BeamZanzo_disp(task* tp)
@@ -100,7 +100,7 @@ static void __cdecl Eggrob_BeamZanzo_r(task* tp)
 		tp->disp = Eggrob_BeamZanzo_disp;
 	}
 
-	TARGET_STATIC(Eggrob_BeamZanzo)(tp);
+	Eggrob_BeamZanzo_t.Original(tp);
 }
 
 static void __cdecl Eggrob_LockOnCursor_disp(task* tp)
@@ -130,13 +130,13 @@ static void __cdecl Eggrob_LockOnCursor_r(task* tp)
 		{
 			auto backup_ptr = playertwp[0];
 			playertwp[0] = playertwp[EGGROB_PNUM(er_tp->twp)];
-			TARGET_STATIC(Eggrob_LockOnCursor)(tp); // one occurence of playertwp[0] in the middle, todo: rewrite
+			Eggrob_LockOnCursor_t.Original(tp); // one occurence of playertwp[0] in the middle, todo: rewrite
 			playertwp[0] = backup_ptr;
 		}
 	}
 	else
 	{
-		TARGET_STATIC(Eggrob_LockOnCursor)(tp);
+		Eggrob_LockOnCursor_t.Original(tp);
 	}
 }
 
@@ -187,7 +187,7 @@ static void DrawMainLaser(taskwk* twp)
 
 static void __cdecl Eggrob_Display_r(task* tp)
 {
-	TARGET_STATIC(Eggrob_Display)(tp);
+	Eggrob_Display_t.Original(tp);
 
 	if (!MissedFrames && SplitScreen::IsActive() && SplitScreen::GetCurrentScreenNum() != 0)
 	{
@@ -203,12 +203,12 @@ static void __cdecl EggRob_r(task* tp) // no way in hell I'm rewriting that
 		EGGROB_PNUM(tp->twp) = GetClosestPlayerNum(&tp->twp->pos);
 		auto backup_ptr = playertwp[0];
 		playertwp[0] = playertwp[EGGROB_PNUM(tp->twp)];
-		TARGET_STATIC(EggRob)(tp);
+		EggRob_t.Original(tp);
 		playertwp[0] = backup_ptr;
 	}
 	else
 	{
-		TARGET_STATIC(EggRob)(tp);
+		EggRob_t.Original(tp);
 	}
 }
 
@@ -300,7 +300,7 @@ static BOOL __cdecl ERobStart_r(erctrlstr* cmd)
 	}
 	else
 	{
-		return TARGET_STATIC(ERobStart)(cmd);
+		return ERobStart_t.Original(cmd);
 	}
 }
 
@@ -327,7 +327,7 @@ static void __cdecl AmyERobApperChecker_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(AmyERobApperChecker)(tp);
+		AmyERobApperChecker_t.Original(tp);
 	}
 }
 
@@ -337,11 +337,11 @@ static void __cdecl ERSC_CommonExec_r(task* tp)
 	{
 		auto backup_ptr = playertwp[0];
 		playertwp[0] = playertwp[GetTheNearestPlayerNumber(&tp->twp->pos)];
-		TARGET_STATIC(ERSC_CommonExec)(tp); // todo: rewrite
+		ERSC_CommonExec_t.Original(tp); // todo: rewrite
 		playertwp[0] = backup_ptr;
 	}
 	else
 	{
-		TARGET_STATIC(ERSC_CommonExec)(tp);
+		ERSC_CommonExec_t.Original(tp);
 	}
 }

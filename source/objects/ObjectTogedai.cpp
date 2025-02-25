@@ -145,7 +145,7 @@ static void ObjectTogedaiNormal_m(task* tp)
 }
 
 static void __cdecl ObjectTogedaiNormal_r(task* tp);
-Trampoline ObjectTogedaiNormal_t(0x5EA7A0, 0x5EA7A8, ObjectTogedaiNormal_r);
+FastFunctionHookPtr<decltype(&ObjectTogedaiNormal_r)> ObjectTogedaiNormal_t(0x5EA7A0, ObjectTogedaiNormal_r);
 static void __cdecl ObjectTogedaiNormal_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -154,6 +154,6 @@ static void __cdecl ObjectTogedaiNormal_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectTogedaiNormal)(tp);
+		ObjectTogedaiNormal_t.Original(tp);
 	}
 }

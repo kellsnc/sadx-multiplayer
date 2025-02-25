@@ -13,7 +13,7 @@ used for drawing since the camera runs in slot 0)
 
 */
 
-Trampoline* late_DispMilesMeter2P_t = nullptr;
+FastFunctionHook<void, task*> late_DispMilesMeter2P_t(0x47C260);
 
 DataPointer(float, AnalogRatio_High, 0x3C539E8);
 DataArray(int, AnalogTbl, 0x7E4AC4, 4);
@@ -665,13 +665,13 @@ static void __cdecl late_DispMilesMeter2P_r(task* tp)
 		if (SplitScreen::GetCurrentScreenNum() == 0)
 		{
 			SplitScreen::ChangeViewPort(-1);
-			TARGET_DYNAMIC(late_DispMilesMeter2P)(tp);
+			late_DispMilesMeter2P_t.Original(tp);
 			SplitScreen::ChangeViewPort(0);
 		}
 	}
 	else
 	{
-		TARGET_DYNAMIC(late_DispMilesMeter2P)(tp);
+		late_DispMilesMeter2P_t.Original(tp);
 	}
 }
 
@@ -806,5 +806,5 @@ void Set_NPC_Sonic_m(int num)
 void InitMilesRace()
 {
 	WriteCall((void*)0x47D9B6, LoadMoble2PControl); // patch task level for eggman ai
-	late_DispMilesMeter2P_t = new Trampoline(0x47C260, 0x47C267, late_DispMilesMeter2P_r);
+	late_DispMilesMeter2P_t.Hook(late_DispMilesMeter2P_r);
 }

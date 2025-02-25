@@ -79,7 +79,7 @@ static void exec_m(task* tp)
 }
 
 static void __cdecl EnemyMountainTgtMissile_exec_r(task* tp);
-Trampoline EnemyMountainTgtMissile_exec_t(0x60F360, 0x60F366, EnemyMountainTgtMissile_exec_r);
+FastFunctionHookPtr<decltype(&EnemyMountainTgtMissile_exec_r)> EnemyMountainTgtMissile_exec_t(0x60F360, EnemyMountainTgtMissile_exec_r);
 static void __cdecl EnemyMountainTgtMissile_exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -88,6 +88,6 @@ static void __cdecl EnemyMountainTgtMissile_exec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(EnemyMountainTgtMissile_exec)(tp);
+		EnemyMountainTgtMissile_exec_t.Original(tp);
 	}
 }

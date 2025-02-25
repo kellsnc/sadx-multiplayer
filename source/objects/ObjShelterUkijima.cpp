@@ -108,7 +108,7 @@ static void ObjShelterUkijimaExec_m(task* tp)
 }
 
 static void __cdecl ObjShelterUkijimaExec_r(task* tp); //"Exec"
-Trampoline ObjShelterUkijimaExec_t(0x59DC20, 0x59DC25, ObjShelterUkijimaExec_r);
+FastFunctionHookPtr<decltype(&ObjShelterUkijimaExec_r)> ObjShelterUkijimaExec_t(0x59DC20, ObjShelterUkijimaExec_r);
 static void __cdecl ObjShelterUkijimaExec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -117,6 +117,6 @@ static void __cdecl ObjShelterUkijimaExec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterUkijimaExec)(tp);
+		ObjShelterUkijimaExec_t.Original(tp);
 	}
 }

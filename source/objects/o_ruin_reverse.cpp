@@ -77,7 +77,7 @@ static void ReverseRuinLoop_m(task* tp)
 }
 
 static void __cdecl ReverseRuinLoop_r(task* tp);
-Trampoline ReverseRuinLoop_t(0x5E3960, 0x5E3967, ReverseRuinLoop_r);
+FastFunctionHookPtr<decltype(&ReverseRuinLoop_r)> ReverseRuinLoop_t(0x5E3960, ReverseRuinLoop_r);
 static void __cdecl ReverseRuinLoop_r(task* tp)
 {
 	if (tp->twp->smode == 0)
@@ -94,6 +94,6 @@ static void __cdecl ReverseRuinLoop_r(task* tp)
 
 	if (!multiplayer::IsActive())
 	{
-		TARGET_STATIC(ReverseRuinLoop)(tp);
+		ReverseRuinLoop_t.Original(tp);
 	}
 }

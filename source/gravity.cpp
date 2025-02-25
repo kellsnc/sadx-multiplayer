@@ -3,8 +3,8 @@
 
 // Allow per-player gravity
 
-Trampoline* SetDefaultGravity_t = nullptr;
-Trampoline* SetUserGravityXZ_t = nullptr;
+FastFunctionHook<void> SetDefaultGravity_t(0x43B490);
+FastFunctionHook<void, Angle, Angle> SetUserGravityXZ_t(0x43B4C0);
 
 namespace gravity
 {
@@ -100,7 +100,7 @@ namespace gravity
 
 static void __cdecl SetDefaultGravity_r()
 {
-	TARGET_DYNAMIC(SetDefaultGravity)();
+	SetDefaultGravity_t.Original();
 	gravity::Disable();
 }
 
@@ -112,13 +112,13 @@ static void __cdecl SetUserGravityXZ_r(Angle angx, Angle angz)
 	}
 	else
 	{
-		TARGET_DYNAMIC(SetUserGravityXZ)(angx, angz);
+		SetUserGravityXZ_t.Original(angx, angz);
 		gravity::Disable();
 	}
 }
 
 void InitGravityPatches()
 {
-	SetDefaultGravity_t = new Trampoline(0x43B490, 0x43B49C, SetDefaultGravity_r);
-	SetUserGravityXZ_t = new Trampoline(0x43B4C0, 0x43B4C6, SetUserGravityXZ_r);
+	SetDefaultGravity_t.Hook(SetDefaultGravity_r);
+	SetUserGravityXZ_t.Hook(SetUserGravityXZ_r);
 }

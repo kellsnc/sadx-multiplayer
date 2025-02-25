@@ -229,7 +229,7 @@ static void execSkyLever_m(task* tp)
 }
 
 static void __cdecl execSkyLever_r(task* tp);
-Trampoline execSkyLever_t(0x5F1D20, 0x5F1D28, execSkyLever_r);
+FastFunctionHookPtr<decltype(&execSkyLever_r)> execSkyLever_t(0x5F1D20, execSkyLever_r);
 static void __cdecl execSkyLever_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -238,6 +238,6 @@ static void __cdecl execSkyLever_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(execSkyLever)(tp);
+		execSkyLever_t.Original(tp);
 	}
 }

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "sadx_utils.h"
 
@@ -112,7 +112,7 @@ static void __cdecl Object_Mountain_Yougan_m(task* tp)
 }
 
 static void __cdecl Object_Mountain_Yougan_r(task* tp);
-Trampoline Object_Mountain_Yougan_t(0x602670, 0x602676, Object_Mountain_Yougan_r);
+FastFunctionHookPtr<decltype(&Object_Mountain_Yougan_r)> Object_Mountain_Yougan_t(0x602670, Object_Mountain_Yougan_r);
 static void __cdecl Object_Mountain_Yougan_r(task* tp)
 {
 	if (multiplayer::IsEnabled())
@@ -122,6 +122,6 @@ static void __cdecl Object_Mountain_Yougan_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(Object_Mountain_Yougan)(tp);
+		Object_Mountain_Yougan_t.Original(tp);
 	}
 }

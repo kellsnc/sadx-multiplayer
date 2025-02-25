@@ -92,7 +92,7 @@ static void FragmEmeraldDigDisplay_m(task* tp)
 }
 
 static void __cdecl FragmEmeraldDigDisplay_r(task* tp);
-Trampoline FragmEmeraldDigDisplay_t(0x4A31D0, 0x4A31D6, FragmEmeraldDigDisplay_r);
+FastFunctionHookPtr<decltype(&FragmEmeraldDigDisplay_r)> FragmEmeraldDigDisplay_t(0x4A31D0, FragmEmeraldDigDisplay_r);
 static void __cdecl FragmEmeraldDigDisplay_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -101,6 +101,6 @@ static void __cdecl FragmEmeraldDigDisplay_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(FragmEmeraldDigDisplay)(tp);
+		FragmEmeraldDigDisplay_t.Original(tp);
 	}
 }

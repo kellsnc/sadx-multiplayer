@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "utils.h"
 #include "multiplayer.h"
@@ -91,7 +91,7 @@ static void execRound_m(task* tp)
 }
 
 static void __cdecl execRound_Sandboard_r(task* tp);
-Trampoline execRound_Sandboard_t(0x597BD0, 0x597BD6, execRound_Sandboard_r);
+FastFunctionHookPtr<decltype(&execRound_Sandboard_r)> execRound_Sandboard_t(0x597BD0, execRound_Sandboard_r);
 static void __cdecl execRound_Sandboard_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -100,6 +100,6 @@ static void __cdecl execRound_Sandboard_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(execRound_Sandboard)(tp);
+		execRound_Sandboard_t.Original(tp);
 	}
 }

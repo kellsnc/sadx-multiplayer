@@ -15,10 +15,10 @@ static void __cdecl ObjShelterHaguruma3_ExecATask_r(task* tp);
 static void __cdecl ObjShelterHaguruma4_ExecATask_r(task* tp);
 static void __cdecl ObjShelterHaguruma6_ExecATask_r(task* tp);
 
-Trampoline ObjShelterHaguruma1_ExecATask_t(0x5A0310, 0x5A0317, ObjShelterHaguruma1_ExecATask_r);
-Trampoline ObjShelterHaguruma3_ExecATask_t(0x5A0010, 0x5A0017, ObjShelterHaguruma3_ExecATask_r);
-Trampoline ObjShelterHaguruma4_ExecATask_t(0x59FB20, 0x59FB27, ObjShelterHaguruma4_ExecATask_r);
-Trampoline ObjShelterHaguruma6_ExecATask_t(0x59F820, 0x59F827, ObjShelterHaguruma6_ExecATask_r);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma1_ExecATask_r)> ObjShelterHaguruma1_ExecATask_t(0x5A0310, ObjShelterHaguruma1_ExecATask_r);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma3_ExecATask_r)> ObjShelterHaguruma3_ExecATask_t(0x5A0010, ObjShelterHaguruma3_ExecATask_r);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma4_ExecATask_r)> ObjShelterHaguruma4_ExecATask_t(0x59FB20, ObjShelterHaguruma4_ExecATask_r);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma6_ExecATask_r)> ObjShelterHaguruma6_ExecATask_t(0x59F820, ObjShelterHaguruma6_ExecATask_r);
 
 static void ExecATask_m(task* tp, NJS_OBJECT* object)
 {
@@ -71,7 +71,7 @@ static void __cdecl ObjShelterHaguruma6_ExecATask_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterHaguruma6_ExecATask)(tp);
+		ObjShelterHaguruma6_ExecATask_t.Original(tp);
 	}
 }
 
@@ -83,7 +83,7 @@ static void __cdecl ObjShelterHaguruma4_ExecATask_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterHaguruma4_ExecATask)(tp);
+		ObjShelterHaguruma4_ExecATask_t.Original(tp);
 	}
 }
 
@@ -95,7 +95,7 @@ static void __cdecl ObjShelterHaguruma3_ExecATask_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterHaguruma3_ExecATask)(tp);
+		ObjShelterHaguruma3_ExecATask_t.Original(tp);
 	}
 }
 
@@ -107,6 +107,6 @@ static void __cdecl ObjShelterHaguruma1_ExecATask_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterHaguruma1_ExecATask)(tp);
+		ObjShelterHaguruma1_ExecATask_t.Original(tp);
 	}
 }

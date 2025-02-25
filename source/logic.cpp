@@ -18,10 +18,10 @@ static int netActNumber;
 static int oldTimerWake;
 static int oldPauseEnabled;
 
-Trampoline* AdvanceActLocal_t = nullptr;
-Trampoline* SetChangeGameMode_t = nullptr;
-Trampoline* ChangeStageWithFadeOut_t = nullptr;
-Trampoline* RestartStageWithFadeOut_t = nullptr;
+FastFunctionHook<void, int> AdvanceActLocal_t(0x4146E0);
+FastFunctionHook<void, Sint16> SetChangeGameMode_t(0x413C90);
+FastFunctionHook<void, Sint8, Sint8> ChangeStageWithFadeOut_t(0x4145D0);
+FastFunctionHook<void> RestartStageWithFadeOut_t(0x414600);
 
 static bool LogicListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
@@ -113,16 +113,16 @@ static bool LogicSender(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM
 
 static void AdvanceActLocal_r(int ssActAddition)
 {
-	TARGET_DYNAMIC(AdvanceActLocal)(ssActAddition);
+	AdvanceActLocal_t.Original(ssActAddition);
 	netplay.Send(Netplay::PACKET_LOGIC_EXIT, LogicSender, -1, true);
 }
 
-static void SetChangeGameMode_r(__int16 mode)
+static void SetChangeGameMode_r(Sint16 mode)
 {
 	if (netplay.IsConnected())
 	{
 		auto old = ssGameModeChange;
-		TARGET_DYNAMIC(SetChangeGameMode)(mode);
+		SetChangeGameMode_t.Original(mode);
 
 		if (ssGameModeChange != old)
 		{
@@ -131,19 +131,19 @@ static void SetChangeGameMode_r(__int16 mode)
 	}
 	else
 	{
-		TARGET_DYNAMIC(SetChangeGameMode)(mode);
+		SetChangeGameMode_t.Original(mode);
 	}
 }
 
-static void ChangeStageWithFadeOut_r(int8_t stg, int8_t act)
+static void ChangeStageWithFadeOut_r(Sint8 stg, Sint8 act)
 {
-	TARGET_DYNAMIC(ChangeStageWithFadeOut)(stg, act);
+	ChangeStageWithFadeOut_t.Original(stg, act);
 	netplay.Send(Netplay::PACKET_LOGIC_STAGECHG, LogicSender, -1, true);
 }
 
 static void RestartStageWithFadeOut_r()
 {
-	TARGET_DYNAMIC(RestartStageWithFadeOut)();
+	RestartStageWithFadeOut_t.Original();
 	netplay.Send(Netplay::PACKET_LOGIC_EXIT, LogicSender, -1, true);
 }
 #endif
@@ -216,9 +216,9 @@ void InitLogic()
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_PAUSE, LogicListener);
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_RAND, LogicListener);
 
-	AdvanceActLocal_t = new Trampoline(0x4146E0, 0x4146E5, AdvanceActLocal_r);
-	SetChangeGameMode_t = new Trampoline(0x413C90, 0x413C96, SetChangeGameMode_r);
-	ChangeStageWithFadeOut_t = new Trampoline(0x4145D0, 0x4145D6, ChangeStageWithFadeOut_r);
-	RestartStageWithFadeOut_t = new Trampoline(0x414600, 0x414609, RestartStageWithFadeOut_r);
+	AdvanceActLocal_t.Hook(AdvanceActLocal_r);
+	SetChangeGameMode_t.Hook(SetChangeGameMode_r);
+	ChangeStageWithFadeOut_t.Hook(ChangeStageWithFadeOut_r);
+	RestartStageWithFadeOut_t.Hook(RestartStageWithFadeOut_r);
 #endif
 }

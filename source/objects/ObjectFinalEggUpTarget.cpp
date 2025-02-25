@@ -2,7 +2,7 @@
 #include "multiplayer.h"
 
 static void __cdecl uptarget_exec_wait_r(task* tp);
-Trampoline uptarget_exec_wait_t(0x5B5740, 0x5B5747, uptarget_exec_wait_r);
+FastFunctionHookPtr<decltype(&uptarget_exec_wait_r)> uptarget_exec_wait_t(0x5B5740, uptarget_exec_wait_r);
 static void __cdecl uptarget_exec_wait_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -17,6 +17,6 @@ static void __cdecl uptarget_exec_wait_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(uptarget_exec_wait)(tp);
+		uptarget_exec_wait_t.Original(tp);
 	}
 }

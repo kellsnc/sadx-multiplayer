@@ -6,9 +6,9 @@ static void __cdecl ObjectMountainExplosionRock1_r(task* tp);
 static void __cdecl ObjectMountainExplosionRock2_r(task* tp);
 static void __cdecl MiddleRock_r(task* tp);
 
-Trampoline ObjectMountainExplosionRock1_t(0x602130, 0x602135, ObjectMountainExplosionRock1_r);
-Trampoline ObjectMountainExplosionRock2_t(0x602320, 0x602325, ObjectMountainExplosionRock2_r);
-Trampoline MiddleRock_t(0x601EC0, 0x601EC7, MiddleRock_r);
+FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock1_r)> ObjectMountainExplosionRock1_t(0x602130, ObjectMountainExplosionRock1_r);
+FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock2_r)> ObjectMountainExplosionRock2_t(0x602320, ObjectMountainExplosionRock2_r);
+FastFunctionHookPtr<decltype(&MiddleRock_r)> MiddleRock_t(0x601EC0, MiddleRock_r);
 
 struct steamtbl
 {
@@ -54,7 +54,7 @@ static void __cdecl MiddleRock_r(task* tp)
 {
 	if (!multiplayer::IsActive() || tp->twp->mode == 0)
 	{
-		TARGET_STATIC(MiddleRock)(tp);
+		MiddleRock_t.Original(tp);
 	}
 	else
 	{
@@ -121,7 +121,7 @@ static void __cdecl ObjectMountainExplosionRock2_r(task* tp)
 {
 	if (!multiplayer::IsActive() || tp->twp->mode == 0)
 	{
-		TARGET_STATIC(ObjectMountainExplosionRock2)(tp);
+		ObjectMountainExplosionRock2_t.Original(tp);
 	}
 	else
 	{
@@ -198,7 +198,7 @@ static void __cdecl ObjectMountainExplosionRock1_r(task* tp)
 {
 	if (!multiplayer::IsActive() || tp->twp->mode == 0)
 	{
-		TARGET_STATIC(ObjectMountainExplosionRock1)(tp);
+		ObjectMountainExplosionRock1_t.Original(tp);
 	}
 	else
 	{

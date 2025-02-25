@@ -15,7 +15,6 @@ struct IUnknown;
 #include <d3d8.h>
 
 #include "SADXModLoader.h"
-#include "Trampoline.h"
 #include "IniFile.hpp"
 
 #include "FastFunctionHook.hpp"

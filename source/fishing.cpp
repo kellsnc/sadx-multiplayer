@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
@@ -51,16 +51,16 @@ static auto sub_46D0D0 = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x46D0
 static auto sub_46D970 = GenerateUsercallWrapper<BOOL(*)(Big_ypos* big_y_ptr, task* tp)>(rEAX, 0x46D970, rEAX, stack4); // inline, checks if lure collided with water
 static auto calcFishingLureY = GenerateUsercallWrapper<void (*)(taskwk* twp, Big_ypos* big_y_ptr, char flag)>(noret, 0x46DD20, rEAX, rESI, stack4);
 static auto moveFishingRotY = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46E380, rEAX);
-static auto chkKabeAngle2 = GenerateUsercallWrapper<BOOL(*)(Angle3* angle3_p)>(noret, 0x46C6A0, rESI);
+static auto chkKabeAngle2 = GenerateUsercallWrapper<BOOL(*)(Angle3* angle3_p)>(rEAX, 0x46C6A0, rESI);
 
-static Trampoline* dispFishWeightTexture_t = nullptr;
-static Trampoline* exitFishWeightTexture_t = nullptr;
-static Trampoline* dispFishingLure_t = nullptr;
-static Trampoline* dispFishingLureSwitch_t = nullptr;
-static Trampoline* fishingLureCtrl_t = nullptr;
-static Trampoline* SetFishingLureTask_t = nullptr;
-static Trampoline* fishingCursorCtrl_t = nullptr;
-static Trampoline* SetFishingCursorTask_t = nullptr;
+FastFunctionHook<void, task*> dispFishWeightTexture_t(0x46F580);
+FastFunctionHook<void, task*> exitFishWeightTexture_t(0x470160);
+FastFunctionHook<void, task*> dispFishingLure_t(0x470580);
+FastFunctionHook<void, task*> dispFishingLureSwitch_t(0x4703F0);
+FastFunctionHook<void, task*> fishingLureCtrl_t(0x471580);
+FastFunctionHook<task*, task*> SetFishingLureTask_t(0x471ED0);
+FastFunctionHook<void, task*> fishingCursorCtrl_t(0x46FA10);
+FastFunctionHook<task*, task*> SetFishingCursorTask_t(0x470330);
 
 BIGETC* GetBigEtc(int pnum)
 {
@@ -201,12 +201,12 @@ static void __cdecl dispFishWeightTexture_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		TARGET_DYNAMIC(dispFishWeightTexture)(tp);
+		dispFishWeightTexture_t.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		TARGET_DYNAMIC(dispFishWeightTexture)(tp);
+		dispFishWeightTexture_t.Original(tp);
 	}
 }
 
@@ -227,7 +227,7 @@ static void __cdecl exitFishWeightTexture_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(exitFishWeightTexture)(tp);
+		exitFishWeightTexture_t.Original(tp);
 	}
 }
 
@@ -308,7 +308,7 @@ static void __cdecl dispFishingLure_r(task* tp)
 			return;
 		}
 
-		TARGET_DYNAMIC(dispFishingLure)(tp);
+		dispFishingLure_t.Original(tp);
 	}
 }
 
@@ -320,7 +320,7 @@ static void __cdecl dispFishingLureSwitch_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(dispFishingLureSwitch)(tp);
+		dispFishingLureSwitch_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -1923,13 +1923,13 @@ static void __cdecl fishingLureCtrl_r(task* tp)
 			return;
 		}
 
-		TARGET_DYNAMIC(fishingLureCtrl)(tp);
+		fishingLureCtrl_t.Original(tp);
 	}
 }
 
 static task* __cdecl SetFishingLureTask_r(task* tp)
 {
-	auto lure_tp = TARGET_DYNAMIC(SetFishingLureTask)(tp);
+	auto lure_tp = SetFishingLureTask_t.Original(tp);
 	auto pnum = lure_tp->twp->btimer = TASKWK_PLAYERID(tp->twp);
 
 	auto etc = GetBigEtc(pnum);
@@ -2018,13 +2018,13 @@ static void __cdecl fishingCursorCtrl_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(fishingCursorCtrl)(tp);
+		fishingCursorCtrl_t.Original(tp);
 	}
 }
 
 static task* __cdecl SetFishingCursorTask_r(task* tp)
 {
-	auto cursor_tp = TARGET_DYNAMIC(SetFishingCursorTask)(tp);
+	auto cursor_tp = SetFishingCursorTask_t.Original(tp);
 	TASKWK_PLAYERID(cursor_tp->twp) = TASKWK_PLAYERID(tp->twp);
 	return cursor_tp;
 }
@@ -2046,15 +2046,14 @@ static void BigStateInit_r()
 
 void InitFishing()
 {
-	dispFishWeightTexture_t = new Trampoline(0x46F580, 0x46F585, dispFishWeightTexture_r);
-	exitFishWeightTexture_t = new Trampoline(0x470160, 0x470165, exitFishWeightTexture_r);
-	dispFishingLure_t = new Trampoline(0x470580, 0x470588, dispFishingLure_r);
-	dispFishingLureSwitch_t = new Trampoline(0x4703F0, 0x4703F8, dispFishingLureSwitch_r);
-	fishingLureCtrl_t = new Trampoline(0x471580, 0x471589, fishingLureCtrl_r);
-
-	SetFishingLureTask_t = new Trampoline(0x471ED0, 0x471ED6, SetFishingLureTask_r);
-	fishingCursorCtrl_t = new Trampoline(0x46FA10, 0x46FA18, fishingCursorCtrl_r);
-	SetFishingCursorTask_t = new Trampoline(0x470330, 0x470336, SetFishingCursorTask_r);
+	dispFishWeightTexture_t.Hook(dispFishWeightTexture_r);
+	exitFishWeightTexture_t.Hook(exitFishWeightTexture_r);
+	dispFishingLure_t.Hook(dispFishingLure_r);
+	dispFishingLureSwitch_t.Hook(dispFishingLureSwitch_r);
+	fishingLureCtrl_t.Hook(fishingLureCtrl_r);
+	SetFishingLureTask_t.Hook(SetFishingLureTask_r);
+	fishingCursorCtrl_t.Hook(fishingCursorCtrl_r);
+	SetFishingCursorTask_t.Hook(SetFishingCursorTask_r);
 
 	WriteJump((void*)0x470120, BigStateInit_r);
 	WriteCall((void*)0x48CCE4, Big_CreateBigDisplayFishWeight_j);

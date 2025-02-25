@@ -3,26 +3,13 @@
 
 // Crane platform in Speed Highway
 
-static void checkPlayerRideOnTheCage_w();
+static Bool __cdecl checkPlayerRideOnTheCage_r(task* tp);
 static void __cdecl execCage_r(task* tp);
 
-Trampoline checkPlayerRideOnTheCage_t(0x61B060, 0x61B067, checkPlayerRideOnTheCage_w);
-Trampoline execCage_t(0x61B190, 0x61B198, execCage_r);
+FastUsercallHookPtr<decltype(&checkPlayerRideOnTheCage_r), rEAX, rEAX> checkPlayerRideOnTheCage_t(0x61B060, checkPlayerRideOnTheCage_r);
+FastFunctionHookPtr<decltype(&execCage_r)> execCage_t(0x61B190, execCage_r);
 
-BOOL checkPlayerRideOnTheCage_o(task* tp)
-{
-	auto target = checkPlayerRideOnTheCage_t.Target();
-	BOOL r;
-	__asm
-	{
-		mov eax, [tp]
-		call target
-		mov r, eax
-	}
-	return r;
-}
-
-BOOL __cdecl checkPlayerRideOnTheCage_r(task* tp)
+static Bool __cdecl checkPlayerRideOnTheCage_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -58,24 +45,13 @@ BOOL __cdecl checkPlayerRideOnTheCage_r(task* tp)
 	}
 	else
 	{
-		return checkPlayerRideOnTheCage_o(tp);
-	}
-}
-
-static void __declspec(naked) checkPlayerRideOnTheCage_w()
-{
-	__asm
-	{
-		push eax
-		call checkPlayerRideOnTheCage_r
-		add esp, 4
-		retn
+		return checkPlayerRideOnTheCage_t.Original(tp);
 	}
 }
 
 static void __cdecl execCage_r(task* tp)
 {
-	TARGET_STATIC(execCage)(tp);
+	execCage_t.Original(tp);
 
 	for (int i = 2; i < PLAYER_MAX; ++i)
 	{

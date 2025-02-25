@@ -38,7 +38,7 @@ static void ObjectRuinSwdoorX_m(task* tp)
 }
 
 static void __cdecl ObjectRuinSwdoorX_r(task* tp);
-Trampoline ObjectRuinSwdoorX_t(0x5E7660, 0x5E7668, ObjectRuinSwdoorX_r);
+FastFunctionHookPtr<decltype(&ObjectRuinSwdoorX_r)> ObjectRuinSwdoorX_t(0x5E7660, ObjectRuinSwdoorX_r);
 static void __cdecl ObjectRuinSwdoorX_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == 0)
@@ -47,6 +47,6 @@ static void __cdecl ObjectRuinSwdoorX_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectRuinSwdoorX)(tp);
+		ObjectRuinSwdoorX_t.Original(tp);
 	}
 }

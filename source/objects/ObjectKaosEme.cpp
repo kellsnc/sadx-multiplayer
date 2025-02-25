@@ -10,9 +10,9 @@ static void __cdecl ObjectKaosEme_r(task* tp);
 static void __cdecl ObjectKaosEmeIC_r(task* tp);
 static void __cdecl ObjectKaosEmeCA_r(task* tp);
 
-Trampoline ObjectKaosEme_t(0x4DF3B0, 0x4DF3B6, ObjectKaosEme_r);
-Trampoline ObjectKaosEmeIC_t(0x4ECFA0, 0x4ECFA6, ObjectKaosEmeIC_r);
-Trampoline ObjectKaosEmeCA_t(0x5DD0A0, 0x5DD0A6, ObjectKaosEmeCA_r);
+FastFunctionHookPtr<decltype(&ObjectKaosEme_r)> ObjectKaosEme_t(0x4DF3B0, ObjectKaosEme_r);
+FastFunctionHookPtr<decltype(&ObjectKaosEmeIC_r)> ObjectKaosEmeIC_t(0x4ECFA0, ObjectKaosEmeIC_r);
+FastFunctionHookPtr<decltype(&ObjectKaosEmeCA_r)> ObjectKaosEmeCA_t(0x5DD0A0, ObjectKaosEmeCA_r);
 
 static void __cdecl ObjectKaosEmeDisp(task* tp)
 {
@@ -73,7 +73,7 @@ static void __cdecl ObjectKaosEme_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(ObjectKaosEme)(tp);
+	ObjectKaosEme_t.Original(tp);
 }
 
 static void __cdecl ObjectKaosEmeIC_r(task* tp)
@@ -91,7 +91,7 @@ static void __cdecl ObjectKaosEmeIC_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(ObjectKaosEmeIC)(tp);
+	ObjectKaosEmeIC_t.Original(tp);
 }
 
 static void __cdecl ObjectKaosEmeCA_r(task* tp)
@@ -109,5 +109,5 @@ static void __cdecl ObjectKaosEmeCA_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(ObjectKaosEmeCA)(tp);
+	ObjectKaosEmeCA_t.Original(tp);
 }

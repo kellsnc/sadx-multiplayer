@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "camera.h"
 
@@ -53,7 +53,7 @@ static void ColliNoWaterRange_m(task* tp)
 }
 
 static void __cdecl ColliNoWaterRange_r(task* tp);
-Trampoline ColliNoWaterRange_t(0x4D4E10, 0x4D4E15, ColliNoWaterRange_r);
+FastFunctionHookPtr<decltype(&ColliNoWaterRange_r)> ColliNoWaterRange_t(0x4D4E10, ColliNoWaterRange_r);
 static void __cdecl ColliNoWaterRange_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -62,6 +62,6 @@ static void __cdecl ColliNoWaterRange_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ColliNoWaterRange)(tp);
+		ColliNoWaterRange_t.Original(tp);
 	}
 }

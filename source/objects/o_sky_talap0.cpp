@@ -3,10 +3,10 @@
 #include "multiplayer.h"
 
 static void __cdecl ObjectSkydeck_c_talap0_Exec_r(task* tp);
-Trampoline ObjectSkydeck_c_talap0_Exec_t(0x5FB5F0, 0x5FB5F8, ObjectSkydeck_c_talap0_Exec_r);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_c_talap0_Exec_r)> ObjectSkydeck_c_talap0_Exec_t(0x5FB5F0, ObjectSkydeck_c_talap0_Exec_r);
 static void __cdecl ObjectSkydeck_c_talap0_Exec_r(task* tp)
 {
-	TARGET_STATIC(ObjectSkydeck_c_talap0_Exec)(tp);
+	ObjectSkydeck_c_talap0_Exec_t.Original(tp);
 
 	if (multiplayer::IsActive())
 	{

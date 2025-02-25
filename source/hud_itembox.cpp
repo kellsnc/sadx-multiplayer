@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
@@ -13,8 +13,8 @@ enum : __int8
 	MODE_SHRINK // custom name
 };
 
-Trampoline* manager_Disp_t = nullptr;
-Trampoline* itemBoxManager_t = nullptr;
+FastFunctionHook<void, task*> manager_Disp_t(0x4C0790);
+FastFunctionHook<void, task*> itemBoxManager_t(0x4C09B0);
 
 VariableHook<ITEM_MANAGER, 0x3C5A9D8> manager_data_m;
 
@@ -131,7 +131,7 @@ static void __cdecl manager_Disp_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(manager_Disp)(tp);
+		manager_Disp_t.Original(tp);
 	}
 }
 
@@ -241,7 +241,7 @@ static void __cdecl itemBoxManager_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(itemBoxManager)(tp);
+		itemBoxManager_t.Original(tp);
 	}
 }
 
@@ -258,6 +258,6 @@ void EntryItemBoxPanel_m(int panel, int pnum)
 
 void InitItemBoxHUD()
 {
-	manager_Disp_t = new Trampoline(0x4C0790, 0x4C0795, manager_Disp_r);
-	itemBoxManager_t = new Trampoline(0x4C09B0, 0x4C09B5, itemBoxManager_r);
+	manager_Disp_t.Hook(manager_Disp_r);
+	itemBoxManager_t.Hook(itemBoxManager_r);
 }

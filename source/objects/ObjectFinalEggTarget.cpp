@@ -3,7 +3,7 @@
 #include "result.h"
 
 static void __cdecl dummytarget_exec_r(task* tp);
-Trampoline dummytarget_exec_t(0x5B5960, 0x5B5965, dummytarget_exec_r);
+FastFunctionHookPtr<decltype(&dummytarget_exec_r)> dummytarget_exec_t(0x5B5960, dummytarget_exec_r);
 static void __cdecl dummytarget_exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -18,5 +18,5 @@ static void __cdecl dummytarget_exec_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(dummytarget_exec)(tp);
+	dummytarget_exec_t.Original(tp);
 }

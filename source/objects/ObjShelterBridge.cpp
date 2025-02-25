@@ -1,23 +1,13 @@
 #include "pch.h"
 #include "multiplayer.h"
 
-static void ObjShelterBridgeExec_w();
-static void ObjShelterBridgeShrink_w();
+static void __cdecl ObjShelterBridgeExec_r(task* tp);
+static void __cdecl ObjShelterBridgeShrink_r(task* tp);
 
-Trampoline ObjShelterBridgeExec_t(0x5A0E90, 0x5A0E97, ObjShelterBridgeExec_w);
-Trampoline ObjShelterBridgeShrink_t(0x5A0FD0, 0x5A0FD7, ObjShelterBridgeShrink_w);
+FastUsercallHookPtr<decltype(&ObjShelterBridgeExec_r), noret, rEBX> ObjShelterBridgeExec_t(0x5A0E90, ObjShelterBridgeExec_r);
+FastUsercallHookPtr<decltype(&ObjShelterBridgeShrink_r), noret, rEDI> ObjShelterBridgeShrink_t(0x5A0FD0, ObjShelterBridgeShrink_r);
 
 #pragma region ExecATask
-static void ObjShelterBridgeExec_o(task* tp)
-{
-	auto target = ObjShelterBridgeExec_t.Target();
-	__asm
-	{
-		mov ebx, [tp]
-		call target
-	}
-}
-
 static void ObjShelterBridgeExec_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -66,33 +56,12 @@ static void __cdecl ObjShelterBridgeExec_r(task* tp)
 	}
 	else
 	{
-		ObjShelterBridgeExec_o(tp);
-	}
-}
-
-static void __declspec(naked) ObjShelterBridgeExec_w()
-{
-	__asm
-	{
-		push ebx
-		call ObjShelterBridgeExec_r
-		pop ebx
-		retn
+		ObjShelterBridgeExec_t.Original(tp);
 	}
 }
 #pragma endregion
 
 #pragma region ShrinkTask
-static void ObjShelterBridgeShrink_o(task* tp)
-{
-	auto target = ObjShelterBridgeShrink_t.Target();
-	__asm
-	{
-		mov edi, [tp]
-		call target
-	}
-}
-
 static void ObjShelterBridgeShrink_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -135,18 +104,7 @@ static void __cdecl ObjShelterBridgeShrink_r(task* tp)
 	}
 	else
 	{
-		ObjShelterBridgeShrink_o(tp);
-	}
-}
-
-static void __declspec(naked) ObjShelterBridgeShrink_w()
-{
-	__asm
-	{
-		push edi
-		call ObjShelterBridgeShrink_r
-		pop edi
-		retn
+		ObjShelterBridgeShrink_t.Original(tp);
 	}
 }
 #pragma endregion

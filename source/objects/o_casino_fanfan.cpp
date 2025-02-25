@@ -206,7 +206,7 @@ static void Exec_m(task* tp)
 }
 
 static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp);
-Trampoline ObjectCasinoFanfan_Exec_t(0x5CBAF0, 0x5CBAF5, ObjectCasinoFanfan_Exec_r);
+FastFunctionHookPtr<decltype(&ObjectCasinoFanfan_Exec_r)> ObjectCasinoFanfan_Exec_t(0x5CBAF0, ObjectCasinoFanfan_Exec_r);
 static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -215,6 +215,6 @@ static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectCasinoFanfan_Exec)(tp);
+		ObjectCasinoFanfan_Exec_t.Original(tp);
 	}
 }

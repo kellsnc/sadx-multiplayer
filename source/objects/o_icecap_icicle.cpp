@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 
 static void ObjectIcicleExecute_m(task* tp)
@@ -45,7 +45,7 @@ static void ObjectIcicleExecute_m(task* tp)
 }
 
 static void __cdecl ObjectIcicleExecute_r(task* tp);
-Trampoline ObjectIcicleExecute_t(0x4F4C20, 0x4F4C25, ObjectIcicleExecute_r);
+FastFunctionHookPtr<decltype(&ObjectIcicleExecute_r)> ObjectIcicleExecute_t(0x4F4C20, ObjectIcicleExecute_r);
 static void __cdecl ObjectIcicleExecute_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -54,6 +54,6 @@ static void __cdecl ObjectIcicleExecute_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectIcicleExecute)(tp);
+		ObjectIcicleExecute_t.Original(tp);
 	}
 }

@@ -3,14 +3,14 @@
 void __cdecl ObjectBeachAttackOrukaSummon_r(task* tp);
 void __cdecl ObjectBeachPathOrukaSummon_r(task* tp);
 
-Trampoline ObjectBeachAttackOrukaSummon_t(0x4FBE40, 0x4FBE47, ObjectBeachAttackOrukaSummon_r);
-Trampoline ObjectBeachPathOrukaSummon_t(0x4FBBE0, 0x4FBBE7, ObjectBeachPathOrukaSummon_r);
+FastFunctionHookPtr<decltype(&ObjectBeachAttackOrukaSummon_r)> ObjectBeachAttackOrukaSummon_t(0x4FBE40, ObjectBeachAttackOrukaSummon_r);
+FastFunctionHookPtr<decltype(&ObjectBeachPathOrukaSummon_r)> ObjectBeachPathOrukaSummon_t(0x4FBBE0, ObjectBeachPathOrukaSummon_r);
 
 void __cdecl ObjectBeachAttackOrukaSummon_r(task* tp)
 {
 	if (!multiplayer::IsEnabled())
 	{
-		TARGET_STATIC(ObjectBeachAttackOrukaSummon)(tp);
+		ObjectBeachAttackOrukaSummon_t.Original(tp);
 	}
 }
 
@@ -18,6 +18,6 @@ void __cdecl ObjectBeachPathOrukaSummon_r(task* tp)
 {
 	if (!multiplayer::IsEnabled())
 	{
-		TARGET_STATIC(ObjectBeachPathOrukaSummon)(tp);
+		ObjectBeachPathOrukaSummon_t.Original(tp);
 	}
 }

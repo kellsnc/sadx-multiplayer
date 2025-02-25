@@ -45,24 +45,23 @@ General patches to allow compatibility for 4+ players
 
 */
 
-static Trampoline* PGetRotation_t = nullptr;
-static Trampoline* PGetAcceleration_t = nullptr;
-static Trampoline* PGetAccelerationSnowBoard_t = nullptr;
-static Trampoline* PGetAccelerationForBuilding_t = nullptr;
-static Trampoline* Ring_t = nullptr;
-static Trampoline* Tobitiri_t = nullptr;
-static Trampoline* EnemyDist2FromPlayer_t = nullptr;
-static Trampoline* EnemyCalcPlayerAngle_t = nullptr;
-static Trampoline* EnemyTurnToPlayer_t = nullptr;
-static Trampoline* TikalDisplay_t = nullptr;
-static Trampoline* ObjectSpringB_t = nullptr;
-static Trampoline* SpinnaDisplayer_t = nullptr;
-static Trampoline* ListGroundForDrawing_t = nullptr;
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetRotation_t(0x44BB60);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetAcceleration_t(0x44C270);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*, float> PGetAccelerationSnowBoard_t(0x448550);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetAccelerationForBuilding_t(0x448150);
+FastFunctionHook<void, task*> Ring_t(0x450370);
+FastFunctionHook<void, task*> Tobitiri_t(0x44FD10);
+FastFunctionHook<Float, taskwk*, int> EnemyDist2FromPlayer_t(0x4CD610);
+FastFunctionHook<Angle, taskwk*, enemywk*, Uint8> EnemyCalcPlayerAngle_t(0x4CD670);
+FastFunctionHook<Angle, taskwk*, enemywk*, Uint8> EnemyTurnToPlayer_t(0x4CD6F0);
+FastFunctionHook<void, task*> TikalDisplay_t(0x7B33A0);
+FastFunctionHook<void, task*> SpinnaDisplayer_t(0x4AFD80);
+FastFunctionHook<void> ListGroundForDrawing_t(0x43A900);
 FastFunctionHook<int, taskwk*, enemywk*> EnemyCheckDamage_t((intptr_t)OhNoImDead);
 FastFunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
 FastUsercallHookPtr<void(*)(taskwk* twp), noret, rESI> SonicMotionCheckEdition(0x492170);
 FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rEDI> PlayerVacumedRing_t(0x44FA90);
-static Trampoline* OGate2_Main_t = nullptr;
+FastFunctionHook<void, task*> OGate2_Main_t(0x59C850);
 FastFunctionHook<void, taskwk*> PPlayADXAsWaiting_t(0x442360); //idle
 
 FastFunctionHook<void, task*> OTpRing_t((intptr_t)OTpRing);
@@ -77,13 +76,13 @@ void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo:
 		{
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
-			TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
+			PGetRotation_t.Original(twp, mwp, pwp);
 			camera_twp->ang = backup;
 			return;
 		}
 	}
 
-	TARGET_DYNAMIC(PGetRotation)(twp, mwp, pwp);
+	PGetRotation_t.Original(twp, mwp, pwp);
 }
 
 void __cdecl PGetAcceleration_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -96,13 +95,13 @@ void __cdecl PGetAcceleration_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		{
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
-			TARGET_DYNAMIC(PGetAcceleration)(twp, mwp, pwp);
+			PGetAcceleration_t.Original(twp, mwp, pwp);
 			camera_twp->ang = backup;
 			return;
 		}
 	}
 
-	TARGET_DYNAMIC(PGetAcceleration)(twp, mwp, pwp);
+	PGetAcceleration_t.Original(twp, mwp, pwp);
 }
 
 void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* pwp, float Max_Speed)
@@ -116,14 +115,14 @@ void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* 
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
 			camera_twp->smode = GetStageNumber() == 0x802 && twp->pos.x > -5400.0f && twp->pos.y > -3900.0f ? 1 : 0;
-			TARGET_DYNAMIC(PGetAccelerationSnowBoard)(twp, mwp, pwp, Max_Speed);
+			PGetAccelerationSnowBoard_t.Original(twp, mwp, pwp, Max_Speed);
 			camera_twp->ang = backup;
 			camera_twp->smode = 0;
 			return;
 		}
 	}
 
-	TARGET_DYNAMIC(PGetAccelerationSnowBoard)(twp, mwp, pwp, Max_Speed);
+	PGetAccelerationSnowBoard_t.Original(twp, mwp, pwp, Max_Speed);
 }
 
 void __cdecl PGetAccelerationForBuilding_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -136,13 +135,13 @@ void __cdecl PGetAccelerationForBuilding_r(taskwk* twp, motionwk2* mwp, playerwk
 		{
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
-			TARGET_DYNAMIC(PGetAccelerationForBuilding)(twp, mwp, pwp);
+			PGetAccelerationForBuilding_t.Original(twp, mwp, pwp);
 			camera_twp->ang = backup;
 			return;
 		}
 	}
 
-	TARGET_DYNAMIC(PGetAccelerationForBuilding)(twp, mwp, pwp);
+	PGetAccelerationForBuilding_t.Original(twp, mwp, pwp);
 }
 
 void __cdecl SonicMotionCheckEdition_r(taskwk* twp)
@@ -232,7 +231,7 @@ void __cdecl Ring_r(task* tp)
 		}
 	}
 
-	TARGET_DYNAMIC(Ring)(tp);
+	Ring_t.Original(tp);
 }
 
 void __cdecl OTpRing_r(task* tp)
@@ -285,7 +284,7 @@ void __cdecl Tobitiri_r(task* tp)
 		}
 	}
 
-	TARGET_DYNAMIC(Tobitiri)(tp);
+	Tobitiri_t.Original(tp);
 }
 
 // Patch for other players to get kill score
@@ -369,37 +368,37 @@ float __cdecl EnemyDist2FromPlayer_r(taskwk* twp, int num)
 {
 	if (multiplayer::IsActive() && num == 0)
 	{
-		return TARGET_DYNAMIC(EnemyDist2FromPlayer)(twp, GetClosestPlayerNum(&twp->pos));
+		return EnemyDist2FromPlayer_t.Original(twp, GetClosestPlayerNum(&twp->pos));
 	}
 	else
 	{
-		return TARGET_DYNAMIC(EnemyDist2FromPlayer)(twp, num);
+		return EnemyDist2FromPlayer_t.Original(twp, num);
 	}
 }
 
 // Despite taking player id, it always gets 0 so let's check closest player
-Angle __cdecl EnemyCalcPlayerAngle_r(taskwk* twp, enemywk* ewp, unsigned __int8 pnum)
+Angle __cdecl EnemyCalcPlayerAngle_r(taskwk* twp, enemywk* ewp, Uint8 pnum)
 {
 	if (multiplayer::IsActive() && pnum == 0)
 	{
-		return TARGET_DYNAMIC(EnemyCalcPlayerAngle)(twp, ewp, GetClosestPlayerNum(&twp->pos));
+		return EnemyCalcPlayerAngle_t.Original(twp, ewp, GetClosestPlayerNum(&twp->pos));
 	}
 	else
 	{
-		return TARGET_DYNAMIC(EnemyCalcPlayerAngle)(twp, ewp, pnum);
+		return EnemyCalcPlayerAngle_t.Original(twp, ewp, pnum);
 	}
 }
 
 // Despite taking player id, it always gets 0 so let's check closest player
-Angle __cdecl EnemyTurnToPlayer_r(taskwk* twp, enemywk* ewp, unsigned __int8 pnum)
+Angle __cdecl EnemyTurnToPlayer_r(taskwk* twp, enemywk* ewp, Uint8 pnum)
 {
 	if (multiplayer::IsActive() && pnum == 0)
 	{
-		return TARGET_DYNAMIC(EnemyTurnToPlayer)(twp, ewp, GetClosestPlayerNum(&twp->pos));
+		return EnemyTurnToPlayer_t.Original(twp, ewp, GetClosestPlayerNum(&twp->pos));
 	}
 	else
 	{
-		return TARGET_DYNAMIC(EnemyTurnToPlayer)(twp, ewp, pnum);
+		return EnemyTurnToPlayer_t.Original(twp, ewp, pnum);
 	}
 }
 
@@ -412,7 +411,7 @@ BOOL IsGamePausedOrNot1stScreen()
 // Add shadow rendering in Tikal's display routine because they forgot it
 void TikalDisplay_r(task* tp)
 {
-	TARGET_DYNAMIC(TikalDisplay)(tp);
+	TikalDisplay_t.Original(tp);
 
 	if (IsGamePausedOrNot1stScreen())
 	{
@@ -563,7 +562,7 @@ void __cdecl SpinnaDisplayer_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(SpinnaDisplayer)(tp);
+		SpinnaDisplayer_t.Original(tp);
 	}
 }
 
@@ -623,7 +622,7 @@ void __cdecl ListGroundForDrawing_r()
 	}
 	else
 	{
-		TARGET_DYNAMIC(ListGroundForDrawing)();
+		ListGroundForDrawing_t.Original();
 	}
 }
 
@@ -726,7 +725,7 @@ void __cdecl OGate2_Main_r(task* tp)
 			twp->mode = 2; //force the door to open
 	}
 
-	TARGET_DYNAMIC(OGate2_Main)(tp);
+	OGate2_Main_t.Original(tp);
 }
 
 void __cdecl FixShakeoffGarbageAction(Uint8 pno, Uint8 mode)
@@ -863,17 +862,17 @@ void __cdecl PPlayADXAsWaiting_r(taskwk* pTwp)
 
 void InitPatches()
 {
-	Ring_t = new Trampoline(0x450370, 0x450375, Ring_r);
-	Tobitiri_t = new Trampoline(0x44FD10, 0x44FD18, Tobitiri_r);;
+	Ring_t.Hook(Ring_r);
+	Tobitiri_t.Hook(Tobitiri_r);
 	OTpRing_t.Hook(OTpRing_r);
 	PlayerVacumedRing_t.Hook(PlayerVacumedRing_r);
-	ListGroundForDrawing_t = new Trampoline(0x43A900, 0x43A905, ListGroundForDrawing_r);
+	ListGroundForDrawing_t.Hook(ListGroundForDrawing_r);
 
 	// Player
-	PGetRotation_t = new Trampoline(0x44BB60, 0x44BB68, PGetRotation_r);
-	PGetAcceleration_t = new Trampoline(0x44C270, 0x44C278, PGetAcceleration_r);
-	PGetAccelerationSnowBoard_t = new Trampoline(0x448550, 0x448558, PGetAccelerationSnowBoard_r);
-	PGetAccelerationForBuilding_t = new Trampoline(0x448150, 0x448158, PGetAccelerationForBuilding_r);
+	PGetRotation_t.Hook(PGetRotation_r);
+	PGetAcceleration_t.Hook(PGetAcceleration_r);
+	PGetAccelerationSnowBoard_t.Hook(PGetAccelerationSnowBoard_r);
+	PGetAccelerationForBuilding_t.Hook(PGetAccelerationForBuilding_r);
 	SonicMotionCheckEdition.Hook(SonicMotionCheckEdition_r);
 	PPlayADXAsWaiting_t.Hook(PPlayADXAsWaiting_r); //patch idle voice multiplayer
 
@@ -890,19 +889,19 @@ void InitPatches()
 	WriteData<5>((void*)0x7B326D, 0x90); // EBuyon: remove original 100 points for player 0
 
 	// Enemy player checks
-	EnemyDist2FromPlayer_t = new Trampoline(0x4CD610, 0x4CD61B, EnemyDist2FromPlayer_r);
-	EnemyCalcPlayerAngle_t = new Trampoline(0x4CD670, 0x4CD675, EnemyCalcPlayerAngle_r);
-	EnemyTurnToPlayer_t = new Trampoline(0x4CD6F0, 0x4CD6F5, EnemyTurnToPlayer_r);
+	EnemyDist2FromPlayer_t.Hook(EnemyDist2FromPlayer_r);
+	EnemyCalcPlayerAngle_t.Hook(EnemyCalcPlayerAngle_r);
+	EnemyTurnToPlayer_t.Hook(EnemyTurnToPlayer_r);
 	WriteData((char*)0x4CCB3F, (char)PLAYER_MAX); // EnemySearchPlayer
 
 	// Enemies
-	SpinnaDisplayer_t = new Trampoline(0x4AFD80, 0x4AFD85, SpinnaDisplayer_r);
+	SpinnaDisplayer_t.Hook(SpinnaDisplayer_r);
 
 	// Bosses
 	SetCircleLimit_t.Hook(SetCircleLimit_r);
 
 	//open door in hot shelter if not amy
-	OGate2_Main_t = new Trampoline(0x59C850, 0x59C858, OGate2_Main_r);
+	OGate2_Main_t.Hook(OGate2_Main_r);
 
 	// Character shadows:
 	// Game draws shadow in logic sub but also in display sub *if* game is paused.
@@ -914,7 +913,7 @@ void InitPatches()
 	WriteCall((void*)0x4875F9, IsGamePausedOrNot1stScreen); // Amy
 	WriteCall((void*)0x48BA5A, IsGamePausedOrNot1stScreen); // Big
 	WriteCall((void*)0x480702, IsGamePausedOrNot1stScreen); // Gamma
-	TikalDisplay_t = new Trampoline(0x7B33A0, 0x7B33A5, TikalDisplay_r);
+	TikalDisplay_t.Hook(TikalDisplay_r);
 
 	// Springs for 4+ players
 	WriteData((uint8_t*)0x7A4DC4, (uint8_t)PLAYER_MAX); // ObjectSpring

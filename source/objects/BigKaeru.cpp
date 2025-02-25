@@ -578,7 +578,7 @@ static void BigKaeru_m(task* tp)
 }
 
 static void __cdecl BigKaeru_r(task* tp);
-Trampoline BigKaeru_t(0x7A7AD0, 0x7A7AD5, BigKaeru_r);
+FastFunctionHookPtr<decltype(&BigKaeru_r)> BigKaeru_t(0x7A7AD0, BigKaeru_r);
 static void __cdecl BigKaeru_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -587,6 +587,6 @@ static void __cdecl BigKaeru_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(BigKaeru)(tp);
+		BigKaeru_t.Original(tp);
 	}
 }

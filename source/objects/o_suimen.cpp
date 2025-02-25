@@ -4,7 +4,7 @@
 // Water switches in Lost World (and the water iself)
 
 static void __cdecl cNormal_r(task* tp);
-Trampoline ObjectSuimen_cNormal_t(0x5E8410, 0x5E8415, cNormal_r);
+FastFunctionHookPtr<decltype(&cNormal_r)> ObjectSuimen_cNormal_t(0x5E8410, cNormal_r);
 static void __cdecl cNormal_r(task* tp)
 {
 	auto twp = tp->twp;

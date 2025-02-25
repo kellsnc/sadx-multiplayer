@@ -5,10 +5,10 @@
 
 enum : char
 {
-	INIT,   // symbol
-	WAIT,   // symbol
-	ACTIVE, // custom
-	STOP,   // custom
+	INIT,
+	WAIT,
+	ACTIVE,
+	STOP,
 };
 
 DataPointer(CCL_INFO, palley_colli, 0x24C8C70);
@@ -49,12 +49,12 @@ static void DrawWireTarumi_m(task* tp)
 }
 
 static void KasshaDisplayer_r(task* tp);
-Trampoline KasshaDisplayer_t(0x603590, 0x603595, KasshaDisplayer_r);
+FastFunctionHookPtr<decltype(&KasshaDisplayer_r)> KasshaDisplayer_t(0x603590, KasshaDisplayer_r);
 static void KasshaDisplayer_r(task* tp)
 {
 	if (!SplitScreen::IsActive())
 	{
-		return TARGET_STATIC(KasshaDisplayer)(tp);
+		return KasshaDisplayer_t.Original(tp);
 	}
 
 	if (!MissedFrames)
@@ -86,12 +86,12 @@ static void MovePlayer(taskwk* twp, pathtag* tag, float onpathpos, int pnum)
 }
 
 static void PathKassha_r(task* tp);
-Trampoline PathKassha_t(0x603640, 0x603647, PathKassha_r);
+FastFunctionHookPtr<decltype(&PathKassha_r)> PathKassha_t(0x603640, PathKassha_r);
 static void PathKassha_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return TARGET_STATIC(PathKassha)(tp);
+		return PathKassha_t.Original(tp);
 	}
 
 	auto twp = tp->twp;

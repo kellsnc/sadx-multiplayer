@@ -5,15 +5,15 @@
 // Had to patch some player logic too
 // To-do: simultaneity
 
-static void ObjectJumpPanelCollision_w();
+static void __cdecl ObjectJumpPanelCollision_r(task* tp);
 static signed int CanIMakePanelJump_r(taskwk* twp);
 static void StartPlayerPanelJump_r(taskwk* twp);
-static BOOL CheckCollisionedForJumpPanel_r(taskwk* twp);
+static Bool CheckCollisionedForJumpPanel_r(taskwk* twp);
 
-Trampoline ObjectJumpPanelCollision_t(0x4B8600, 0x4B8606, ObjectJumpPanelCollision_w);
-Trampoline CanIMakePanelJump_t(0x4B83F0, 0x4B83F7, CanIMakePanelJump_r);
-Trampoline StartPlayerPanelJump_t(0x4B8470, 0x4B8479, StartPlayerPanelJump_r);
-Trampoline CheckCollisionedForJumpPanel_t(0x4B83C0, 0x4B83C7, CheckCollisionedForJumpPanel_r);
+FastUsercallHookPtr<decltype(&ObjectJumpPanelCollision_r), noret, rEAX> ObjectJumpPanelCollision_t(0x4B8600, ObjectJumpPanelCollision_r);
+FastFunctionHookPtr<decltype(&CanIMakePanelJump_r)> CanIMakePanelJump_t(0x4B83F0, CanIMakePanelJump_r);
+FastFunctionHookPtr<decltype(&StartPlayerPanelJump_r)> StartPlayerPanelJump_t(0x4B8470, StartPlayerPanelJump_r);
+FastFunctionHookPtr<decltype(&CheckCollisionedForJumpPanel_r)> CheckCollisionedForJumpPanel_t(0x4B83C0, CheckCollisionedForJumpPanel_r);
 
 DataArray(task*, jumppanel_tp_list, 0x3C5A27C, 10);
 
@@ -41,7 +41,7 @@ static taskwk* CCL_IsHitPanel(taskwk* twp)
 	return nullptr;
 }
 
-static bool AreJumpPanelsActive()
+static Bool AreJumpPanelsActive()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
@@ -73,7 +73,7 @@ static bool AreJumpPanelsActive()
 }
 
 #pragma region CheckCollisionedForJumpPanel
-static BOOL __cdecl CheckCollisionedForJumpPanel_r(taskwk* twp)
+static Bool __cdecl CheckCollisionedForJumpPanel_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -81,7 +81,7 @@ static BOOL __cdecl CheckCollisionedForJumpPanel_r(taskwk* twp)
 	}
 	else
 	{
-		return TARGET_STATIC(CheckCollisionedForJumpPanel)(twp);
+		return CheckCollisionedForJumpPanel_t.Original(twp);
 	}
 }
 #pragma endregion
@@ -120,7 +120,7 @@ static void __cdecl StartPlayerPanelJump_r(taskwk* twp)
 	}
 	else
 	{
-		TARGET_STATIC(StartPlayerPanelJump)(twp);
+		StartPlayerPanelJump_t.Original(twp);
 	}
 }
 #pragma endregion
@@ -168,22 +168,12 @@ static signed int __cdecl CanIMakePanelJump_r(taskwk* twp)
 	}
 	else
 	{
-		return TARGET_STATIC(CanIMakePanelJump)(twp);
+		return CanIMakePanelJump_t.Original(twp);
 	}
 }
 #pragma endregion
 
 #pragma region ObjectJumpPanelCollision
-static void ObjectJumpPanelCollision_o(task* tp)
-{
-	auto target = ObjectJumpPanelCollision_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
-
 static void __cdecl ObjectJumpPanelCollision_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -209,18 +199,7 @@ static void __cdecl ObjectJumpPanelCollision_r(task* tp)
 	}
 	else
 	{
-		ObjectJumpPanelCollision_o(tp);
-	}
-}
-
-static void __declspec(naked) ObjectJumpPanelCollision_w()
-{
-	__asm
-	{
-		push eax
-		call ObjectJumpPanelCollision_r
-		pop eax
-		retn
+		ObjectJumpPanelCollision_t.Original(tp);
 	}
 }
 #pragma endregion

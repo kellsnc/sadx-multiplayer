@@ -6,8 +6,8 @@
 #include "hud_itembox.h"
 #include "ObjectItemBox.h"
 
-Trampoline* ObjectItemboxNormal_t = nullptr;
-Trampoline* itembox_airCollisitonBefore_t = nullptr;
+FastUsercallHookPtr<void(*)(task*), noret, rEAX> ObjectItemboxNormal_t(0x4D6670);
+FastUsercallHookPtr<void(*)(task*), noret, rEDI> itembox_airCollisitonBefore_t(0x4C0610);
 FastFunctionHook<void, task*> ItemBoxAir_t((intptr_t)ItemBoxAir_Main);
 
 static bool CheckHitByPlayerOrBullet(taskwk* twp)
@@ -161,16 +161,6 @@ static void __cdecl ef_th_baria_r(taskwk* twp)
 #pragma endregion
 
 #pragma region ObjectItemBox
-static void ObjectItemboxNormal_o(task* tp)
-{
-	auto target = ObjectItemboxNormal_t->Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
-
 static void ObjectItemboxNormal_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -222,33 +212,12 @@ static void __cdecl ObjectItemboxNormal_r(task* tp)
 	}
 	else
 	{
-		ObjectItemboxNormal_o(tp);
-	}
-}
-
-static void __declspec(naked) ObjectItemboxNormal_w()
-{
-	__asm
-	{
-		push eax
-		call ObjectItemboxNormal_r
-		pop eax
-		retn
+		ObjectItemboxNormal_t.Original(tp);
 	}
 }
 #pragma endregion
 
 #pragma region ObjectItemboxAir
-static void itembox_airCollisitonBefore_o(task* tp)
-{
-	auto target = itembox_airCollisitonBefore_t->Target();
-	__asm
-	{
-		mov edi, [tp]
-		call target
-	}
-}
-
 static void itembox_airCollisitonBefore_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -293,18 +262,7 @@ static void __cdecl itembox_airCollisitonBefore_r(task* tp)
 	}
 	else
 	{
-		itembox_airCollisitonBefore_o(tp);
-	}
-}
-
-static void __declspec(naked) itembox_airCollisitonBefore_w()
-{
-	__asm
-	{
-		push edi
-		call itembox_airCollisitonBefore_r
-		pop edi
-		retn
+		itembox_airCollisitonBefore_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -345,8 +303,8 @@ static void DeleteAirBox(task* obj)
 
 void InitItemBoxPatches()
 {
-	ObjectItemboxNormal_t = new Trampoline(0x4D6670, 0x4D6677, ObjectItemboxNormal_w);
-	itembox_airCollisitonBefore_t = new Trampoline(0x4C0610, 0x4C0616, itembox_airCollisitonBefore_w);
+	ObjectItemboxNormal_t.Hook(ObjectItemboxNormal_r);
+	itembox_airCollisitonBefore_t.Hook(itembox_airCollisitonBefore_r);
 
 	item_info[1].effect_func = ef_muteki_r;
 	item_info[2].effect_func = ef_5ring_r;

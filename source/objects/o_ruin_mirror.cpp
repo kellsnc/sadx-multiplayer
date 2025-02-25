@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
@@ -19,15 +19,15 @@ static void __cdecl ObjectRuinFogChange_r(task* tp);
 static void __cdecl ObjectRuinFogLight_r(task* tp);
 static void __cdecl DrawFogHasira_r(task* tp);
 
-Trampoline ObjectRuinFogSwitch_t(0x5E25A0, 0x5E25A5, ObjectRuinFogSwitch_r);
-Trampoline DrawMirror_t(0x5E2380, 0x5E2385, DrawMirror_r);
-Trampoline ObjectRuinMirror_t(0x5E2850, 0x5E2855, ObjectRuinMirror_r);
-Trampoline BigMirrorDraw_t(0x5E2EA0, 0x5E2EA7, BigMirrorDraw_r);
-Trampoline FogEnd_t(0x5E2530, 0x5E2537, FogEnd_r);
-Trampoline ObjectRuinBigMirror_t(0x5E3310, 0x5E3315, ObjectRuinBigMirror_r);
-Trampoline ObjectRuinFogChange_t(0x5E3020, 0x5E3026, ObjectRuinFogChange_r);
-Trampoline ObjectRuinFogLight_t(0x5E3240, 0x5E3246, ObjectRuinFogLight_r);
-Trampoline DrawFogHasira_t(0x5E27A0, 0x5E27A5, DrawFogHasira_r);
+FastFunctionHookPtr<decltype(&ObjectRuinFogSwitch_r)> ObjectRuinFogSwitch_t(0x5E25A0, ObjectRuinFogSwitch_r);
+FastFunctionHookPtr<decltype(&DrawMirror_r)> DrawMirror_t(0x5E2380, DrawMirror_r);
+FastFunctionHookPtr<decltype(&ObjectRuinMirror_r)> ObjectRuinMirror_t(0x5E2850, ObjectRuinMirror_r);
+FastFunctionHookPtr<decltype(&BigMirrorDraw_r)> BigMirrorDraw_t(0x5E2EA0, BigMirrorDraw_r);
+FastFunctionHookPtr<decltype(&FogEnd_r)> FogEnd_t(0x5E2530, FogEnd_r);
+FastFunctionHookPtr<decltype(&ObjectRuinBigMirror_r)> ObjectRuinBigMirror_t(0x5E3310, ObjectRuinBigMirror_r);
+FastFunctionHookPtr<decltype(&ObjectRuinFogChange_r)> ObjectRuinFogChange_t(0x5E3020, ObjectRuinFogChange_r);
+FastFunctionHookPtr<decltype(&ObjectRuinFogLight_r)> ObjectRuinFogLight_t(0x5E3240, ObjectRuinFogLight_r);
+FastFunctionHookPtr<decltype(&DrawFogHasira_r)> DrawFogHasira_t(0x5E27A0, DrawFogHasira_r);
 
 DataPointer(CCL_INFO, c_colli_mirror, 0x2038C38);
 DataPointer(float, max_dist, 0x2038CA0);
@@ -107,7 +107,7 @@ static void __cdecl ObjectRuinFogSwitch_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectRuinFogSwitch)(tp);
+		ObjectRuinFogSwitch_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -151,7 +151,7 @@ static void __cdecl DrawMirror_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(DrawMirror)(tp);
+		DrawMirror_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -295,7 +295,7 @@ static void __cdecl ObjectRuinMirror_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectRuinMirror)(tp);
+		ObjectRuinMirror_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -338,7 +338,7 @@ static void __cdecl BigMirrorDraw_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(BigMirrorDraw)(tp);
+	BigMirrorDraw_t.Original(tp);
 }
 
 static void ObjectRuinBigMirror_m(task* tp)
@@ -369,7 +369,7 @@ static void __cdecl ObjectRuinBigMirror_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectRuinBigMirror)(tp);
+		ObjectRuinBigMirror_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -391,7 +391,7 @@ static void __cdecl FogEnd_r(task* tp)
 		fog::ResetUserFog(i);
 	}
 
-	TARGET_STATIC(FogEnd)(tp);
+	FogEnd_t.Original(tp);
 }
 
 static void GetClosestActiveMirror(NJS_POINT3* plpos, NJS_POINT3* aim_pos)
@@ -515,7 +515,7 @@ static void __cdecl ObjectRuinFogChange_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectRuinFogChange)(tp);
+		ObjectRuinFogChange_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -559,7 +559,7 @@ static void __cdecl ObjectRuinFogLight_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectRuinFogLight)(tp);
+		ObjectRuinFogLight_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -596,7 +596,7 @@ static void __cdecl DrawFogHasira_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(DrawFogHasira)(tp);
+		DrawFogHasira_t.Original(tp);
 	}
 }
 #pragma endregion

@@ -1,25 +1,14 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "result.h"
 
-Trampoline* e105_calcSomeValue_t = nullptr;
-Trampoline* e105_chkPlayerRangeIn_t = nullptr;
-Trampoline* e105_moveBattery_t = nullptr;
+FastUsercallHookPtr<void(*)(task*), noret, rEAX> e105_calcSomeValue_t(0x5A3860);
+FastFunctionHook<void, task*> e105_moveBattery_t(0x5A40B0);
+FastFunctionHook<Bool, task*> e105_chkPlayerRangeIn_t(0x5A3670);
 
 // Unknown main struct so no full rewrite for now
-
-#pragma region calcSomeValue
-static void e105_calcSomeValue_o(task* tp)
-{
-	auto target = e105_calcSomeValue_t->Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
 
 static void __cdecl e105_calcSomeValue_r(task* tp)
 {
@@ -30,29 +19,16 @@ static void __cdecl e105_calcSomeValue_r(task* tp)
 		auto pnum = GetClosestPlayerNum(&tp->twp->pos);
 		playertp[0] = playertp[pnum];
 		playermwp[0] = playermwp[pnum];
-		e105_calcSomeValue_o(tp);
+		e105_calcSomeValue_t.Original(tp);
 		playertp[0] = pltp;
 		playermwp[0] = plmwp;
 	}
 	else
 	{
-		e105_calcSomeValue_o(tp);
+		e105_calcSomeValue_t.Original(tp);
 	}
 }
 
-static void __declspec(naked) e105_calcSomeValue_w()
-{
-	__asm
-	{
-		push eax
-		call e105_calcSomeValue_r
-		pop eax
-		retn
-	}
-}
-#pragma endregion
-
-#pragma region moveBattery
 static void __cdecl e105_moveBattery_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -71,18 +47,16 @@ static void __cdecl e105_moveBattery_r(task* tp)
 
 		auto pltp = playertp[0];
 		playertp[0] = playertp[GetClosestPlayerNum(&tp->twp->pos)];
-		TARGET_DYNAMIC(e105_moveBattery)(tp);
+		e105_moveBattery_t.Original(tp);
 		playertp[0] = pltp;
 	}
 	else
 	{
-		TARGET_DYNAMIC(e105_moveBattery)(tp);
+		e105_moveBattery_t.Original(tp);
 	}
 }
-#pragma endregion
 
-#pragma region chkPlayerRangeIn
-static BOOL __cdecl e105_chkPlayerRangeIn_r(task* tp)
+static Bool __cdecl e105_chkPlayerRangeIn_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -98,16 +72,13 @@ static BOOL __cdecl e105_chkPlayerRangeIn_r(task* tp)
 	}
 	else
 	{
-		return TARGET_DYNAMIC(e105_chkPlayerRangeIn)(tp);
+		return e105_chkPlayerRangeIn_t.Original(tp);
 	}
 }
-#pragma endregion
 
 void InitE105Patches()
 {
-	e105_moveBattery_t = new Trampoline(0x5A40B0, 0x5A40B7, e105_moveBattery_r);
-	e105_calcSomeValue_t = new Trampoline(0x5A3860, 0x5A3865, e105_calcSomeValue_w);
-
-	e105_chkPlayerRangeIn_t = new Trampoline(0x5A3670, 0x5A3677, e105_chkPlayerRangeIn_r);
-	WriteCall((void*)((int)e105_chkPlayerRangeIn_t->Target() + 2), (void*)0x441AC0); // Patch trampoline
+	e105_calcSomeValue_t.Hook(e105_calcSomeValue_r);
+	e105_moveBattery_t.Hook(e105_moveBattery_r);
+	e105_chkPlayerRangeIn_t.Hook(e105_chkPlayerRangeIn_r);
 }

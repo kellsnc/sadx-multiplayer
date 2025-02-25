@@ -1,14 +1,14 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 
 // Amy key handles in Final Egg
 // It's done properly in the player's task, but the object itself is hardcoded to p1
 
-Trampoline* HandleTest_t = nullptr;
-Trampoline* AmyHndlGetHandleAngle_t = nullptr;
+FastUsercallHookPtr<void(*)(taskwk*), noret, rEAX> HandleTest_t(0x5A2840);
+FastFunctionHook<Bool, Angle*> AmyHndlGetHandleAngle_t(0x4C56D0);
 
 VariableHook<amyhndlstr, 0x3C5B300> amyhndlstatus_m; // Add handle information for all players
 
@@ -41,7 +41,7 @@ static bool AmyHndlGetHandleAngle_m(int pnum, Angle* ang)
 	return true;
 }
 
-static BOOL AmyHndlGetHandleAngle_r(Angle* ang)
+static Bool AmyHndlGetHandleAngle_r(Angle* ang)
 {
 	if (multiplayer::IsActive())
 	{
@@ -49,7 +49,7 @@ static BOOL AmyHndlGetHandleAngle_r(Angle* ang)
 	}
 	else
 	{
-		return TARGET_DYNAMIC(AmyHndlGetHandleAngle)(ang);
+		return AmyHndlGetHandleAngle_t.Original(ang);
 	}
 }
 
@@ -155,16 +155,6 @@ static void HandleTest_m(taskwk* twp)
 	}
 }
 
-static void HandleTest_o(taskwk* twp)
-{
-	auto target = HandleTest_t->Target();
-	__asm
-	{
-		mov eax, [twp]
-		call target
-	}
-}
-
 static void __cdecl HandleTest_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
@@ -173,25 +163,13 @@ static void __cdecl HandleTest_r(taskwk* twp)
 	}
 	else
 	{
-		HandleTest_o(twp);
-	}
-}
-
-static void __declspec(naked) HandleTest_w()
-{
-	__asm
-	{
-		push eax
-		call HandleTest_r
-		pop eax
-		retn
+		HandleTest_t.Original(twp);
 	}
 }
 
 void PatchAmyHandles()
 {
-	WriteJump((void*)0x4C5800, AmyHndlGetInfoStrP_r); // Too small to trampoline
-	AmyHndlGetHandleAngle_t = new Trampoline(0x4C56D0, 0x4C56D8, AmyHndlGetHandleAngle_r);
-	HandleTest_t = new Trampoline(0x5A2840, 0x5A2848, HandleTest_w);
-	WriteCall((void*)((int)HandleTest_t->Target() + 3), (void*)0x5A2600); // Patch trampoline
+	WriteJump((void*)0x4C5800, AmyHndlGetInfoStrP_r); // Too small to hook
+	AmyHndlGetHandleAngle_t.Hook(AmyHndlGetHandleAngle_r);
+	HandleTest_t.Hook(HandleTest_r);
 }

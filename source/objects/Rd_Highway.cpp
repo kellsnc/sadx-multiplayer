@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 #include "result.h"
 
@@ -8,13 +8,12 @@
 
 VoidFunc(RdHighwayManageLandMask, 0x60FEE0); // custom name
 
-static void RdHighwayCheckArriveAtTheBuilding_w();
+static void __cdecl RdHighwayCheckArriveAtTheBuilding_r(task* tp);
 static void __cdecl subRd_Highway_r(task* tp);
 
-Trampoline RdHighwayCheckArriveAtTheBuilding_t(0x610050, 0x610057, RdHighwayCheckArriveAtTheBuilding_w);
-Trampoline subRd_Highway_t(0x6104C0, 0x6104C5, subRd_Highway_r);
+FastUsercallHookPtr<decltype(&RdHighwayCheckArriveAtTheBuilding_r), noret, rEAX> RdHighwayCheckArriveAtTheBuilding_t(0x610050, RdHighwayCheckArriveAtTheBuilding_r);
+FastFunctionHookPtr<decltype(&subRd_Highway_r)> subRd_Highway_t(0x6104C0, subRd_Highway_r);
 
-#pragma region subRd_Highway
 static void RdHighwayAct2Multi(taskwk* twp)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -154,19 +153,7 @@ static void __cdecl subRd_Highway_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(subRd_Highway)(tp);
-	}
-}
-#pragma endregion
-
-#pragma region RdHighwayCheckArriveAtTheBuilding
-static void RdHighwayCheckArriveAtTheBuilding_o(task* tp)
-{
-	auto target = RdHighwayCheckArriveAtTheBuilding_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
+		subRd_Highway_t.Original(tp);
 	}
 }
 
@@ -178,18 +165,6 @@ static void __cdecl RdHighwayCheckArriveAtTheBuilding_r(task* tp)
 	}
 	else
 	{
-		RdHighwayCheckArriveAtTheBuilding_o(tp);
+		RdHighwayCheckArriveAtTheBuilding_t.Original(tp);
 	}
 }
-
-static void __declspec(naked) RdHighwayCheckArriveAtTheBuilding_w()
-{
-	__asm
-	{
-		push eax
-		call RdHighwayCheckArriveAtTheBuilding_r
-		pop eax
-		retn
-	}
-}
-#pragma endregion

@@ -86,7 +86,7 @@ static void ObjectSkydeck_crane_hang_m(task* tp)
 }
 
 static void __cdecl ObjectSkydeck_crane_hang_r(task* tp);
-Trampoline ObjectSkydeck_crane_hang_t(0x5F2F90, 0x5F2F99, ObjectSkydeck_crane_hang_r);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_crane_hang_r)> ObjectSkydeck_crane_hang_t(0x5F2F90, ObjectSkydeck_crane_hang_r);
 static void __cdecl ObjectSkydeck_crane_hang_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -95,6 +95,6 @@ static void __cdecl ObjectSkydeck_crane_hang_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectSkydeck_crane_hang)(tp);
+		ObjectSkydeck_crane_hang_t.Original(tp);
 	}
 }

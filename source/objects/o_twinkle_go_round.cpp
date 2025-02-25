@@ -41,7 +41,7 @@ static void execTPFloor_m(task* tp)
 }
 
 static void __cdecl execTPFloor_r(task* tp);
-Trampoline execTPFloor_t(0x6210B0, 0x6210B8, execTPFloor_r);
+FastFunctionHookPtr<decltype(&execTPFloor_r)> execTPFloor_t(0x6210B0, execTPFloor_r);
 static void __cdecl execTPFloor_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == 1)
@@ -50,6 +50,6 @@ static void __cdecl execTPFloor_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(execTPFloor)(tp);
+		execTPFloor_t.Original(tp);
 	}
 }

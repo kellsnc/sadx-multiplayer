@@ -77,7 +77,7 @@ static void exec_m(task* tp)
 }
 
 static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp);
-Trampoline EnemyWindyTgtMissile_exec_t(0x4E84B0, 0x4E84B6, EnemyWindyTgtMissile_exec_r);
+FastFunctionHookPtr<decltype(&EnemyWindyTgtMissile_exec_r)> EnemyWindyTgtMissile_exec_t(0x4E84B0, EnemyWindyTgtMissile_exec_r);
 static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -86,6 +86,6 @@ static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(EnemyWindyTgtMissile_exec)(tp);
+		EnemyWindyTgtMissile_exec_t.Original(tp);
 	}
 }

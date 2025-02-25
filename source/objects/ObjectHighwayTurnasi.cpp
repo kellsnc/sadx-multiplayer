@@ -21,25 +21,15 @@ enum MD_TURNASI // made up
 	MD_TURNASI_DEADOUT
 };
 
-static void AsiCollisionCollision_w();
-static void ObjectHighwayTurnasiHit_w();
-static void ObjectHighwayTurnasiNormal_w();
+static void __cdecl AsiCollisionCollision_r(task* tp);
+static void __cdecl ObjectHighwayTurnasiHit_r(taskwk* twp);
+static void __cdecl ObjectHighwayTurnasiNormal_r(task* tp);
 
-Trampoline AsiCollisionCollision_t(0x618CE0, 0x618CE5, AsiCollisionCollision_w);
-Trampoline ObjectHighwayTurnasiHit_t(0x618F50, 0x618F56, ObjectHighwayTurnasiHit_w);
-Trampoline ObjectHighwayTurnasiNormal_t(0x618B10, 0x618B15, ObjectHighwayTurnasiNormal_w);
+FastUsercallHookPtr<decltype(&AsiCollisionCollision_r), noret, rEAX> AsiCollisionCollision_t(0x618CE0, AsiCollisionCollision_r);
+FastUsercallHookPtr<decltype(&ObjectHighwayTurnasiHit_r), noret, rESI> ObjectHighwayTurnasiHit_t(0x618F50, ObjectHighwayTurnasiHit_r);
+FastUsercallHookPtr<decltype(&ObjectHighwayTurnasiNormal_r), noret, rEAX> ObjectHighwayTurnasiNormal_t(0x618B10, ObjectHighwayTurnasiNormal_r);
 
 #pragma region "Collision" subroutine from AsiCollision
-static void AsiCollisionCollision_o(task* tp)
-{
-	auto target = AsiCollisionCollision_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
-
 static void AsiCollisionCollision_m(task* tp)
 {
 	auto twp = tp->twp; // this task work (collision child task)
@@ -110,33 +100,12 @@ static void __cdecl AsiCollisionCollision_r(task* tp)
 	}
 	else
 	{
-		AsiCollisionCollision_o(tp);
-	}
-}
-
-static void __declspec(naked) AsiCollisionCollision_w()
-{
-	__asm
-	{
-		push eax
-		call AsiCollisionCollision_r
-		pop eax
-		retn
+		AsiCollisionCollision_t.Original(tp);
 	}
 }
 #pragma endregion
 
 #pragma region "Hit" subroutine from ObjectHighwayTurnasi
-static void ObjectHighwayTurnasiHit_o(taskwk* twp)
-{
-	auto target = ObjectHighwayTurnasiHit_t.Target();
-	__asm
-	{
-		mov esi, [twp]
-		call target
-	}
-}
-
 static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 {
 	auto ctp = reinterpret_cast<task*>(twp->timer.ptr);
@@ -280,33 +249,12 @@ static void __cdecl ObjectHighwayTurnasiHit_r(taskwk* twp)
 	}
 	else
 	{
-		ObjectHighwayTurnasiHit_o(twp);
-	}
-}
-
-static void __declspec(naked) ObjectHighwayTurnasiHit_w()
-{
-	__asm
-	{
-		push esi
-		call ObjectHighwayTurnasiHit_r
-		pop esi
-		retn
+		ObjectHighwayTurnasiHit_t.Original(twp);
 	}
 }
 #pragma endregion
 
 #pragma region "Normal" subroutine from ObjectHighwayTurnasi
-static void ObjectHighwayTurnasiNormal_o(task* tp)
-{
-	auto target = ObjectHighwayTurnasiNormal_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
-
 static void __cdecl ObjectHighwayTurnasiNormal_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -352,18 +300,7 @@ static void __cdecl ObjectHighwayTurnasiNormal_r(task* tp)
 	}
 	else
 	{
-		ObjectHighwayTurnasiNormal_o(tp);
-	}
-}
-
-static void __declspec(naked) ObjectHighwayTurnasiNormal_w()
-{
-	__asm
-	{
-		push eax
-		call ObjectHighwayTurnasiNormal_r
-		pop eax
-		retn
+		ObjectHighwayTurnasiNormal_t.Original(tp);
 	}
 }
 #pragma endregion

@@ -51,7 +51,7 @@ static void __cdecl dispE102LaserDraw(task* tp)
 }
 
 static void __cdecl dispE102Laser_r(task* tp);
-Trampoline dispE102Laser_t(0x4C4C20, 0x4C4C25, dispE102Laser_r);
+FastFunctionHookPtr<decltype(&dispE102Laser_r)> dispE102Laser_t(0x4C4C20, dispE102Laser_r);
 static void __cdecl dispE102Laser_r(task* tp)
 {
 	if (SplitScreen::IsActive())
@@ -64,5 +64,5 @@ static void __cdecl dispE102Laser_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(dispE102Laser)(tp);
+	dispE102Laser_t.Original(tp);
 }

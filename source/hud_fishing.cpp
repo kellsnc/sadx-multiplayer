@@ -62,7 +62,7 @@ static void DrawBigHUDMulti(int pnum)
 }
 
 static void __cdecl dispZankiTexturePause_r(task* tp);
-Trampoline dispZankiTexturePause_t(0x46FB00, 0x46FB05, dispZankiTexturePause_r);
+FastFunctionHookPtr<decltype(&dispZankiTexturePause_r)> dispZankiTexturePause_t(0x46FB00, dispZankiTexturePause_r);
 static void __cdecl dispZankiTexturePause_r(task* tp)
 {
 	if (CurrentCharacter != Characters_Big)
@@ -96,12 +96,12 @@ static void __cdecl dispZankiTexturePause_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		TARGET_STATIC(dispZankiTexturePause)(tp);
+		dispZankiTexturePause_t.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		TARGET_STATIC(dispZankiTexturePause)(tp);
+		dispZankiTexturePause_t.Original(tp);
 	}
 }
 #pragma endregion
@@ -198,7 +198,7 @@ static void dispHitTexturePause_m(task* tp)
 }
 
 static void __cdecl dispHitTexturePause_r(task* tp);
-Trampoline dispHitTexturePause_t(0x46C920, 0x46C926, dispHitTexturePause_r);
+FastFunctionHookPtr<decltype(&dispHitTexturePause_r)> dispHitTexturePause_t(0x46C920, dispHitTexturePause_r);
 static void __cdecl dispHitTexturePause_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -210,7 +210,7 @@ static void __cdecl dispHitTexturePause_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(dispHitTexturePause)(tp);
+		dispHitTexturePause_t.Original(tp);
 	}
 }
 

@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "splitscreen.h"
 #include "multiplayer.h"
 
-Trampoline* savepointCollision_t = nullptr;
-Trampoline* PrintTimer_t = nullptr;
+FastUsercallHookPtr<void(*)(task*, taskwk*), noret, rEDI, rESI> savepointCollision_t(0x44F430);
+FastFunctionHook<void, CUSTUM_PRINT_NUMBER*, Sint32, Sint32> PrintTimer_t(0x4BABE0);
 
 float savepointGetSpeed_m(taskwk* twp, int pID)
 {
@@ -61,27 +61,7 @@ void __cdecl savepointCollision_r(task* tp, taskwk* twp)
 	}
 	else
 	{
-		auto target = TARGET_DYNAMIC(savepointCollision);
-
-		__asm
-		{
-			mov esi, [twp]
-			mov edi, [tp]
-			call target
-		}
-	}
-}
-
-void __declspec(naked) savepointCollision_w()
-{
-	__asm
-	{
-		push esi // twp
-		push edi // tp
-		call savepointCollision_r
-		pop edi // tp
-		pop esi // twp
-		retn
+		savepointCollision_t.Original(tp, twp);
 	}
 }
 
@@ -89,12 +69,12 @@ void __cdecl PrintTimer_r(CUSTUM_PRINT_NUMBER* custom, Sint32 min, Sint32 sec)
 {
 	if (!SplitScreen::IsActive())
 	{
-		TARGET_DYNAMIC(PrintTimer)(custom, min, sec);
+		PrintTimer_t.Original(custom, min, sec);
 	}
 }
 
 void PatchCheckpoint()
 {
-	savepointCollision_t = new Trampoline(0x44F430, 0x44F435, savepointCollision_w);
-	PrintTimer_t = new Trampoline(0x4BABE0, 0x4BABE5, PrintTimer_r);
+	savepointCollision_t.Hook(savepointCollision_r);
+	PrintTimer_t.Hook(PrintTimer_r);
 }

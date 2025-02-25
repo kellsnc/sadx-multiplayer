@@ -5,25 +5,13 @@
 
 static void __cdecl EnemyAir_r(task* tp);
 static void __cdecl AirMissle_r(task* tp);
-static void MissleLockOn_w();
+static void __cdecl MissleLockOn_r(enemywk* ewp, task* tp);
 
-Trampoline EnemyAir_t(0x4AA340, 0x4AA347, EnemyAir_r);
-Trampoline AirMissle_t(0x4AA270, 0x4AA276, AirMissle_r);
-Trampoline MissleLockOn_t(0x4A8AF0, 0x4A8AF8, MissleLockOn_w);
+FastFunctionHookPtr<decltype(&EnemyAir_r)> EnemyAir_t(0x4AA340, EnemyAir_r);
+FastFunctionHookPtr<decltype(&AirMissle_r)> AirMissle_t(0x4AA270, AirMissle_r);
+FastUsercallHookPtr<decltype(&MissleLockOn_r), noret, rEBX, stack4> MissleLockOn_t(0x4A8AF0, MissleLockOn_r);
 
 #pragma region MissleLockOn
-static void MissleLockOn_o(enemywk* ewp, task* tp)
-{
-	auto target = MissleLockOn_t.Target();
-	__asm
-	{
-		push[tp]
-		mov ebx, [ewp]
-		call target
-		add esp, 4
-	}
-}
-
 static void MissleLockOn_m(enemywk* ewp, task* tp)
 {
 	auto twp = tp->twp;
@@ -83,20 +71,7 @@ static void __cdecl MissleLockOn_r(enemywk* ewp, task* tp)
 	}
 	else
 	{
-		MissleLockOn_o(ewp, tp);
-	}
-}
-
-static void __declspec(naked) MissleLockOn_w()
-{
-	__asm
-	{
-		push[esp + 04h]
-		push ebx
-		call MissleLockOn_r
-		pop ebx
-		add esp, 4
-		retn
+		MissleLockOn_t.Original(ewp, tp);
 	}
 }
 #pragma endregion
@@ -112,7 +87,7 @@ static void __cdecl AirMissleDisp(task* tp)
 
 static void __cdecl AirMissle_r(task* tp)
 {
-	TARGET_STATIC(AirMissle)(tp);
+	AirMissle_t.Original(tp);
 	tp->disp = AirMissleDisp;
 }
 #pragma endregion
@@ -126,7 +101,7 @@ static void __cdecl EnemyAirDisp(task* tp)
 
 static void __cdecl EnemyAir_r(task* tp)
 {
-	TARGET_STATIC(EnemyAir)(tp);
+	EnemyAir_t.Original(tp);
 	tp->disp = EnemyAirDisp;
 }
 #pragma endregion

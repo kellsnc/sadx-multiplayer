@@ -785,7 +785,7 @@ void EnemyCartM(task* tp)
 }
 
 void __cdecl EnemyCart_r(task* tp);
-Trampoline EnemyCart_t(0x79A9E0, 0x79A9E5, EnemyCart_r);
+FastFunctionHookPtr<decltype(&EnemyCart_r)> EnemyCart_t(0x79A9E0, EnemyCart_r);
 void __cdecl EnemyCart_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -794,7 +794,7 @@ void __cdecl EnemyCart_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(EnemyCart)(tp);
+		EnemyCart_t.Original(tp);
 	}
 }
 
@@ -812,7 +812,7 @@ static bool IsTaskPlayerTask(task* tp)
 }
 
 void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd);
-Trampoline SetCartVelocity_t(0x79AF90, 0x79AF96, SetCartVelocity_r);
+FastFunctionHookPtr<decltype(&SetCartVelocity_r)> SetCartVelocity_t(0x79AF90, SetCartVelocity_r);
 void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd)
 {
 	if (multiplayer::IsActive())
@@ -860,12 +860,12 @@ void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd)
 	}
 	else
 	{
-		TARGET_STATIC(SetCartVelocity)(tp, spd);
+		SetCartVelocity_t.Original(tp, spd);
 	}
 }
 
 void __cdecl CartGetOffPlayer_r(task* tp);
-Trampoline CartGetOffPlayer_t(0x798C60, 0x798C65, CartGetOffPlayer_r);
+FastFunctionHookPtr<decltype(&CartGetOffPlayer_r)> CartGetOffPlayer_t(0x798C60, CartGetOffPlayer_r);
 void __cdecl CartGetOffPlayer_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -885,12 +885,12 @@ void __cdecl CartGetOffPlayer_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(CartGetOffPlayer)(tp);
+		CartGetOffPlayer_t.Original(tp);
 	}
 }
 
 void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang);
-Trampoline SetCartPos_t(0x796C50, 0x796C57, SetCartPos_r);
+FastFunctionHookPtr<decltype(&SetCartPos_r)> SetCartPos_t(0x796C50, SetCartPos_r);
 void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 {
 	if (multiplayer::IsActive())
@@ -906,7 +906,7 @@ void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 	}
 	else
 	{
-		return TARGET_STATIC(SetCartPos)(tp, pos, ang);
+		return SetCartPos_t.Original(tp, pos, ang);
 	}
 }
 

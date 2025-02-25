@@ -9,18 +9,8 @@ DataPointer(NJS_POINT3*, tor_pos, 0x3C5D674);
 static Float offset_ypos_m[PLAYER_MAX]{};
 static Float yang_m[PLAYER_MAX]{};
 
-static void VacumePlayer_w();
-Trampoline VacumePlayer_t(0x4DE5F0, 0x4DE5F7, VacumePlayer_w);
-
-static void VacumePlayer_o(task* tp)
-{
-	auto target = VacumePlayer_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
+static void __cdecl VacumePlayer_r(task* tp);
+FastUsercallHookPtr<decltype(&VacumePlayer_r), noret, rEAX> VacumePlayer_t(0x4DE5F0, VacumePlayer_r);
 
 static void VacumePlayer_m(task* tp)
 {
@@ -83,17 +73,6 @@ static void __cdecl VacumePlayer_r(task* tp)
 	}
 	else
 	{
-		VacumePlayer_o(tp);
-	}
-}
-
-static void __declspec(naked) VacumePlayer_w()
-{
-	__asm
-	{
-		push eax
-		call VacumePlayer_r
-		pop eax
-		retn
+		VacumePlayer_t.Original(tp);
 	}
 }

@@ -132,7 +132,7 @@ static void ObjectMountainAsiba_m(task* tp)
 }
 
 static void __cdecl ObjectMountainAsiba_r(task* obj);
-Trampoline ObjectMountainAsiba_t(0x60E150, 0x60E156, ObjectMountainAsiba_r);
+FastFunctionHookPtr<decltype(&ObjectMountainAsiba_r)> ObjectMountainAsiba_t(0x60E150, ObjectMountainAsiba_r);
 static void __cdecl ObjectMountainAsiba_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -141,6 +141,6 @@ static void __cdecl ObjectMountainAsiba_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectMountainAsiba)(tp);
+		ObjectMountainAsiba_t.Original(tp);
 	}
 }

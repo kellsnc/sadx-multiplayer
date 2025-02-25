@@ -2,7 +2,6 @@
 #include <d3d8types.h>
 #include <d3d8.h>
 #include "SADXModLoader.h"
-#include "Trampoline.h"
 #include "FastFunctionHook.hpp"
 #include "config.h"
 #include "hud_multi.h"

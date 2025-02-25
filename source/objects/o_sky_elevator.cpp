@@ -4,7 +4,7 @@
 #include "multiplayer.h"
 
 static void __cdecl objSkyEVStep_r(task* tp);
-Trampoline objSkyEVStep_t(0x5F5A70, 0x5F5A75, objSkyEVStep_r);
+FastFunctionHookPtr<decltype(&objSkyEVStep_r)> objSkyEVStep_t(0x5F5A70, objSkyEVStep_r);
 static void __cdecl objSkyEVStep_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == 1)
@@ -39,6 +39,6 @@ static void __cdecl objSkyEVStep_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(objSkyEVStep)(tp);
+		objSkyEVStep_t.Original(tp);
 	}
 }

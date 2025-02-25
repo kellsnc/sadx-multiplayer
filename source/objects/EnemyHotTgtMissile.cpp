@@ -8,18 +8,18 @@
 
 // Unknown main struct for large function so I cannot rewrite properly yet
 static void __cdecl EnemyHotTgtMissile_exec_r(task* tp);
-Trampoline EnemyHotTgtMissile_exec_t(0x5ACB70, 0x5ACB75, EnemyHotTgtMissile_exec_r);
+FastFunctionHookPtr<decltype(&EnemyHotTgtMissile_exec_r)> EnemyHotTgtMissile_exec_t(0x5ACB70, EnemyHotTgtMissile_exec_r);
 static void __cdecl EnemyHotTgtMissile_exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
 		auto pltwp = playertwp[0];
 		playertwp[0] = playertwp[GetClosestPlayerNum(&tp->twp->pos)];
-		TARGET_STATIC(EnemyHotTgtMissile_exec)(tp);
+		EnemyHotTgtMissile_exec_t.Original(tp);
 		playertwp[0] = pltwp;
 	}
 	else
 	{
-		TARGET_STATIC(EnemyHotTgtMissile_exec)(tp);
+		EnemyHotTgtMissile_exec_t.Original(tp);
 	}
 }

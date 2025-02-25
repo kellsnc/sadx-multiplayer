@@ -13,25 +13,15 @@ enum : __int8 // not official enum
 
 DataPointer(NJS_MATRIX, MtxBuff, 0x3B0EFE0);
 
-static void hallgate_set_colli_w();
+static void __cdecl hallgate_set_colli_r(task* tp);
 static void __cdecl hallgate_switch_exec_r(task* tp);
 static void __cdecl hallgate_o_switch_exec_r(task* tp);
 static void __cdecl hallgate_exec_r(task* tp);
 
-Trampoline hallgate_set_colli_t(0x5B6860, 0x5B6867, hallgate_set_colli_w);
-Trampoline hallgate_switch_exec_t(0x5B6B30, 0x5B6B36, hallgate_switch_exec_r);
-Trampoline hallgate_o_switch_exec_t(0x5B6910, 0x5B6915, hallgate_o_switch_exec_r);
-Trampoline hallgate_exec_t(0x5B69D0, 0x5B69D6, hallgate_exec_r);
-
-static void hallgate_set_colli_o(task* tp)
-{
-	auto target = hallgate_set_colli_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
+FastUsercallHookPtr<decltype(&hallgate_set_colli_r), noret, rEAX> hallgate_set_colli_t(0x5B6860, hallgate_set_colli_r);
+FastFunctionHookPtr<decltype(&hallgate_switch_exec_r)> hallgate_switch_exec_t(0x5B6B30, hallgate_switch_exec_r);
+FastFunctionHookPtr<decltype(&hallgate_o_switch_exec_r)> hallgate_o_switch_exec_t(0x5B6910, hallgate_o_switch_exec_r);
+FastFunctionHookPtr<decltype(&hallgate_exec_r)> hallgate_exec_t(0x5B69D0, hallgate_exec_r);
 
 static void hallgate_set_colli_m(task* tp)
 {
@@ -62,18 +52,7 @@ static void __cdecl hallgate_set_colli_r(task* tp)
 	}
 	else
 	{
-		hallgate_set_colli_o(tp);
-	}
-}
-
-static void __declspec(naked) hallgate_set_colli_w()
-{
-	__asm
-	{
-		push eax
-		call hallgate_set_colli_r
-		pop eax
-		retn
+		hallgate_set_colli_t.Original(tp);
 	}
 }
 
@@ -120,7 +99,7 @@ static void __cdecl hallgate_switch_exec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(hallgate_switch_exec)(tp);
+		hallgate_switch_exec_t.Original(tp);
 	}
 }
 
@@ -155,7 +134,7 @@ static void __cdecl hallgate_o_switch_exec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(hallgate_o_switch_exec)(tp);
+		hallgate_o_switch_exec_t.Original(tp);
 	}
 }
 
@@ -180,5 +159,5 @@ static void __cdecl hallgate_exec_r(task* tp)
 		}
 	}
 
-	TARGET_STATIC(hallgate_exec)(tp);
+	hallgate_exec_t.Original(tp);
 }

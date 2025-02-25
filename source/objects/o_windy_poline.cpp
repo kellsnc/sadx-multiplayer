@@ -283,7 +283,7 @@ static void ObjectWindyPoline_m(task* tp)
 }
 
 static void __cdecl ObjectWindyPoline_r(task* tp);
-Trampoline ObjectWindyPoline_t(0x4E3200, 0x4E3206, ObjectWindyPoline_r);
+FastFunctionHookPtr<decltype(&ObjectWindyPoline_r)> ObjectWindyPoline_t(0x4E3200, ObjectWindyPoline_r);
 static void __cdecl ObjectWindyPoline_r(task* tp)
 {
 	if (multiplayer::IsEnabled() && tp->twp->mode != MODE_INITIAL)
@@ -292,6 +292,6 @@ static void __cdecl ObjectWindyPoline_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectWindyPoline)(tp);
+		ObjectWindyPoline_t.Original(tp);
 	}
 }

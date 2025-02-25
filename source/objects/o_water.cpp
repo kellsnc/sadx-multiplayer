@@ -179,7 +179,7 @@ static void __cdecl Wait_m(task* tp)
 }
 
 static void __cdecl ObjectWater_r(task* tp);
-Trampoline ObjectWater_t(0x5E3830, 0x5E3837, ObjectWater_r);
+FastFunctionHookPtr<decltype(&ObjectWater_r)> ObjectWater_t(0x5E3830, ObjectWater_r);
 static void __cdecl ObjectWater_r(task* tp)
 {
 	tp->exec = Wait_m;

@@ -127,7 +127,7 @@ static void Normal_m(task* tp)
 }
 
 static void __cdecl ObjectRockRoll_Normal_r(task* tp);
-Trampoline ObjectRockRoll_Normal_t(0x5E3CB0, 0x5E3CB7, ObjectRockRoll_Normal_r);
+FastFunctionHookPtr<decltype(&ObjectRockRoll_Normal_r)> ObjectRockRoll_Normal_t(0x5E3CB0, ObjectRockRoll_Normal_r);
 static void __cdecl ObjectRockRoll_Normal_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -136,6 +136,6 @@ static void __cdecl ObjectRockRoll_Normal_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectRockRoll_Normal)(tp);
+		ObjectRockRoll_Normal_t.Original(tp);
 	}
 }

@@ -97,7 +97,7 @@ static void ObjectFinalEggElevator2_m(task* tp)
 }
 
 static void __cdecl ObjectFinalEggElevator2_r(task* tp);
-Trampoline ObjectFinalEggElevator2_t(0x5B4B30, 0x5B4B35, ObjectFinalEggElevator2_r);
+FastFunctionHookPtr<decltype(&ObjectFinalEggElevator2_r)> ObjectFinalEggElevator2_t(0x5B4B30, ObjectFinalEggElevator2_r);
 static void __cdecl ObjectFinalEggElevator2_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode != MODE_INIT)
@@ -106,6 +106,6 @@ static void __cdecl ObjectFinalEggElevator2_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectFinalEggElevator2)(tp);
+		ObjectFinalEggElevator2_t.Original(tp);
 	}
 }

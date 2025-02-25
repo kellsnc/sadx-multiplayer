@@ -73,7 +73,7 @@ static void PanelExec_m(task* tp)
 }
 
 static void __cdecl PanelExec_r(task* tp);
-Trampoline PanelExec_t(0x5E92A0, 0x5E92A8, PanelExec_r);
+FastFunctionHookPtr<decltype(&PanelExec_r)> PanelExec_t(0x5E92A0, PanelExec_r);
 static void __cdecl PanelExec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -82,6 +82,6 @@ static void __cdecl PanelExec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(PanelExec)(tp);
+		PanelExec_t.Original(tp);
 	}
 }

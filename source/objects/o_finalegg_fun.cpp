@@ -7,18 +7,8 @@
 DataPointer(float, FunAcc, 0x1AC4854);
 DataPointer(float, FunAccRate, 0x1AC4858);
 
-static void Fun_ExecATask_w();
-Trampoline Fun_ExecATask_t(0x5B7480, 0x5B7487, Fun_ExecATask_w);
-
-static void Fun_ExecATask_o(task* tp)
-{
-	auto target = Fun_ExecATask_t.Target();
-	__asm
-	{
-		mov edi, [tp]
-		call target
-	}
-}
+static void __cdecl Fun_ExecATask_r(task* tp);
+FastUsercallHookPtr<decltype(&Fun_ExecATask_r), noret, rEDI> Fun_ExecATask_t(0x5B7480, Fun_ExecATask_r);
 
 static void ExecATask_m(task* tp)
 {
@@ -72,17 +62,6 @@ static void __cdecl Fun_ExecATask_r(task* tp)
 	}
 	else
 	{
-		Fun_ExecATask_o(tp);
-	}
-}
-
-static void __declspec(naked) Fun_ExecATask_w()
-{
-	__asm
-	{
-		push edi
-		call Fun_ExecATask_r
-		pop edi
-		retn
+		Fun_ExecATask_t.Original(tp);
 	}
 }

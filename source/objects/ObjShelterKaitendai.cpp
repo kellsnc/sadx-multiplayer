@@ -3,18 +3,8 @@
 
 DataPointer(NJS_OBJECT, object_kaiten_kaitendaiz_kaitendaiz, 0x18300C8);
 
-static void ExecATask_w();
-Trampoline ObjShelterKaitendaiExecATask_t(0x59E760, 0x59E767, ExecATask_w);
-
-static void ExecATask_o(task* tp)
-{
-	auto target = ObjShelterKaitendaiExecATask_t.Target();
-	__asm
-	{
-		mov edi, [tp]
-		call target
-	}
-}
+static void __cdecl ObjShelterKaitendaiExecATask_r(task* tp);
+FastUsercallHookPtr<decltype(&ObjShelterKaitendaiExecATask_r), noret, rEDI> ObjShelterKaitendaiExecATask_t(0x59E760, ObjShelterKaitendaiExecATask_r);
 
 static void ExecATask_m(task* tp)
 {
@@ -51,7 +41,7 @@ static void ExecATask_m(task* tp)
 	}
 }
 
-static void __cdecl ExecATask_r(task* tp)
+static void __cdecl ObjShelterKaitendaiExecATask_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -59,17 +49,6 @@ static void __cdecl ExecATask_r(task* tp)
 	}
 	else
 	{
-		ExecATask_o(tp);
-	}
-}
-
-static void __declspec(naked) ExecATask_w()
-{
-	__asm
-	{
-		push edi
-		call ExecATask_r
-		pop edi
-		retn
+		ObjShelterKaitendaiExecATask_t.Original(tp);
 	}
 }

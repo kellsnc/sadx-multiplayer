@@ -123,7 +123,7 @@ static void ObjShelterElevator_m(task* tp)
 }
 
 static void __cdecl ObjShelterElevator_r(task* tp);
-Trampoline ObjShelterElevator_t(0x5A1D70, 0x5A1D76, ObjShelterElevator_r);
+FastFunctionHookPtr<decltype(&ObjShelterElevator_r)> ObjShelterElevator_t(0x5A1D70, ObjShelterElevator_r);
 static void __cdecl ObjShelterElevator_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -132,6 +132,6 @@ static void __cdecl ObjShelterElevator_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjShelterElevator)(tp);
+		ObjShelterElevator_t.Original(tp);
 	}
 }

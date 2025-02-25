@@ -153,7 +153,7 @@ static void execObjShelterSen_m(task* tp)
 }
 
 static void __cdecl execObjShelterSen_r(task* tp); // "Exec"
-Trampoline execObjShelterSen_t(0x5AAB10, 0x5AAB15, execObjShelterSen_r);
+FastFunctionHookPtr<decltype(&execObjShelterSen_r)> execObjShelterSen_t(0x5AAB10, execObjShelterSen_r);
 static void __cdecl execObjShelterSen_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -162,6 +162,6 @@ static void __cdecl execObjShelterSen_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(execObjShelterSen)(tp);
+		execObjShelterSen_t.Original(tp);
 	}
 }

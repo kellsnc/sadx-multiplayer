@@ -18,16 +18,16 @@ static inline void sub_4A4240(taskwk* twp, enemywk* ewp)
 }
 
 static void __cdecl RoboHeadDisplayer_r(task* tp);
-static void RoboHeadChase_w();
+static void __cdecl RoboHeadChase_r(task* tp, enemywk* ewp);
 static void __cdecl RoboDisplayer_r(task* tp);
-static void RoboHearSound_w();
-static void RoboSearchPlayer_w();
+static Bool __cdecl RoboHearSound_r(taskwk* twp);
+static Bool __cdecl RoboSearchPlayer_r(taskwk* twp, enemywk* ewp);
 
-Trampoline RoboHeadDisplayer_t(0x4A4220, 0x4A4227, RoboHeadDisplayer_r);
-Trampoline RoboHeadChase_t(0x4A4520, 0x4A4525, RoboHeadChase_w);
-Trampoline RoboDisplayer_t(0x4A4DA0, 0x4A4DA7, RoboDisplayer_r);
-Trampoline RoboHearSound_t(0x4A5190, 0x4A5195, RoboHearSound_w);
-Trampoline RoboSearchPlayer_t(0x4A51F0, 0x4A51F8, RoboSearchPlayer_w);
+FastFunctionHookPtr<decltype(&RoboHeadDisplayer_r)> RoboHeadDisplayer_t(0x4A4220, RoboHeadDisplayer_r);
+FastUsercallHookPtr<decltype(&RoboHeadChase_r), noret, rEBX, rEAX> RoboHeadChase_t(0x4A4520, RoboHeadChase_r);
+FastFunctionHookPtr<decltype(&RoboDisplayer_r)> RoboDisplayer_t(0x4A4DA0, RoboDisplayer_r);
+FastUsercallHookPtr<decltype(&RoboHearSound_r), rEAX, rECX> RoboHearSound_t(0x4A5190, RoboHearSound_r);
+FastUsercallHookPtr<decltype(&RoboSearchPlayer_r), rEAX, rESI, rEBX> RoboSearchPlayer_t(0x4A51F0, RoboSearchPlayer_r);
 
 FastUsercallHookPtr<void(*)(taskwk* twp, enemywk* ewp), noret, rECX, rEAX> RoboSwing_t(0x4A5840);
 
@@ -126,23 +126,12 @@ static void __cdecl RoboHeadDisplayer_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(RoboHeadDisplayer)(tp);
+		RoboHeadDisplayer_t.Original(tp);
 	}
 }
 #pragma endregion
 
 #pragma region RoboHeadChase
-static void RoboHeadChase_o(task* tp, enemywk* ewp)
-{
-	auto target = RoboHeadChase_t.Target();
-	__asm
-	{
-		mov eax, [ewp]
-		mov ebx, [tp]
-		call target
-	}
-}
-
 static void RoboHeadChase_m(task* tp, enemywk* ewp)
 {
 	auto twp = tp->twp;
@@ -188,20 +177,7 @@ static void __cdecl RoboHeadChase_r(task* tp, enemywk* ewp)
 	}
 	else
 	{
-		RoboHeadChase_o(tp, ewp);
-	}
-}
-
-static void __declspec(naked) RoboHeadChase_w()
-{
-	__asm
-	{
-		push eax
-		push ebx
-		call RoboHeadChase_r
-		pop ebx
-		pop eax
-		retn
+		RoboHeadChase_t.Original(tp, ewp);
 	}
 }
 #pragma endregion
@@ -215,25 +191,12 @@ static void __cdecl RoboDisplayer_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(RoboDisplayer)(tp);
+		RoboDisplayer_t.Original(tp);
 	}
 }
 #pragma endregion
 
 #pragma region RoboHearSound
-static BOOL RoboHearSound_o(taskwk* twp)
-{
-	auto target = RoboHearSound_t.Target();
-	BOOL result;
-	__asm
-	{
-		mov ecx, [twp]
-		call target
-		mov result, eax
-	}
-	return result;
-}
-
 static int RoboHearSound_m(taskwk* twp)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -259,7 +222,7 @@ static int RoboHearSound_m(taskwk* twp)
 	return 0;
 }
 
-static BOOL __cdecl RoboHearSound_r(taskwk* twp)
+static Bool __cdecl RoboHearSound_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -267,38 +230,13 @@ static BOOL __cdecl RoboHearSound_r(taskwk* twp)
 	}
 	else
 	{
-		return RoboHearSound_o(twp);
-	}
-}
-
-static void __declspec(naked) RoboHearSound_w()
-{
-	__asm
-	{
-		push ecx
-		call RoboHearSound_r
-		pop ecx
-		retn
+		return RoboHearSound_t.Original(twp);
 	}
 }
 #pragma endregion
 
 #pragma region RoboSearchPlayer
-static BOOL RoboSearchPlayer_o(taskwk* twp, enemywk* ewp)
-{
-	auto target = RoboSearchPlayer_t.Target();
-	BOOL result;
-	__asm
-	{
-		mov esi, [twp]
-		mov ebx, [ewp]
-		call target
-		mov result, eax
-	}
-	return result;
-}
-
-static BOOL RoboSearchPlayer_m(taskwk* twp, enemywk* ewp)
+static Bool RoboSearchPlayer_m(taskwk* twp, enemywk* ewp)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
@@ -342,7 +280,7 @@ static BOOL RoboSearchPlayer_m(taskwk* twp, enemywk* ewp)
 	return FALSE;
 }
 
-static BOOL __cdecl RoboSearchPlayer_r(taskwk* twp, enemywk* ewp)
+static Bool __cdecl RoboSearchPlayer_r(taskwk* twp, enemywk* ewp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -350,20 +288,7 @@ static BOOL __cdecl RoboSearchPlayer_r(taskwk* twp, enemywk* ewp)
 	}
 	else
 	{
-		return RoboSearchPlayer_o(twp, ewp);
-	}
-}
-
-static void __declspec(naked) RoboSearchPlayer_w()
-{
-	__asm
-	{
-		push ebx
-		push esi
-		call RoboSearchPlayer_r
-		pop esi
-		pop ebx
-		retn
+		return RoboSearchPlayer_t.Original(twp, ewp);
 	}
 }
 #pragma endregion

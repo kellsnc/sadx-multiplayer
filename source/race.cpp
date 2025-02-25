@@ -11,8 +11,8 @@ Multiplayer Twinkle Circuit manager
 
 */
 
-Trampoline* TwinkleCircuitZoneTask_t = nullptr;
-Trampoline* Rd_MiniCart_t = nullptr;
+FastFunctionHook<void, task*> TwinkleCircuitZoneTask_t(0x4DBCF0);
+FastFunctionHook<void, task*> Rd_MiniCart_t(0x4DAA80);
 
 // RACE MANAGER:
 
@@ -354,7 +354,7 @@ void __cdecl Rd_MiniCart_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(Rd_MiniCart)(tp);
+		Rd_MiniCart_t.Original(tp);
 	}
 }
 
@@ -442,12 +442,12 @@ static void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
 	}
 	else
 	{
-		TARGET_DYNAMIC(TwinkleCircuitZoneTask)(tp);
+		TwinkleCircuitZoneTask_t.Original(tp);
 	}
 }
 
 void InitRace()
 {
-	TwinkleCircuitZoneTask_t = new Trampoline(0x4DBCF0, 0x4DBCF8, TwinkleCircuitZoneTask_r);
-	Rd_MiniCart_t = new Trampoline(0x4DAA80, 0x4DAA86, Rd_MiniCart_r);
+	TwinkleCircuitZoneTask_t.Hook(TwinkleCircuitZoneTask_r);
+	Rd_MiniCart_t.Hook(Rd_MiniCart_r);
 }

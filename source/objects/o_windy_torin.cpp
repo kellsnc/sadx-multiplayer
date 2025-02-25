@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "utils.h"
 #include "camera.h"
 
@@ -48,7 +48,7 @@ static void RotateObj_m(task* tp)
 }
 
 static void __cdecl RotateObj_r(task* tp);
-Trampoline RotateObj_t(0x4DF5A0, 0x4DF5A5, RotateObj_r);
+FastFunctionHookPtr<decltype(&RotateObj_r)> RotateObj_t(0x4DF5A0, RotateObj_r);
 static void __cdecl RotateObj_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -57,6 +57,6 @@ static void __cdecl RotateObj_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(RotateObj)(tp);
+		RotateObj_t.Original(tp);
 	}
 }

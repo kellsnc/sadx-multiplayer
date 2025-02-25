@@ -3,23 +3,10 @@
 
 // Breakable ice in Big's Ice Cap
 
-static void CheckBreakFuta_w();
-Trampoline CheckBreakFuta_t(0x4EEA10, 0x4EEA15, CheckBreakFuta_w);
+Bool __cdecl CheckBreakFuta_r(task* tp);
+FastUsercallHookPtr<decltype(&CheckBreakFuta_r), rEAX, rEDI> CheckBreakFuta_t(0x4EEA10, CheckBreakFuta_r);
 
-BOOL CheckBreakFuta_o(task* tp)
-{
-	auto target = CheckBreakFuta_t.Target();
-	BOOL r;
-	__asm
-	{
-		mov edi, [tp]
-		call target
-		mov r, eax
-	}
-	return r;
-}
-
-BOOL CheckBreakFuta_m(task* tp)
+Bool CheckBreakFuta_m(task* tp)
 {
 	auto  twp = tp->twp;
 	auto cwp = twp->cwp;
@@ -66,7 +53,7 @@ BOOL CheckBreakFuta_m(task* tp)
 	return FALSE;
 }
 
-BOOL __cdecl CheckBreakFuta_r(task* tp)
+Bool __cdecl CheckBreakFuta_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -74,17 +61,6 @@ BOOL __cdecl CheckBreakFuta_r(task* tp)
 	}
 	else
 	{
-		return CheckBreakFuta_o(tp);
-	}
-}
-
-static void __declspec(naked) CheckBreakFuta_w()
-{
-	__asm
-	{
-		push edi
-		call CheckBreakFuta_r
-		add esp, 4
-		retn
+		return CheckBreakFuta_t.Original(tp);
 	}
 }

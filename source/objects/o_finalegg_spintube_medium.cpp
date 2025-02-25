@@ -3,18 +3,8 @@
 #include "utils.h"
 #include "multiplayer.h"
 
-static void SpinTubeMedium_ExecATask_w();
-Trampoline SpinTubeMedium_ExecATask_t(0x5BCBA0, 0x5BCBA7, SpinTubeMedium_ExecATask_w);
-
-static void SpinTubeMedium_ExecATask_o(task* tp)
-{
-	auto target = SpinTubeMedium_ExecATask_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
+static void __cdecl SpinTubeMedium_ExecATask_r(task* tp);
+FastUsercallHookPtr<decltype(&SpinTubeMedium_ExecATask_r), noret, rEAX> SpinTubeMedium_ExecATask_t(0x5BCBA0, SpinTubeMedium_ExecATask_r);
 
 static void ExecATask_m(task* tp)
 {
@@ -60,17 +50,6 @@ static void __cdecl SpinTubeMedium_ExecATask_r(task* tp)
 	}
 	else
 	{
-		SpinTubeMedium_ExecATask_o(tp);
-	}
-}
-
-static void __declspec(naked) SpinTubeMedium_ExecATask_w()
-{
-	__asm
-	{
-		push eax
-		call SpinTubeMedium_ExecATask_r
-		pop eax
-		retn
+		SpinTubeMedium_ExecATask_t.Original(tp);
 	}
 }

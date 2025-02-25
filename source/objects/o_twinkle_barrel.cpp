@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 
 static void __cdecl ObjectTPBarrel_r(task* tp);
-Trampoline ObjectTPBarrel_t(0x624020, 0x624026, ObjectTPBarrel_r);
+FastFunctionHookPtr<decltype(&ObjectTPBarrel_r)> ObjectTPBarrel_t(0x624020, ObjectTPBarrel_r);
 static void __cdecl ObjectTPBarrel_r(task* tp)
 {
-	TARGET_STATIC(ObjectTPBarrel)(tp);
+	ObjectTPBarrel_t.Original(tp);
 
 	if (multiplayer::IsActive())
 	{

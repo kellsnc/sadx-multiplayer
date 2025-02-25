@@ -141,7 +141,7 @@ static void ObjectTPShutter_m(task* tp)
 }
 
 static void __cdecl ObjectTPShutter_r(task* tp);
-Trampoline ObjectTPShutter_t(0x624380, 0x624386, ObjectTPShutter_r);
+FastFunctionHookPtr<decltype(&ObjectTPShutter_r)> ObjectTPShutter_t(0x624380, ObjectTPShutter_r);
 static void __cdecl ObjectTPShutter_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -150,6 +150,6 @@ static void __cdecl ObjectTPShutter_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectTPShutter)(tp);
+		ObjectTPShutter_t.Original(tp);
 	}
 }

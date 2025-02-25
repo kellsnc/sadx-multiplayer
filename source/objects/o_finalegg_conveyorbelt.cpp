@@ -3,24 +3,13 @@
 #include "utils.h"
 #include "multiplayer.h"
 
-static void ConveyorBelt_ExecATask_w();
-static void ConveyorBelt_ReserveColli_w();
+static void __cdecl ConveyorBelt_ExecATask_r(task* tp);
+static void __cdecl ConveyorBelt_ReserveColli_r(task* tp);
 static void __cdecl ConveyorBelt_SideTaskExec_r(task* tp);
 
-Trampoline ConveyorBelt_ExecATask_t(0x5BD480, 0x5BD487, ConveyorBelt_ExecATask_w);
-Trampoline ConveyorBelt_ReserveColli_t(0x5BD3B0, 0x5BD3B5, ConveyorBelt_ReserveColli_w);
-Trampoline ConveyorBelt_SideTaskExec_t(0x5BD6D0, 0x5BD6D5, ConveyorBelt_SideTaskExec_r);
-
-#pragma region ExecATask
-static void ConveyorBelt_ExecATask_o(task* tp)
-{
-	auto target = ConveyorBelt_ExecATask_t.Target();
-	__asm
-	{
-		mov ebx, [tp]
-		call target
-	}
-}
+FastUsercallHookPtr<decltype(&ConveyorBelt_ExecATask_r), noret, rEBX> ConveyorBelt_ExecATask_t(0x5BD480, ConveyorBelt_ExecATask_r);
+FastUsercallHookPtr<decltype(&ConveyorBelt_ReserveColli_r), noret, rEBX> ConveyorBelt_ReserveColli_t(0x5BD3B0, ConveyorBelt_ReserveColli_r);
+FastFunctionHookPtr<decltype(&ConveyorBelt_SideTaskExec_r)> ConveyorBelt_SideTaskExec_t(0x5BD6D0, ConveyorBelt_SideTaskExec_r);
 
 static void __cdecl ConveyorBelt_ExecATask_r(task* tp)
 {
@@ -33,30 +22,7 @@ static void __cdecl ConveyorBelt_ExecATask_r(task* tp)
 	}
 	else
 	{
-		ConveyorBelt_ExecATask_o(tp);
-	}
-}
-
-static void __declspec(naked) ConveyorBelt_ExecATask_w()
-{
-	__asm
-	{
-		push ebx
-		call ConveyorBelt_ExecATask_r
-		pop ebx
-		retn
-	}
-}
-#pragma endregion
-
-#pragma region ReserveColli
-static void ConveyorBelt_ReserveColli_o(task* tp)
-{
-	auto target = ConveyorBelt_ReserveColli_t.Target();
-	__asm
-	{
-		mov ebx, [tp]
-		call target
+		ConveyorBelt_ExecATask_t.Original(tp);
 	}
 }
 
@@ -99,21 +65,9 @@ static void __cdecl ConveyorBelt_ReserveColli_r(task* tp)
 	}
 	else
 	{
-		ConveyorBelt_ReserveColli_o(tp);
+		ConveyorBelt_ReserveColli_t.Original(tp);
 	}
 }
-
-static void __declspec(naked) ConveyorBelt_ReserveColli_w()
-{
-	__asm
-	{
-		push ebx
-		call ConveyorBelt_ReserveColli_r
-		pop ebx
-		retn
-	}
-}
-#pragma endregion
 
 static void __cdecl ConveyorBelt_SideTaskExec_r(task* tp)
 {
@@ -123,6 +77,6 @@ static void __cdecl ConveyorBelt_SideTaskExec_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ConveyorBelt_SideTaskExec)(tp);
+		ConveyorBelt_SideTaskExec_t.Original(tp);
 	}
 }

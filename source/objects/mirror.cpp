@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "multiplayer.h"
 
-Trampoline* dispMirrorTaskP_t = nullptr;
-Trampoline* execMirrorTaskP_t = nullptr;
+FastFunctionHook<void, task*> dispMirrorTaskP_t(0x61E1B0);
+FastFunctionHook<void, task*> execMirrorTaskP_t(0x61E230);
 
 static auto getMirror = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x61E070, rESI);
 
@@ -25,7 +25,7 @@ static void __cdecl dispMirrorTaskP_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(dispMirrorTaskP)(tp);
+		dispMirrorTaskP_t.Original(tp);
 	}
 }
 
@@ -55,14 +55,12 @@ static void __cdecl execMirrorTaskP_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(execMirrorTaskP)(tp);
+		execMirrorTaskP_t.Original(tp);
 	}
 }
 
 void PatchTwinkleMirrors()
 {
-	dispMirrorTaskP_t = new Trampoline(0x61E1B0, 0x61E1B8, dispMirrorTaskP_r);
-	WriteCall((void*)((int)dispMirrorTaskP_t->Target() + 3), (void*)0x441AC0); // Patch trampoline
-	execMirrorTaskP_t = new Trampoline(0x61E230, 0x61E235, execMirrorTaskP_r);
-	WriteCall((void*)((int)execMirrorTaskP_t->Target()), (void*)0x4258F0); // Patch trampoline
+	dispMirrorTaskP_t.Hook(dispMirrorTaskP_r);
+	execMirrorTaskP_t.Hook(execMirrorTaskP_r);
 }

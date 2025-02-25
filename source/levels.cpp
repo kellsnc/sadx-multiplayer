@@ -11,22 +11,22 @@ Level-related adjustements for multiplayer
 
 */
 
-Trampoline* Rd_Chaos2_t = nullptr;
-Trampoline* Rd_Chaos4_t = nullptr;
-Trampoline* Rd_Chaos6_t = nullptr;
+FastFunctionHook<void, task*> Rd_Chaos2_t(0x54A700);
+FastFunctionHook<void, task*> Rd_Chaos4_t(0x550A30);
+FastFunctionHook<void, task*> Rd_Chaos6_t(0x557920);
 
-Trampoline* Rd_Beach_t = nullptr;
-Trampoline* Rd_Windy_t = nullptr;
-Trampoline* Rd_Mountain_t = nullptr;
-Trampoline* Rd_Twinkle_t = nullptr;
-Trampoline* Rd_Ruin_t = nullptr;
+FastFunctionHook<void, task*> Rd_Beach_t(0x4F6D60);
+FastFunctionHook<void, task*> Rd_Windy_t(0x4DDB30);
+FastFunctionHook<void, task*> Rd_Mountain_t(0x601550);
+FastFunctionHook<void, task*> Rd_Twinkle_t(0x61D150);
+FastFunctionHook<void, task*> Rd_Ruin_t(0x5E18B0);
 
-Trampoline* dispBgSnow_t = nullptr;
-Trampoline* dispBgHighway_t = nullptr;
-Trampoline* dispBgTwinkle_t = nullptr;
+FastFunctionHook<void, task*> dispBgSnow_t(0x4E9950);
+FastFunctionHook<void, task*> dispBgHighway_t(0x610570);
+FastFunctionHook<void, task*> dispBgTwinkle_t(0x61D1F0);
 
-Trampoline* Bg_MysticRuin_t = nullptr;
-Trampoline* Bg_Past_t = nullptr;
+FastFunctionHook<void, task*> Bg_MysticRuin_t(0x530670);
+FastFunctionHook<void, task*> Bg_Past_t(0x542030);
 
 FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rESI> CollisionSceneChangerSS_CheckCollision_t(0x640550);
 FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> ObjectMysticRuinTorokko_ExecATask_t(0x53D830);
@@ -40,7 +40,7 @@ DataPointer(uint16_t, word_3C75124, 0x3C75124);
 DataPointer(int, ring_kiran, 0x38D8D64);
 
 static auto setTPFog = GenerateUsercallWrapper<void (*)(unsigned __int8 mode)>(noret, 0x61CAC0, rAL);
-static auto RdRuinInit = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5E1670, rEDI);
+static auto RdRuinInit = GenerateUsercallWrapper<void (*)(task * tp)>(noret, 0x5E1670, rEDI);
 
 void MultiArena(task* tp)
 {
@@ -169,7 +169,7 @@ void __cdecl Rd_Chaos2_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(Rd_Chaos2)(tp);
+		Rd_Chaos2_t.Original(tp);
 	}
 }
 
@@ -181,7 +181,7 @@ void __cdecl Rd_Chaos4_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(Rd_Chaos4)(tp);
+		Rd_Chaos4_t.Original(tp);
 	}
 }
 
@@ -193,7 +193,7 @@ void __cdecl Rd_Chaos6_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(Rd_Chaos6)(tp);
+		Rd_Chaos6_t.Original(tp);
 	}
 }
 
@@ -218,7 +218,7 @@ void __cdecl Rd_Beach_r(task* tp)
 		}
 	}
 
-	TARGET_DYNAMIC(Rd_Beach)(tp);
+	Rd_Beach_t.Original(tp);
 }
 
 void __cdecl Rd_Windy_r(task* tp)
@@ -236,7 +236,7 @@ void __cdecl Rd_Windy_r(task* tp)
 		}
 	}
 
-	TARGET_DYNAMIC(Rd_Windy)(tp);
+	Rd_Windy_t.Original(tp);
 }
 
 void __cdecl Rd_Mountain_r(task* tp)
@@ -266,13 +266,13 @@ void __cdecl Rd_Mountain_r(task* tp)
 
 		//patch an issue where the original function was taking priority for act swap
 		if (tp->twp->mode != 1)
-			TARGET_DYNAMIC(Rd_Mountain)(tp);
+			Rd_Mountain_t.Original(tp);
 		else
 			LoopTaskC(tp);
 	}
 	else
 	{
-		TARGET_DYNAMIC(Rd_Mountain)(tp);
+		Rd_Mountain_t.Original(tp);
 	}
 }
 
@@ -344,7 +344,7 @@ void __cdecl Rd_Twinkle_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(Rd_Twinkle)(tp);
+		Rd_Twinkle_t.Original(tp);
 	}
 }
 
@@ -422,13 +422,13 @@ void __cdecl Rd_Ruin_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(Rd_Ruin)(tp);
+		Rd_Ruin_t.Original(tp);
 	}
 }
 
 static void __cdecl dispBgSnow_r(task* tp)
 {
-	TARGET_DYNAMIC(dispBgSnow)(tp);
+	dispBgSnow_t.Original(tp);
 
 	if (camera_twp && tp->twp->mode == 10 && SplitScreen::IsActive())
 	{
@@ -506,13 +506,13 @@ static void __cdecl dispBgHighway_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(dispBgHighway)(tp);
+		dispBgHighway_t.Original(tp);
 	}
 }
 
 static void __cdecl dispBgTwinkle_r(task* tp)
 {
-	TARGET_DYNAMIC(dispBgTwinkle)(tp);
+	dispBgTwinkle_t.Original(tp);
 
 	if (camera_twp && pRd_Master && SplitScreen::IsActive())
 	{
@@ -529,7 +529,7 @@ void __cdecl Bg_MysticRuin_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		TARGET_DYNAMIC(Bg_MysticRuin)(tp);
+		Bg_MysticRuin_t.Original(tp);
 		return;
 	}
 
@@ -573,7 +573,7 @@ void __cdecl Bg_Past_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		TARGET_DYNAMIC(Bg_Past)(tp);
+		Bg_Past_t.Original(tp);
 		return;
 	}
 
@@ -882,8 +882,8 @@ void InitLevels()
 	WriteData((void**)0x610A7E, (void*)0x6109E0); // Speed Highway
 	WriteData((void**)0x5E1FCE, (void*)0x5E1F30); // Lost World
 	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Ice Cap
-	Bg_MysticRuin_t = new Trampoline(0x530670, 0x530676, Bg_MysticRuin_r);
-	Bg_Past_t = new Trampoline(0x542030, 0x542036, Bg_Past_r);
+	Bg_MysticRuin_t.Hook(Bg_MysticRuin_r);
+	Bg_Past_t.Hook(Bg_Past_r);
 	
 	// Emerald Coast Bridge
 	WriteData<2>((void*)0x501B66, 0x90ui8);
@@ -931,17 +931,17 @@ void InitLevels()
 
 #ifdef MULTI_TEST
 	// In battle mode, boss become fighting arenas
-	Rd_Chaos2_t = new Trampoline(0x54A700, 0x54A706, Rd_Chaos2_r);
-	Rd_Chaos4_t = new Trampoline(0x550A30, 0x550A36, Rd_Chaos4_r);
-	Rd_Chaos6_t = new Trampoline(0x557920, 0x557926, Rd_Chaos6_r);
+	Rd_Chaos2_t.Hook(Rd_Chaos2_r);
+	Rd_Chaos4_t.Hook(Rd_Chaos4_r);
+	Rd_Chaos6_t.Hook(Rd_Chaos6_r);
 #endif
 
 	// Act swap fixes
-	Rd_Beach_t = new Trampoline(0x4F6D60, 0x4F6D67, Rd_Beach_r);
-	Rd_Windy_t = new Trampoline(0x4DDB30, 0x4DDB37, Rd_Windy_r);
-	Rd_Mountain_t = new Trampoline(0x601550, 0x601558, Rd_Mountain_r);
-	Rd_Twinkle_t = new Trampoline(0x61D150, 0x61D155, Rd_Twinkle_r);
-	Rd_Ruin_t = new Trampoline(0x5E18B0, 0x5E18B5, Rd_Ruin_r);
+	Rd_Beach_t.Hook(Rd_Beach_r);
+	Rd_Windy_t.Hook(Rd_Windy_r);
+	Rd_Mountain_t.Hook(Rd_Mountain_r);
+	Rd_Twinkle_t.Hook(Rd_Twinkle_r);
+	Rd_Ruin_t.Hook(Rd_Ruin_r);
 	
 	// Casino area positions
 	WriteCall((void*)0x5C0D67, Casino_StartPos_r);
@@ -952,9 +952,9 @@ void InitLevels()
 	//WriteCall((void*)0x5C0EF1, Casino_StartPos_r); // pinball
 
 	// Move landtable mask flag to display for multiplayer compatibility
-	dispBgSnow_t = new Trampoline(0x4E9950, 0x4E9955, dispBgSnow_r);
-	dispBgHighway_t = new Trampoline(0x610570, 0x610575, dispBgHighway_r);
-	dispBgTwinkle_t = new Trampoline(0x61D1F0, 0x61D1F5, dispBgTwinkle_r);
+	dispBgSnow_t.Hook(dispBgSnow_r);
+	dispBgHighway_t.Hook(dispBgHighway_r);
+	dispBgTwinkle_t.Hook(dispBgTwinkle_r);
 
 	// Hub world swap fixes
 	CollisionSceneChangerSS_CheckCollision_t.Hook(CollisionSceneChangerSS_CheckCollision_r); // Station Square

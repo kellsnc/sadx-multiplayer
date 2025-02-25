@@ -28,7 +28,7 @@ bool relbox_switch_test_riding_m(taskwk* twp, taskwk* parent_twp)
 }
 
 void __cdecl relbox_switch_exec_r(task* task_p);
-Trampoline relbox_switch_exec_t(0x46AE60, 0x46AE66, relbox_switch_exec_r);
+FastFunctionHookPtr<decltype(&relbox_switch_exec_r)> relbox_switch_exec_t(0x46AE60, relbox_switch_exec_r);
 void __cdecl relbox_switch_exec_r(task* task_p)
 {
 	if (multiplayer::IsActive())
@@ -73,6 +73,6 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 	}
 	else
 	{
-		TARGET_STATIC(relbox_switch_exec)(task_p);
+		relbox_switch_exec_t.Original(task_p);
 	}
 }

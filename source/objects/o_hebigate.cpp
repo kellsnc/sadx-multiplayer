@@ -43,7 +43,7 @@ static void Normal_m(task* tp)
 }
 
 static void __cdecl ObjectHebigate_Normal_r(task* tp); // "Normal"
-Trampoline ObjectHebigate_Normal_t(0x5EADE0, 0x5EADE5, ObjectHebigate_Normal_r);
+FastFunctionHookPtr<decltype(&ObjectHebigate_Normal_r)> ObjectHebigate_Normal_t(0x5EADE0, ObjectHebigate_Normal_r);
 static void __cdecl ObjectHebigate_Normal_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -52,6 +52,6 @@ static void __cdecl ObjectHebigate_Normal_r(task* tp)
 	}
 	else
 	{
-		TARGET_STATIC(ObjectHebigate_Normal)(tp);
+		ObjectHebigate_Normal_t.Original(tp);
 	}
 }

@@ -2,23 +2,13 @@
 #include "multiplayer.h"
 #include "result.h"
 
-static void ObjectFrogCollision_w();
+static void __cdecl ObjectFrogCollision_r(task* tp);
 static void __cdecl ObjectFrog_r(task* tp);
 static void __cdecl ObjectSandFrog_r(task* tp);
 
-Trampoline ObjectFrogCollision_t(0x4FA2C0, 0x4FA2C7, ObjectFrogCollision_w);
-Trampoline ObjectFrog_t(0x4FA320, 0x4FA325, ObjectFrog_r);
-Trampoline ObjectSandFrog_t(0x598040, 0x598045, ObjectSandFrog_r);
-
-static void ObjectFrogCollision_o(task* tp)
-{
-	auto target = ObjectFrogCollision_t.Target();
-	__asm
-	{
-		mov eax, [tp]
-		call target
-	}
-}
+FastUsercallHookPtr<decltype(&ObjectFrogCollision_r), noret, rEAX> ObjectFrogCollision_t(0x4FA2C0, ObjectFrogCollision_r);
+FastFunctionHookPtr<decltype(&ObjectFrog_r)> ObjectFrog_t(0x4FA320, ObjectFrog_r);
+FastFunctionHookPtr<decltype(&ObjectSandFrog_r)> ObjectSandFrog_t(0x598040, ObjectSandFrog_r);
 
 static void ObjectFrogCollision_m(taskwk* twp)
 {
@@ -40,18 +30,7 @@ static void __cdecl ObjectFrogCollision_r(task* tp)
 	}
 	else
 	{
-		ObjectFrogCollision_o(tp);
-	}
-}
-
-static void __declspec(naked) ObjectFrogCollision_w()
-{
-	__asm
-	{
-		push eax
-		call ObjectFrogCollision_r
-		pop eax
-		retn
+		ObjectFrogCollision_t.Original(tp);
 	}
 }
 
@@ -64,7 +43,7 @@ static void __cdecl ObjectFrog_r(task* tp)
 		ObjectFrogCollision_m(twp);
 	}
 
-	TARGET_STATIC(ObjectFrog)(tp);
+	ObjectFrog_t.Original(tp);
 }
 
 static void __cdecl ObjectSandFrog_r(task* tp)
@@ -76,5 +55,5 @@ static void __cdecl ObjectSandFrog_r(task* tp)
 		ObjectFrogCollision_m(twp);
 	}
 
-	TARGET_STATIC(ObjectSandFrog)(tp);
+	ObjectSandFrog_t.Original(tp);
 }

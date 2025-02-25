@@ -4,8 +4,8 @@
 #include <algorithm>
 #include <d3d8types.h>
 #include <d3d8.h>
-#include <SADXModLoader.h>
-#include <Trampoline.h>
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "drawqueue.h"
 #include "d3d8vars.h"
 #include "splitscreen.h"
@@ -17,9 +17,8 @@ Rewrite the whole draw queue display just to support viewports.
 
 */
 
-Trampoline* late_addZEntry_t = nullptr;
-Trampoline* late_setOdr_t = nullptr;
-Trampoline* late_exec_t = nullptr;
+FastUsercallHookPtr<LATE_RQ*(*)(Sint32, Sint32, Sint32, Sint32), rEAX, rEAX, stack4, stack4, stack4> late_setOdr_t(0x403F60);
+FastFunctionHook<void> late_exec_t(0x4086F0);
 
 void njSetScreenDist_(Angle bams)
 {
@@ -298,33 +297,13 @@ void __cdecl late_exec_r()
 	}
 	else
 	{
-		TARGET_DYNAMIC(late_exec)();
+		late_exec_t.Original();
 	}
-}
-
-LATE_RQ* late_setOdr_o(Sint32 no, Sint32 sz, Sint32 odr, Sint32 flgs)
-{
-	const auto late_setOdr_ptr = late_setOdr_t->Target();
-
-	LATE_RQ* result;
-
-	__asm
-	{
-		push dword ptr[flgs]
-		push dword ptr[odr]
-		push[sz]
-		mov eax, [no]
-		call late_setOdr_ptr
-		add esp, 12
-		mov result, eax
-	}
-
-	return result;
 }
 
 LATE_RQ* __cdecl late_setOdr_r(Sint32 no, Sint32 sz, Sint32 odr, Sint32 flgs)
 {
-	auto rq = late_setOdr_o(no, sz, odr, flgs);
+	auto rq = late_setOdr_t.Original(no, sz, odr, flgs);
 
 	if (rq && SplitScreen::IsActive() && SplitScreen::numViewPort != -1)
 	{
@@ -334,24 +313,10 @@ LATE_RQ* __cdecl late_setOdr_r(Sint32 no, Sint32 sz, Sint32 odr, Sint32 flgs)
 	return rq;
 }
 
-void __declspec(naked) late_setOdr_w()
-{
-	__asm
-	{
-		push[esp + 0Ch] // flgs
-		push[esp + 0Ch] // odr
-		push[esp + 0Ch] // sz
-		push eax
-		call late_setOdr_r
-		add esp, 16
-		retn
-	}
-}
-
 void DrawQueue_Init()
 {
-	late_exec_t = new Trampoline(0x4086F0, 0x4086F6, late_exec_r);
-	late_setOdr_t = new Trampoline(0x403F60, 0x403F65, late_setOdr_w);
+	late_exec_t.Hook(late_exec_r);
+	late_setOdr_t.Hook(late_setOdr_r);
 	
 	// Expand draw queue memory pool
 	WriteData((Uint32*)0x408643, 0x100000ui32);
