@@ -173,7 +173,7 @@ void Mode_SDCylDownChanges(taskwk* data1, playerwk* pwp)
 
 void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd)
 {
-	if (!multiplayer::IsActive)
+	if (!multiplayer::IsActive())
 	{
 		dsHangPoleCom_h.Original(tp, rotspd);
 		return;
