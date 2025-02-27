@@ -4,8 +4,8 @@
 static void __cdecl ObjShelterBridgeExec_r(task* tp);
 static void __cdecl ObjShelterBridgeShrink_r(task* tp);
 
-FastUsercallHookPtr<decltype(&ObjShelterBridgeExec_r), noret, rEBX> ObjShelterBridgeExec_t(0x5A0E90, ObjShelterBridgeExec_r);
-FastUsercallHookPtr<decltype(&ObjShelterBridgeShrink_r), noret, rEDI> ObjShelterBridgeShrink_t(0x5A0FD0, ObjShelterBridgeShrink_r);
+FastUsercallHookPtr<decltype(&ObjShelterBridgeExec_r), noret, rEBX> ObjShelterBridgeExec_t(0x5A0E90);
+FastUsercallHookPtr<decltype(&ObjShelterBridgeShrink_r), noret, rEDI> ObjShelterBridgeShrink_t(0x5A0FD0);
 
 #pragma region ExecATask
 static void ObjShelterBridgeExec_m(task* tp)
@@ -108,3 +108,11 @@ static void __cdecl ObjShelterBridgeShrink_r(task* tp)
 	}
 }
 #pragma endregion
+
+void patch_shelter_bridge_init()
+{
+	ObjShelterBridgeExec_t.Hook(ObjShelterBridgeExec_r);
+	ObjShelterBridgeShrink_t.Hook(ObjShelterBridgeShrink_r);
+}
+
+RegisterPatch patch_shelter_bridge(patch_shelter_bridge_init);

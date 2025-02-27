@@ -167,9 +167,11 @@ static void __cdecl HandleTest_r(taskwk* twp)
 	}
 }
 
-void PatchAmyHandles()
+void patch_shelter_kaitenkey_init()
 {
 	WriteJump((void*)0x4C5800, AmyHndlGetInfoStrP_r); // Too small to hook
 	AmyHndlGetHandleAngle_t.Hook(AmyHndlGetHandleAngle_r);
 	HandleTest_t.Hook(HandleTest_r);
 }
+
+RegisterPatch patch_shelter_kaitenkey(patch_shelter_kaitenkey_init);

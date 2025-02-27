@@ -490,7 +490,9 @@ static void SetupCamPathCam2_Ruin_r(task* tp)
 	}
 }
 
-void PatchRuinPathCam()
+void patch_ruin_pathcam_init()
 {
 	SetupCamPathCam2_Ruin_h.Hook(SetupCamPathCam2_Ruin_r);
 }
+
+RegisterPatch patch_ruin_pathcam(patch_ruin_pathcam_init);

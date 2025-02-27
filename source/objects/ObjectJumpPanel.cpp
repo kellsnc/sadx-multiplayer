@@ -10,10 +10,10 @@ static signed int CanIMakePanelJump_r(taskwk* twp);
 static void StartPlayerPanelJump_r(taskwk* twp);
 static Bool CheckCollisionedForJumpPanel_r(taskwk* twp);
 
-FastUsercallHookPtr<decltype(&ObjectJumpPanelCollision_r), noret, rEAX> ObjectJumpPanelCollision_t(0x4B8600, ObjectJumpPanelCollision_r);
-FastFunctionHookPtr<decltype(&CanIMakePanelJump_r)> CanIMakePanelJump_t(0x4B83F0, CanIMakePanelJump_r);
-FastFunctionHookPtr<decltype(&StartPlayerPanelJump_r)> StartPlayerPanelJump_t(0x4B8470, StartPlayerPanelJump_r);
-FastFunctionHookPtr<decltype(&CheckCollisionedForJumpPanel_r)> CheckCollisionedForJumpPanel_t(0x4B83C0, CheckCollisionedForJumpPanel_r);
+FastUsercallHookPtr<decltype(&ObjectJumpPanelCollision_r), noret, rEAX> ObjectJumpPanelCollision_t(0x4B8600);
+FastFunctionHookPtr<decltype(&CanIMakePanelJump_r)> CanIMakePanelJump_t(0x4B83F0);
+FastFunctionHookPtr<decltype(&StartPlayerPanelJump_r)> StartPlayerPanelJump_t(0x4B8470);
+FastFunctionHookPtr<decltype(&CheckCollisionedForJumpPanel_r)> CheckCollisionedForJumpPanel_t(0x4B83C0);
 
 DataArray(task*, jumppanel_tp_list, 0x3C5A27C, 10);
 
@@ -203,3 +203,13 @@ static void __cdecl ObjectJumpPanelCollision_r(task* tp)
 	}
 }
 #pragma endregion
+
+void patch_jumppanel_init()
+{
+	ObjectJumpPanelCollision_t.Hook(ObjectJumpPanelCollision_r);
+	CanIMakePanelJump_t.Hook(CanIMakePanelJump_r);
+	StartPlayerPanelJump_t.Hook(StartPlayerPanelJump_r);
+	CheckCollisionedForJumpPanel_t.Hook(CheckCollisionedForJumpPanel_r);
+}
+
+RegisterPatch patch_jumppanel(patch_jumppanel_init);

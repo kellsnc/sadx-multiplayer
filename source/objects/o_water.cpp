@@ -6,6 +6,9 @@
 
 #define WATER_PNUM(twp) twp->smode
 
+static void __cdecl ObjectWater_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectWater_r)> ObjectWater_t(0x5E3830);
+
 static void __cdecl Wait_m(task* tp);
 
 static void __cdecl Normal2_m(task* tp)
@@ -178,8 +181,6 @@ static void __cdecl Wait_m(task* tp)
 	}
 }
 
-static void __cdecl ObjectWater_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectWater_r)> ObjectWater_t(0x5E3830, ObjectWater_r);
 static void __cdecl ObjectWater_r(task* tp)
 {
 	tp->exec = Wait_m;
@@ -191,3 +192,10 @@ static void __cdecl ObjectWater_r(task* tp)
 		WATER_PNUM(ctp->twp) = i;
 	}
 }
+
+void patch_water_init()
+{
+	ObjectWater_t.Hook(ObjectWater_r);
+}
+
+RegisterPatch patch_water(patch_water_init);

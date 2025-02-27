@@ -22,9 +22,11 @@ void eggWalker_r(task* tp)
 	Boss_SetNextPlayerToAttack(timeLimit);
 }
 
-void initEggWalkerPatches()
+void patch_egm3_init()
 {
-#ifdef MULTI_TEST
 	eggWalker_t.Hook(eggWalker_r);
-#endif
 }
+
+#ifdef MULTI_TEST
+RegisterPatch patch_egm3(patch_egm3_init);
+#endif

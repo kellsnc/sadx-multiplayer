@@ -5,6 +5,9 @@
 
 TaskFunc(ObjectTuribasiDisplayer, 0x7A6240);
 
+void __cdecl ObjectWindyTuriBrokenE102_r(task* tp);
+FastFunctionHook<void, task*> ObjectWindyTuriBrokenE102_h(0x4E0FC0);
+
 void __cdecl ObjectWindyTuribasiDisplayerE102(task* tp)
 {
 	ObjectTuribasiDisplayer(tp);
@@ -30,10 +33,15 @@ void __cdecl ObjectWindyTuribasiDisplayerE102(task* tp)
 	}
 }
 
-void __cdecl ObjectWindyTuriBrokenE102(task* tp);
-FastFunctionHook<void, task*> ObjectWindyTuriBrokenE102_h(0x4E0FC0, ObjectWindyTuriBrokenE102);
-void __cdecl ObjectWindyTuriBrokenE102(task* tp)
+void __cdecl ObjectWindyTuriBrokenE102_r(task* tp)
 {
 	ObjectWindyTuriBrokenE102_h.Original(tp);
 	tp->disp = ObjectWindyTuribasiDisplayerE102;
 }
+
+void patch_windy_turibasi_init()
+{
+	ObjectWindyTuriBrokenE102_h.Hook(ObjectWindyTuriBrokenE102_r);
+}
+
+RegisterPatch patch_windy_turibasi(patch_windy_turibasi_init);

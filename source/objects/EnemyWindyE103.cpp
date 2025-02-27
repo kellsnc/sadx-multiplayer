@@ -256,7 +256,7 @@ static void __cdecl e103_normal_r(task* tp)
 	e103_normal_t.Original(tp);
 }
 
-void InitE103Patches()
+void patch_windy_e103_init()
 {
 	e103_move_t.Hook(e103_move_r);
 	e103_chkPlayerRadius_t.Hook(e103_chkPlayerRadius_r);
@@ -265,3 +265,5 @@ void InitE103Patches()
 	e103_chkDamage_t.Hook(e103_chkDamage_r);
 	e103_normal_t.Hook(e103_normal_r);
 }
+
+RegisterPatch patch_windy_e103(patch_windy_e103_init);

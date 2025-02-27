@@ -5,7 +5,8 @@
 #include "multiplayer.h"
 
 void ALO_ObakeHeadHeldP_r(task* tp);
-static FastUsercallHookPtr<decltype(&ALO_ObakeHeadHeldP_r), noret, rEAX> ALO_ObakeHeadHeldP_t(0x007230C0, ALO_ObakeHeadHeldP_r);
+static FastUsercallHookPtr<decltype(&ALO_ObakeHeadHeldP_r), noret, rEAX> ALO_ObakeHeadHeldP_t(0x007230C0);
+
 void ALO_ObakeHeadHeldP_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -26,3 +27,10 @@ void ALO_ObakeHeadHeldP_r(task* tp)
 		ALO_ObakeHeadHeldP_t.Original(tp);
 	}
 }
+
+void patch_alo_obake_head_init()
+{
+	ALO_ObakeHeadHeldP_t.Hook(ALO_ObakeHeadHeldP_r);
+}
+
+RegisterPatch patch_alo_obake_head(patch_alo_obake_head_init);

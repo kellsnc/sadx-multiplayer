@@ -3,6 +3,9 @@
 #include "FastFunctionHook.hpp"
 #include "utils.h"
 
+static void __cdecl ObjectWindyBrokenObj_Exec_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectWindyBrokenObj_Exec_r)> ObjectWindyBrokenObj_Exec_t(0x4E2970);
+
 static void Exec_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -51,8 +54,6 @@ static void Exec_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectWindyBrokenObj_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectWindyBrokenObj_Exec_r)> ObjectWindyBrokenObj_Exec_t(0x4E2970, ObjectWindyBrokenObj_Exec_r);
 static void __cdecl ObjectWindyBrokenObj_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -64,3 +65,10 @@ static void __cdecl ObjectWindyBrokenObj_Exec_r(task* tp)
 		ObjectWindyBrokenObj_Exec_t.Original(tp);
 	}
 }
+
+void patch_windy_broobj_init()
+{
+	ObjectWindyBrokenObj_Exec_t.Hook(ObjectWindyBrokenObj_Exec_r);
+}
+
+RegisterPatch patch_windy_broobj(patch_windy_broobj_init);

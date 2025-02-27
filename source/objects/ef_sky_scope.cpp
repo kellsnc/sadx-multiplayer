@@ -5,6 +5,9 @@
 
 // Target mark for EnemyAir (e_aircraft)
 
+static void __cdecl EffectSkyScope_r(task* tp);
+FastFunctionHookPtr<decltype(&EffectSkyScope_r)> EffectSkyScope_t(0x5F1AA0);
+
 static void  EffectSkyScope_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -47,8 +50,6 @@ static void  EffectSkyScope_m(task* tp)
 	}
 }
 
-static void __cdecl EffectSkyScope_r(task* tp);
-FastFunctionHookPtr<decltype(&EffectSkyScope_r)> EffectSkyScope_t(0x5F1AA0, EffectSkyScope_r);
 static void __cdecl EffectSkyScope_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -60,3 +61,10 @@ static void __cdecl EffectSkyScope_r(task* tp)
 		EffectSkyScope_t.Original(tp);
 	}
 }
+
+void patch_ef_sky_scope_init()
+{
+	EffectSkyScope_t.Hook(EffectSkyScope_r);
+}
+
+RegisterPatch patch_ef_sky_scope(patch_ef_sky_scope_init);

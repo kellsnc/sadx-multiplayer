@@ -3,7 +3,8 @@
 #include "FastFunctionHook.hpp"
 
 void __cdecl PathworkGoneWithTheWind_r(task* tp);
-FastFunctionHook<void, task*> PathworkGoneWithTheWind_h(0x4DF020, PathworkGoneWithTheWind_r);
+FastFunctionHook<void, task*> PathworkGoneWithTheWind_h(0x4DF020);
+
 void __cdecl PathworkGoneWithTheWind_r(task* tp)
 {
 	auto twp = tp->twp;
@@ -88,3 +89,10 @@ void __cdecl PathworkGoneWithTheWind_r(task* tp)
 		}
 	}
 }
+
+void patch_windy_pathact_init()
+{
+	PathworkGoneWithTheWind_h.Hook(PathworkGoneWithTheWind_r);
+}
+
+RegisterPatch patch_windy_pathact(patch_windy_pathact_init);

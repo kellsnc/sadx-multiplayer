@@ -14,9 +14,9 @@ static void __cdecl ObjectSkydeck_Wall_r(task* tp);
 static void __cdecl RdSkydeckWind_r(__int16 act);
 static void __cdecl Skydeck_EggcarrierCtrl_r(__int16 act);
 
-FastFunctionHookPtr<decltype(&ObjectSkydeck_Wall_r)> ObjectSkydeck_Wall_t(0x5EF2B0, ObjectSkydeck_Wall_r);
-FastFunctionHookPtr<decltype(&RdSkydeckWind_r)> RdSkydeckWind_t(0x5EF300, RdSkydeckWind_r);
-FastFunctionHookPtr<decltype(&Skydeck_EggcarrierCtrl_r)> Skydeck_EggcarrierCtrl_t(0x5ECA80, Skydeck_EggcarrierCtrl_r);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_Wall_r)> ObjectSkydeck_Wall_t(0x5EF2B0);
+FastFunctionHookPtr<decltype(&RdSkydeckWind_r)> RdSkydeckWind_t(0x5EF300);
+FastFunctionHookPtr<decltype(&Skydeck_EggcarrierCtrl_r)> Skydeck_EggcarrierCtrl_t(0x5ECA80);
 
 static void Skydeck_EggcarrierCtrl_m(__int16 act)
 {
@@ -303,3 +303,12 @@ static void __cdecl ObjectSkydeck_Wall_r(task* tp)
 		ObjectSkydeck_Wall_t.Original(tp);
 	}
 }
+
+void patch_rd_skydeck_init()
+{
+	ObjectSkydeck_Wall_t.Hook(ObjectSkydeck_Wall_r);
+	RdSkydeckWind_t.Hook(RdSkydeckWind_r);
+	Skydeck_EggcarrierCtrl_t.Hook(Skydeck_EggcarrierCtrl_r);
+}
+
+RegisterPatch patch_rd_skydeck(patch_rd_skydeck_init);

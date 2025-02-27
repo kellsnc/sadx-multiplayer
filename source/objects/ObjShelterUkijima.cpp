@@ -11,7 +11,10 @@ enum : __int8
 	MODE_FREEZE
 };
 
-static void ObjShelterUkijimaExec_m(task* tp)
+static void __cdecl ObjShelterUkijima_Exec_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjShelterUkijima_Exec_r)> ObjShelterUkijima_Exec_t(0x59DC20);
+
+static void ObjShelterUkijima_Exec_m(task* tp)
 {
 	auto twp = tp->twp;
 
@@ -107,16 +110,21 @@ static void ObjShelterUkijimaExec_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjShelterUkijimaExec_r(task* tp); //"Exec"
-FastFunctionHookPtr<decltype(&ObjShelterUkijimaExec_r)> ObjShelterUkijimaExec_t(0x59DC20, ObjShelterUkijimaExec_r);
-static void __cdecl ObjShelterUkijimaExec_r(task* tp)
+static void __cdecl ObjShelterUkijima_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
-		ObjShelterUkijimaExec_m(tp);
+		ObjShelterUkijima_Exec_m(tp);
 	}
 	else
 	{
-		ObjShelterUkijimaExec_t.Original(tp);
+		ObjShelterUkijima_Exec_t.Original(tp);
 	}
 }
+
+void patch_shelter_ukijima_init()
+{
+	ObjShelterUkijima_Exec_t.Hook(ObjShelterUkijima_Exec_r);
+}
+
+RegisterPatch patch_shelter_ukijima(patch_shelter_ukijima_init);

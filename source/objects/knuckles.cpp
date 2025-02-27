@@ -6,7 +6,6 @@
 #include "result.h"
 #include "collision.h"
 #include "ObjCylinderCmn.h"
-#include "knuckles.h"
 
 FastFunctionHook<void> KnuEffectPutCharge0_t(0x4C2210);
 FastFunctionHook<void> KnuEffectPutCharge1_t(0x4C2260);
@@ -496,7 +495,7 @@ void __cdecl KnucklesTheEchidna_r(task* tp)
 	}
 }
 
-void Init_KnuxPatches()
+void patch_knuckles_init()
 {
 	KnuEffectPutCharge0_t.Hook(KnuEffectPutCharge0_r);
 	KnuEffectPutCharge1_t.Hook(KnuEffectPutCharge1_r);
@@ -509,3 +508,5 @@ void Init_KnuxPatches()
 	Knux_RunsActions_t.Hook(Knux_RunsActions_r);
 	KnucklesTheEchidna_t.Hook(KnucklesTheEchidna_r);
 }
+
+RegisterPatch patch_knuckles(patch_knuckles_init);

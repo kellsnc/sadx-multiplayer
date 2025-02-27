@@ -4,6 +4,9 @@
 #include "VariableHook.hpp"
 #include "camera.h"
 
+static void __cdecl ColliNoWaterRange_r(task* tp);
+FastFunctionHookPtr<decltype(&ColliNoWaterRange_r)> ColliNoWaterRange_t(0x4D4E10);
+
 static void ColliNoWaterRange_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -52,8 +55,6 @@ static void ColliNoWaterRange_m(task* tp)
 	}
 }
 
-static void __cdecl ColliNoWaterRange_r(task* tp);
-FastFunctionHookPtr<decltype(&ColliNoWaterRange_r)> ColliNoWaterRange_t(0x4D4E10, ColliNoWaterRange_r);
 static void __cdecl ColliNoWaterRange_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -65,3 +66,10 @@ static void __cdecl ColliNoWaterRange_r(task* tp)
 		ColliNoWaterRange_t.Original(tp);
 	}
 }
+
+void patch_colli_space_init()
+{
+	ColliNoWaterRange_t.Hook(ColliNoWaterRange_r);
+}
+
+RegisterPatch patch_colli_space(patch_colli_space_init);

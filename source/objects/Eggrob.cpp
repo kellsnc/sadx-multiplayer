@@ -21,14 +21,14 @@ static void __cdecl Eggrob_LockOnCursor_r(task* tp);
 static void __cdecl Eggrob_BeamZanzo_r(task* tp);
 static void __cdecl Eggrob_BeamKonseki_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ERSC_CommonExec_r)> ERSC_CommonExec_t(0x7B0640, ERSC_CommonExec_r);
-FastFunctionHookPtr<decltype(&AmyERobApperChecker_r)> AmyERobApperChecker_t(0x486980, AmyERobApperChecker_r);
-FastFunctionHookPtr<decltype(&ERobStart_r)> ERobStart_t(0x4B3EB0, ERobStart_r);
-FastFunctionHookPtr<decltype(&EggRob_r)> EggRob_t(0x4D2960, EggRob_r);
-FastFunctionHookPtr<decltype(&Eggrob_Display_r)> Eggrob_Display_t(0x4CFB70, Eggrob_Display_r);
-FastFunctionHookPtr<decltype(&Eggrob_LockOnCursor_r)> Eggrob_LockOnCursor_t(0x4D01B0, Eggrob_LockOnCursor_r);
-FastFunctionHookPtr<decltype(&Eggrob_BeamZanzo_r)> Eggrob_BeamZanzo_t(0x4CFEE0, Eggrob_BeamZanzo_r);
-FastFunctionHookPtr<decltype(&Eggrob_BeamKonseki_r)> Eggrob_BeamKonseki_t(0x4D00E0, Eggrob_BeamKonseki_r);
+FastFunctionHookPtr<decltype(&ERSC_CommonExec_r)> ERSC_CommonExec_t(0x7B0640);
+FastFunctionHookPtr<decltype(&AmyERobApperChecker_r)> AmyERobApperChecker_t(0x486980);
+FastFunctionHookPtr<decltype(&ERobStart_r)> ERobStart_t(0x4B3EB0);
+FastFunctionHookPtr<decltype(&EggRob_r)> EggRob_t(0x4D2960);
+FastFunctionHookPtr<decltype(&Eggrob_Display_r)> Eggrob_Display_t(0x4CFB70);
+FastFunctionHookPtr<decltype(&Eggrob_LockOnCursor_r)> Eggrob_LockOnCursor_t(0x4D01B0);
+FastFunctionHookPtr<decltype(&Eggrob_BeamZanzo_r)> Eggrob_BeamZanzo_t(0x4CFEE0);
+FastFunctionHookPtr<decltype(&Eggrob_BeamKonseki_r)> Eggrob_BeamKonseki_t(0x4D00E0);
 
 DataPointer(task*, er_tp, 0x3C5815C);
 DataPointer(mtnjvwk, er_mwk, 0x3C5C658);
@@ -345,3 +345,17 @@ static void __cdecl ERSC_CommonExec_r(task* tp)
 		ERSC_CommonExec_t.Original(tp);
 	}
 }
+
+void patch_eggrob_init()
+{
+	ERSC_CommonExec_t.Hook(ERSC_CommonExec_r);
+	AmyERobApperChecker_t.Hook(AmyERobApperChecker_r);
+	ERobStart_t.Hook(ERobStart_r);
+	EggRob_t.Hook(EggRob_r);
+	Eggrob_Display_t.Hook(Eggrob_Display_r);
+	Eggrob_LockOnCursor_t.Hook(Eggrob_LockOnCursor_r);
+	Eggrob_BeamZanzo_t.Hook(Eggrob_BeamZanzo_r);
+	Eggrob_BeamKonseki_t.Hook(Eggrob_BeamKonseki_r);
+}
+
+RegisterPatch patch_eggrob(patch_eggrob_init);

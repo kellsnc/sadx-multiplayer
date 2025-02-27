@@ -102,9 +102,11 @@ static void __cdecl ObjectRocket_Wait_r(task* tp)
 	ObjectRocket_Wait_t.Original(tp);
 }
 
-void PatchRocket()
+void patch_rocket_init()
 {
 	ObjectRocket_Wait_t.Hook(ObjectRocket_Wait_r);
 	ObjectRocket_Hold_V_t.Hook(ObjectRocket_Hold_V_r);
 	ObjectRocket_Hold_H.Hook(ObjectRocket_Hold_H_r);
 }
+
+RegisterPatch patch_rocket(patch_rocket_init);

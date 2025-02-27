@@ -334,10 +334,12 @@ void __cdecl DisplayTimer_r()
 	}
 }
 
-void MultiHudInit()
+void patch_hud_init()
 {
 	DisplayScore_t.Hook(DisplayScore_r);
 	DisplayTimer_t.Hook(DisplayTimer_r);
 	LoadTextureForEachGameMode_t.Hook(LoadTextureForEachGameMode_r);
 	ReleaseTextureForEachGameMode_t.Hook(ReleaseTextureForEachGameMode_r);
 }
+
+RegisterPatch patch_hud(patch_hud_init);

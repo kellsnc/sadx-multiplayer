@@ -52,7 +52,9 @@ void CreateSpark_m(NJS_POINT3* pos, NJS_POINT3* velo)
 	}
 }
 
-void PatchEffectSpark()
+void patch_ef_spark_init()
 {
 	WriteJump((void*)0x4CEA00, CreateSpark_m);
 }
+
+RegisterPatch patch_ef_spark(patch_ef_spark_init);

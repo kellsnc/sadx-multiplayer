@@ -127,7 +127,9 @@ void Flicky_detectAim_m(Flicky* __this, taskwk* twp)
 	}
 }
 
-void PatchFlicky()
+void patch_flicky_init()
 {
 	Flicky_detectAim.Hook(Flicky_detectAim_m);
 }
+
+RegisterPatch patch_flicky(patch_flicky_init);

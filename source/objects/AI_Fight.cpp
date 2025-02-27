@@ -45,7 +45,9 @@ void __cdecl LoadCharacterBoss_r(int boss_id)
 	LoadCharacterBoss_t.Original(boss_id);
 }
 
-void init_AIFight_Patches()
+void patch_ai_fight_init()
 {
 	LoadCharacterBoss_t.Hook(LoadCharacterBoss_r);
 }
+
+RegisterPatch patch_ai_fight(patch_ai_fight_init);

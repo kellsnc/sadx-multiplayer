@@ -73,9 +73,6 @@
     <ClCompile Include="hud_result.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectCrane.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="objects\ObjectKaosEme.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
@@ -91,16 +88,10 @@
     <ClCompile Include="objects\ef_spark.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectExplosionRock.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
     <ClCompile Include="emeraldhunt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectEmeraldPRegular.cpp">
-      <Filter>Source Files\objects</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\FragmEmeraldDigDisplay.cpp">
+    <ClCompile Include="objects\o_eme.cpp">
       <Filter>Source Files\objects</Filter>
     </ClCompile>
     <ClCompile Include="hud_emerald.cpp">
@@ -385,9 +376,6 @@
     <ClCompile Include="objects\ObjectFinalEggTarget.cpp">
       <Filter>Source Files\objects\stg10_finalegg</Filter>
     </ClCompile>
-    <ClCompile Include="objects\ObjectFinalEggUptarget.cpp">
-      <Filter>Source Files\objects\stg10_finalegg</Filter>
-    </ClCompile>
     <ClCompile Include="objects\rd_skydeck.cpp">
       <Filter>Source Files\objects\stg06_skydeck</Filter>
     </ClCompile>
@@ -483,9 +471,6 @@
     </ClCompile>
     <ClCompile Include="objects\ObjectTPCatapult.cpp">
       <Filter>Source Files\objects\stg03_twinkle</Filter>
-    </ClCompile>
-    <ClCompile Include="objects\ColliFinalEggFakeRoot.cpp">
-      <Filter>Source Files\objects\stg10_finalegg</Filter>
     </ClCompile>
     <ClCompile Include="objects\ef_sky_scope.cpp">
       <Filter>Source Files\objects\stg06_skydeck</Filter>
@@ -583,6 +568,15 @@
     <ClCompile Include="FastFunctionHook.cpp">
       <Filter>Source Files\classes</Filter>
     </ClCompile>
+    <ClCompile Include="RegisterPatch.cpp">
+      <Filter>Source Files\classes</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectCrane.cpp">
+      <Filter>Source Files\objects\stg04_highway</Filter>
+    </ClCompile>
+    <ClCompile Include="objects\ObjectExplosionRock.cpp">
+      <Filter>Source Files\objects\stg05_mountain</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -633,9 +627,6 @@
     <ClInclude Include="levels.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="objects\ObjectItemBox.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
     <ClInclude Include="multiplayer.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
@@ -657,14 +648,8 @@
     <ClInclude Include="hud_result.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
-    <ClInclude Include="objects\ef_spark.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
     <ClInclude Include="emeraldhunt.h">
       <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="hud_emerald.h">
-      <Filter>Header FIles\gui</Filter>
     </ClInclude>
     <ClInclude Include="milesrace.h">
       <Filter>Header FIles</Filter>
@@ -686,9 +671,6 @@
     </ClInclude>
     <ClInclude Include="config.h">
       <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="hud_itembox.h">
-      <Filter>Header FIles\gui</Filter>
     </ClInclude>
     <ClInclude Include="gravity.h">
       <Filter>Header FIles</Filter>
@@ -723,113 +705,38 @@
     <ClInclude Include="GameText.hpp">
       <Filter>Header FIles\classes</Filter>
     </ClInclude>
-    <ClInclude Include="objects\ladder.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\ObjectRocket.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
     <ClInclude Include="menu_adventure.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
     <ClInclude Include="collision.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
-    <ClInclude Include="objects\sonic.h">
-      <Filter>Header FIles\objects\figure</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\knuckles.h">
-      <Filter>Header FIles\objects\figure</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\amy.h">
-      <Filter>Header FIles\objects\figure</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\gamma.h">
-      <Filter>Header FIles\objects\figure</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\big.h">
-      <Filter>Header FIles\objects\figure</Filter>
-    </ClInclude>
     <ClInclude Include="event.h">
       <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\miles.h">
-      <Filter>Header FIles\objects\figure</Filter>
     </ClInclude>
     <ClInclude Include="objects\e_cart.h">
       <Filter>Header FIles\objects\enemy</Filter>
     </ClInclude>
-    <ClInclude Include="objects\e_gachapon.h">
-      <Filter>Header FIles\objects\enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\e_pondskater.h">
-      <Filter>Header FIles\objects\enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\EnemyHotE105.h">
-      <Filter>Header FIles\objects\stg12_hotshelter</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\EnemyMountainE104.h">
-      <Filter>Header FIles\objects\stg05_mountain</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\EnemyWindyE103.h">
-      <Filter>Header FIles\objects\stg02_windy</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\o_sky_cannon_s.h">
-      <Filter>Header FIles\objects\stg06_skydeck</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\o_sky_ocm.h">
-      <Filter>Header FIles\objects\stg06_skydeck</Filter>
-    </ClInclude>
     <ClInclude Include="objects\ObjCylinderCmn.h">
       <Filter>Header FIles\objects\stg06_skydeck</Filter>
     </ClInclude>
-    <ClInclude Include="objects\ObjShelterKaitenKey.h">
-      <Filter>Header FIles\objects\stg12_hotshelter</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\SnowBoard.h">
-      <Filter>Header FIles\objects\stg08_icecap</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\mirror.h">
-      <Filter>Header FIles\objects\stg03_twinkle</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\Sw_Door.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\e_robo.h">
-      <Filter>Header FIles\objects\enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\e_sai.h">
-      <Filter>Header FIles\objects\enemy</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\flicky.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
     <ClInclude Include="teleport.h">
       <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\AI_Fight.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\o_savepoint.h">
-      <Filter>Header FIles\objects</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\o_ruin_pathcam.h">
-      <Filter>Header FIles\objects\stg08_icecap</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\o_casino_pathcam.h">
-      <Filter>Header FIles\objects\stg09_casino</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\o_hw_pathcam.h">
-      <Filter>Header FIles\objects\stg04_highway</Filter>
-    </ClInclude>
-    <ClInclude Include="objects\o_beach_pathcam.h">
-      <Filter>Header FIles\objects\stg01_beach</Filter>
     </ClInclude>
     <ClInclude Include="FastFunctionHook.hpp">
       <Filter>Header FIles\classes</Filter>
     </ClInclude>
     <ClInclude Include="hde32.h">
       <Filter>Header FIles\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisterPatch.hpp">
+      <Filter>Header FIles\classes</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_emerald.h">
+      <Filter>Header FIles\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_itembox.h">
+      <Filter>Source Files\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -862,9 +769,6 @@
     </Filter>
     <Filter Include="Source Files\objects\bosses">
       <UniqueIdentifier>{7d85d775-a2ac-429b-9e63-1731455402c9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\objects\figure">
-      <UniqueIdentifier>{8c180e99-72c3-4944-be96-09e009ff6f0b}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\objects\stg01_beach">
       <UniqueIdentifier>{fa93a4ab-6d25-4187-8219-c4b8a16950c5}</UniqueIdentifier>
@@ -905,38 +809,14 @@
     <Filter Include="Header FIles\objects\enemy">
       <UniqueIdentifier>{81c5c565-ce1e-4972-955b-3c35d5358c64}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header FIles\objects\stg12_hotshelter">
-      <UniqueIdentifier>{bec4c527-f67c-41b7-a105-db0f91068ed4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\objects\stg05_mountain">
-      <UniqueIdentifier>{8c0d83ae-3c68-4ee9-8e34-24392f4d84a4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\objects\stg02_windy">
-      <UniqueIdentifier>{2392a3ca-2fed-4f34-860c-dafadd36aee0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header FIles\objects\stg06_skydeck">
       <UniqueIdentifier>{97885f92-1a5f-4994-97dd-6079a3b042b0}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\objects\stg03_twinkle">
-      <UniqueIdentifier>{f25cd30a-3099-4f95-bda7-44e94b9dc0b6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\objects\stg08_icecap">
-      <UniqueIdentifier>{b753b058-ec18-47e3-a0bb-fee83cb59d3e}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\netplay">
       <UniqueIdentifier>{e3a1b93c-f944-426a-b922-707b7b85d8be}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header FIles\netplay">
       <UniqueIdentifier>{fbedaab8-05f5-4755-8346-ba4688365961}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\objects\stg09_casino">
-      <UniqueIdentifier>{c3f770f2-10af-40b1-9f4e-dbfd26c5e3f1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\objects\stg04_highway">
-      <UniqueIdentifier>{068bfeb0-9202-4f0f-ac87-9f78c9b48462}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header FIles\objects\stg01_beach">
-      <UniqueIdentifier>{bacd9dff-ad87-4280-939b-5b42a721f35a}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\objects\chao">
       <UniqueIdentifier>{b5270be9-68fe-4ae8-b50e-0422f75b68ae}</UniqueIdentifier>

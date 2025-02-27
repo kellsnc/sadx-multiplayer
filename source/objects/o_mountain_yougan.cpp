@@ -12,6 +12,9 @@
 #define TARGET rd_mountain_twp->scl.x
 #define SPEED rd_mountain_twp->scl.y
 
+static void __cdecl Object_Mountain_Yougan_r(task* tp);
+FastFunctionHookPtr<decltype(&Object_Mountain_Yougan_r)> Object_Mountain_Yougan_t(0x602670);
+
 static void __cdecl Object_Mountain_Yougan_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -111,8 +114,6 @@ static void __cdecl Object_Mountain_Yougan_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl Object_Mountain_Yougan_r(task* tp);
-FastFunctionHookPtr<decltype(&Object_Mountain_Yougan_r)> Object_Mountain_Yougan_t(0x602670, Object_Mountain_Yougan_r);
 static void __cdecl Object_Mountain_Yougan_r(task* tp)
 {
 	if (multiplayer::IsEnabled())
@@ -125,3 +126,10 @@ static void __cdecl Object_Mountain_Yougan_r(task* tp)
 		Object_Mountain_Yougan_t.Original(tp);
 	}
 }
+
+void patch_mountain_yougan_init()
+{
+	Object_Mountain_Yougan_t.Hook(Object_Mountain_Yougan_r);
+}
+
+RegisterPatch patch_mountain_yougan(patch_mountain_yougan_init);

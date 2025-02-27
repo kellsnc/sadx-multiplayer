@@ -2,6 +2,9 @@
 
 DataPointer(int, clear_flag, 0x3C72A7C);
 
+static void ObjShelterCargocontainerC_Exec_r(task* tp); // "ExecC"
+FastFunctionHookPtr<decltype(&ObjShelterCargocontainerC_Exec_r)> ObjShelterCargocontainerC_Exec_t(0x59BF30);
+
 static void ExecC_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -33,9 +36,7 @@ static void ExecC_m(task* tp)
 	tp->disp(tp);
 }
 
-static void ObjShelterCargocontainerExecC_r(task* tp); // "ExecC"
-FastFunctionHookPtr<decltype(&ObjShelterCargocontainerExecC_r)> ObjShelterCargocontainerExecC_t(0x59BF30, ObjShelterCargocontainerExecC_r);
-static void ObjShelterCargocontainerExecC_r(task* tp)
+static void ObjShelterCargocontainerC_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -43,6 +44,13 @@ static void ObjShelterCargocontainerExecC_r(task* tp)
 	}
 	else
 	{
-		ObjShelterCargocontainerExecC_t.Original(tp);
+		ObjShelterCargocontainerC_Exec_t.Original(tp);
 	}
 }
+
+void patch_shelter_cargocontainer_init()
+{
+	ObjShelterCargocontainerC_Exec_t.Hook(ObjShelterCargocontainerC_Exec_r);
+}
+
+RegisterPatch patch_shelter_cargocontainer(patch_shelter_cargocontainer_init);

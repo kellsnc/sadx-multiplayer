@@ -3,6 +3,9 @@
 #include "result.h"
 #include "utils.h"
 
+void __cdecl relbox_switch_exec_r(task* task_p);
+FastFunctionHookPtr<decltype(&relbox_switch_exec_r)> relbox_switch_exec_t(0x46AE60);
+
 bool relbox_switch_test_riding_m(taskwk* twp, taskwk* parent_twp)
 {
 	for (int i = 0; i < 8; ++i)
@@ -27,8 +30,6 @@ bool relbox_switch_test_riding_m(taskwk* twp, taskwk* parent_twp)
 	return false;
 }
 
-void __cdecl relbox_switch_exec_r(task* task_p);
-FastFunctionHookPtr<decltype(&relbox_switch_exec_r)> relbox_switch_exec_t(0x46AE60, relbox_switch_exec_r);
 void __cdecl relbox_switch_exec_r(task* task_p)
 {
 	if (multiplayer::IsActive())
@@ -76,3 +77,10 @@ void __cdecl relbox_switch_exec_r(task* task_p)
 		relbox_switch_exec_t.Original(task_p);
 	}
 }
+
+void patch_releasebox_init()
+{
+	relbox_switch_exec_t.Hook(relbox_switch_exec_r);
+}
+
+RegisterPatch patch_releasebox(patch_releasebox_init);

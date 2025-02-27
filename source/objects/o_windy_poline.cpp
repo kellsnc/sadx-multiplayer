@@ -14,6 +14,9 @@ enum : Sint8
 	MODE_END
 };
 
+static void __cdecl ObjectWindyPoline_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectWindyPoline_r)> ObjectWindyPoline_t(0x4E3200);
+
 /*
  * Custom task to run one logic per player simultaneously
  */
@@ -282,8 +285,6 @@ static void ObjectWindyPoline_m(task* tp)
 	}
 }
 
-static void __cdecl ObjectWindyPoline_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectWindyPoline_r)> ObjectWindyPoline_t(0x4E3200, ObjectWindyPoline_r);
 static void __cdecl ObjectWindyPoline_r(task* tp)
 {
 	if (multiplayer::IsEnabled() && tp->twp->mode != MODE_INITIAL)
@@ -295,3 +296,10 @@ static void __cdecl ObjectWindyPoline_r(task* tp)
 		ObjectWindyPoline_t.Original(tp);
 	}
 }
+
+void patch_windy_poline_init()
+{
+	ObjectWindyPoline_t.Hook(ObjectWindyPoline_r);
+}
+
+RegisterPatch patch_windy_poline(patch_windy_poline_init);

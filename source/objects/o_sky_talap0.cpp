@@ -3,7 +3,8 @@
 #include "multiplayer.h"
 
 static void __cdecl ObjectSkydeck_c_talap0_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectSkydeck_c_talap0_Exec_r)> ObjectSkydeck_c_talap0_Exec_t(0x5FB5F0, ObjectSkydeck_c_talap0_Exec_r);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_c_talap0_Exec_r)> ObjectSkydeck_c_talap0_Exec_t(0x5FB5F0);
+
 static void __cdecl ObjectSkydeck_c_talap0_Exec_r(task* tp)
 {
 	ObjectSkydeck_c_talap0_Exec_t.Original(tp);
@@ -19,3 +20,10 @@ static void __cdecl ObjectSkydeck_c_talap0_Exec_r(task* tp)
 			ocm->flag &= ~1;
 	}
 }
+
+void patch_sky_talap0_init()
+{
+	ObjectSkydeck_c_talap0_Exec_t.Hook(ObjectSkydeck_c_talap0_Exec_r);
+}
+
+RegisterPatch patch_sky_talap0(patch_sky_talap0_init);

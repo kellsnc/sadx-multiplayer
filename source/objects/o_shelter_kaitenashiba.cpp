@@ -9,6 +9,9 @@ enum : __int8
 
 FunctionPointer(void, GetKaitenKeyCount, (int no, Angle* r, Angle* l), 0x5A27F0);
 
+static void __cdecl execShelterKaitenashiba_r(task* tp); // "Exec"
+FastFunctionHookPtr<decltype(&execShelterKaitenashiba_r)> execShelterKaitenashiba_t(0x59CB40);
+
 static void execShelterKaitenashiba_m(task* tp)
 {
 	if (!CheckRangeOut(tp))
@@ -92,8 +95,6 @@ static void execShelterKaitenashiba_m(task* tp)
 	}
 }
 
-static void __cdecl execShelterKaitenashiba_r(task* tp); // "Exec"
-FastFunctionHookPtr<decltype(&execShelterKaitenashiba_r)> execShelterKaitenashiba_t(0x59CB40, execShelterKaitenashiba_r);
 static void __cdecl execShelterKaitenashiba_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -105,3 +106,10 @@ static void __cdecl execShelterKaitenashiba_r(task* tp)
 		execShelterKaitenashiba_t.Original(tp);
 	}
 }
+
+void patch_shelter_kaitenashiba_init()
+{
+	execShelterKaitenashiba_t.Hook(execShelterKaitenashiba_r);
+}
+
+RegisterPatch patch_shelter_kaitenashiba(patch_shelter_kaitenashiba_init);

@@ -490,7 +490,9 @@ static void SetupCamPathCam2_Beach_r(task* tp)
 	}
 }
 
-void PatchBeachPathCam()
+void patch_beach_pathcam_init()
 {
 	SetupCamPathCam2_Beach_h.Hook(SetupCamPathCam2_Beach_r);
 }
+
+RegisterPatch patch_beach_pathcam(patch_beach_pathcam_init);

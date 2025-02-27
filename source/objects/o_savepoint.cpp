@@ -73,8 +73,10 @@ void __cdecl PrintTimer_r(CUSTUM_PRINT_NUMBER* custom, Sint32 min, Sint32 sec)
 	}
 }
 
-void PatchCheckpoint()
+void patch_savepoint_init()
 {
 	savepointCollision_t.Hook(savepointCollision_r);
 	PrintTimer_t.Hook(PrintTimer_r);
 }
+
+RegisterPatch patch_savepoint(patch_savepoint_init);

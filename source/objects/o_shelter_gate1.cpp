@@ -12,6 +12,9 @@ enum : __int8
 	MODE_END
 };
 
+static void __cdecl ObjShelterGate1_ExecATask_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjShelterGate1_ExecATask_r)> ObjShelterGate1_ExecATask_t(0x5A1F70);
+
 static bool CheckCollisionCylinder(NJS_POINT3* pt, NJS_POINT3* vp, float r, float h)
 {
 	NJS_VECTOR v = *pt;
@@ -19,9 +22,7 @@ static bool CheckCollisionCylinder(NJS_POINT3* pt, NJS_POINT3* vp, float r, floa
 	return v.x * v.x + v.z * v.z - r * r <= 0.0f && njAbs(v.y) <= h;
 }
 
-static void __cdecl execShelterGate1_r(task* tp); // "ExecATask"
-FastFunctionHookPtr<decltype(&execShelterGate1_r)> execShelterGate1_t(0x5A1F70, execShelterGate1_r);
-static void __cdecl execShelterGate1_r(task* tp)
+static void __cdecl ObjShelterGate1_ExecATask_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == MODE_NORMAL)
 	{
@@ -48,6 +49,13 @@ static void __cdecl execShelterGate1_r(task* tp)
 	}
 	else
 	{
-		execShelterGate1_t.Original(tp);
+		ObjShelterGate1_ExecATask_t.Original(tp);
 	}
 }
+
+void patch_shelter_gate1_init()
+{
+	ObjShelterGate1_ExecATask_t.Hook(ObjShelterGate1_ExecATask_r);
+}
+
+RegisterPatch patch_shelter_gate1(patch_shelter_gate1_init);

@@ -15,10 +15,10 @@ static void __cdecl ObjShelterHaguruma3_ExecATask_r(task* tp);
 static void __cdecl ObjShelterHaguruma4_ExecATask_r(task* tp);
 static void __cdecl ObjShelterHaguruma6_ExecATask_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjShelterHaguruma1_ExecATask_r)> ObjShelterHaguruma1_ExecATask_t(0x5A0310, ObjShelterHaguruma1_ExecATask_r);
-FastFunctionHookPtr<decltype(&ObjShelterHaguruma3_ExecATask_r)> ObjShelterHaguruma3_ExecATask_t(0x5A0010, ObjShelterHaguruma3_ExecATask_r);
-FastFunctionHookPtr<decltype(&ObjShelterHaguruma4_ExecATask_r)> ObjShelterHaguruma4_ExecATask_t(0x59FB20, ObjShelterHaguruma4_ExecATask_r);
-FastFunctionHookPtr<decltype(&ObjShelterHaguruma6_ExecATask_r)> ObjShelterHaguruma6_ExecATask_t(0x59F820, ObjShelterHaguruma6_ExecATask_r);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma1_ExecATask_r)> ObjShelterHaguruma1_ExecATask_t(0x5A0310);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma3_ExecATask_r)> ObjShelterHaguruma3_ExecATask_t(0x5A0010);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma4_ExecATask_r)> ObjShelterHaguruma4_ExecATask_t(0x59FB20);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma6_ExecATask_r)> ObjShelterHaguruma6_ExecATask_t(0x59F820);
 
 static void ExecATask_m(task* tp, NJS_OBJECT* object)
 {
@@ -110,3 +110,13 @@ static void __cdecl ObjShelterHaguruma1_ExecATask_r(task* tp)
 		ObjShelterHaguruma1_ExecATask_t.Original(tp);
 	}
 }
+
+void patch_shelter_haguruma_init()
+{
+	ObjShelterHaguruma1_ExecATask_t.Hook(ObjShelterHaguruma1_ExecATask_r);
+	ObjShelterHaguruma3_ExecATask_t.Hook(ObjShelterHaguruma3_ExecATask_r);
+	ObjShelterHaguruma4_ExecATask_t.Hook(ObjShelterHaguruma4_ExecATask_r);
+	ObjShelterHaguruma6_ExecATask_t.Hook(ObjShelterHaguruma6_ExecATask_r);
+}
+
+RegisterPatch patch_shelter_haguruma(patch_shelter_haguruma_init);

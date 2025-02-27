@@ -3,6 +3,8 @@
 #include "FastFunctionHook.hpp"
 #include "camera.h"
 
+FastFunctionHook<void, task*> ObjectBeachYurehasiExec_h(0x501BC0);
+
 static void ObjectBeachYurehasiExec_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -77,8 +79,6 @@ static void ObjectBeachYurehasiExec_m(task* tp)
 	LoopTaskC(tp);
 }
 
-static void __cdecl ObjectBeachYurehasiExec_r(task* tp); // "Exec"
-FastFunctionHook<void, task*> ObjectBeachYurehasiExec_h(0x501BC0, ObjectBeachYurehasiExec_r);
 static void __cdecl ObjectBeachYurehasiExec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -90,3 +90,10 @@ static void __cdecl ObjectBeachYurehasiExec_r(task* tp)
 		ObjectBeachYurehasiExec_h.Original(tp);
 	}
 }
+
+void patch_beach_yurehasi_init()
+{
+	ObjectBeachYurehasiExec_h.Hook(ObjectBeachYurehasiExec_r);
+}
+
+RegisterPatch patch_beach_yurehasi(patch_beach_yurehasi_init);

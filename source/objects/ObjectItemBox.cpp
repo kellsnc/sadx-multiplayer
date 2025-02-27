@@ -4,7 +4,6 @@
 #include "sadx_utils.h"
 #include "splitscreen.h"
 #include "hud_itembox.h"
-#include "ObjectItemBox.h"
 
 FastUsercallHookPtr<void(*)(task*), noret, rEAX> ObjectItemboxNormal_t(0x4D6670);
 FastUsercallHookPtr<void(*)(task*), noret, rEDI> itembox_airCollisitonBefore_t(0x4C0610);
@@ -301,7 +300,7 @@ static void DeleteAirBox(task* obj)
 	DeadOut(obj);
 }
 
-void InitItemBoxPatches()
+static void patch_itembox_init()
 {
 	ObjectItemboxNormal_t.Hook(ObjectItemboxNormal_r);
 	itembox_airCollisitonBefore_t.Hook(itembox_airCollisitonBefore_r);
@@ -318,3 +317,5 @@ void InitItemBoxPatches()
 	WriteCall((void*)0x4C097C, DeleteAirBox);
 	ItemBoxAir_t.Hook(ItemBoxAir_Main_r);
 }
+
+RegisterPatch patch_itembox(patch_itembox_init);

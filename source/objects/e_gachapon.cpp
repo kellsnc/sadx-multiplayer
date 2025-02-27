@@ -57,8 +57,10 @@ void GachaCheckColli_r(taskwk* twp, gachamotionwk* mwp)
 	}
 }
 
-void PatchGachapon()
+void patch_gachapon_init()
 {
 	chk_mode_Hook.Hook(chk_mode_r);
 	GachaCheckColli_Hook.Hook(GachaCheckColli_r);
 }
+
+RegisterPatch patch_gachapon(patch_gachapon_init);

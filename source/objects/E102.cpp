@@ -18,6 +18,10 @@ FastFunctionHook<void, task*, motionwk2*, playerwk*> E102_RunsActions_t((intptr_
 FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> E102_CheckInput_t(0x480870);
 FastFunctionHook<void, task*> E102_t((intptr_t)0x483430);
 FastFunctionHook<void, task*> E102DispTimeUpWarning_t(0x4C51D0);
+FastFunctionHookPtr<TaskFuncPtr> E102LockOnCursor_t(0x4CF090);
+FastFunctionHookPtr<TaskFuncPtr> E102Beam_t(0x4C40B0);
+FastFunctionHookPtr<TaskFuncPtr> E102AddSecTotalNewDisplay_t(0x49FDA0);
+FastFunctionHookPtr<TaskFuncPtr> E102AddSecTotalNew_t(0x49FF10);
 
 bool IsCountingDown()
 {
@@ -299,16 +303,12 @@ void __cdecl E102_r(task* tp)
 	}
 }
 
-static void __cdecl E102LockOnCursor_r(task* tp);
-FastFunctionHookPtr<decltype(&E102LockOnCursor_r)> E102LockOnCursor_t(0x4CF090, E102LockOnCursor_r);
 static void __cdecl E102LockOnCursor_r(task* tp)
 {
 	e102_work_ptr = (E102WK*)tp->awp[1].work.ul[0];
 	E102LockOnCursor_t.Original(tp);
 }
 
-static void __cdecl E102Beam_r(task* tp);
-FastFunctionHookPtr<decltype(&E102Beam_r)> E102Beam_t(0x4C40B0, E102Beam_r);
 static void __cdecl E102Beam_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -326,8 +326,6 @@ static void __cdecl E102Beam_r(task* tp)
 	E102Beam_t.Original(tp);
 }
 
-static void __cdecl E102AddSecTotalNewDisplay_r(task* tp);
-FastFunctionHookPtr<decltype(&E102AddSecTotalNewDisplay_r)> E102AddSecTotalNewDisplay_t(0x49FDA0, E102AddSecTotalNewDisplay_r);
 static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
 {
 	if (IsCountingDown())
@@ -346,8 +344,6 @@ static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
 	}
 }
 
-static void __cdecl E102AddSecTotalNew_r(task* tp);
-FastFunctionHookPtr<decltype(&E102AddSecTotalNew_r)> E102AddSecTotalNew_t(0x49FF10, E102AddSecTotalNew_r);
 static void __cdecl E102AddSecTotalNew_r(task* tp)
 {
 	if (IsCountingDown())
@@ -356,13 +352,19 @@ static void __cdecl E102AddSecTotalNew_r(task* tp)
 	}
 }
 
-void initGammaPatch()
+void patch_e102_init()
 {
 	E102_t.Hook(E102_r);
 	E102_CheckInput_t.Hook(E102_CheckInput_r);
 	E102_RunsActions_t.Hook(E102_RunActions_r);
 	E102DispTimeUpWarning_t.Hook(E102DispTimeUpWarning_r);
+	E102LockOnCursor_t.Hook(E102LockOnCursor_r);
+	E102Beam_t.Hook(E102Beam_r);
+	E102AddSecTotalNewDisplay_t.Hook(E102AddSecTotalNewDisplay_r);
+	E102AddSecTotalNew_t.Hook(E102AddSecTotalNew_r);
 	WriteCall((void*)0x49FD54, E102AddSeconds_r);
 	WriteCall((void*)0x47FC17, E102TimeOverHook);
 	WriteCall((void*)0x426081, GammaTickTimePatch);
 }
+
+RegisterPatch patch_e102(patch_e102_init);

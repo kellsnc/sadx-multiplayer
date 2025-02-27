@@ -10,7 +10,7 @@ static Float offset_ypos_m[PLAYER_MAX]{};
 static Float yang_m[PLAYER_MAX]{};
 
 static void __cdecl VacumePlayer_r(task* tp);
-FastUsercallHookPtr<decltype(&VacumePlayer_r), noret, rEAX> VacumePlayer_t(0x4DE5F0, VacumePlayer_r);
+FastUsercallHookPtr<decltype(&VacumePlayer_r), noret, rEAX> VacumePlayer_t(0x4DE5F0);
 
 static void VacumePlayer_m(task* tp)
 {
@@ -76,3 +76,10 @@ static void __cdecl VacumePlayer_r(task* tp)
 		VacumePlayer_t.Original(tp);
 	}
 }
+
+void patch_windy_torout_init()
+{
+	VacumePlayer_t.Hook(VacumePlayer_r);
+}
+
+RegisterPatch patch_windy_torout(patch_windy_torout_init);

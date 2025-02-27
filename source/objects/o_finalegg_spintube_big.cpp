@@ -4,7 +4,7 @@
 #include "multiplayer.h"
 
 static void __cdecl SpinTubeBig_ExecATask_r(task* tp);
-FastUsercallHookPtr<decltype(&SpinTubeBig_ExecATask_r), noret, rEAX> SpinTubeBig_ExecATask_t(0x5BCED0, SpinTubeBig_ExecATask_r);
+FastUsercallHookPtr<decltype(&SpinTubeBig_ExecATask_r), noret, rEAX> SpinTubeBig_ExecATask_t(0x5BCED0);
 
 static void ExecATask_m(task* tp)
 {
@@ -53,3 +53,10 @@ static void __cdecl SpinTubeBig_ExecATask_r(task* tp)
 		SpinTubeBig_ExecATask_t.Original(tp);
 	}
 }
+
+void patch_finalegg_spintube_big_init()
+{
+	SpinTubeBig_ExecATask_t.Hook(SpinTubeBig_ExecATask_r);
+}
+
+RegisterPatch patch_finalegg_spintube_big(patch_finalegg_spintube_big_init);

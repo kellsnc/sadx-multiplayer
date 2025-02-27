@@ -1,13 +1,6 @@
 #include "pch.h"
 #include "multiplayer.h"
 
-DataPointer(NJS_ACTION, action_bowling_bowlingdai, 0x27C23FC);
-TaskFunc(dispCatapult, 0x621FA0);
-
-auto sub_622000 = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x622000, rECX);
-auto rotateArms = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x621EF0, rEDI);
-auto manipulateArm = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x6220F0, rEDI);
-
 #define PNUM(twp) twp->ang.z
 
 enum : char
@@ -19,6 +12,16 @@ enum : char
 	MODE_4,
 	MODE_5
 };
+
+DataPointer(NJS_ACTION, action_bowling_bowlingdai, 0x27C23FC);
+TaskFunc(dispCatapult, 0x621FA0);
+
+auto sub_622000 = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x622000, rECX);
+auto rotateArms = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x621EF0, rEDI);
+auto manipulateArm = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x6220F0, rEDI);
+
+static void __cdecl ObjectTPCatapult_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectTPCatapult_r)> ObjectTPCatapult_t(0x6223C0);
 
 static void inhallPlayer_m(taskwk* twp)
 {
@@ -320,8 +323,6 @@ static void ObjectTPCatapult_m(task* tp)
 	}
 }
 
-static void __cdecl ObjectTPCatapult_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectTPCatapult_r)> ObjectTPCatapult_t(0x6223C0, ObjectTPCatapult_r);
 static void __cdecl ObjectTPCatapult_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -333,3 +334,10 @@ static void __cdecl ObjectTPCatapult_r(task* tp)
 		ObjectTPCatapult_t.Original(tp);
 	}
 }
+
+void patch_twinkle_catapult_init()
+{
+	ObjectTPCatapult_t.Hook(ObjectTPCatapult_r);
+}
+
+RegisterPatch patch_twinkle_catapult(patch_twinkle_catapult_init);

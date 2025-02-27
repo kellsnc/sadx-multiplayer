@@ -11,7 +11,7 @@ static NJS_VECTOR vel_hardcodedgap = { 14.0f, 0.4f, 0.0f };
 static Angle3 ang_spdman = { 0, 0xB200, 0 };
 
 static void __cdecl Rd_Snow_r(task* tp);
-FastFunctionHookPtr<decltype(&Rd_Snow_r)> Rd_Snow_t(0x4E9D90, Rd_Snow_r);
+FastFunctionHookPtr<decltype(&Rd_Snow_r)> Rd_Snow_t(0x4E9D90);
 
 static void __cdecl RdSnowBoardingSpeedManager_m(task* tp)
 {
@@ -178,3 +178,10 @@ static void __cdecl Rd_Snow_r(task* tp)
 		Rd_Snow_t.Original(tp);
 	}
 }
+
+void patch_rd_snow_init()
+{
+	Rd_Snow_t.Hook(Rd_Snow_r);
+}
+
+RegisterPatch patch_rd_snow(patch_rd_snow_init);

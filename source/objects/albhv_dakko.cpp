@@ -5,7 +5,11 @@
 #include "multiplayer.h"
 
 void DakkoControl_r(task* tp);
-FastFunctionHookPtr<decltype(&DakkoControl_r)> DakkoControl_t(0x00739050, DakkoControl_r);
+Bool AL_CheckDakko_r(task* tp);
+
+FastFunctionHookPtr<decltype(&DakkoControl_r)> DakkoControl_t(0x00739050);
+FastFunctionHookPtr<decltype(&AL_CheckDakko_r)> AL_CheckDakko_t(0x00739670);
+
 void DakkoControl_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -27,8 +31,6 @@ void DakkoControl_r(task* tp)
 	}
 }
 
-Bool AL_CheckDakko_r(task* tp);
-FastFunctionHookPtr<decltype(&AL_CheckDakko_r)> AL_CheckDakko_t(0x00739670, AL_CheckDakko_r);
 Bool AL_CheckDakko_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -44,3 +46,11 @@ Bool AL_CheckDakko_r(task* tp)
 		return AL_CheckDakko_t.Original(tp);
 	}
 }
+
+void patch_albhv_dakko_init()
+{
+	DakkoControl_t.Hook(DakkoControl_r);
+	AL_CheckDakko_t.Hook(AL_CheckDakko_r);
+}
+
+RegisterPatch patch_albhv_dakko(patch_albhv_dakko_init);

@@ -3,14 +3,11 @@
 #include "camera.h"
 #include "splitscreen.h"
 #include "menu.h"
-#include "hud_multi.h"
 #include "patches.h"
 #include "set.h"
 #include "levels.h"
 #include "race.h"
 #include "emeraldhunt.h"
-#include "hud_emerald.h"
-#include "hud_itembox.h"
 #include "sound.h"
 #include "result.h"
 #include "milesrace.h"
@@ -45,19 +42,16 @@ extern "C"
 		InitSplitScreen();
 		InitCamera();
 		InitInputPatches();
-		InitPatches();
+		InitMiscPatches();
 		InitPlayerPatches();
 		InitMenu();
-		MultiHudInit();
 		InitSET();
 		InitLevels();
 		InitRace();
 		InitEmeraldHunt();
-		InitItemBoxHUD();
 		InitSoundPatches();
 		InitResult();
 		TestSpawn();
-		InitEmeraldRadar();
 		InitMilesRace();
 		InitFishing();
 		InitForceWorkPatches();
@@ -65,11 +59,15 @@ extern "C"
 		InitFogPatches();
 		initEvents();
 		InitCollisionPatches();
+
+		InitPatches();
 	}
 
 	__declspec(dllexport) void __cdecl OnExit()
 	{
 		netplay.Exit();
+
+		FreePatches();
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

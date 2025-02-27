@@ -4,7 +4,8 @@
 #include "multiplayer.h"
 
 static void __cdecl objSkyEVStep_r(task* tp);
-FastFunctionHookPtr<decltype(&objSkyEVStep_r)> objSkyEVStep_t(0x5F5A70, objSkyEVStep_r);
+FastFunctionHookPtr<decltype(&objSkyEVStep_r)> objSkyEVStep_t(0x5F5A70);
+
 static void __cdecl objSkyEVStep_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == 1)
@@ -42,3 +43,10 @@ static void __cdecl objSkyEVStep_r(task* tp)
 		objSkyEVStep_t.Original(tp);
 	}
 }
+
+void patch_sky_elevator_init()
+{
+	objSkyEVStep_t.Hook(objSkyEVStep_r);
+}
+
+RegisterPatch patch_sky_elevator(patch_sky_elevator_init);

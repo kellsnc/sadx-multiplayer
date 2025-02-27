@@ -4,7 +4,8 @@
 #include "utils.h"
 
 static void __cdecl rotateobj_Draw_r(task* tp);
-FastFunctionHookPtr<decltype(&rotateobj_Draw_r)> rotateobj_Draw_t(0x4E1010, rotateobj_Draw_r);
+FastFunctionHookPtr<decltype(&rotateobj_Draw_r)> rotateobj_Draw_t(0x4E1010);
+
 static void __cdecl rotateobj_Draw_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -19,3 +20,10 @@ static void __cdecl rotateobj_Draw_r(task* tp)
 		rotateobj_Draw_t.Original(tp);
 	}
 }
+
+void patch_windy_rotateobj_init()
+{
+	rotateobj_Draw_t.Hook(rotateobj_Draw_r);
+}
+
+RegisterPatch patch_windy_rotateobj(patch_windy_rotateobj_init);

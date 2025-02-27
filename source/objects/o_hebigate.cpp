@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "multiplayer.h"
 
+static void __cdecl ObjectHebigate_Normal_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectHebigate_Normal_r)> ObjectHebigate_Normal_t(0x5EADE0);
+
 static void Normal_m(task* tp)
 {
 	if (!CheckRangeOut(tp))
@@ -42,8 +45,6 @@ static void Normal_m(task* tp)
 	}
 }
 
-static void __cdecl ObjectHebigate_Normal_r(task* tp); // "Normal"
-FastFunctionHookPtr<decltype(&ObjectHebigate_Normal_r)> ObjectHebigate_Normal_t(0x5EADE0, ObjectHebigate_Normal_r);
 static void __cdecl ObjectHebigate_Normal_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -55,3 +56,10 @@ static void __cdecl ObjectHebigate_Normal_r(task* tp)
 		ObjectHebigate_Normal_t.Original(tp);
 	}
 }
+
+void patch_hebigate_init()
+{
+	ObjectHebigate_Normal_t.Hook(ObjectHebigate_Normal_r);
+}
+
+RegisterPatch patch_hebigate(patch_hebigate_init);

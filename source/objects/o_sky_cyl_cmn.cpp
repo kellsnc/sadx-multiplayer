@@ -4,9 +4,7 @@
 #include "sadx_utils.h"
 
 UsercallFunc(BOOL, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
-
-void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd);
-FastFunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0, dsHangPoleCom_r);
+FastFunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0);
 
 signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* co2)
 {
@@ -274,6 +272,9 @@ void __cdecl dsHangPoleCom_r(task* tp, Angle rotspd)
 	}
 }
 
-void init_SDCylinderPatches()
+void patch_sky_cyl_cmn_init()
 {
+	dsHangPoleCom_h.Hook(dsHangPoleCom_r);
 }
+
+RegisterPatch patch_sky_cyl_cmn(patch_sky_cyl_cmn_init);

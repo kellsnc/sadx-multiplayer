@@ -1,5 +1,8 @@
 #include "pch.h"
 
+static void ObjShelterCargoC_Exec_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjShelterCargoC_Exec_r)> ObjShelterCargoC_Exec_t(0x59C4D0);
+
 static void ExecC_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -26,9 +29,7 @@ static void ExecC_m(task* tp)
 	tp->disp(tp);
 }
 
-static void ObjShelterCargoExecC_r(task* tp); // "ExecC"
-FastFunctionHookPtr<decltype(&ObjShelterCargoExecC_r)> ObjShelterCargoExecC_t(0x59C4D0, ObjShelterCargoExecC_r);
-static void ObjShelterCargoExecC_r(task* tp)
+static void ObjShelterCargoC_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -36,6 +37,13 @@ static void ObjShelterCargoExecC_r(task* tp)
 	}
 	else
 	{
-		ObjShelterCargoExecC_t.Original(tp);
+		ObjShelterCargoC_Exec_t.Original(tp);
 	}
 }
+
+void patch_shelter_cargo_init()
+{
+	ObjShelterCargoC_Exec_t.Hook(ObjShelterCargoC_Exec_r);
+}
+
+RegisterPatch patch_shelter_cargo(patch_shelter_cargo_init);

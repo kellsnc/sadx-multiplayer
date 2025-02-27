@@ -16,6 +16,9 @@ enum : __int8
 
 DataPointer(NJS_OBJECT, object_elevator_hontai_bmerge1, 0x1A37A38);
 
+static void __cdecl ObjectFinalEggElevator_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectFinalEggElevator_r)> ObjectFinalEggElevator_t(0x5B7210);
+
 static void ExecATask_m(taskwk* twp) // inline symbols
 {
 	MirenObjCheckCollisionP(twp, 60.0f);
@@ -204,8 +207,6 @@ static void ObjectFinalEggElevator_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectFinalEggElevator_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectFinalEggElevator_r)> ObjectFinalEggElevator_t(0x5B7210, ObjectFinalEggElevator_r);
 static void __cdecl ObjectFinalEggElevator_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode != MODE_INIT)
@@ -217,3 +218,10 @@ static void __cdecl ObjectFinalEggElevator_r(task* tp)
 		ObjectFinalEggElevator_t.Original(tp);
 	}
 }
+
+void patch_finalegg_elevator_init()
+{
+	ObjectFinalEggElevator_t.Hook(ObjectFinalEggElevator_r);
+}
+
+RegisterPatch patch_finalegg_elevator(patch_finalegg_elevator_init);

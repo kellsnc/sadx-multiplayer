@@ -31,6 +31,9 @@ struct stopperwk // custom
 static auto setCart = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x7B1240, rEAX);
 static auto slideStopper = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x7B1040, rEAX);
 
+static void __cdecl ObjectCartStopper_execObject_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectCartStopper_execObject_r)> ObjectCartStopper_execObject_t(0x7B13D0);
+
 static void execObject_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -89,8 +92,6 @@ static void execObject_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectCartStopper_execObject_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectCartStopper_execObject_r)> ObjectCartStopper_execObject_t(0x7B13D0, ObjectCartStopper_execObject_r);
 static void __cdecl ObjectCartStopper_execObject_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -102,3 +103,10 @@ static void __cdecl ObjectCartStopper_execObject_r(task* tp)
 		ObjectCartStopper_execObject_t.Original(tp);
 	}
 }
+
+void patch_cart_stopper_init()
+{
+	ObjectCartStopper_execObject_t.Hook(ObjectCartStopper_execObject_r);
+}
+
+RegisterPatch patch_cart_stopper(patch_cart_stopper_init);

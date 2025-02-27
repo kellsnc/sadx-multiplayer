@@ -388,9 +388,8 @@ void Chaos0_Exec_r(task* tp)
 	Boss_SetNextPlayerToAttack(timeLimit);
 }
 
-void initChaos0Patches()
+void patch_chaos0_init()
 {
-#ifdef MULTI_TEST
 	WriteJump(drawEffectChaos0EffectB, drawEffectChaos0EffectB_r);
 	WriteJump(drawEffectChaos0LightParticle, drawEffectChaos0LightParticle_r);
 	WriteJump(dispEffectChaos0AttackA, dispEffectChaos0AttackA_r);
@@ -400,5 +399,8 @@ void initChaos0Patches()
 	setApartTargetPos_t.Hook(setApartTargetPos_r);
 	chaos0Pole_t.Hook(chaos0Pole_r);
 	chaos0Punch_t.Hook(chaos0Punch_r);
-#endif
 }
+
+#ifdef MULTI_TEST
+RegisterPatch patch_chaos0(patch_chaos0_init);
+#endif

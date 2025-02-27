@@ -4,7 +4,8 @@
 #include "multiplayer.h"
 
 static void __cdecl ObjectTPBarrel_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectTPBarrel_r)> ObjectTPBarrel_t(0x624020, ObjectTPBarrel_r);
+FastFunctionHookPtr<decltype(&ObjectTPBarrel_r)> ObjectTPBarrel_t(0x624020);
+
 static void __cdecl ObjectTPBarrel_r(task* tp)
 {
 	ObjectTPBarrel_t.Original(tp);
@@ -19,3 +20,10 @@ static void __cdecl ObjectTPBarrel_r(task* tp)
 		}
 	}
 }
+
+void patch_twinkle_barrel_init()
+{
+	ObjectTPBarrel_t.Hook(ObjectTPBarrel_r);
+}
+
+RegisterPatch patch_twinkle_barrel(patch_twinkle_barrel_init);

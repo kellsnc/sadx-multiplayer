@@ -9,6 +9,8 @@ UsercallFunction<void, taskwk*> expandAndConstrict(0x61B800, rESI);
 //UsercallFuncVoid(execFountain, (taskwk* twp), (twp), 0x61B8B0, rESI);
 //UsercallFuncVoid(expandAndConstrict, (taskwk* twp), (twp), 0x61B800, rESI);
 
+FastFunctionHook<void, task*> ObjectFoutain_h(0x61BDC0);
+
 static void pushUp_m(task* tp, int pnum)
 {
 	auto awp = tp->awp;
@@ -75,8 +77,6 @@ static void ObjectFountain_m(task* tp)
 	tp->disp(tp);
 }
 
-static void ObjectFoutain_r(task* tp);
-FastFunctionHook<void, task*> ObjectFoutain_h(0x61BDC0, ObjectFoutain_r);
 static void ObjectFoutain_r(task* tp)
 {
 	auto twp = tp->twp;
@@ -89,3 +89,10 @@ static void ObjectFoutain_r(task* tp)
 		ObjectFoutain_h.Original(tp);
 	}
 }
+
+void patch_fountain_init()
+{
+	ObjectFoutain_h.Hook(ObjectFoutain_r);
+}
+
+RegisterPatch patch_fountain(patch_fountain_init);

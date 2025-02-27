@@ -5,6 +5,12 @@
 #include "multiplayer.h"
 #include "camera.h"
 
+void AL_CreateNormalCameraTask_r();
+void ALCAM_CreateCameraManager_r();
+
+FastFunctionHookPtr<decltype(&AL_CreateNormalCameraTask_r)> AL_CreateNormalCameraTask_t(0x0072A570);
+FastFunctionHookPtr<decltype(&ALCAM_CreateCameraManager_r)> ALCAM_CreateCameraManager_t(0x0072A750);
+
 struct AL_CAMERA_WORK {
 	Sint8 mode;
 	Sint8 smode;
@@ -283,8 +289,6 @@ task* AL_CreateNormalCameraTask_m(int pnum)
 	return tp;
 }
 
-void AL_CreateNormalCameraTask_r();
-FastFunctionHookPtr<decltype(&AL_CreateNormalCameraTask_r)> AL_CreateNormalCameraTask_t(0x0072A570, AL_CreateNormalCameraTask_r);
 void AL_CreateNormalCameraTask_r()
 {
 	AL_CreateNormalCameraTask_t.Original();
@@ -319,8 +323,6 @@ void ALCAM_ModeSystem_m(_OBJ_CAMERAPARAM* pParam)
 	camcont_wp->tgtdist = camwk->dist;
 }
 
-void ALCAM_CreateCameraManager_r();
-FastFunctionHookPtr<decltype(&ALCAM_CreateCameraManager_r)> ALCAM_CreateCameraManager_t(0x0072A750, ALCAM_CreateCameraManager_r);
 void ALCAM_CreateCameraManager_r()
 {
 	ALCAM_CreateCameraManager_t.Original();
@@ -333,3 +335,11 @@ void ALCAM_CreateCameraManager_r()
 		}
 	}
 }
+
+void patch_al_camera_init()
+{
+	ALCAM_CreateCameraManager_t.Hook(ALCAM_CreateCameraManager_r);
+	AL_CreateNormalCameraTask_t.Hook(AL_CreateNormalCameraTask_r);
+}
+
+RegisterPatch patch_al_camera(patch_al_camera_init);

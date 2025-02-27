@@ -25,31 +25,11 @@ DataArray(int, fanstat, 0x3C75058, 5);
 
 FunctionPointer(void, ExecKazu, (float yacc, taskwk* twp), 0x5CB6B0);
 
-static const void* const IsRangeInPtr = (void*)0x5CB9B0;
-static inline BOOL IsRangeIn(taskwk* twp, NJS_POINT3* pos, float mul_)
-{
-	BOOL result;
-	__asm
-	{
-		push[mul_]
-		mov ecx, [pos]
-		mov eax, [twp]
-		call IsRangeInPtr
-		mov result, eax
-		add esp, 4
-	}
-	return result;
-}
+static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectCasinoFanfan_Exec_r)> ObjectCasinoFanfan_Exec_t(0x5CBAF0);
 
-static const void* const InitKuzuPtr = (void*)0x5CB650;
-static inline void InitKuzu(taskwk* twp)
-{
-	__asm
-	{
-		mov ebx, [twp]
-		call InitKuzuPtr
-	}
-}
+UsercallFunc(Bool, IsRangeIn, (taskwk* twp, NJS_POINT3* pos, float mul_), (twp, pos, mul_), 0x5CB9B0, rEAX, rEAX, rECX, stack4);
+UsercallFuncVoid(InitKuzu, (taskwk* twp), (twp), 0x5CB9B0, rEBX);
 
 static bool IsPlayerRangeIn(taskwk* twp, float mul)
 {
@@ -205,8 +185,6 @@ static void Exec_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectCasinoFanfan_Exec_r)> ObjectCasinoFanfan_Exec_t(0x5CBAF0, ObjectCasinoFanfan_Exec_r);
 static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -218,3 +196,10 @@ static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp)
 		ObjectCasinoFanfan_Exec_t.Original(tp);
 	}
 }
+
+void patch_casino_fanfan_init()
+{
+	ObjectCasinoFanfan_Exec_t.Hook(ObjectCasinoFanfan_Exec_r);
+}
+
+RegisterPatch patch_casino_fanfan(patch_casino_fanfan_init);

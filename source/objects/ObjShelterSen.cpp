@@ -19,6 +19,9 @@ enum : __int8
 DataPointer(int, sen_flag, 0x3C72A4C);
 DataPointer(int, aquarium_sequence_flag, 0x3C72A50);
 
+static void __cdecl execObjShelterSen_r(task* tp);
+FastFunctionHookPtr<decltype(&execObjShelterSen_r)> execObjShelterSen_t(0x5AAB10);
+
 static void execObjShelterSen_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -152,8 +155,6 @@ static void execObjShelterSen_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl execObjShelterSen_r(task* tp); // "Exec"
-FastFunctionHookPtr<decltype(&execObjShelterSen_r)> execObjShelterSen_t(0x5AAB10, execObjShelterSen_r);
 static void __cdecl execObjShelterSen_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -165,3 +166,10 @@ static void __cdecl execObjShelterSen_r(task* tp)
 		execObjShelterSen_t.Original(tp);
 	}
 }
+
+void patch_shelter_sen_init()
+{
+	execObjShelterSen_t.Hook(execObjShelterSen_r);
+}
+
+RegisterPatch patch_shelter_sen(patch_shelter_sen_init);

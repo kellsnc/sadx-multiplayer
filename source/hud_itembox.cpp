@@ -256,8 +256,10 @@ void EntryItemBoxPanel_m(int panel, int pnum)
 	data.mode = 1;
 }
 
-void InitItemBoxHUD()
+void patch_hud_itembox_init()
 {
 	manager_Disp_t.Hook(manager_Disp_r);
 	itemBoxManager_t.Hook(itemBoxManager_r);
 }
+
+RegisterPatch patch_hud_itembox(patch_hud_itembox_init);

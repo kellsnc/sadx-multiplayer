@@ -7,9 +7,9 @@ static void __cdecl EnemyAir_r(task* tp);
 static void __cdecl AirMissle_r(task* tp);
 static void __cdecl MissleLockOn_r(enemywk* ewp, task* tp);
 
-FastFunctionHookPtr<decltype(&EnemyAir_r)> EnemyAir_t(0x4AA340, EnemyAir_r);
-FastFunctionHookPtr<decltype(&AirMissle_r)> AirMissle_t(0x4AA270, AirMissle_r);
-FastUsercallHookPtr<decltype(&MissleLockOn_r), noret, rEBX, stack4> MissleLockOn_t(0x4A8AF0, MissleLockOn_r);
+FastFunctionHookPtr<decltype(&EnemyAir_r)> EnemyAir_t(0x4AA340);
+FastFunctionHookPtr<decltype(&AirMissle_r)> AirMissle_t(0x4AA270);
+FastUsercallHookPtr<decltype(&MissleLockOn_r), noret, rEBX, stack4> MissleLockOn_t(0x4A8AF0);
 
 #pragma region MissleLockOn
 static void MissleLockOn_m(enemywk* ewp, task* tp)
@@ -105,3 +105,12 @@ static void __cdecl EnemyAir_r(task* tp)
 	tp->disp = EnemyAirDisp;
 }
 #pragma endregion
+
+void patch_aircraft_init()
+{
+	EnemyAir_t.Hook(EnemyAir_r);
+	AirMissle_t.Hook(AirMissle_r);
+	MissleLockOn_t.Hook(MissleLockOn_r);
+}
+
+RegisterPatch patch_aircraft(patch_aircraft_init);

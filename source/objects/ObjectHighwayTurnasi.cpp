@@ -25,9 +25,9 @@ static void __cdecl AsiCollisionCollision_r(task* tp);
 static void __cdecl ObjectHighwayTurnasiHit_r(taskwk* twp);
 static void __cdecl ObjectHighwayTurnasiNormal_r(task* tp);
 
-FastUsercallHookPtr<decltype(&AsiCollisionCollision_r), noret, rEAX> AsiCollisionCollision_t(0x618CE0, AsiCollisionCollision_r);
-FastUsercallHookPtr<decltype(&ObjectHighwayTurnasiHit_r), noret, rESI> ObjectHighwayTurnasiHit_t(0x618F50, ObjectHighwayTurnasiHit_r);
-FastUsercallHookPtr<decltype(&ObjectHighwayTurnasiNormal_r), noret, rEAX> ObjectHighwayTurnasiNormal_t(0x618B10, ObjectHighwayTurnasiNormal_r);
+FastUsercallHookPtr<decltype(&AsiCollisionCollision_r), noret, rEAX> AsiCollisionCollision_t(0x618CE0);
+FastUsercallHookPtr<decltype(&ObjectHighwayTurnasiHit_r), noret, rESI> ObjectHighwayTurnasiHit_t(0x618F50);
+FastUsercallHookPtr<decltype(&ObjectHighwayTurnasiNormal_r), noret, rEAX> ObjectHighwayTurnasiNormal_t(0x618B10);
 
 #pragma region "Collision" subroutine from AsiCollision
 static void AsiCollisionCollision_m(task* tp)
@@ -304,3 +304,12 @@ static void __cdecl ObjectHighwayTurnasiNormal_r(task* tp)
 	}
 }
 #pragma endregion
+
+void patch_highway_turnasi_init()
+{
+	AsiCollisionCollision_t.Hook(AsiCollisionCollision_r);
+	ObjectHighwayTurnasiHit_t.Hook(ObjectHighwayTurnasiHit_r);
+	ObjectHighwayTurnasiNormal_t.Hook(ObjectHighwayTurnasiNormal_r);
+}
+
+RegisterPatch patch_highway_turnasi(patch_highway_turnasi_init);

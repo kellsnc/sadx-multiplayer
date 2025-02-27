@@ -3,7 +3,8 @@
 #include "FastFunctionHook.hpp"
 
 void __cdecl Magmacnt_Main_r(task* obj);
-FastFunctionHook<void, task*> Magmacnt_Main_t(0x608730, Magmacnt_Main_r);
+FastFunctionHook<void, task*> Magmacnt_Main_t(0x608730);
+
 void __cdecl Magmacnt_Main_r(task* tp)
 {
 	auto twp = tp->twp;
@@ -37,3 +38,10 @@ void __cdecl Magmacnt_Main_r(task* tp)
 		}
 	}
 }
+
+void patch_mountain_magmacnt_init()
+{
+	Magmacnt_Main_t.Hook(Magmacnt_Main_r);
+}
+
+RegisterPatch patch_mountain_magmacnt(patch_mountain_magmacnt_init);

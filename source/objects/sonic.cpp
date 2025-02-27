@@ -5,7 +5,6 @@
 #include "gravity.h"
 #include "result.h"
 #include "collision.h"
-#include "sonic.h"
 
 #define SPINTIMER(pwp) (pwp->free.sw[1])
 #define HOMING_TIMER1(pwp) (pwp->free.sw[2])
@@ -234,7 +233,7 @@ static void __cdecl SonicTheHedgehog_r(task* tp)
 	}
 }
 
-void initSonicPatch()
+void patch_sonic_init()
 {
 	SonicHomingOnRings_t.Hook(SonicHomingOnRings_r);
 	SonicCheckLSSTargetEnemy_t.Hook(SonicCheckLSSTargetEnemy_r);
@@ -243,3 +242,5 @@ void initSonicPatch()
 	Sonic_CheckInput_hook.Hook(Sonic_CheckInput_r);
 	SonicTheHedgehog_t.Hook(SonicTheHedgehog_r);
 }
+
+RegisterPatch patch_sonic(patch_sonic_init);

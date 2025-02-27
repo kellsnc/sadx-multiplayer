@@ -11,7 +11,10 @@ enum : __int8
 	MODE_END
 };
 
-static void RotateObj_m(task* tp)
+static void __cdecl torin_r(task* tp);
+FastFunctionHookPtr<decltype(&torin_r)> torin_t(0x4DF5A0);
+
+static void torin_m(task* tp)
 {
 	auto twp = tp->twp;
 
@@ -47,16 +50,21 @@ static void RotateObj_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl RotateObj_r(task* tp);
-FastFunctionHookPtr<decltype(&RotateObj_r)> RotateObj_t(0x4DF5A0, RotateObj_r);
-static void __cdecl RotateObj_r(task* tp)
+static void __cdecl torin_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
-		RotateObj_m(tp);
+		torin_m(tp);
 	}
 	else
 	{
-		RotateObj_t.Original(tp);
+		torin_t.Original(tp);
 	}
 }
+
+void patch_windy_torin_init()
+{
+	torin_t.Hook(torin_r);
+}
+
+RegisterPatch patch_windy_torin(patch_windy_torin_init);

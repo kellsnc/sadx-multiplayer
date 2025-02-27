@@ -3,6 +3,9 @@
 #include "FastFunctionHook.hpp"
 #include "multiplayer.h"
 
+static void __cdecl ObjectIcicleExecute_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectIcicleExecute_r)> ObjectIcicleExecute_t(0x4F4C20);
+
 static void ObjectIcicleExecute_m(task* tp)
 {
 	if (!CheckRangeOut(tp))
@@ -44,8 +47,6 @@ static void ObjectIcicleExecute_m(task* tp)
 	}
 }
 
-static void __cdecl ObjectIcicleExecute_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectIcicleExecute_r)> ObjectIcicleExecute_t(0x4F4C20, ObjectIcicleExecute_r);
 static void __cdecl ObjectIcicleExecute_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -57,3 +58,10 @@ static void __cdecl ObjectIcicleExecute_r(task* tp)
 		ObjectIcicleExecute_t.Original(tp);
 	}
 }
+
+void patch_icecap_icicle_init()
+{
+	ObjectIcicleExecute_t.Hook(ObjectIcicleExecute_r);
+}
+
+RegisterPatch patch_icecap_icicle(patch_icecap_icicle_init);

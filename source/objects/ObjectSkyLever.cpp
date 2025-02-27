@@ -15,6 +15,9 @@ enum : char
 	MODE_2
 };
 
+static void __cdecl execSkyLever_r(task* tp);
+FastFunctionHookPtr<decltype(&execSkyLever_r)> execSkyLever_t(0x5F1D20);
+
 static int GetPlayerHolding(task* htp)
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -228,8 +231,6 @@ static void execSkyLever_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl execSkyLever_r(task* tp);
-FastFunctionHookPtr<decltype(&execSkyLever_r)> execSkyLever_t(0x5F1D20, execSkyLever_r);
 static void __cdecl execSkyLever_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -241,3 +242,10 @@ static void __cdecl execSkyLever_r(task* tp)
 		execSkyLever_t.Original(tp);
 	}
 }
+
+void patch_sky_lever_init()
+{
+	execSkyLever_t.Hook(execSkyLever_r);
+}
+
+RegisterPatch patch_sky_lever(patch_sky_lever_init);

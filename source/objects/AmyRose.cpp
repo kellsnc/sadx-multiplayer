@@ -344,7 +344,7 @@ void __cdecl AmyRose_r(task* tp)
 	}
 }
 
-void Init_AmyPatches()
+void patch_amy_init()
 {
 	AmyRose_t.Hook(AmyRose_r);
 	Amy_CheckInput_t.Hook(Amy_CheckInput_r);
@@ -356,3 +356,5 @@ void Init_AmyPatches()
 	AmyBirdExe_t.Hook(AmyBird_Main_r);
 	AmySetRoboConChecker_t.Hook(AmySetRoboConChecker_r);
 }
+
+RegisterPatch patch_amy(patch_amy_init);

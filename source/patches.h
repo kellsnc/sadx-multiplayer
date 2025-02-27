@@ -1,3 +1,3 @@
 #pragma once
 
-void InitPatches();
+void InitMiscPatches();

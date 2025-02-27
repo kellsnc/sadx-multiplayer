@@ -97,8 +97,10 @@ void __cdecl Knuckles_KakeraGamePutRadar1C_r(task* tp)
 	}
 }
 
-void InitEmeraldRadar()
+void patch_hud_emerald_init()
 {
 	Knuckles_KakeraGameExec_t.Hook(Knuckles_KakeraGameExec_r);
 	Knuckles_KakeraGamePutRadar1C_t.Hook(Knuckles_KakeraGamePutRadar1C_r);
 }
+
+RegisterPatch patch_hud_emerald(patch_hud_emerald_init);

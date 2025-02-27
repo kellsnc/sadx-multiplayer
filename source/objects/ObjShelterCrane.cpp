@@ -23,6 +23,9 @@ static auto sub_5A4E30 = GenerateUsercallWrapper<BOOL(*)(float*, float, float)>(
 static auto sub_5A4E60 = GenerateUsercallWrapper<BOOL(*)(float*, float, float)>(rEAX, 0x5A4E60, rECX, stack4, stack4); //inline
 static auto SetColli = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5A4E90, rEAX);
 
+static void __cdecl ObjShelterCrane_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjShelterCrane_r)> ObjShelterCrane_t(0x5A5110);
+
 static void ObjShelterCrane_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -168,8 +171,6 @@ static void ObjShelterCrane_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjShelterCrane_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjShelterCrane_r)> ObjShelterCrane_t(0x5A5110, ObjShelterCrane_r);
 static void __cdecl ObjShelterCrane_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -181,3 +182,10 @@ static void __cdecl ObjShelterCrane_r(task* tp)
 		ObjShelterCrane_t.Original(tp);
 	}
 }
+
+void patch_shelter_crane_init()
+{
+	ObjShelterCrane_t.Hook(ObjShelterCrane_r);
+}
+
+RegisterPatch patch_shelter_crane(patch_shelter_crane_init);

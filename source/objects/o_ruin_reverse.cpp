@@ -8,6 +8,9 @@
 
 static auto SetPath2Taskwk = GenerateUsercallWrapper<void (*)(pathtag* ptag, taskwk* twp, float onpathpos)>(noret, 0x5E3860, rEDX, rESI, stack4);
 
+static void __cdecl ReverseRuinLoop_r(task* tp);
+FastFunctionHookPtr<decltype(&ReverseRuinLoop_r)> ReverseRuinLoop_t(0x5E3960);
+
 static void ReverseRuinLoop_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -76,8 +79,6 @@ static void ReverseRuinLoop_m(task* tp)
 	}
 }
 
-static void __cdecl ReverseRuinLoop_r(task* tp);
-FastFunctionHookPtr<decltype(&ReverseRuinLoop_r)> ReverseRuinLoop_t(0x5E3960, ReverseRuinLoop_r);
 static void __cdecl ReverseRuinLoop_r(task* tp)
 {
 	if (tp->twp->smode == 0)
@@ -97,3 +98,10 @@ static void __cdecl ReverseRuinLoop_r(task* tp)
 		ReverseRuinLoop_t.Original(tp);
 	}
 }
+
+void patch_ruin_reverse_init()
+{
+	ReverseRuinLoop_t.Hook(ReverseRuinLoop_r);
+}
+
+RegisterPatch patch_ruin_reverse(patch_ruin_reverse_init);

@@ -11,6 +11,9 @@ DataPointer(Float, CasHosinSmokeSpd, 0x1E759BC);
 DataPointer(Float, CasHosinY, 0x1E759B8);
 DataPointer(Float, CasHosinSmokeScl, 0x1E759C0);
 
+void __cdecl ExecHosin_r(task* tp);
+FastFunctionHook<void, task*> ExecHosin_h(0x5C5400);
+
 void ExecHosin_m(task* tp)
 {
 	if (!CheckRangeOutWithR(tp, 62510.0f))
@@ -59,8 +62,6 @@ void ExecHosin_m(task* tp)
 	}
 }
 
-void __cdecl ExecHosin_r(task* tp);
-FastFunctionHook<void, task*> ExecHosin_h(0x5C5400, ExecHosin_r);
 void __cdecl ExecHosin_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -72,3 +73,10 @@ void __cdecl ExecHosin_r(task* tp)
 		ExecHosin_h.Original(tp);
 	}
 }
+
+void patch_casino_hosin_init()
+{
+	ExecHosin_h.Hook(ExecHosin_r);
+}
+
+RegisterPatch patch_casino_hosin(patch_casino_hosin_init);

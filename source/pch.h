@@ -17,6 +17,7 @@ struct IUnknown;
 #include "SADXModLoader.h"
 #include "IniFile.hpp"
 
+#include "RegisterPatch.hpp"
 #include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 

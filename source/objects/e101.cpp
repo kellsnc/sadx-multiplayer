@@ -5,9 +5,8 @@
 #include "levels.h"
 #include "result.h"
 
-#ifdef MULTI_TEST
-static void __cdecl Rd_E101_r(task* tp);
-FastFunctionHook<void, task*> E101_Main_t(E101_Main, Rd_E101_r);
+FastFunctionHook<void, task*> E101_Main_t(E101_Main);
+
 static void __cdecl Rd_E101_r(task* tp)
 {
 	if (multiplayer::IsFightMode())
@@ -16,6 +15,7 @@ static void __cdecl Rd_E101_r(task* tp)
 	}
 	else
 	{
+		//WRONG
 		auto twp = tp->twp;
 
 		auto hit_twp = CCL_IsHitPlayer(twp);
@@ -28,4 +28,12 @@ static void __cdecl Rd_E101_r(task* tp)
 		E101_Main_t.Original(tp);
 	}
 }
+
+void patch_e101_init()
+{
+	E101_Main_t.Hook(Rd_E101_r);
+}
+
+#ifdef MULTI_TEST
+RegisterPatch patch_e101(patch_e101_init);
 #endif

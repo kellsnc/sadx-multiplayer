@@ -18,10 +18,10 @@ static void __cdecl hallgate_switch_exec_r(task* tp);
 static void __cdecl hallgate_o_switch_exec_r(task* tp);
 static void __cdecl hallgate_exec_r(task* tp);
 
-FastUsercallHookPtr<decltype(&hallgate_set_colli_r), noret, rEAX> hallgate_set_colli_t(0x5B6860, hallgate_set_colli_r);
-FastFunctionHookPtr<decltype(&hallgate_switch_exec_r)> hallgate_switch_exec_t(0x5B6B30, hallgate_switch_exec_r);
-FastFunctionHookPtr<decltype(&hallgate_o_switch_exec_r)> hallgate_o_switch_exec_t(0x5B6910, hallgate_o_switch_exec_r);
-FastFunctionHookPtr<decltype(&hallgate_exec_r)> hallgate_exec_t(0x5B69D0, hallgate_exec_r);
+FastUsercallHookPtr<decltype(&hallgate_set_colli_r), noret, rEAX> hallgate_set_colli_t(0x5B6860);
+FastFunctionHookPtr<decltype(&hallgate_switch_exec_r)> hallgate_switch_exec_t(0x5B6B30);
+FastFunctionHookPtr<decltype(&hallgate_o_switch_exec_r)> hallgate_o_switch_exec_t(0x5B6910);
+FastFunctionHookPtr<decltype(&hallgate_exec_r)> hallgate_exec_t(0x5B69D0);
 
 static void hallgate_set_colli_m(task* tp)
 {
@@ -161,3 +161,13 @@ static void __cdecl hallgate_exec_r(task* tp)
 
 	hallgate_exec_t.Original(tp);
 }
+
+void patch_finalegg_hallgate_init()
+{
+	hallgate_set_colli_t.Hook(hallgate_set_colli_r);
+	hallgate_switch_exec_t.Hook(hallgate_switch_exec_r);
+	hallgate_o_switch_exec_t.Hook(hallgate_o_switch_exec_r);
+	hallgate_exec_t.Hook(hallgate_exec_r);
+}
+
+RegisterPatch patch_finalegg_hallgate(patch_finalegg_hallgate_init);

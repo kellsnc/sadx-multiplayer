@@ -11,6 +11,9 @@ TaskFunc(C_Smoke, 0x5E3B90);
 TaskFunc(C_Fire, 0x5E3AC0);
 DataArray(int, FirePosi, 0x2038D40, 8);
 
+static void __cdecl ObjectRockRoll_Normal_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectRockRoll_Normal_r)> ObjectRockRoll_Normal_t(0x5E3CB0);
+
 static void Normal_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -126,8 +129,6 @@ static void Normal_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectRockRoll_Normal_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectRockRoll_Normal_r)> ObjectRockRoll_Normal_t(0x5E3CB0, ObjectRockRoll_Normal_r);
 static void __cdecl ObjectRockRoll_Normal_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -139,3 +140,10 @@ static void __cdecl ObjectRockRoll_Normal_r(task* tp)
 		ObjectRockRoll_Normal_t.Original(tp);
 	}
 }
+
+void patch_rockroll_init()
+{
+	ObjectRockRoll_Normal_t.Hook(ObjectRockRoll_Normal_r);
+}
+
+RegisterPatch patch_rockroll(patch_rockroll_init);

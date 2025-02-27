@@ -501,7 +501,9 @@ static void SetupCamPathCam2_Casino_r(task* tp)
 	}
 }
 
-void PatchCasinoPathCam()
+void patch_casino_pathcam_init()
 {
 	SetupCamPathCam2_Casino_h.Hook(SetupCamPathCam2_Casino_r);
 }
+
+RegisterPatch patch_casino_pathcam(patch_casino_pathcam_init);

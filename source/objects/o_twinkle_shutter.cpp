@@ -12,6 +12,9 @@ enum : __int8
 	MODE_4
 };
 
+static void __cdecl ObjectTPShutter_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectTPShutter_r)> ObjectTPShutter_t(0x624380);
+
 static bool IsPlayerInCart()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -140,8 +143,6 @@ static void ObjectTPShutter_m(task* tp)
 	}
 }
 
-static void __cdecl ObjectTPShutter_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectTPShutter_r)> ObjectTPShutter_t(0x624380, ObjectTPShutter_r);
 static void __cdecl ObjectTPShutter_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -153,3 +154,10 @@ static void __cdecl ObjectTPShutter_r(task* tp)
 		ObjectTPShutter_t.Original(tp);
 	}
 }
+
+void patch_twinkle_shutter_init()
+{
+	ObjectTPShutter_t.Hook(ObjectTPShutter_r);
+}
+
+RegisterPatch patch_twinkle_shutter(patch_twinkle_shutter_init);

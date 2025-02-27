@@ -6,9 +6,9 @@ static void __cdecl ObjectFrogCollision_r(task* tp);
 static void __cdecl ObjectFrog_r(task* tp);
 static void __cdecl ObjectSandFrog_r(task* tp);
 
-FastUsercallHookPtr<decltype(&ObjectFrogCollision_r), noret, rEAX> ObjectFrogCollision_t(0x4FA2C0, ObjectFrogCollision_r);
-FastFunctionHookPtr<decltype(&ObjectFrog_r)> ObjectFrog_t(0x4FA320, ObjectFrog_r);
-FastFunctionHookPtr<decltype(&ObjectSandFrog_r)> ObjectSandFrog_t(0x598040, ObjectSandFrog_r);
+FastUsercallHookPtr<decltype(&ObjectFrogCollision_r), noret, rEAX> ObjectFrogCollision_t(0x4FA2C0);
+FastFunctionHookPtr<decltype(&ObjectFrog_r)> ObjectFrog_t(0x4FA320);
+FastFunctionHookPtr<decltype(&ObjectSandFrog_r)> ObjectSandFrog_t(0x598040);
 
 static void ObjectFrogCollision_m(taskwk* twp)
 {
@@ -57,3 +57,12 @@ static void __cdecl ObjectSandFrog_r(task* tp)
 
 	ObjectSandFrog_t.Original(tp);
 }
+
+void patch_frog_init()
+{
+	ObjectFrogCollision_t.Hook(ObjectFrogCollision_r);
+	ObjectFrog_t.Hook(ObjectFrog_r);
+	ObjectSandFrog_t.Hook(ObjectSandFrog_r);
+}
+
+RegisterPatch patch_frog(patch_frog_init);

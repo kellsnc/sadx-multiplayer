@@ -13,11 +13,11 @@ static void __cdecl ObjShelterTunnelscrollDisp_r(task* tp); // "Disp"
 static void __cdecl ObjShelterTunnelcolExec_r(task* tp); // "Exec"
 static void __cdecl TunnelManagerExec_r(task* tp); // "Exec"
 
-FastFunctionHookPtr<decltype(&ObjShelterFadeDisp_r)> ObjShelterFadeDisp_t(0x5ABB80, ObjShelterFadeDisp_r);
-FastFunctionHookPtr<decltype(&ObjShelterTunnelscrollExec_r)> ObjShelterTunnelscrollExec_t(0x5AC3B0, ObjShelterTunnelscrollExec_r);
-FastFunctionHookPtr<decltype(&ObjShelterTunnelscrollDisp_r)> ObjShelterTunnelscrollDisp_t(0x5AC2F0, ObjShelterTunnelscrollDisp_r);
-FastFunctionHookPtr<decltype(&ObjShelterTunnelcolExec_r)> ObjShelterTunnelcolExec_t(0x5AC050, ObjShelterTunnelcolExec_r);
-FastFunctionHookPtr<decltype(&TunnelManagerExec_r)> TunnelManagerExec_t(0x59AD50, TunnelManagerExec_r);
+FastFunctionHookPtr<decltype(&ObjShelterFadeDisp_r)> ObjShelterFadeDisp_t(0x5ABB80);
+FastFunctionHookPtr<decltype(&ObjShelterTunnelscrollExec_r)> ObjShelterTunnelscrollExec_t(0x5AC3B0);
+FastFunctionHookPtr<decltype(&ObjShelterTunnelscrollDisp_r)> ObjShelterTunnelscrollDisp_t(0x5AC2F0);
+FastFunctionHookPtr<decltype(&ObjShelterTunnelcolExec_r)> ObjShelterTunnelcolExec_t(0x5AC050);
+FastFunctionHookPtr<decltype(&TunnelManagerExec_r)> TunnelManagerExec_t(0x59AD50);
 
 #pragma region ObjShelterFade
 static void ObjShelterFadeDisp_m(task* tp)
@@ -289,3 +289,14 @@ void __cdecl TunnelManagerExec_r(task* tp)
 	}
 }
 #pragma endregion
+
+void patch_rd_hotshelter_init()
+{
+	ObjShelterFadeDisp_t.Hook(ObjShelterFadeDisp_r);
+	ObjShelterTunnelscrollExec_t.Hook(ObjShelterTunnelscrollExec_r);
+	ObjShelterTunnelscrollDisp_t.Hook(ObjShelterTunnelscrollDisp_r);
+	ObjShelterTunnelcolExec_t.Hook(ObjShelterTunnelcolExec_r);
+	TunnelManagerExec_t.Hook(TunnelManagerExec_r);
+}
+
+RegisterPatch patch_rd_hotshelter(patch_rd_hotshelter_init);

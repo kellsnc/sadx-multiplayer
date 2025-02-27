@@ -6,6 +6,9 @@ static auto chkDamage = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x4E8
 static auto smoke = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x4E8260, rEAX);
 static auto addVectorAng = GenerateUsercallWrapper<void (*)(Angle3* ang, MISSILE_WK* wk, float force)>(noret, 0x568280, rEDI, rESI, stack4); // custom name
 
+static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp);
+FastFunctionHookPtr<decltype(&EnemyWindyTgtMissile_exec_r)> EnemyWindyTgtMissile_exec_t(0x4E84B0);
+
 static void updownHeight_m(taskwk* twp, MISSILE_WK* wk, taskwk* ptwp)
 {
 	float y = playerpwp[TASKWK_PLAYERID(ptwp)]->p.center_height + ptwp->pos.y - twp->pos.y;
@@ -76,8 +79,6 @@ static void exec_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp);
-FastFunctionHookPtr<decltype(&EnemyWindyTgtMissile_exec_r)> EnemyWindyTgtMissile_exec_t(0x4E84B0, EnemyWindyTgtMissile_exec_r);
 static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -89,3 +90,10 @@ static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp)
 		EnemyWindyTgtMissile_exec_t.Original(tp);
 	}
 }
+
+void patch_windy_e103missile_init()
+{
+	EnemyWindyTgtMissile_exec_t.Hook(EnemyWindyTgtMissile_exec_r);
+}
+
+RegisterPatch patch_windy_e103missile(patch_windy_e103missile_init);

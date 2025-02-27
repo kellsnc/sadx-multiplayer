@@ -6,6 +6,9 @@
 #include "multiplayer.h"
 #include "camera.h"
 
+static void __cdecl execRound_Sandboard_r(task* tp);
+FastFunctionHookPtr<decltype(&execRound_Sandboard_r)> execRound_Sandboard_t(0x597BD0);
+
 static void Normal()
 {
 	for (int i = 0; i < PLAYER_MAX; ++i)
@@ -90,8 +93,6 @@ static void execRound_m(task* tp)
 	}
 }
 
-static void __cdecl execRound_Sandboard_r(task* tp);
-FastFunctionHookPtr<decltype(&execRound_Sandboard_r)> execRound_Sandboard_t(0x597BD0, execRound_Sandboard_r);
 static void __cdecl execRound_Sandboard_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -103,3 +104,10 @@ static void __cdecl execRound_Sandboard_r(task* tp)
 		execRound_Sandboard_t.Original(tp);
 	}
 }
+
+void patch_rd_sandboard_init()
+{
+	execRound_Sandboard_t.Hook(execRound_Sandboard_r);
+}
+
+RegisterPatch patch_rd_sandboard(patch_rd_sandboard_init);

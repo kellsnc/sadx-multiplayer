@@ -11,8 +11,8 @@ VoidFunc(RdHighwayManageLandMask, 0x60FEE0); // custom name
 static void __cdecl RdHighwayCheckArriveAtTheBuilding_r(task* tp);
 static void __cdecl subRd_Highway_r(task* tp);
 
-FastUsercallHookPtr<decltype(&RdHighwayCheckArriveAtTheBuilding_r), noret, rEAX> RdHighwayCheckArriveAtTheBuilding_t(0x610050, RdHighwayCheckArriveAtTheBuilding_r);
-FastFunctionHookPtr<decltype(&subRd_Highway_r)> subRd_Highway_t(0x6104C0, subRd_Highway_r);
+FastUsercallHookPtr<decltype(&RdHighwayCheckArriveAtTheBuilding_r), noret, rEAX> RdHighwayCheckArriveAtTheBuilding_t(0x610050);
+FastFunctionHookPtr<decltype(&subRd_Highway_r)> subRd_Highway_t(0x6104C0);
 
 static void RdHighwayAct2Multi(taskwk* twp)
 {
@@ -168,3 +168,11 @@ static void __cdecl RdHighwayCheckArriveAtTheBuilding_r(task* tp)
 		RdHighwayCheckArriveAtTheBuilding_t.Original(tp);
 	}
 }
+
+void patch_rd_highway_init()
+{
+	RdHighwayCheckArriveAtTheBuilding_t.Hook(RdHighwayCheckArriveAtTheBuilding_r);
+	subRd_Highway_t.Hook(subRd_Highway_r);
+}
+
+RegisterPatch patch_rd_highway(patch_rd_highway_init);

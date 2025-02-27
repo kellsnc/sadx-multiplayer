@@ -44,8 +44,10 @@ void PondExecutor_r(task* tp)
 	PondExecutor_hook.Original(tp);
 }
 
-void PatchPondSkater()
+void patch_pondskater_init()
 {
 	PondDisplayer_hook.Hook(PondDisplayer_r);
 	PondExecutor_hook.Hook(PondExecutor_r);
 }
+
+RegisterPatch patch_pondskater(patch_pondskater_init);

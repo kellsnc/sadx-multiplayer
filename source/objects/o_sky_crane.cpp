@@ -3,6 +3,9 @@
 #include "utils.h"
 #include "multiplayer.h"
 
+static void __cdecl ObjectSkydeck_crane_hang_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_crane_hang_r)> ObjectSkydeck_crane_hang_t(0x5F2F90);
+
 static void ObjectSkydeck_crane_hang_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -85,8 +88,6 @@ static void ObjectSkydeck_crane_hang_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectSkydeck_crane_hang_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectSkydeck_crane_hang_r)> ObjectSkydeck_crane_hang_t(0x5F2F90, ObjectSkydeck_crane_hang_r);
 static void __cdecl ObjectSkydeck_crane_hang_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -98,3 +99,10 @@ static void __cdecl ObjectSkydeck_crane_hang_r(task* tp)
 		ObjectSkydeck_crane_hang_t.Original(tp);
 	}
 }
+
+void patch_sky_crane_init()
+{
+	ObjectSkydeck_crane_hang_t.Hook(ObjectSkydeck_crane_hang_r);
+}
+
+RegisterPatch patch_sky_crane(patch_sky_crane_init);

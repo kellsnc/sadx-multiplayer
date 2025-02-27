@@ -5,17 +5,11 @@
 #include "camera.h"
 #include "camerafunc.h"
 
-static void __cdecl PathworkCamera_r(task* tp);
-static void __cdecl PathworkSeeingPath_r(task* tp);
-static void __cdecl PathworkSeeingPath_Sky_r(task* tp);
-static void __cdecl PathworkLaddering_r(task* tp);
-static void __cdecl PathworkGoWithHangingDownFromBars_r(task* tp);
-
-FastFunctionHook<void, task*> PathworkCamera_h(0x4BBB90, PathworkCamera_r);
-FastFunctionHook<void, task*> PathworkSeeingPath_h(0x4BB1F0, PathworkSeeingPath_r);
-FastFunctionHook<void, task*> PathworkSeeingPath_Sky_h(0x5F16C0, PathworkSeeingPath_Sky_r);
-FastFunctionHook<void, task*> PathworkLaddering_h(0x4BB830, PathworkLaddering_r);
-FastFunctionHook<void, task*> PathworkGoWithHangingDownFromBars_h(0x4BB520, PathworkGoWithHangingDownFromBars_r);
+FastFunctionHook<void, task*> PathworkCamera_h(0x4BBB90);
+FastFunctionHook<void, task*> PathworkSeeingPath_h(0x4BB1F0);
+FastFunctionHook<void, task*> PathworkSeeingPath_Sky_h(0x5F16C0);
+FastFunctionHook<void, task*> PathworkLaddering_h(0x4BB830);
+FastFunctionHook<void, task*> PathworkGoWithHangingDownFromBars_h(0x4BB520);
 
 // Fix PathworkCamera, a path task only used for Red Mountain
 
@@ -541,3 +535,14 @@ static void __cdecl PathworkGoWithHangingDownFromBars_r(task* tp)
 		PathworkGoWithHangingDownFromBars_h.Original(tp);
 	}
 }
+
+void patch_pathtask_init()
+{
+	PathworkCamera_h.Hook(PathworkCamera_r);
+	PathworkSeeingPath_h.Hook(PathworkSeeingPath_r);
+	PathworkSeeingPath_Sky_h.Hook(PathworkSeeingPath_Sky_r);
+	PathworkLaddering_h.Hook(PathworkLaddering_r);
+	PathworkGoWithHangingDownFromBars_h.Hook(PathworkGoWithHangingDownFromBars_r);
+}
+
+RegisterPatch patch_pathtask(patch_pathtask_init);

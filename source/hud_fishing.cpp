@@ -7,6 +7,12 @@
 DataArray(NJS_TEXANIM, reel_anim, 0x91BAB0, 9);
 static NJS_SPRITE reel_sprite = { { 1.0f, 1.0f, 1.0f }, 1.0f, 1.0f, 0, &FISHING_TEXLIST, &reel_anim };
 
+static void __cdecl dispZankiTexturePause_r(task* tp);
+static void __cdecl dispHitTexturePause_r(task* tp);
+
+FastFunctionHookPtr<decltype(&dispZankiTexturePause_r)> dispZankiTexturePause_t(0x46FB00);
+FastFunctionHookPtr<decltype(&dispHitTexturePause_r)> dispHitTexturePause_t(0x46C920);
+
 #pragma region HUD
 static void DrawBigHUDMulti(int pnum)
 {
@@ -61,8 +67,6 @@ static void DrawBigHUDMulti(int pnum)
 	}
 }
 
-static void __cdecl dispZankiTexturePause_r(task* tp);
-FastFunctionHookPtr<decltype(&dispZankiTexturePause_r)> dispZankiTexturePause_t(0x46FB00, dispZankiTexturePause_r);
 static void __cdecl dispZankiTexturePause_r(task* tp)
 {
 	if (CurrentCharacter != Characters_Big)
@@ -197,8 +201,6 @@ static void dispHitTexturePause_m(task* tp)
 	SplitScreen::RestoreViewPort();
 }
 
-static void __cdecl dispHitTexturePause_r(task* tp);
-FastFunctionHookPtr<decltype(&dispHitTexturePause_r)> dispHitTexturePause_t(0x46C920, dispHitTexturePause_r);
 static void __cdecl dispHitTexturePause_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -327,3 +329,11 @@ void DrawFishingMeter(int pnum, float _reel_length_d, float _reel_tension, Angle
 	}
 }
 #pragma endregion
+
+void patch_hud_fishing_init()
+{
+	dispZankiTexturePause_t.Hook(dispZankiTexturePause_r);
+	dispHitTexturePause_t.Hook(dispHitTexturePause_r);
+}
+
+RegisterPatch patch_hud_fishing(patch_hud_fishing_init);

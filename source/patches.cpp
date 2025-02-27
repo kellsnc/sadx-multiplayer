@@ -5,40 +5,6 @@
 
 #include "FastFunctionHook.hpp"
 
-#include "objects/o_savepoint.h"
-#include "objects/ObjectItemBox.h"
-#include "objects/ObjectRocket.h"
-#include "objects/SnowBoard.h"
-#include "objects/EnemyWindyE103.h"
-#include "objects/EnemyMountainE104.h"
-#include "objects/EnemyHotE105.h"
-#include "objects/ef_spark.h"
-#include "objects/ObjShelterKaitenKey.h"
-#include "objects/mirror.h"
-#include "objects/e_pondskater.h"
-#include "objects/e_gachapon.h"
-#include "objects/ladder.h"
-#include "objects/ObjCylinderCmn.h"
-#include "objects/o_sky_ocm.h"
-#include "objects/e_robo.h"
-#include "objects/e_sai.h"
-#include "objects/flicky.h"
-
-#include "objects/o_ruin_pathcam.h"
-#include "objects/o_casino_pathcam.h"
-#include "objects/o_hw_pathcam.h"
-#include "objects/o_beach_pathcam.h"
-
-#include "objects/sonic.h"
-#include "objects//miles.h"
-#include "objects/knuckles.h"
-#include "objects/amy.h"
-#include "objects/gamma.h"
-#include "objects/big.h"
-#include "objects/o_sky_cannon_s.h"
-#include "objects/Sw_Door.h"
-#include "objects/AI_Fight.h"
-
 /*
 
 General patches to allow compatibility for 4+ players
@@ -694,16 +660,6 @@ void __cdecl HoldOnIcicleP_r(Uint8 pno, task* ttp)
 	}
 }
 
-void initBossesPatches()
-{
-	InitE103Patches();
-	InitE104Patches();
-	InitE105Patches();
-	initChaos0Patches();
-	initEggHornetPatches();
-	initEggWalkerPatches();
-}
-
 void __cdecl SetTimeFrame_r(Sint8 minutes, Sint8 second, Sint8 frame)
 {
 	if (multiplayer::IsActive() && GameState == 15)
@@ -860,7 +816,7 @@ void __cdecl PPlayADXAsWaiting_r(taskwk* pTwp)
 	PlayVoice(voiceID);
 }
 
-void InitPatches()
+void InitMiscPatches()
 {
 	Ring_t.Hook(Ring_r);
 	Tobitiri_t.Hook(Tobitiri_r);
@@ -958,35 +914,4 @@ void InitPatches()
 	WriteCall((void*)0x5C058B, Casino_FixKnuxCheck);
 	WriteCall((void*)0x5C068B, Casino_FixKnuxCheck);
 	WriteCall((void*)0x5C441A, Casino_FixKnuxCheck);
-
-	PatchCheckpoint();
-	InitItemBoxPatches();
-	InitSnowBoardPatches();
-	initBossesPatches();
-	PatchEffectSpark();
-	PatchAmyHandles();
-	PatchTwinkleMirrors();
-	PatchPondSkater();
-	PatchGachapon();
-	PatchFlicky();
-
-	PatchRuinPathCam();
-	PatchCasinoPathCam();
-	PatchHighwayPathCam();
-	PatchBeachPathCam();
-
-	initSDIntroPatches();
-	init_SDCylinderPatches();
-	PatchSkyDeckOCM();
-	init_SwDoorPatch();
-	initSonicPatch();
-	initMilesPatches();
-	Init_KnuxPatches();
-	Init_AmyPatches();
-	Init_BigPatches();
-	initGammaPatch();
-	PatchRocket();
-	initERoboHack();
-	InitEnemySaiPatches();
-	init_AIFight_Patches();
 }

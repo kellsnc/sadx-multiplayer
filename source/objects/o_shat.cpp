@@ -3,7 +3,8 @@
 #include "FastFunctionHook.hpp"
 
 static void Shat_Exec_r(task* tp);
-FastFunctionHook<void, task*> Shat_Exec_t(0x5CD540, Shat_Exec_r);
+FastFunctionHook<void, task*> Shat_Exec_t(0x5CD540);
+
 static void Shat_Exec_r(task* tp)
 {
 	auto twp = tp->twp;
@@ -19,3 +20,10 @@ static void Shat_Exec_r(task* tp)
 
 	Shat_Exec_t.Original(tp);
 }
+
+void patch_shat_init()
+{
+	Shat_Exec_t.Hook(Shat_Exec_r);
+}
+
+RegisterPatch patch_shat(patch_shat_init);

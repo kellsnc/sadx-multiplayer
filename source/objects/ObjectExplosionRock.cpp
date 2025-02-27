@@ -2,14 +2,6 @@
 #include "multiplayer.h"
 #include <UsercallFunctionHandler.h>
 
-static void __cdecl ObjectMountainExplosionRock1_r(task* tp);
-static void __cdecl ObjectMountainExplosionRock2_r(task* tp);
-static void __cdecl MiddleRock_r(task* tp);
-
-FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock1_r)> ObjectMountainExplosionRock1_t(0x602130, ObjectMountainExplosionRock1_r);
-FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock2_r)> ObjectMountainExplosionRock2_t(0x602320, ObjectMountainExplosionRock2_r);
-FastFunctionHookPtr<decltype(&MiddleRock_r)> MiddleRock_t(0x601EC0, MiddleRock_r);
-
 struct steamtbl
 {
 	NJS_POINT3 pos;
@@ -22,6 +14,14 @@ DataArray(steamtbl, exrock2_steamtbl, 0x24985F0, 5);
 
 auto GenerateSteam = GenerateUsercallWrapper<void (*)(steamtbl* tbl, int num)>(noret, 0x601A10, rECX, rEAX);
 auto CreateExplosion = GenerateUsercallWrapper<void (*)(steamtbl* tbl, int num)>(noret, 0x601AD0, rECX, rEAX);
+
+static void __cdecl ObjectMountainExplosionRock1_r(task* tp);
+static void __cdecl ObjectMountainExplosionRock2_r(task* tp);
+static void __cdecl MiddleRock_r(task* tp);
+
+FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock1_r)> ObjectMountainExplosionRock1_t(0x602130);
+FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock2_r)> ObjectMountainExplosionRock2_t(0x602320);
+FastFunctionHookPtr<decltype(&MiddleRock_r)> MiddleRock_t(0x601EC0);
 
 #pragma region MiddleRock
 static void MiddleRock_m(task* tp)
@@ -206,3 +206,12 @@ static void __cdecl ObjectMountainExplosionRock1_r(task* tp)
 	}
 }
 #pragma endregion
+
+void patch_mountain_exrock_init()
+{
+	ObjectMountainExplosionRock1_t.Hook(ObjectMountainExplosionRock1_r);
+	ObjectMountainExplosionRock2_t.Hook(ObjectMountainExplosionRock2_r);
+	MiddleRock_t.Hook(MiddleRock_r);
+}
+
+RegisterPatch patch_mountain_exrock(patch_mountain_exrock_init);

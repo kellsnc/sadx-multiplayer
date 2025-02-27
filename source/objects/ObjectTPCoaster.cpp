@@ -14,7 +14,8 @@ enum {
 };
 
 void __cdecl execTPCoaster_r(task* tp);
-FastFunctionHook<void, task*> execTPCoaster_h(0x61D6E0, execTPCoaster_r);
+FastFunctionHook<void, task*> execTPCoaster_h(0x61D6E0);
+
 void __cdecl execTPCoaster_r(task* tp)
 {
 	taskwk* twp = tp->twp;
@@ -123,3 +124,10 @@ void __cdecl execTPCoaster_r(task* tp)
 
 	dispTPCoaster(tp);
 }
+
+void patch_twinkle_coaster_init()
+{
+	execTPCoaster_h.Hook(execTPCoaster_r);
+}
+
+RegisterPatch patch_twinkle_coaster(patch_twinkle_coaster_init);

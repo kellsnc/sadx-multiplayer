@@ -2,8 +2,8 @@
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
 
-void ObjectSkydeck_cannon_s_Exec_r(task* a1);
-FastFunctionHook<void, task*> ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0, ObjectSkydeck_cannon_s_Exec_r);
+FastFunctionHook<void, task*> ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0);
+
 static char PInCannon[PLAYER_MAX];
 
 void isPlayerinCannon(taskwk* data)
@@ -201,8 +201,18 @@ void __cdecl SDIntroPatch3(Uint8 charIndex, float spd, NJS_VECTOR* a3)
 	return SetParabolicMotionP(charIndex, spd, a3);
 }
 
-void initSDIntroPatches()
+void CannonModePhysics(taskwk* data, motionwk2* data2, playerwk* co2)
 {
+	PGetGravity(data, data2, co2);
+	PGetSpeed(data, data2, co2);
+	PSetPosition(data, data2, co2);
+	PResetPosition(data, data2, co2);
+}
+
+void patch_sky_cannon_s_init()
+{
+	ObjectSkydeck_cannon_s_Exec_t.Hook(ObjectSkydeck_cannon_s_Exec_r);
+
 	WriteCall((void*)0x5FC82D, SDIntroPatch);
 	WriteCall((void*)0x5FC84C, SDIntroPatch);
 	WriteCall((void*)0x5FC8C2, SDIntroPatch);
@@ -215,10 +225,4 @@ void initSDIntroPatches()
 	WriteCall((void*)0x5FCA78, SDIntroPatch3);
 }
 
-void CannonModePhysics(taskwk* data, motionwk2* data2, playerwk* co2)
-{
-	PGetGravity(data, data2, co2);
-	PGetSpeed(data, data2, co2);
-	PSetPosition(data, data2, co2);
-	PResetPosition(data, data2, co2);
-}
+RegisterPatch patch_sky_cannon_s(patch_sky_cannon_s_init);

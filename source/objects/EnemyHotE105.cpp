@@ -76,9 +76,11 @@ static Bool __cdecl e105_chkPlayerRangeIn_r(task* tp)
 	}
 }
 
-void InitE105Patches()
+void patch_hot_e105_init()
 {
 	e105_calcSomeValue_t.Hook(e105_calcSomeValue_r);
 	e105_moveBattery_t.Hook(e105_moveBattery_r);
 	e105_chkPlayerRangeIn_t.Hook(e105_chkPlayerRangeIn_r);
 }
+
+RegisterPatch patch_hot_e105(patch_hot_e105_init);

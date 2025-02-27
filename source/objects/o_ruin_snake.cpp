@@ -4,14 +4,17 @@
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 
-static void __cdecl MoveSnake_r(pathtbl* ptag, float onpathpos, task* tp);
-FastUsercallHookPtr<decltype(&MoveSnake_r), noret, rEAX, stack4, stack4> MoveSnake_t(0x5E4360, MoveSnake_r);
-
 VariableHook<int, 0x3C7ED74> semafo_m;
 
 DataPointer(char, flag_1, 0x3C7ED84);
 DataPointer(float, suimen_ypos, 0x20397A0);
 DataPointer(float, up_up_speed, 0x3C7ED70);
+
+static void __cdecl MoveSnake_r(pathtbl* ptag, float onpathpos, task* tp);
+static void __cdecl ObjectRuinSnake_r(task* tp);
+
+FastUsercallHookPtr<decltype(&MoveSnake_r), noret, rEAX, stack4, stack4> MoveSnake_t(0x5E4360);
+FastFunctionHookPtr<decltype(&ObjectRuinSnake_r)> ObjectRuinSnake_t(0x5E45C0);
 
 static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 {
@@ -112,8 +115,6 @@ static void __cdecl MoveSnake_r(pathtbl* ptag, float onpathpos, task* tp)
 	}
 }
 
-static void __cdecl ObjectRuinSnake_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectRuinSnake_r)> ObjectRuinSnake_t(0x5E45C0, ObjectRuinSnake_r);
 static void __cdecl ObjectRuinSnake_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == 2)
@@ -159,3 +160,11 @@ static void __cdecl ObjectRuinSnake_r(task* tp)
 		ObjectRuinSnake_t.Original(tp);
 	}
 }
+
+void patch_ruin_snake_init()
+{
+	MoveSnake_t.Hook(MoveSnake_r);
+	ObjectRuinSnake_t.Hook(ObjectRuinSnake_r);
+}
+
+RegisterPatch patch_ruin_snake(patch_ruin_snake_init);

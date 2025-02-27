@@ -4,7 +4,8 @@
 // Replace the ladder at the end of the casinopolis sewer with a capsule for multiplayer trial
 
 static void __cdecl ObjectCasinoHasigo_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectCasinoHasigo_Exec_r)> ObjectCasinoHasigo_Exec_t(0x5CC5F0, ObjectCasinoHasigo_Exec_r);
+FastFunctionHookPtr<decltype(&ObjectCasinoHasigo_Exec_r)> ObjectCasinoHasigo_Exec_t(0x5CC5F0);
+
 static void __cdecl ObjectCasinoHasigo_Exec_r(task* tp)
 {
 	if (multiplayer::IsEnabled() && GameMode == GameModes_Trial)
@@ -19,3 +20,10 @@ static void __cdecl ObjectCasinoHasigo_Exec_r(task* tp)
 		ObjectCasinoHasigo_Exec_t.Original(tp);
 	}
 }
+
+void patch_casino_hasigo_init()
+{
+	ObjectCasinoHasigo_Exec_t.Hook(ObjectCasinoHasigo_Exec_r);
+}
+
+RegisterPatch patch_casino_hasigo(patch_casino_hasigo_init);

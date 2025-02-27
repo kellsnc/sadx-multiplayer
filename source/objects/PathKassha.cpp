@@ -18,6 +18,12 @@ auto DrawHuck = GenerateUsercallWrapper<TaskFuncPtr>(noret, 0x602B10, rEAX);
 auto DrawWireTarumi = GenerateUsercallWrapper<void (*)(task* tp, unsigned int number, unsigned __int8 flag)>(noret, 0x603330, rEAX, rECX, stack4);
 auto DrawWire = GenerateUsercallWrapper<TaskFuncPtr>(noret, 0x602DF0, rEAX);
 
+static void KasshaDisplayer_r(task* tp);
+static void PathKassha_r(task* tp);
+
+FastFunctionHookPtr<decltype(&KasshaDisplayer_r)> KasshaDisplayer_t(0x603590);
+FastFunctionHookPtr<decltype(&PathKassha_r)> PathKassha_t(0x603640);
+
 // The wire displayer also moves the player for some reason
 // Luckily they put a "mode == 2" check before even though the function is only called during mode 2
 static void DrawWire_m(task* tp)
@@ -48,8 +54,6 @@ static void DrawWireTarumi_m(task* tp)
 	}
 }
 
-static void KasshaDisplayer_r(task* tp);
-FastFunctionHookPtr<decltype(&KasshaDisplayer_r)> KasshaDisplayer_t(0x603590, KasshaDisplayer_r);
 static void KasshaDisplayer_r(task* tp)
 {
 	if (!SplitScreen::IsActive())
@@ -85,8 +89,6 @@ static void MovePlayer(taskwk* twp, pathtag* tag, float onpathpos, int pnum)
 	}
 }
 
-static void PathKassha_r(task* tp);
-FastFunctionHookPtr<decltype(&PathKassha_r)> PathKassha_t(0x603640, PathKassha_r);
 static void PathKassha_r(task* tp)
 {
 	if (!multiplayer::IsActive())
@@ -176,3 +178,11 @@ static void PathKassha_r(task* tp)
 	EntryColliList(twp);
 	tp->disp(tp);
 }
+
+void patch_mountain_palley_init()
+{
+	KasshaDisplayer_t.Hook(KasshaDisplayer_r);
+	PathKassha_t.Hook(PathKassha_r);
+}
+
+RegisterPatch patch_mountain_palley(patch_mountain_palley_init);

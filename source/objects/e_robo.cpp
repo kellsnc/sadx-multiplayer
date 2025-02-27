@@ -293,7 +293,9 @@ static Bool __cdecl RoboSearchPlayer_r(taskwk* twp, enemywk* ewp)
 }
 #pragma endregion
 
-void initERoboHack()
+void patch_robo_init()
 {
 	RoboSwing_t.Hook(RoboSwing_r);
 }
+
+RegisterPatch patch_robo(patch_robo_init);

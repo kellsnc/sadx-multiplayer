@@ -14,9 +14,9 @@ static void __cdecl ObjectHeliExec_r(task* tp);
 static void __cdecl HeliWriteSub_r(task* tp, taskwk* twp);
 static void __cdecl HeliWrite_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjectHeliExec_r)> ObjectHeliExec_t(0x6139F0, ObjectHeliExec_r);
-FastUsercallHookPtr<decltype(&HeliWriteSub_r), noret, rEBX, rEAX> HeliWriteSub_t(0x6137B0, HeliWriteSub_r);
-FastFunctionHookPtr<decltype(&HeliWrite_r)> HeliWrite_t(0x6136C0, HeliWrite_r);
+FastFunctionHookPtr<decltype(&ObjectHeliExec_r)> ObjectHeliExec_t(0x6139F0);
+FastUsercallHookPtr<decltype(&HeliWriteSub_r), noret, rEBX, rEAX> HeliWriteSub_t(0x6137B0);
+FastFunctionHookPtr<decltype(&HeliWrite_r)> HeliWrite_t(0x6136C0);
 
 enum MD_HELI // made up
 {
@@ -351,3 +351,12 @@ static void __cdecl ObjectHeliExec_r(task* tp)
 	}
 }
 #pragma endregion
+
+void patch_heli_init()
+{
+	ObjectHeliExec_t.Hook(ObjectHeliExec_r);
+	HeliWriteSub_t.Hook(HeliWriteSub_r);
+	HeliWrite_t.Hook(HeliWrite_r);
+}
+
+RegisterPatch patch_heli(patch_heli_init);

@@ -1,13 +1,6 @@
 #include "pch.h"
 #include "multiplayer.h"
 
-static auto InitATask = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5A1BF0, rEDI);
-static auto ExecATask = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5A1A40, rEAX);
-static auto DownMove = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5A1B60, rEDX);
-static auto OpenDoor = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5A1D10, rEAX); // custom name
-
-DataArray(NJS_POINT3, ElevatorPos, 0x1873100, 3 * 2); // [3][2]
-
 enum : __int8
 {
 	MODE_INIT,
@@ -17,6 +10,16 @@ enum : __int8
 	MODE_OPEN,
 	MODE_NONE // custom
 };
+
+static auto InitATask = GenerateUsercallWrapper<void (*)(task * tp)>(noret, 0x5A1BF0, rEDI);
+static auto ExecATask = GenerateUsercallWrapper<void (*)(task * tp)>(noret, 0x5A1A40, rEAX);
+static auto DownMove = GenerateUsercallWrapper<void (*)(task * tp)>(noret, 0x5A1B60, rEDX);
+static auto OpenDoor = GenerateUsercallWrapper<void (*)(task * tp)>(noret, 0x5A1D10, rEAX); // custom name
+
+DataArray(NJS_POINT3, ElevatorPos, 0x1873100, 3 * 2); // [3][2]
+
+static void __cdecl ObjShelterElevator_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjShelterElevator_r)> ObjShelterElevator_t(0x5A1D70);
 
 static void chkPlayer(task* tp) // custom
 {
@@ -122,8 +125,6 @@ static void ObjShelterElevator_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjShelterElevator_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjShelterElevator_r)> ObjShelterElevator_t(0x5A1D70, ObjShelterElevator_r);
 static void __cdecl ObjShelterElevator_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -135,3 +136,10 @@ static void __cdecl ObjShelterElevator_r(task* tp)
 		ObjShelterElevator_t.Original(tp);
 	}
 }
+
+void patch_shelter_elevator_init()
+{
+	ObjShelterElevator_t.Hook(ObjShelterElevator_r);
+}
+
+RegisterPatch patch_shelter_elevator(patch_shelter_elevator_init);

@@ -3,8 +3,8 @@
 
 DataPointer(NJS_OBJECT, object_kaiten_kaitendaiz_kaitendaiz, 0x18300C8);
 
-static void __cdecl ObjShelterKaitendaiExecATask_r(task* tp);
-FastUsercallHookPtr<decltype(&ObjShelterKaitendaiExecATask_r), noret, rEDI> ObjShelterKaitendaiExecATask_t(0x59E760, ObjShelterKaitendaiExecATask_r);
+static void __cdecl ObjShelterKaitendai_ExecATask_r(task* tp);
+FastUsercallHookPtr<decltype(&ObjShelterKaitendai_ExecATask_r), noret, rEDI> ObjShelterKaitendai_ExecATask_t(0x59E760);
 
 static void ExecATask_m(task* tp)
 {
@@ -41,7 +41,7 @@ static void ExecATask_m(task* tp)
 	}
 }
 
-static void __cdecl ObjShelterKaitendaiExecATask_r(task* tp)
+static void __cdecl ObjShelterKaitendai_ExecATask_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -49,6 +49,13 @@ static void __cdecl ObjShelterKaitendaiExecATask_r(task* tp)
 	}
 	else
 	{
-		ObjShelterKaitendaiExecATask_t.Original(tp);
+		ObjShelterKaitendai_ExecATask_t.Original(tp);
 	}
 }
+
+void patch_shelter_kaitendai_init()
+{
+	ObjShelterKaitendai_ExecATask_t.Hook(ObjShelterKaitendai_ExecATask_r);
+}
+
+RegisterPatch patch_shelter_kaitendai(patch_shelter_kaitendai_init);

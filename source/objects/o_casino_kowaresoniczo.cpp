@@ -36,6 +36,9 @@ struct soniczowork
 DataArray(NJS_OBJECT*, psoniczo, 0x1E74C60, 168);
 DataArray(CCL_INFO, object_c_info, 0x1E74F38, 7);
 
+static void __cdecl ObjectCasinoCrashSoniczoExec_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectCasinoCrashSoniczoExec_r)> ObjectCasinoCrashSoniczoExec_t(0x5C3900);
+
 static void Crash_m(task* tp)
 {
 	auto twp = tp->twp;
@@ -265,8 +268,6 @@ static void ObjectCasinoCrashSoniczoExec_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectCasinoCrashSoniczoExec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectCasinoCrashSoniczoExec_r)> ObjectCasinoCrashSoniczoExec_t(0x5C3900, ObjectCasinoCrashSoniczoExec_r);
 static void __cdecl ObjectCasinoCrashSoniczoExec_r(task* tp)
 {
 	if (multiplayer::IsEnabled())
@@ -278,3 +279,10 @@ static void __cdecl ObjectCasinoCrashSoniczoExec_r(task* tp)
 		ObjectCasinoCrashSoniczoExec_t.Original(tp);
 	}
 }
+
+void patch_casino_kowaresoniczo_init()
+{
+	ObjectCasinoCrashSoniczoExec_t.Hook(ObjectCasinoCrashSoniczoExec_r);
+}
+
+RegisterPatch patch_casino_kowaresoniczo(patch_casino_kowaresoniczo_init);

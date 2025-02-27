@@ -1,9 +1,17 @@
 #include "pch.h"
 #include "splitscreen.h"
 
-TaskFunc(ObjectBeachWaveBG1Display, 0x501130); // unnamed in symbols
-TaskFunc(ObjectBeachWaveBG2Display, 0x4F76C0); // unnamed in symbols
-TaskFunc(ObjectBeachWaveBG3Display, 0x4F7760); // unnamed in symbols
+TaskFunc(ObjectBeachWaveBG1Display, 0x501130);
+TaskFunc(ObjectBeachWaveBG2Display, 0x4F76C0);
+TaskFunc(ObjectBeachWaveBG3Display, 0x4F7760);
+
+void __cdecl ObjectBeachWaveBG1_r(task* tp);
+void __cdecl ObjectBeachWaveBG2_r(task* tp);
+void __cdecl ObjectBeachWaveBG3_r(task* tp);
+
+FastFunctionHookPtr<decltype(&ObjectBeachWaveBG1_r)> ObjectBeachWaveBG1_t(0x501970);
+FastFunctionHookPtr<decltype(&ObjectBeachWaveBG2_r)> ObjectBeachWaveBG2_t(0x4F79C0);
+FastFunctionHookPtr<decltype(&ObjectBeachWaveBG3_r)> ObjectBeachWaveBG3_t(0x4F7A00);
 
 void __cdecl ObjectBeachWaveBGExec_multi(task* tp)
 {
@@ -30,8 +38,6 @@ void __cdecl ObjectBeachWaveBG1Display_multi(task* tp)
 	}
 }
 
-void __cdecl ObjectBeachWaveBG1_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectBeachWaveBG1_r)> ObjectBeachWaveBG1_t(0x501970, ObjectBeachWaveBG1_r);
 void __cdecl ObjectBeachWaveBG1_r(task* tp)
 {
 	ObjectBeachWaveBG1_t.Original(tp);
@@ -56,8 +62,6 @@ void __cdecl ObjectBeachWaveBG2Display_Multi(task* tp)
 	}
 }
 
-void __cdecl ObjectBeachWaveBG2_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectBeachWaveBG2_r)> ObjectBeachWaveBG2_t(0x4F79C0, ObjectBeachWaveBG2_r);
 void __cdecl ObjectBeachWaveBG2_r(task* tp)
 {
 	ObjectBeachWaveBG2_t.Original(tp);
@@ -82,8 +86,6 @@ void __cdecl ObjectBeachWaveBG3Display_Multi(task* tp)
 	}
 }
 
-void __cdecl ObjectBeachWaveBG3_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectBeachWaveBG3_r)> ObjectBeachWaveBG3_t(0x4F7A00, ObjectBeachWaveBG3_r);
 void __cdecl ObjectBeachWaveBG3_r(task* tp)
 {
 	ObjectBeachWaveBG3_t.Original(tp);
@@ -98,3 +100,12 @@ void __cdecl ObjectBeachWaveBG3_r(task* tp)
 		tp2->disp = ObjectBeachWaveBG3Display_Multi;
 	}
 }
+
+void patch_beach_wavebg_init()
+{
+	ObjectBeachWaveBG1_t.Hook(ObjectBeachWaveBG1_r);
+	ObjectBeachWaveBG2_t.Hook(ObjectBeachWaveBG2_r);
+	ObjectBeachWaveBG3_t.Hook(ObjectBeachWaveBG3_r);
+}
+
+RegisterPatch patch_beach_wavebg(patch_beach_wavebg_init);

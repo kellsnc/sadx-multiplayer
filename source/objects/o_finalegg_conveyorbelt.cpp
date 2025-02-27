@@ -7,9 +7,9 @@ static void __cdecl ConveyorBelt_ExecATask_r(task* tp);
 static void __cdecl ConveyorBelt_ReserveColli_r(task* tp);
 static void __cdecl ConveyorBelt_SideTaskExec_r(task* tp);
 
-FastUsercallHookPtr<decltype(&ConveyorBelt_ExecATask_r), noret, rEBX> ConveyorBelt_ExecATask_t(0x5BD480, ConveyorBelt_ExecATask_r);
-FastUsercallHookPtr<decltype(&ConveyorBelt_ReserveColli_r), noret, rEBX> ConveyorBelt_ReserveColli_t(0x5BD3B0, ConveyorBelt_ReserveColli_r);
-FastFunctionHookPtr<decltype(&ConveyorBelt_SideTaskExec_r)> ConveyorBelt_SideTaskExec_t(0x5BD6D0, ConveyorBelt_SideTaskExec_r);
+FastUsercallHookPtr<decltype(&ConveyorBelt_ExecATask_r), noret, rEBX> ConveyorBelt_ExecATask_t(0x5BD480);
+FastUsercallHookPtr<decltype(&ConveyorBelt_ReserveColli_r), noret, rEBX> ConveyorBelt_ReserveColli_t(0x5BD3B0);
+FastFunctionHookPtr<decltype(&ConveyorBelt_SideTaskExec_r)> ConveyorBelt_SideTaskExec_t(0x5BD6D0);
 
 static void __cdecl ConveyorBelt_ExecATask_r(task* tp)
 {
@@ -80,3 +80,12 @@ static void __cdecl ConveyorBelt_SideTaskExec_r(task* tp)
 		ConveyorBelt_SideTaskExec_t.Original(tp);
 	}
 }
+
+void patch_finalegg_conveyorbelt_init()
+{
+	ConveyorBelt_ExecATask_t.Hook(ConveyorBelt_ExecATask_r);
+	ConveyorBelt_ReserveColli_t.Hook(ConveyorBelt_ReserveColli_r);
+	ConveyorBelt_SideTaskExec_t.Hook(ConveyorBelt_SideTaskExec_r);
+}
+
+RegisterPatch patch_finalegg_conveyorbelt(patch_finalegg_conveyorbelt_init);

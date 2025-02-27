@@ -5,7 +5,8 @@
 #include "multiplayer.h"
 
 void AL_MinimalHeldP_r(task* tp);
-static FastUsercallHookPtr<decltype(&AL_MinimalHeldP_r), noret, rEDI> AL_MinimalHeldP_t(0x00721C10, AL_MinimalHeldP_r);
+FastUsercallHookPtr<decltype(&AL_MinimalHeldP_r), noret, rEDI> AL_MinimalHeldP_t(0x00721C10);
+
 void AL_MinimalHeldP_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -26,3 +27,10 @@ void AL_MinimalHeldP_r(task* tp)
 		AL_MinimalHeldP_t.Original(tp);
 	}
 }
+
+void patch_al_minimal_init()
+{
+	AL_MinimalHeldP_t.Hook(AL_MinimalHeldP_r);
+}
+
+RegisterPatch patch_al_minimal(patch_al_minimal_init);

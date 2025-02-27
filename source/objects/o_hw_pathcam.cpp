@@ -490,7 +490,9 @@ static void SetupCamPathCam2_Highway_r(task* tp)
 	}
 }
 
-void PatchHighwayPathCam()
+void patch_hw_pathcam_init()
 {
 	SetupCamPathCam2_Highway_h.Hook(SetupCamPathCam2_Highway_r);
 }
+
+RegisterPatch patch_hw_pathcam(patch_hw_pathcam_init);

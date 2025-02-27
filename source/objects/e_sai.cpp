@@ -80,10 +80,12 @@ static void __cdecl EnemySai_r(task* tp)
 	playertwp[0] = backup;
 }
 
-void InitEnemySaiPatches()
+void patch_sai_init()
 {
 	EnemySai_h.Hook(EnemySai_r);
 #ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_OBJECT_RHINOTANK, SaiListener);
 #endif
 }
+
+RegisterPatch patch_sai(patch_sai_init);

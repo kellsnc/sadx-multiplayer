@@ -13,6 +13,9 @@ enum : __int8
 	MODE_END
 };
 
+static void __cdecl ObjectBaloon_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectBaloon_r)> ObjectBaloon_t(0x7A21C0);
+
 static void Normal_m(taskwk* twp)
 {
 	twp->value.f = njSin((twp->counter.l + 800) << 8) * 4.0f;
@@ -117,8 +120,6 @@ static void ObjectBaloon_m(task* tp)
 	}
 }
 
-static void __cdecl ObjectBaloon_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectBaloon_r)> ObjectBaloon_t(0x7A21C0, ObjectBaloon_r);
 static void __cdecl ObjectBaloon_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -130,3 +131,10 @@ static void __cdecl ObjectBaloon_r(task* tp)
 		ObjectBaloon_t.Original(tp);
 	}
 }
+
+void patch_baloon_init()
+{
+	ObjectBaloon_t.Hook(ObjectBaloon_r);
+}
+
+RegisterPatch patch_baloon(patch_baloon_init);

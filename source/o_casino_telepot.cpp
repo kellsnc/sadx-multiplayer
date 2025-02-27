@@ -3,7 +3,8 @@
 #include "FastFunctionHook.hpp"
 
 static void ObjectCasinoTelepotExec_r(task* tp);
-FastFunctionHook<void, task*> ObjectCasinoTelepotExec_t(0x5D10C0, ObjectCasinoTelepotExec_r);
+FastFunctionHook<void, task*> ObjectCasinoTelepotExec_t(0x5D10C0);
+
 static void ObjectCasinoTelepotExec_r(task* tp)
 {
 	if (!multiplayer::IsActive() || ObjectSelectedDebug((ObjectMaster*)tp))
@@ -127,5 +128,10 @@ static void ObjectCasinoTelepotExec_r(task* tp)
     EntryColliList(twp);
     ++twp->wtimer;
 }
-    
 
+void patch_casino_telepot_init()
+{
+    ObjectCasinoTelepotExec_t.Hook(ObjectCasinoTelepotExec_r);
+}
+
+RegisterPatch patch_casino_telepot(patch_casino_telepot_init);

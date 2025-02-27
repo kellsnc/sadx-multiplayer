@@ -20,6 +20,9 @@ enum MD_CARGO // made up
 	MDCARGO_OUT
 };
 
+static void __cdecl ObjShelterCargostart_Exec_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjShelterCargostart_Exec_r)> ObjShelterCargostart_Exec_t(0x5A4B30);
+
 static void CheckPlayerGround(task* tp)
 {
 	auto twp = tp->twp;
@@ -89,7 +92,7 @@ static void Move(task* tp, float x)
 	}
 }
 
-static void ObjShelterCargostartExec_m(task* tp)
+static void ObjShelterCargostart_Exec_m(task* tp)
 {
 	auto twp = tp->twp;
 
@@ -189,16 +192,21 @@ static void ObjShelterCargostartExec_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjShelterCargostartExec_r(task* tp); // "Exec"
-FastFunctionHookPtr<decltype(&ObjShelterCargostartExec_r)> ObjShelterCargostartExec_t(0x5A4B30, ObjShelterCargostartExec_r);
-static void __cdecl ObjShelterCargostartExec_r(task* tp)
+static void __cdecl ObjShelterCargostart_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
-		ObjShelterCargostartExec_m(tp);
+		ObjShelterCargostart_Exec_m(tp);
 	}
 	else
 	{
-		ObjShelterCargostartExec_t.Original(tp);
+		ObjShelterCargostart_Exec_t.Original(tp);
 	}
 }
+
+void patch_shelter_cargostart_init()
+{
+	ObjShelterCargostart_Exec_t.Hook(ObjShelterCargostart_Exec_r);
+}
+
+RegisterPatch patch_shelter_cargostart(patch_shelter_cargostart_init);

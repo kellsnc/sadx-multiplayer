@@ -11,6 +11,9 @@ static auto PanelExecBlink = GenerateUsercallWrapper<TaskFuncPtr>(noret, 0x5E8F9
 DataPointer(uint8_t, gMode, 0x3C7EDE4);
 DataPointer(uint8_t, gState, 0x3C7EDE5);
 
+static void __cdecl PanelExec_r(task* tp);
+FastFunctionHookPtr<decltype(&PanelExec_r)> PanelExec_t(0x5E92A0);
+
 static void PanelExec_m(task* tp)
 {
 	if (!CheckRangeOut(tp))
@@ -72,8 +75,6 @@ static void PanelExec_m(task* tp)
 	}
 }
 
-static void __cdecl PanelExec_r(task* tp);
-FastFunctionHookPtr<decltype(&PanelExec_r)> PanelExec_t(0x5E92A0, PanelExec_r);
 static void __cdecl PanelExec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -85,3 +86,10 @@ static void __cdecl PanelExec_r(task* tp)
 		PanelExec_t.Original(tp);
 	}
 }
+
+void patch_ruin_tatearuki_init()
+{
+	PanelExec_t.Hook(PanelExec_r);
+}
+
+RegisterPatch patch_ruin_tatearuki(patch_ruin_tatearuki_init);

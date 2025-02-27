@@ -5,7 +5,8 @@
 #include "multiplayer.h"
 
 void ALO_FruitHeldP_r(task* tp);
-static FastUsercallHookPtr<decltype(&ALO_FruitHeldP_r), noret, rEAX> ALO_FruitHeldP_t(0x007227C0, ALO_FruitHeldP_r);
+static FastUsercallHookPtr<decltype(&ALO_FruitHeldP_r), noret, rEAX> ALO_FruitHeldP_t(0x007227C0);
+
 void ALO_FruitHeldP_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -26,3 +27,10 @@ void ALO_FruitHeldP_r(task* tp)
 		ALO_FruitHeldP_t.Original(tp);
 	}
 }
+
+void patch_alo_fruit_init()
+{
+	ALO_FruitHeldP_t.Hook(ALO_FruitHeldP_r);
+}
+
+RegisterPatch patch_alo_fruit(patch_alo_fruit_init);

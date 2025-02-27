@@ -14,6 +14,9 @@ FastUsercallHookPtr<void(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), noret, 
 FastUsercallHookPtr<Bool(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), rEAX, rEAX, rEDI, stack4> Big_CheckInput_t(0x48D400);
 FastFunctionHook<void, task*> Big_Jiggle_t((intptr_t)0x48C720);
 FastFunctionHook<void, task*> BigEyeTracker_t(0x48E2E0);
+FastFunctionHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp)> bigActMissSet_t(0x48CD50);
+FastFunctionHook<void> sub_48CDE0_t(0x48CDE0);
+FastFunctionHook<void> sub_48CE10_t(0x48CE10);
 
 void __cdecl BigEyeTracker_r(task* tp)
 {
@@ -35,8 +38,6 @@ void __cdecl Big_Jiggle_r(task* tp)
 	Big_Jiggle_t.Original(tp);
 }
 
-void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp);
-FastFunctionHookPtr<decltype(&bigActMissSet_r)> bigActMissSet_t(0x48CD50, bigActMissSet_r);
 void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (multiplayer::IsActive())
@@ -65,8 +66,6 @@ void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	}
 }
 
-void __cdecl sub_48CDE0_r();
-FastFunctionHookPtr<decltype(&sub_48CDE0_r)> sub_48CDE0_t(0x48CDE0, sub_48CDE0_r);
 void __cdecl sub_48CDE0_r()
 {
 	if (multiplayer::IsActive())
@@ -88,8 +87,6 @@ void __cdecl sub_48CDE0_r()
 	}
 }
 
-void __cdecl sub_48CE10_r();
-FastFunctionHookPtr<decltype(&sub_48CE10_r)> sub_48CE10_t(0x48CE10, sub_48CE10_r);
 void __cdecl sub_48CE10_r()
 {
 	if (multiplayer::IsActive())
@@ -291,11 +288,16 @@ void __cdecl BigTheCat_r(task* tp)
 	}
 }
 
-void Init_BigPatches()
+void patch_big_init()
 {
 	BigTheCat_t.Hook(BigTheCat_r);
 	Big_CheckInput_t.Hook(Big_CheckInput_r);
 	BigChkMode_t.Hook(BigChkMode_r);
 	Big_Jiggle_t.Hook(Big_Jiggle_r);
 	BigEyeTracker_t.Hook(BigEyeTracker_r);
+	bigActMissSet_t.Hook(bigActMissSet_r);
+	sub_48CDE0_t.Hook(sub_48CDE0_r);
+	sub_48CE10_t.Hook(sub_48CE10_r);
 }
+
+RegisterPatch patch_big(patch_big_init);

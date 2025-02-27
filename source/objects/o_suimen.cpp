@@ -3,9 +3,10 @@
 
 // Water switches in Lost World (and the water iself)
 
-static void __cdecl cNormal_r(task* tp);
-FastFunctionHookPtr<decltype(&cNormal_r)> ObjectSuimen_cNormal_t(0x5E8410, cNormal_r);
-static void __cdecl cNormal_r(task* tp)
+static void __cdecl ObjectSuimen_cNormal_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectSuimen_cNormal_r)> ObjectSuimen_cNormal_t(0x5E8410);
+
+static void __cdecl ObjectSuimen_cNormal_r(task* tp)
 {
 	auto twp = tp->twp;
 	auto awp = tp->awp;
@@ -43,3 +44,10 @@ static void __cdecl cNormal_r(task* tp)
 
 	tp->disp(tp);
 }
+
+void patch_suimen_init()
+{
+	ObjectSuimen_cNormal_t.Hook(ObjectSuimen_cNormal_r);
+}
+
+RegisterPatch patch_suimen(patch_suimen_init);

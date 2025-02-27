@@ -9,11 +9,8 @@ FunctionPointer(float, GetTargetDist, (task*), 0x7A2280);
 FunctionPointer(Bool, CalcDashPosition, (task*), 0x7A2320);
 FunctionPointer(Bool, CreateChkDashPlayer, (task* tp, Sint32 pl_num, Float dist), 0x7A2610);
 
-void ChkDashPlayer_r(task* tp);
-Bool InitCmnDushRing_r(task* tp);
-
-FastFunctionHook<void, task*> ChkDashPlayer_h(0x7A2500, ChkDashPlayer_r);
-FastFunctionHook<Bool, task*> InitCmnDushRing_h(0x7A2660, InitCmnDushRing_r);
+FastFunctionHook<void, task*> ChkDashPlayer_h(0x7A2500);
+FastFunctionHook<Bool, task*> InitCmnDushRing_h(0x7A2660);
 
 // The original code checks for all player despite being a per-player subtask
 void ChkDashPlayer_m(task* tp)
@@ -106,3 +103,11 @@ Bool InitCmnDushRing_r(task* tp)
 		return InitCmnDushRing_h.Original(tp);
 	}
 }
+
+void patch_cmndushring_init()
+{
+	ChkDashPlayer_h.Hook(ChkDashPlayer_r);
+	InitCmnDushRing_h.Hook(InitCmnDushRing_r);
+}
+
+RegisterPatch patch_cmndushring(patch_cmndushring_init);

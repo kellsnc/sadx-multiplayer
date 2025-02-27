@@ -9,10 +9,10 @@ static void __cdecl KillHimByFallingDownP_r(int pno);
 static void __cdecl KillPlayerFallingDownStageP_r(task* tp);
 static void __cdecl BreathCounterP_r(task* tp);
 
-FastFunctionHook<void, int> KillHimP_t(KillHimP, KillHimP_r);
-FastFunctionHook<void, int> KillHimByFallingDownP_t(KillHimByFallingDownP, KillHimByFallingDownP_r);
-FastFunctionHook<void, task*> KillPlayerFallingDownStageP_t(0x44AE80, KillPlayerFallingDownStageP_r);
-FastFunctionHook<void, task*> BreathCounterP_t(0x446B10, BreathCounterP_r);
+FastFunctionHook<void, int> KillHimP_t(KillHimP);
+FastFunctionHook<void, int> KillHimByFallingDownP_t(KillHimByFallingDownP);
+FastFunctionHook<void, task*> KillPlayerFallingDownStageP_t(0x44AE80);
+FastFunctionHook<void, task*> BreathCounterP_t(0x446B10);
 
 void __cdecl GamePlayerMissedFree(task* tp)
 {
@@ -328,3 +328,13 @@ static void __cdecl BreathCounterP_r(task* tp)
 		tp->disp(tp);
 	}
 }
+
+void patch_death_init()
+{
+	KillHimP_t.Hook(KillHimP_r);
+	KillHimByFallingDownP_t.Hook(KillHimByFallingDownP_r);
+	KillPlayerFallingDownStageP_t.Hook(KillPlayerFallingDownStageP_r);
+	BreathCounterP_t.Hook(BreathCounterP_r);
+}
+
+RegisterPatch patch_death(patch_death_init);

@@ -5,7 +5,8 @@
 // Big Cannon at the end of act 1
 
 static void __cdecl ObjectSkydeck_cannon_h2_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectSkydeck_cannon_h2_Exec_r)> ObjectSkydeck_cannon_h2_Exec_t(0x5F38F0, ObjectSkydeck_cannon_h2_Exec_r);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_cannon_h2_Exec_r)> ObjectSkydeck_cannon_h2_Exec_t(0x5F38F0);
+
 static void __cdecl ObjectSkydeck_cannon_h2_Exec_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -20,3 +21,10 @@ static void __cdecl ObjectSkydeck_cannon_h2_Exec_r(task* tp)
 		ObjectSkydeck_cannon_h2_Exec_t.Original(tp);
 	}
 }
+
+void patch_sky_cannon_h2_init()
+{
+	ObjectSkydeck_cannon_h2_Exec_t.Hook(ObjectSkydeck_cannon_h2_Exec_r);
+}
+
+RegisterPatch patch_sky_cannon_h2(patch_sky_cannon_h2_init);

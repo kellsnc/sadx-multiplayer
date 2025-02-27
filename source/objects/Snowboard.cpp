@@ -43,7 +43,9 @@ static void __cdecl SetPlayerSnowBoard_r(task* tp)
 	}
 }
 
-void InitSnowBoardPatches()
+void patch_snowboard_init()
 {
 	SetPlayerSnowBoard_Hook.Hook(SetPlayerSnowBoard_r);
 }
+
+RegisterPatch patch_snowboard(patch_snowboard_init);

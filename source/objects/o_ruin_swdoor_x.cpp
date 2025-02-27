@@ -10,6 +10,9 @@ enum : __int8
 	MODE_END
 };
 
+static void __cdecl ObjectRuinSwdoorX_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectRuinSwdoorX_r)> ObjectRuinSwdoorX_t(0x5E7660);
+
 static void ObjectRuinSwdoorX_m(task* tp)
 {
 	if (CheckRangeOut(tp))
@@ -37,8 +40,6 @@ static void ObjectRuinSwdoorX_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectRuinSwdoorX_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectRuinSwdoorX_r)> ObjectRuinSwdoorX_t(0x5E7660, ObjectRuinSwdoorX_r);
 static void __cdecl ObjectRuinSwdoorX_r(task* tp)
 {
 	if (multiplayer::IsActive() && tp->twp->mode == 0)
@@ -50,3 +51,10 @@ static void __cdecl ObjectRuinSwdoorX_r(task* tp)
 		ObjectRuinSwdoorX_t.Original(tp);
 	}
 }
+
+void patch_ruin_swdoor_x_init()
+{
+	ObjectRuinSwdoorX_t.Hook(ObjectRuinSwdoorX_r);
+}
+
+RegisterPatch patch_ruin_swdoor_x(patch_ruin_swdoor_x_init);

@@ -3,7 +3,7 @@
 
 static OCMDATA ocmdataarray_m[SCHAR_MAX];
 
-void PatchSkyDeckOCM()
+void patch_sky_ocm_init()
 {
 	WriteData((int8_t*)0x5FE33C, (int8_t)SCHAR_MAX);
 	WriteData((int8_t*)0x5FE3A0, (int8_t)SCHAR_MAX);
@@ -17,3 +17,5 @@ void PatchSkyDeckOCM()
 	WriteData((OCMDATA**)0x5FE454, ocmdataarray_m);
 	WriteData((OCMDATA**)0x5FE4E3, ocmdataarray_m);
 }
+
+RegisterPatch patch_sky_ocm(patch_sky_ocm_init);

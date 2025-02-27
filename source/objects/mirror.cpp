@@ -59,8 +59,10 @@ static void __cdecl execMirrorTaskP_r(task* tp)
 	}
 }
 
-void PatchTwinkleMirrors()
+void patch_mirror_init()
 {
 	dispMirrorTaskP_t.Hook(dispMirrorTaskP_r);
 	execMirrorTaskP_t.Hook(execMirrorTaskP_r);
 }
+
+RegisterPatch patch_mirror(patch_mirror_init);

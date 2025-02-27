@@ -18,6 +18,9 @@ enum : char
 	MODE_20 = 20i8
 };
 
+static void __cdecl ObjectTogedai_Normal_r(task* tp);
+FastFunctionHookPtr<decltype(&ObjectTogedai_Normal_r)> ObjectTogedai_Normal_t(0x5EA7A0);
+
 static void effect(taskwk* twp)
 {
 	auto pnum = GetClosestPlayerNum(&twp->pos);
@@ -58,7 +61,7 @@ static void move(taskwk* twp, float y)
 	}
 }
 
-static void ObjectTogedaiNormal_m(task* tp)
+static void ObjectTogedai_Normal_m(task* tp)
 {
 	if (CheckRangeOut(tp))
 	{
@@ -144,16 +147,21 @@ static void ObjectTogedaiNormal_m(task* tp)
 	tp->disp(tp);
 }
 
-static void __cdecl ObjectTogedaiNormal_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectTogedaiNormal_r)> ObjectTogedaiNormal_t(0x5EA7A0, ObjectTogedaiNormal_r);
-static void __cdecl ObjectTogedaiNormal_r(task* tp)
+static void __cdecl ObjectTogedai_Normal_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
-		ObjectTogedaiNormal_m(tp);
+		ObjectTogedai_Normal_m(tp);
 	}
 	else
 	{
-		ObjectTogedaiNormal_t.Original(tp);
+		ObjectTogedai_Normal_t.Original(tp);
 	}
 }
+
+void patch_togedai_init()
+{
+	ObjectTogedai_Normal_t.Hook(ObjectTogedai_Normal_r);
+}
+
+RegisterPatch patch_togedai(patch_togedai_init);

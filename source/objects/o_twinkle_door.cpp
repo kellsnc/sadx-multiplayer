@@ -5,9 +5,9 @@ static void __cdecl checkTPDoorMode_r(taskwk* twp);
 static void __cdecl checkTPDoorMode2_r(taskwk* twp);
 static void __cdecl ObjectTPDoubleDoor_r(task* tp);
 
-FastUsercallHookPtr<decltype(&checkTPDoorMode_r), noret, rESI> checkTPDoorMode_t(0x61E460, checkTPDoorMode_r);
-FastUsercallHookPtr<decltype(&checkTPDoorMode2_r), noret, rESI> checkTPDoorMode2_t(0x61E510, checkTPDoorMode2_r);
-FastFunctionHookPtr<decltype(&ObjectTPDoubleDoor_r)> ObjectTPDoubleDoor_t(0x61EAC0, ObjectTPDoubleDoor_r);
+FastUsercallHookPtr<decltype(&checkTPDoorMode_r), noret, rESI> checkTPDoorMode_t(0x61E460);
+FastUsercallHookPtr<decltype(&checkTPDoorMode2_r), noret, rESI> checkTPDoorMode2_t(0x61E510);
+FastFunctionHookPtr<decltype(&ObjectTPDoubleDoor_r)> ObjectTPDoubleDoor_t(0x61EAC0);
 
 static void getModeWithFOV(taskwk* twp, taskwk* ptwp)
 {
@@ -175,3 +175,12 @@ static void __cdecl ObjectTPDoubleDoor_r(task* tp)
 		ObjectTPDoubleDoor_t.Original(tp);
 	}
 }
+
+void patch_twinkle_door_init()
+{
+	checkTPDoorMode_t.Hook(checkTPDoorMode_r);
+	checkTPDoorMode2_t.Hook(checkTPDoorMode2_r);
+	ObjectTPDoubleDoor_t.Hook(ObjectTPDoubleDoor_r);
+}
+
+RegisterPatch patch_twinkle_door(patch_twinkle_door_init);

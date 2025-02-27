@@ -30,4 +30,3 @@ void MultiHudLives(int num);
 
 void DrawWaitScreen(int num);
 void DisplayMultiHud(int num);
-void MultiHudInit();

@@ -104,7 +104,7 @@ void MilesTalesPrower_r(task* tp)
 	}
 }
 
-void initMilesPatches()
+void patch_miles_init()
 {
 	MilesJiggle_t.Hook(MilesJiggle_r);
 	MilesDirectAhead_t.Hook(MilesDirectAhead_r);
@@ -113,3 +113,5 @@ void initMilesPatches()
 	Miles_CheckInput_t.Hook(Miles_CheckInput_r);
 	MilesTalesPrower_t.Hook(MilesTalesPrower_r);
 }
+
+RegisterPatch patch_miles(patch_miles_init);

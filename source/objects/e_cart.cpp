@@ -47,6 +47,17 @@ DataArray(int*, dword_3D08E40, 0x3D08E40, 30);
 DataArray(int, cart_se_num, 0x38A6D70, 6 * 2);
 DataPointer(float, hamariDist, 0x3D08E10);
 
+
+void __cdecl EnemyCart_r(task* tp);
+void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd);
+void __cdecl CartGetOffPlayer_r(task* tp);
+void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang);
+
+FastFunctionHookPtr<decltype(&EnemyCart_r)> EnemyCart_t(0x79A9E0);
+FastFunctionHookPtr<decltype(&SetCartVelocity_r)> SetCartVelocity_t(0x79AF90);
+FastFunctionHookPtr<decltype(&CartGetOffPlayer_r)> CartGetOffPlayer_t(0x798C60);
+FastFunctionHookPtr<decltype(&SetCartPos_r)> SetCartPos_t(0x796C50);
+
 task* taskOfPlayerOn_m[PLAYER_MAX];
 
 task* CartChangeForceMode(int num)
@@ -784,8 +795,6 @@ void EnemyCartM(task* tp)
 	++cart_data->hamari_cnt;
 }
 
-void __cdecl EnemyCart_r(task* tp);
-FastFunctionHookPtr<decltype(&EnemyCart_r)> EnemyCart_t(0x79A9E0, EnemyCart_r);
 void __cdecl EnemyCart_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -811,8 +820,6 @@ static bool IsTaskPlayerTask(task* tp)
 	return false;
 }
 
-void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd);
-FastFunctionHookPtr<decltype(&SetCartVelocity_r)> SetCartVelocity_t(0x79AF90, SetCartVelocity_r);
 void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd)
 {
 	if (multiplayer::IsActive())
@@ -864,8 +871,6 @@ void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd)
 	}
 }
 
-void __cdecl CartGetOffPlayer_r(task* tp);
-FastFunctionHookPtr<decltype(&CartGetOffPlayer_r)> CartGetOffPlayer_t(0x798C60, CartGetOffPlayer_r);
 void __cdecl CartGetOffPlayer_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -889,8 +894,6 @@ void __cdecl CartGetOffPlayer_r(task* tp)
 	}
 }
 
-void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang);
-FastFunctionHookPtr<decltype(&SetCartPos_r)> SetCartPos_t(0x796C50, SetCartPos_r);
 void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 {
 	if (multiplayer::IsActive())
@@ -921,3 +924,13 @@ void KillPlayerInKart(taskwk* data, playerwk* co2, char mode, uint16_t anm)
 		}
 	}
 }
+
+void patch_cart_init()
+{
+	EnemyCart_t.Hook(EnemyCart_r);
+	SetCartVelocity_t.Hook(SetCartVelocity_r);
+	CartGetOffPlayer_t.Hook(CartGetOffPlayer_r);
+	SetCartPos_t.Hook(SetCartPos_r);
+}
+
+RegisterPatch patch_cart(patch_cart_init);
