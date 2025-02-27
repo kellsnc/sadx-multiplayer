@@ -4,7 +4,7 @@
 #include "camera.h"
 #include "camerafunc.h"
 #include "splitscreen.h"
-#include "bosses.h"
+#include "boss-common.h"
 #include "levels.h"
 
 static const int timeLimit = 300;

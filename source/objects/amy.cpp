@@ -4,7 +4,7 @@
 #include "gravity.h"
 #include "e_cart.h"
 #include "result.h"
-#include "ObjCylinderCmn.h"
+#include "o_sky_cyl_cmn.h"
 
 FastUsercallHookPtr<Bool(*)(playerwk* pwp, motionwk2* mwp, taskwk* twp), rEAX, rECX, rEDI, rESI> Amy_CheckInput_t(0x487810);
 FastFunctionHook<void, task*> AmyRose_t((intptr_t)Amy_Main);

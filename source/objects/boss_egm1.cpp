@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "bosses.h"
+#include "boss-common.h"
 #include "levels.h"
 
 FastFunctionHook<void, task*> eggHornet_t(0x572010);

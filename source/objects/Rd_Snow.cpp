@@ -10,8 +10,8 @@ static NJS_VECTOR vel_spdman = { 4.0f, 0.4f, 0.0f };
 static NJS_VECTOR vel_hardcodedgap = { 14.0f, 0.4f, 0.0f };
 static Angle3 ang_spdman = { 0, 0xB200, 0 };
 
-static void __cdecl Rd_Snow_r(task* tp);
-FastFunctionHookPtr<decltype(&Rd_Snow_r)> Rd_Snow_t(0x4E9D90);
+FastFunctionHookPtr<TaskFuncPtr> Rd_Snow_t(0x4E9D90);
+FastFunctionHookPtr<TaskFuncPtr> SetPlayerSnowBoard_Hook(0x4E9660);
 
 static void __cdecl RdSnowBoardingSpeedManager_m(task* tp)
 {
@@ -179,9 +179,48 @@ static void __cdecl Rd_Snow_r(task* tp)
 	}
 }
 
+static void SetPlayerSnowBoard_m()
+{
+	for (int i = 0; i < PLAYER_MAX; ++i)
+	{
+		auto ptwp = playertwp[i];
+
+		if (ptwp)
+		{
+			auto char_id = TASKWK_CHARID(ptwp);
+
+			switch (char_id)
+			{
+			case Characters_Sonic:
+				SetInputP(i, PL_OP_SNOWBOARDING);
+				CreateElementalTask(3u, 2, (TaskFuncPtr)0x4959E0)->twp->counter.b[0] = i;
+				break;
+			case Characters_Tails:
+				SetInputP(i, PL_OP_SNOWBOARDING);
+				CreateElementalTask(3u, 2, (TaskFuncPtr)0x461510)->twp->counter.b[0] = i;
+				break;
+			}
+		}
+	}
+}
+
+static void __cdecl SetPlayerSnowBoard_r(task* tp)
+{
+	if (multiplayer::IsActive())
+	{
+		SetPlayerSnowBoard_m();
+		FreeTask(tp);
+	}
+	else
+	{
+		SetPlayerSnowBoard_Hook.Original(tp);
+	}
+}
+
 void patch_rd_snow_init()
 {
 	Rd_Snow_t.Hook(Rd_Snow_r);
+	SetPlayerSnowBoard_Hook.Hook(SetPlayerSnowBoard_r);
 }
 
 RegisterPatch patch_rd_snow(patch_rd_snow_init);

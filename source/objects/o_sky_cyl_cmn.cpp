@@ -6,7 +6,7 @@
 UsercallFunc(BOOL, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
 FastFunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0);
 
-signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* co2)
+signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* pwp)
 {
 	if (data->mode >= SDCylStd && data->mode <= SDCylRight)
 	{
@@ -15,7 +15,7 @@ signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* co2)
 	}
 	else
 	{
-		if (co2->htp->twp->pos.y + co2->htp->twp->cwp->info->center.y - co2->htp->twp->cwp->info->b >= data->pos.y)
+		if (pwp->htp->twp->pos.y + pwp->htp->twp->cwp->info->center.y - pwp->htp->twp->cwp->info->b >= data->pos.y)
 		{
 			data->mode = SDCylStd;
 		}
@@ -24,21 +24,21 @@ signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* co2)
 			data->mode = SDCylDown;
 		}
 
-		PClearSpeed(data2, co2);
+		PClearSpeed(data2, pwp);
 		data->flag &= 0xDAu;
-		co2->free.sw[3] = 0;
+		pwp->free.sw[3] = 0;
 	}
 
 	return 1;
 }
 
-void HoldOnPillar(playerwk* co2, taskwk* data)
+void HoldOnPillar(playerwk* pwp, taskwk* data)
 {
 	float v5 = 0.0f;
 	int v6 = 0;
 	float v7 = 0.0f;
 
-	auto htp = co2->htp;
+	auto htp = pwp->htp;
 
 	if (htp)
 	{
@@ -68,15 +68,15 @@ void HoldOnPillar(playerwk* co2, taskwk* data)
 }
 
 //Functions used in character main
-void Mode_SDCylinderStd(taskwk* data, playerwk* co2)
+void Mode_SDCylinderStd(taskwk* data, playerwk* pwp)
 {
-	HoldOnPillar(co2, data);
+	HoldOnPillar(pwp, data);
 }
 
-void Mode_SDCylinderDown(taskwk* data, playerwk* co2)
+void Mode_SDCylinderDown(taskwk* data, playerwk* pwp)
 {
 	auto v18 = data->pos.y - 0.5f;
-	auto v19 = co2->htp->twp;
+	auto v19 = pwp->htp->twp;
 	data->pos.y = v18;
 
 	auto v20 = v19->cwp->info->center.y + v19->pos.y - v19->cwp->info->b;
@@ -85,27 +85,27 @@ void Mode_SDCylinderDown(taskwk* data, playerwk* co2)
 		data->pos.y = v20;
 	}
 
-	HoldOnPillar(co2, data);
+	HoldOnPillar(pwp, data);
 }
 
-void Mode_SDCylinderLeft(taskwk* data, playerwk* co2)
+void Mode_SDCylinderLeft(taskwk* data, playerwk* pwp)
 {
-	data->ang.y += SonicGetPillarRotSpeed(co2);
-	HoldOnPillar(co2, data);
+	data->ang.y += SonicGetPillarRotSpeed(pwp);
+	HoldOnPillar(pwp, data);
 }
 
-void Mode_SDCylinderRight(taskwk* data, playerwk* co2)
+void Mode_SDCylinderRight(taskwk* data, playerwk* pwp)
 {
-	data->ang.y -= SonicGetPillarRotSpeed(co2);
-	HoldOnPillar(co2, data);
+	data->ang.y -= SonicGetPillarRotSpeed(pwp);
+	HoldOnPillar(pwp, data);
 }
 
 //Functions used in character run actions (chk_mode)
-void Mode_SDCylStdChanges(taskwk* data1, playerwk* co2)
+void Mode_SDCylStdChanges(taskwk* data1, playerwk* pwp)
 {
 	if (data1->mode < SDCylStd || data1->mode > SDCylRight)
 	{
-		co2->htp = 0;
+		pwp->htp = 0;
 		return;
 	}
 
@@ -128,14 +128,14 @@ void Mode_SDCylStdChanges(taskwk* data1, playerwk* co2)
 	return;
 }
 
-void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2)
+void Mode_SDCylDownChanges(taskwk* data1, playerwk* pwp)
 {
-	auto htpTsk = co2->htp;
+	auto htpTsk = pwp->htp;
 
 	if (!htpTsk)
 	{
 		data1->mode = 1;
-		co2->mj.reqaction = 0;
+		pwp->mj.reqaction = 0;
 		return;
 	}
 
@@ -153,7 +153,7 @@ void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2)
 			{
 				if (data1->mode < SDCylStd || data1->mode > SDCylRight)
 				{
-					co2->htp = 0;
+					pwp->htp = 0;
 				}
 			}
 			else
@@ -165,7 +165,7 @@ void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2)
 	else
 	{
 		data1->mode = 1;
-		co2->mj.reqaction = 0;
+		pwp->mj.reqaction = 0;
 	}
 
 	return;

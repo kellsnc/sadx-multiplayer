@@ -7,7 +7,7 @@
 #include "fishing.h"
 #include "e_cart.h"
 #include "result.h"
-#include "ObjCylinderCmn.h"
+#include "o_sky_cyl_cmn.h"
 
 FastFunctionHook<void, task*> BigTheCat_t((intptr_t)Big_Main);
 FastUsercallHookPtr<void(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), noret, rEAX, stack4, stack4> BigChkMode_t(0x48E640);

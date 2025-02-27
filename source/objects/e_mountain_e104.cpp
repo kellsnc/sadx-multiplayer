@@ -256,7 +256,7 @@ static void __cdecl e104_execMode_r(task* tp)
 	e104_execMode_t.Original(tp);
 }
 
-void patch_windy_e104_init()
+void patch_mountain_e104_init()
 {
 	e104_move_t.Hook(e104_move_r);
 	e104_waitPlayer_t.Hook(e104_waitPlayer_r);
@@ -266,4 +266,4 @@ void patch_windy_e104_init()
 	e104_chkPlayerRadius_t.Hook(e104_chkPlayerRadius_r);
 }
 
-RegisterPatch patch_windy_e104(patch_windy_e104_init);
+RegisterPatch patch_mountain_e104(patch_mountain_e104_init);

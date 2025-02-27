@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "bosses.h"
+#include "boss-common.h"
 #include "levels.h"
 
 FastFunctionHook<void, task*> eggWalker_t(0x576650);

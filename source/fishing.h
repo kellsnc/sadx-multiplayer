@@ -1,6 +1,6 @@
 #pragma once
 
-__declspec(align(4)) struct BIGETC // struct doesn't actually exist, but all of the global variables are adjacent
+struct BIGETC // struct doesn't actually exist, but all of the global variables are adjacent
 {
 	int Sakanu_Num;
 	__int16 Big_Fish_Flag;
@@ -27,7 +27,7 @@ __declspec(align(4)) struct BIGETC // struct doesn't actually exist, but all of 
 	float distancep;
 };
 
-enum : unsigned __int16 // made up
+enum : Uint16
 {
 	LUREFLAG_HIT = 0x1,       // Hit mode
 	LUREFLAG_RELEASE = 0x2,   // Fish released

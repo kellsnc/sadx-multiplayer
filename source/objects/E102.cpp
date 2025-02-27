@@ -7,7 +7,7 @@
 #include "gravity.h"
 #include "e_cart.h"
 #include "result.h"
-#include "ObjCylinderCmn.h"
+#include "o_sky_cyl_cmn.h"
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 
