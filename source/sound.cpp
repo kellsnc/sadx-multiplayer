@@ -204,7 +204,7 @@ int __cdecl dsGetVolume_r(int ii)
 		auto pnum = GetClosestPlayerNum(&se->pos);
 
 		if (pnum < 0)
-			return dsGetVolume_o(ii);
+			return dsGetVolume_t.Original(ii);
 
 		auto cam_pos = GetCameraPosition(pnum);
 		float dist = GetDistance(&se->pos, cam_pos ? cam_pos : &playertwp[pnum]->pos);
