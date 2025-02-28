@@ -33,13 +33,13 @@ struct CamPathWk
 
 FastUsercallHookPtr<void(*)(task* tp), noret, rEDI> SetupCamPathCam2_Highway_h(0x613370);
 
-static auto CheckRangeIn = GenerateUsercallWrapper<BOOL(*)(NJS_POINT3*, NJS_POINT3*, NJS_POINT3*, Angle3*)>(rEAX, 0x6122C0, rEAX, rEDX, rECX, rESI);
+static auto CheckRangeIn = GenerateUsercallWrapper<Bool(*)(NJS_POINT3*, NJS_POINT3*, NJS_POINT3*, Angle3*)>(rEAX, 0x6122C0, rEAX, rEDX, rECX, rESI);
 static auto Camera_PathLinearScan = GenerateUsercallWrapper<Sint32(*)(taskwk*, NJS_POINT3*, NJS_POINT3*, NJS_POINT3*, Float*)>(rEAX, 0x612650, rEAX, rECX, rEDI, rESI, stack4);
 static auto Camera_PathLinearScanXZ = GenerateUsercallWrapper<Sint32(*)(taskwk*, NJS_POINT3*, NJS_POINT3*, NJS_POINT3*, Float*)>(rEAX, 0x6126B0, rEAX, rECX, rEDI, rESI, stack4);
 
 static VariableHook<Sint32, 0x3C81074> Paths_m;
 
-static BOOL CameraExec_m(taskwk* twp, taskwk* ptwp, taskwk* ctwp)
+static Bool CameraExec_m(taskwk* twp, taskwk* ptwp, taskwk* ctwp)
 {
 	auto pnum = twp->timer.w[1];
 	auto pathwk = PATHWORK(twp);
@@ -53,7 +53,7 @@ static BOOL CameraExec_m(taskwk* twp, taskwk* ptwp, taskwk* ctwp)
 		return FALSE;
 	}
 
-	BOOL end = FALSE;
+	Bool end = FALSE;
 
 	NJS_POINT3 v1 = { 0.0f, pathwk->fSonicSize + 0.01f, 0.0f };
 	NJS_POINT3 v2 = { 0.0f, 0.0f, 0.0f };
@@ -269,7 +269,7 @@ static BOOL CameraExec_m(taskwk* twp, taskwk* ptwp, taskwk* ctwp)
 	return end == FALSE;
 }
 
-static BOOL CameraInit_m(taskwk* twp, taskwk* ptwp)
+static Bool CameraInit_m(taskwk* twp, taskwk* ptwp)
 {
 	auto pnum = twp->timer.w[1];
 	auto pathwk = PATHWORK(twp);

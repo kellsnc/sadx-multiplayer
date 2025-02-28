@@ -269,7 +269,7 @@ void __cdecl HoldOnIcicleP_r(Uint8 pno, task* ttp)
 }
 
 // Trick the game to draw shadows on other screens
-BOOL ChkPause_Shadow_Hack()
+Bool ChkPause_Shadow_Hack()
 {
 	return ChkPause() || SplitScreen::numScreen != 0;
 }

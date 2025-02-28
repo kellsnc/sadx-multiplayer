@@ -48,7 +48,7 @@ Angle __cdecl EnemyTurnToPlayer_r(taskwk* twp, enemywk* ewp, Uint8 pnum)
 }
 
 // Patch for other players to get kill score
-BOOL __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
+Bool __cdecl EnemyCheckDamage_r(taskwk* twp, enemywk* ewp)
 {
 	if (!multiplayer::IsActive())
 	{

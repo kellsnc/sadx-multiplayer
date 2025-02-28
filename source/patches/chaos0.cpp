@@ -16,7 +16,7 @@ FastUsercallHookPtr<Angle(*)(chaoswk* cwk), rEAX, rEDI> setApartTargetPos_t(0x54
 FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp), noret, rECX, rESI> chaos0Pole_t(0x547260);
 FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp, bosswk* bwk), noret, rEDI, rESI, stack4> chaos0Punch_t(0x546790);
 
-UsercallFuncVoid(SetChaos0LandFlags, (BOOL flag), (flag), 0x5485E0, rEDX);
+UsercallFuncVoid(SetChaos0LandFlags, (Bool flag), (flag), 0x5485E0, rEDX);
 
 //Patches Chaos effects to make them display on other player screens, it is done by manually setting a disp function that is lacking in vanilla.
 

@@ -18,7 +18,7 @@ enum : __int8
 	MODE_CATCHING
 };
 
-FunctionPointer(BOOL, moveLureDirKaeru, (task* tp), 0x7A7290);
+FunctionPointer(Bool, moveLureDirKaeru, (task* tp), 0x7A7290);
 TaskFunc(moveKaeru_Only, 0x7A6F60);
 DataPointer(float, gf32BigDepth, 0x3C55018);
 DataPointer(NJS_ACTION, action_f_f0021_frog, 0x9228A4); // swimming animation

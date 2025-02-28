@@ -19,8 +19,8 @@ enum MD_CRANE // made up
 };
 
 static auto sub_5A4F10 = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x5A4F10, rECX); //inline
-static auto sub_5A4E30 = GenerateUsercallWrapper<BOOL(*)(float*, float, float)>(rEAX, 0x5A4E30, rECX, stack4, stack4); //inline
-static auto sub_5A4E60 = GenerateUsercallWrapper<BOOL(*)(float*, float, float)>(rEAX, 0x5A4E60, rECX, stack4, stack4); //inline
+static auto sub_5A4E30 = GenerateUsercallWrapper<Bool(*)(float*, float, float)>(rEAX, 0x5A4E30, rECX, stack4, stack4); //inline
+static auto sub_5A4E60 = GenerateUsercallWrapper<Bool(*)(float*, float, float)>(rEAX, 0x5A4E60, rECX, stack4, stack4); //inline
 static auto SetColli = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5A4E90, rEAX);
 
 static void __cdecl ObjShelterCrane_r(task* tp);

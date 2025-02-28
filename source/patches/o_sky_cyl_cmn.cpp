@@ -3,7 +3,7 @@
 #include "FastFunctionHook.hpp"
 #include "sadx_utils.h"
 
-UsercallFunc(BOOL, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
+UsercallFunc(Bool, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
 FastFunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0);
 
 signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* pwp)

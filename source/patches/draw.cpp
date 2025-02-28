@@ -7,7 +7,7 @@
 // However dsCheckViewV uses the current world matrix, so it only works for player 1
 // Since this is rare and hardly improving performance, we just always pass in multiplayer
 
-BOOL __cdecl dsCheckViewV_ExecHack(NJS_POINT3* ft, float radius)
+Bool __cdecl dsCheckViewV_ExecHack(NJS_POINT3* ft, float radius)
 {
 	if (multiplayer::IsActive())
 	{

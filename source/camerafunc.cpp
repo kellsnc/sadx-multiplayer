@@ -1303,7 +1303,7 @@ void __cdecl CameraLocalPath_m(_OBJ_CAMERAPARAM* pParam)
 	++data->point;
 
 	float onpos;
-	BOOL onpath = SCPathPntnmbToOnpos(data->ptp, data->point, &onpos);
+	Bool onpath = SCPathPntnmbToOnpos(data->ptp, data->point, &onpos);
 
 	switch (data->mode)
 	{

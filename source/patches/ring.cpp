@@ -99,7 +99,7 @@ void __cdecl Tobitiri_r(task* tp)
 	Tobitiri_t.Original(tp);
 }
 
-static BOOL PlayerVacumedRing_r(taskwk* twp)
+static Bool PlayerVacumedRing_r(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{

@@ -4,8 +4,8 @@
 #include "teleport.h"
 
 DataPointer(NJS_POINT3, tunnel_pos, 0x17D0AE8);
-DataPointer(BOOL, tunnel_flag, 0x3C72A78);
-DataPointer(BOOL, clear_flag, 0x3C72A7C);
+DataPointer(Bool, tunnel_flag, 0x3C72A78);
+DataPointer(Bool, clear_flag, 0x3C72A7C);
 
 static void __cdecl ObjShelterFadeDisp_r(task* tp); // "Disp"
 static void __cdecl ObjShelterTunnelscrollExec_r(task* tp); // "Exec"

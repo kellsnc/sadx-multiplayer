@@ -4,7 +4,7 @@
 
 // Snake door in Lost World
 
-DataPointer(BOOL, kouka_flag, 0x3C7EE0C);
+DataPointer(Bool, kouka_flag, 0x3C7EE0C);
 DataPointer(int, last_counter, 0x3C7EE08);
 
 enum : char

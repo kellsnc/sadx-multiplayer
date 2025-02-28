@@ -28,8 +28,8 @@ struct stopperwk // custom
 	task* cart_tp;
 };
 
-static auto setCart = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x7B1240, rEAX);
-static auto slideStopper = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x7B1040, rEAX);
+static auto setCart = GenerateUsercallWrapper<Bool(*)(task* tp)>(rEAX, 0x7B1240, rEAX);
+static auto slideStopper = GenerateUsercallWrapper<Bool(*)(task* tp)>(rEAX, 0x7B1040, rEAX);
 
 static void __cdecl ObjectCartStopper_execObject_r(task* tp);
 FastFunctionHookPtr<decltype(&ObjectCartStopper_execObject_r)> ObjectCartStopper_execObject_t(0x7B13D0);

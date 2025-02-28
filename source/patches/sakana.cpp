@@ -23,7 +23,7 @@ enum : __int8
 
 static auto setSakana = GenerateUsercallWrapper<task* (*)(task* tp)>(rEAX, 0x597590, rEDI);
 static auto motionSakana = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x596A40, rEDX);
-static auto moveLureDirSakana = GenerateUsercallWrapper<BOOL(*)(task* tp, task* otp)>(rEAX, 0x596D40, rEAX, stack4);
+static auto moveLureDirSakana = GenerateUsercallWrapper<Bool(*)(task* tp, task* otp)>(rEAX, 0x596D40, rEAX, stack4);
 static auto sub_596570 = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x596570, rEDX); // inlined in symbols
 
 DataArray(NJS_ACTION*, sakana_hontai_tbl, 0x173B630, 16);

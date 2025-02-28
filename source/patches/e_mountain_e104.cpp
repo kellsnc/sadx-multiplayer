@@ -162,7 +162,7 @@ static void __cdecl e104_waitPlayer_r(task* tp)
 	}
 }
 
-static BOOL __cdecl e104_chkPlayerRadius_r(task* tp, Float r)
+static Bool __cdecl e104_chkPlayerRadius_r(task* tp, Float r)
 {
 	if (multiplayer::IsActive())
 	{

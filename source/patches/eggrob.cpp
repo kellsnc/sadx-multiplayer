@@ -14,7 +14,7 @@ Hack to get zero to aim the closest player
 
 static void __cdecl ERSC_CommonExec_r(task* tp);
 static void __cdecl AmyERobApperChecker_r(task* tp);
-static BOOL __cdecl ERobStart_r(erctrlstr* cmd);
+static Bool __cdecl ERobStart_r(erctrlstr* cmd);
 static void __cdecl EggRob_r(task* tp);
 static void __cdecl Eggrob_Display_r(task* tp);
 static void __cdecl Eggrob_LockOnCursor_r(task* tp);
@@ -292,7 +292,7 @@ static bool ERobStart_m(erctrlstr* cmd)
 	return er_tp != nullptr;
 }
 
-static BOOL __cdecl ERobStart_r(erctrlstr* cmd)
+static Bool __cdecl ERobStart_r(erctrlstr* cmd)
 {
 	if (multiplayer::IsActive())
 	{

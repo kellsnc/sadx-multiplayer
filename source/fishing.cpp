@@ -42,16 +42,16 @@ struct lurewk // custom; todo: find symbol struct
 
 VariableHook<BIGETC, 0x3C524E8> bigetc_m;
 
-FunctionPointer(BOOL, checkturipoint2, (), 0x48D030);
+FunctionPointer(Bool, checkturipoint2, (), 0x48D030);
 FunctionPointer(int, sub_46EE90, (), 0x46EE90); // inline, get fished item
 DataPointer(CCL_INFO, lure_colli_tbl, 0x91BA7C);
 DataArray(NJS_POINT3, icecap_fpoint_tbl, 0x91BA44, 4);
 
-static auto sub_46D0D0 = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x46D0D0, rEAX); // inline, checks if lure touches ground
-static auto sub_46D970 = GenerateUsercallWrapper<BOOL(*)(Big_ypos* big_y_ptr, task* tp)>(rEAX, 0x46D970, rEAX, stack4); // inline, checks if lure collided with water
+static auto sub_46D0D0 = GenerateUsercallWrapper<Bool(*)(task* tp)>(rEAX, 0x46D0D0, rEAX); // inline, checks if lure touches ground
+static auto sub_46D970 = GenerateUsercallWrapper<Bool(*)(Big_ypos* big_y_ptr, task* tp)>(rEAX, 0x46D970, rEAX, stack4); // inline, checks if lure collided with water
 static auto calcFishingLureY = GenerateUsercallWrapper<void (*)(taskwk* twp, Big_ypos* big_y_ptr, char flag)>(noret, 0x46DD20, rEAX, rESI, stack4);
 static auto moveFishingRotY = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46E380, rEAX);
-static auto chkKabeAngle2 = GenerateUsercallWrapper<BOOL(*)(Angle3* angle3_p)>(rEAX, 0x46C6A0, rESI);
+static auto chkKabeAngle2 = GenerateUsercallWrapper<Bool(*)(Angle3* angle3_p)>(rEAX, 0x46C6A0, rESI);
 
 FastFunctionHook<void, task*> dispFishWeightTexture_t(0x46F580);
 FastFunctionHook<void, task*> exitFishWeightTexture_t(0x470160);
