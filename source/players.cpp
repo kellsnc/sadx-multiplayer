@@ -12,7 +12,6 @@
 #include "menu_multi.h"
 #include "teleport.h"
 #include "players.h"
-#include "patches.h"
 
 /*
 

@@ -37,9 +37,6 @@
     <ClCompile Include="death.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="patches.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -388,7 +385,7 @@
     <ClCompile Include="patches\o_shelter_cargotop.cpp">
       <Filter>Source Files\patches\stg12_hotshelter</Filter>
     </ClCompile>
-    <ClCompile Include="patches\o_shelter_gate1.cpp">
+    <ClCompile Include="patches\o_shelter_gate.cpp">
       <Filter>Source Files\patches\stg12_hotshelter</Filter>
     </ClCompile>
     <ClCompile Include="patches\o_shelter_haguruma.cpp">
@@ -574,6 +571,45 @@
     <ClCompile Include="patches\e102shot.cpp">
       <Filter>Source Files\patches\figure</Filter>
     </ClCompile>
+    <ClCompile Include="patches\ring.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\player.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\enemy.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\e_spinna.cpp">
+      <Filter>Source Files\patches\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\e_buyon.cpp">
+      <Filter>Source Files\patches\enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\o_casino_mudout.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\rd_casino.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\tikal.cpp">
+      <Filter>Source Files\patches\figure</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\o_spring.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\o_beach_jumpraft.cpp">
+      <Filter>Source Files\patches\stg01_beach</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\chaos_misc.cpp">
+      <Filter>Source Files\patches\figure</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\land.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\draw.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -613,9 +649,6 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="d3d8vars.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="patches.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="set.h">
@@ -684,9 +717,6 @@
     <ClInclude Include="packet.h">
       <Filter>Header FIles\netplay</Filter>
     </ClInclude>
-    <ClInclude Include="logic.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
     <ClInclude Include="timer.h">
       <Filter>Header FIles\netplay</Filter>
     </ClInclude>
@@ -734,6 +764,9 @@
     </ClInclude>
     <ClInclude Include="hud_itembox.h">
       <Filter>Source Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="logic.h">
+      <Filter>Header FIles</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

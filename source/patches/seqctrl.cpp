@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "patches.h"
 
 // Change character boss ID from 1 to 7 to avoid conflict with other players.
 

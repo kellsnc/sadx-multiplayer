@@ -3,7 +3,6 @@
 #include "camera.h"
 #include "splitscreen.h"
 #include "menu.h"
-#include "patches.h"
 #include "set.h"
 #include "levels.h"
 #include "race.h"
@@ -42,7 +41,6 @@ extern "C"
 		InitSplitScreen();
 		InitCamera();
 		InitInputPatches();
-		InitMiscPatches();
 		InitPlayerPatches();
 		InitMenu();
 		InitSET();

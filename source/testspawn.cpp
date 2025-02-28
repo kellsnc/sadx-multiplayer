@@ -51,6 +51,8 @@ static Characters parse_character_id(const std::wstring& str)
 
 void TestSpawn()
 {
+	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
+
 	int argc = 0;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 

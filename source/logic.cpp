@@ -4,7 +4,6 @@
 #include "netplay.h"
 #include "timer.h"
 #include "players.h"
-#include "logic.h"
 #include "config.h"
 
 #ifdef MULTI_NETPLAY
@@ -203,8 +202,45 @@ extern "C"
 	}
 }
 
+static void __cdecl InitTimer_r()
+{
+	TimeFrames = 0;
+	TimeSeconds = 0;
+	TimeMinutes = 0;
+	GameTimer = 0;
+
+	if (CurrentCharacter == Characters_Gamma && !multiplayer::IsBattleMode())
+	{
+		TimeMinutes = 3;
+		TimeSeconds = 0;
+	}
+}
+
+static void __cdecl InitTime_r()
+{
+	ulGlobalTimer = 0;
+	InitTimer_r();
+}
+
+void __cdecl SetTimeFrame_r(Sint8 minutes, Sint8 second, Sint8 frame)
+{
+	if (multiplayer::IsActive() && GameState == 15)
+		return;
+
+	TimeMinutes = minutes,
+		TimeSeconds = second;
+	TimeFrames = frame;
+}
+
 void InitLogic()
 {
+	// Normal start timer for Gamma in multiplayer
+	WriteJump((void*)0x425FF0, InitTimer_r);
+	WriteJump((void*)0x427F10, InitTime_r);
+
+	// Don't reset time with death in multiplayer
+	WriteCall((void*)0x44EE0A, SetTimeFrame_r);
+
 #ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_TIMER, LogicListener);
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_CLOCK, LogicListener);
