@@ -5,9 +5,9 @@
 #include "multiplayer.h"
 #include "splitscreen.h"
 #include "gravity.h"
-#include "e_cart.h"
+#include "patch_e_cart.h"
 #include "result.h"
-#include "o_sky_cyl_cmn.h"
+#include "patch_o_sky_cyl_cmn.h"
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 

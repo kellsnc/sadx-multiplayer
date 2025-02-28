@@ -2,7 +2,7 @@
 #include "multiplayer.h"
 #include "fishing.h"
 #include "hud_fishing.h"
-#include "BigKaeru.h"
+#include "patch_bigkaeru.h"
 
 #define SAKANA_PNUM(twp) twp->smode
 #define MAX_FISH 5 * GetPlayerCount()

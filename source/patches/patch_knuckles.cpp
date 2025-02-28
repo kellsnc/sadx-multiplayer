@@ -2,10 +2,10 @@
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
 #include "gravity.h"
-#include "e_cart.h"
+#include "patch_e_cart.h"
 #include "result.h"
 #include "collision.h"
-#include "o_sky_cyl_cmn.h"
+#include "patch_o_sky_cyl_cmn.h"
 
 FastFunctionHook<void> KnuEffectPutCharge0_t(0x4C2210);
 FastFunctionHook<void> KnuEffectPutCharge1_t(0x4C2260);

@@ -2,7 +2,7 @@
 #include "multiplayer.h"
 #include "fishing.h"
 #include "hud_fishing.h"
-#include "BigKaeru.h"
+#include "patch_bigkaeru.h"
 
 #define KAERU_PNUM(twp) twp->smode
 #define CHKFISHING(etc) (etc->Big_Fish_Flag & (LUREFLAG_HIT | LUREFLAG_FISH))

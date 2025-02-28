@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "boss-common.h"
+#include "patch_boss_common.h"
 #include "levels.h"
 #include "result.h"
 
