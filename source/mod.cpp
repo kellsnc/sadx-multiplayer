@@ -4,7 +4,6 @@
 #include "splitscreen.h"
 #include "menu.h"
 #include "set.h"
-#include "levels.h"
 #include "race.h"
 #include "emeraldhunt.h"
 #include "sound.h"
@@ -44,7 +43,6 @@ extern "C"
 		InitPlayerPatches();
 		InitMenu();
 		InitSET();
-		InitLevels();
 		InitRace();
 		InitEmeraldHunt();
 		InitSoundPatches();

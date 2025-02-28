@@ -16,7 +16,7 @@ static void ObjectBeachYurehasiExec_m(task* tp)
 		auto ctwp = ctp->twp;
 
 		ctwp->flag &= ~0x100;
-		ctwp->smode = 0;
+		ctwp->smode = 1;
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
@@ -31,7 +31,7 @@ static void ObjectBeachYurehasiExec_m(task* tp)
 
 			if (cam_pos && GetDistance(&ctwp->pos, cam_pos) < sqrtf(*(float*)0x7EC9F4))
 			{
-				ctwp->smode = 1;
+				ctwp->smode = 0;
 			}
 		}
 
@@ -94,6 +94,10 @@ static void __cdecl ObjectBeachYurehasiExec_r(task* tp)
 void patch_beach_yurehasi_init()
 {
 	ObjectBeachYurehasiExec_h.Hook(ObjectBeachYurehasiExec_r);
+
+	// Remove bridge culling
+	//WriteData<2>((void*)0x501B66, 0x90ui8);
+	//WriteData<2>((void*)0x501B12, 0x90ui8);
 }
 
 RegisterPatch patch_beach_yurehasi(patch_beach_yurehasi_init);

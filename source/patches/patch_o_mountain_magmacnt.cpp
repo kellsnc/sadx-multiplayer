@@ -42,6 +42,7 @@ void __cdecl Magmacnt_Main_r(task* tp)
 void patch_mountain_magmacnt_init()
 {
 	Magmacnt_Main_t.Hook(Magmacnt_Main_r);
+	WriteData<2>((void*)0x6087D6, 0x90ui8); // Remove explicit P1 check. Note: this makesP1 tails able to trigger lava
 }
 
 RegisterPatch patch_mountain_magmacnt(patch_mountain_magmacnt_init);

@@ -2,9 +2,10 @@
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
 #include "patch_boss_common.h"
-#include "levels.h"
 
-FastFunctionHook<void, task*> eggHornet_t(0x572010);
+// Egg Hornet
+
+FastFunctionHook<void, task*> Egm1_t(0x572010);
 FastFunctionHook<int> EH_PosPlayerCheck_t(0x573310);
 FastFunctionHook<int, taskwk*> EH_GetVsPlayerAng_t(0x573160);
 
@@ -187,24 +188,18 @@ int EH_PosPlayerCheck_r()
 	}
 }
 
-void eggHornet_r(task* tp)
+void Egm1_r(task* tp)
 {
-	if (multiplayer::IsFightMode())
-	{
-		return MultiArena(tp);
-	}
-
 	if (tp->twp && !tp->twp->mode)
 		ResetBossRNG();
 
-	eggHornet_t.Original(tp);
+	Egm1_t.Original(tp);
 	Boss_SetNextPlayerToAttack(timeLimit);
 }
 
 void patch_egm1_init()
 {
-	eggHornet_t.Hook(eggHornet_r);
-
+	Egm1_t.Hook(Egm1_r);
 	EH_PosPlayerCheck_t.Hook(EH_PosPlayerCheck_r);
 	EH_GetVsPlayerAng_t.Hook(EH_GetVsPlayerAng_r);
 	SetEgm1MoveRoute_t.Hook(SetEgm1MoveRoute_r);

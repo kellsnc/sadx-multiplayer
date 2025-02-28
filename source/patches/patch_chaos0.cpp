@@ -5,12 +5,11 @@
 #include "camerafunc.h"
 #include "splitscreen.h"
 #include "patch_boss_common.h"
-#include "levels.h"
 
 static const int timeLimit = 300;
 
 FastFunctionHook<void, taskwk*, chaoswk*> turnToPlayer_t(0x7AE660);
-FastFunctionHook<void, task*> chaos0_t(0x548640);
+FastFunctionHook<void, task*> BossChaos0_t(0x548640);
 FastFunctionHook<void, task*> Bg_Chaos0_t(0x545DF0);
 FastUsercallHookPtr<Angle(*)(chaoswk* cwk), rEAX, rEDI> setApartTargetPos_t(0x546460);
 FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp), noret, rECX, rESI> chaos0Pole_t(0x547260);
@@ -352,13 +351,8 @@ void Bg_Chaos0_r(task* tp)
 	Bg_Chaos0_t.Original(tp);
 }
 
-void Chaos0_Exec_r(task* tp)
+void BossChaos0_r(task* tp)
 {
-	if (multiplayer::IsFightMode())
-	{
-		return MultiArena(tp);
-	}
-
 	auto twp = tp->twp;
 
 	if (twp && !twp->mode)
@@ -369,13 +363,13 @@ void Chaos0_Exec_r(task* tp)
 	if (!twp || !wk)
 	{
 		SetDefaultNormalCameraMode(CAMMD_CHAOS, CAMADJ_NONE);
-		chaos0_t.Original(tp);
+		BossChaos0_t.Original(tp);
 		return;
 	}
 
 	auto oldcam = wk->camera_mode;
 
-	chaos0_t.Original(tp);
+	BossChaos0_t.Original(tp);
 
 	if (oldcam != wk->camera_mode)
 	{
@@ -394,7 +388,7 @@ void patch_chaos0_init()
 	WriteJump(drawEffectChaos0LightParticle, drawEffectChaos0LightParticle_r);
 	WriteJump(dispEffectChaos0AttackA, dispEffectChaos0AttackA_r);
 	turnToPlayer_t.Hook(turnToPlayer_r);
-	chaos0_t.Hook(Chaos0_Exec_r);
+	BossChaos0_t.Hook(BossChaos0_r);
 	Bg_Chaos0_t.Hook(Bg_Chaos0_r);
 	setApartTargetPos_t.Hook(setApartTargetPos_r);
 	chaos0Pole_t.Hook(chaos0Pole_r);

@@ -118,7 +118,6 @@
     <ClInclude Include="hud_itembox.h" />
     <ClInclude Include="hud_result.h" />
     <ClInclude Include="input.h" />
-    <ClInclude Include="levels.h" />
     <ClInclude Include="logic.h" />
     <ClInclude Include="menu.h" />
     <ClInclude Include="menu_adventure.h" />
@@ -178,15 +177,24 @@
     <ClCompile Include="patches\patch_al_camera.cpp" />
     <ClCompile Include="patches\patch_al_minimal.cpp" />
     <ClCompile Include="patches\patch_chaos_misc.cpp" />
+    <ClCompile Include="patches\patch_c_past_scenechanger.cpp" />
+    <ClCompile Include="patches\patch_c_ss_scenechanger.cpp" />
     <ClCompile Include="patches\patch_draw.cpp" />
     <ClCompile Include="patches\patch_enemy.cpp" />
     <ClCompile Include="patches\patch_e_buyon.cpp" />
     <ClCompile Include="patches\patch_e_spinna.cpp" />
+    <ClCompile Include="patches\patch_game.cpp" />
     <ClCompile Include="patches\patch_land.cpp" />
     <ClCompile Include="patches\patch_o_beach_jumpraft.cpp" />
+    <ClCompile Include="patches\patch_o_beach_land_texanim.cpp" />
     <ClCompile Include="patches\patch_o_casino_mudout.cpp" />
+    <ClCompile Include="patches\patch_o_mysticruin_torokko.cpp" />
+    <ClCompile Include="patches\patch_o_ruin_texanim.cpp" />
     <ClCompile Include="patches\patch_o_spring.cpp" />
+    <ClCompile Include="patches\patch_o_ss_land_texanim.cpp" />
+    <ClCompile Include="patches\patch_o_windy_leaf.cpp" />
     <ClCompile Include="patches\patch_player.cpp" />
+    <ClCompile Include="patches\patch_rd_beach.cpp" />
     <ClCompile Include="patches\patch_rd_casino.cpp" />
     <ClCompile Include="patches\patch_rd_e101.cpp" />
     <ClCompile Include="patches\patch_rd_e101_r.cpp" />
@@ -195,7 +203,6 @@
     <ClCompile Include="patches\patch_miles.cpp" />
     <ClCompile Include="milesrace.cpp" />
     <ClCompile Include="multiapi.cpp" />
-    <ClCompile Include="levels.cpp" />
     <ClCompile Include="menu.cpp" />
     <ClCompile Include="mod.cpp" />
     <ClCompile Include="menu_multi.cpp" />
@@ -316,6 +323,10 @@
     <ClCompile Include="patches\patch_o_windy_torin.cpp" />
     <ClCompile Include="patches\patch_o_windy_turibasi.cpp" />
     <ClCompile Include="patches\patch_pathtask.cpp" />
+    <ClCompile Include="patches\patch_rd_mountain.cpp" />
+    <ClCompile Include="patches\patch_rd_mr.cpp" />
+    <ClCompile Include="patches\patch_rd_past.cpp" />
+    <ClCompile Include="patches\patch_rd_ruin.cpp" />
     <ClCompile Include="patches\patch_rd_sandboard.cpp" />
     <ClCompile Include="patches\patch_rd_skydeck.cpp" />
     <ClCompile Include="patches\patch_o_sky_cannon_h2.cpp" />
@@ -331,6 +342,8 @@
     <ClCompile Include="patches\patch_rd_hotshelter.cpp" />
     <ClCompile Include="patches\patch_rd_highway.cpp" />
     <ClCompile Include="patches\patch_rd_snow.cpp" />
+    <ClCompile Include="patches\patch_rd_twinkle.cpp" />
+    <ClCompile Include="patches\patch_rd_windy.cpp" />
     <ClCompile Include="patches\patch_ring.cpp" />
     <ClCompile Include="patches\patch_sakana.cpp" />
     <ClCompile Include="patches\patch_sonic.cpp" />
@@ -339,6 +352,7 @@
     <ClCompile Include="patches\patch_seqctrl.cpp" />
     <ClCompile Include="o_casino_telepot.cpp" />
     <ClCompile Include="packet.cpp" />
+    <ClCompile Include="patches\patch_ta_twinkle.cpp" />
     <ClCompile Include="patches\patch_tikal.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

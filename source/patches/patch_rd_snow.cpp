@@ -1,6 +1,9 @@
 #include "pch.h"
-#include "camera.h"
+#include "FastFunctionHook.hpp"
+#include "RegisterPatch.hpp"
 #include "multiplayer.h"
+#include "splitscreen.h"
+#include "camera.h"
 
 DataPointer(NJS_POINT3, pos_7E9628, 0x7E9628);
 DataPointer(NJS_POINT3, pos_7E9634, 0x7E9634);
@@ -12,6 +15,7 @@ static Angle3 ang_spdman = { 0, 0xB200, 0 };
 
 FastFunctionHookPtr<TaskFuncPtr> Rd_Snow_t(0x4E9D90);
 FastFunctionHookPtr<TaskFuncPtr> SetPlayerSnowBoard_Hook(0x4E9660);
+FastFunctionHook<void, task*> dispBgSnow_t(0x4E9950);
 
 static void __cdecl RdSnowBoardingSpeedManager_m(task* tp)
 {
@@ -217,10 +221,60 @@ static void __cdecl SetPlayerSnowBoard_r(task* tp)
 	}
 }
 
+// Fix display masks
+static void __cdecl dispBgSnow_r(task* tp)
+{
+	dispBgSnow_t.Original(tp);
+
+	if (camera_twp && tp->twp->mode == 10 && SplitScreen::IsActive())
+	{
+		NJS_POINT3* pos = &camera_twp->pos;
+
+		if (pos->y <= 200.0f)
+		{
+			if (pos->y < 0.0f)
+			{
+				if (pos->x >= 1612.0f)
+				{
+					MaskBlock = 0x1C;
+				}
+				else
+				{
+					MaskBlock = 0x6;
+				}
+			}
+			else
+			{
+				if (pos->x >= 1666.0f)
+				{
+					MaskBlock = 0x18;
+				}
+				else
+				{
+					MaskBlock = 0x6;
+				}
+			}
+		}
+		else if (pos->x >= 1666.0f)
+		{
+			MaskBlock = 0x78;
+		}
+		else
+		{
+			MaskBlock = 0x62;
+		}
+	}
+}
+
 void patch_rd_snow_init()
 {
 	Rd_Snow_t.Hook(Rd_Snow_r);
 	SetPlayerSnowBoard_Hook.Hook(SetPlayerSnowBoard_r);
+	dispBgSnow_t.Hook(dispBgSnow_r);
+	
+	WriteData((uint8_t*)0x4E91C0, 0xC3ui8); // Remove landtable collision chunk optimisation
+	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Patch skybox mode
+	WriteData((uint8_t*)0x4E91AE, (uint8_t)PLAYER_MAX); // Breath generator for all players
 }
 
 RegisterPatch patch_rd_snow(patch_rd_snow_init);

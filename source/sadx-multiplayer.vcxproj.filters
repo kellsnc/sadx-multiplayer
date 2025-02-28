@@ -40,9 +40,6 @@
     <ClCompile Include="set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="levels.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="multiplayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -610,6 +607,54 @@
     <ClCompile Include="patches\patch_draw.cpp">
       <Filter>Source Files\patches</Filter>
     </ClCompile>
+    <ClCompile Include="patches\patch_rd_beach.cpp">
+      <Filter>Source Files\patches\stg01_beach</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_rd_windy.cpp">
+      <Filter>Source Files\patches\stg02_windy</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_rd_twinkle.cpp">
+      <Filter>Source Files\patches\stg03_twinkle</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_rd_mountain.cpp">
+      <Filter>Source Files\patches\stg05_mountain</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_rd_ruin.cpp">
+      <Filter>Source Files\patches\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_beach_land_texanim.cpp">
+      <Filter>Source Files\patches\stg01_beach</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_ruin_texanim.cpp">
+      <Filter>Source Files\patches\stg07_ruin</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_ta_twinkle.cpp">
+      <Filter>Source Files\patches\stg03_twinkle</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_windy_leaf.cpp">
+      <Filter>Source Files\patches\stg02_windy</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_c_ss_scenechanger.cpp">
+      <Filter>Source Files\patches\adv00_stationsquare</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_ss_land_texanim.cpp">
+      <Filter>Source Files\patches\adv00_stationsquare</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_rd_mr.cpp">
+      <Filter>Source Files\patches\adv02_mysticruin</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_mysticruin_torokko.cpp">
+      <Filter>Source Files\patches\adv02_mysticruin</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_rd_past.cpp">
+      <Filter>Source Files\patches\adv03_past</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_c_past_scenechanger.cpp">
+      <Filter>Source Files\patches\adv03_past</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_game.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -652,9 +697,6 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="set.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="levels.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="multiplayer.h">
@@ -853,6 +895,15 @@
     </Filter>
     <Filter Include="Header Files\patches\stg06_skydeck">
       <UniqueIdentifier>{97885f92-1a5f-4994-97dd-6079a3b042b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\adv00_stationsquare">
+      <UniqueIdentifier>{22807ce7-f84a-4061-9e76-b82e0a6cb1c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\adv02_mysticruin">
+      <UniqueIdentifier>{d2b5e976-c5b7-49b8-9b49-bd53438deb5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\adv03_past">
+      <UniqueIdentifier>{92ca4548-7960-4041-8983-19cff790795d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

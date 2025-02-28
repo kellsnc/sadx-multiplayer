@@ -2,17 +2,19 @@
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
 #include "multiplayer.h"
+#include "splitscreen.h"
 #include "result.h"
 
 // Mess to make Speed Highway playable (especially the second act)
 
-VoidFunc(RdHighwayManageLandMask, 0x60FEE0); // custom name
+DataPointer(NJS_OBJECT, object_s1_nbg1_nbg1, 0x26A0EC0);
+DataPointer(NJS_OBJECT, object_s2_yakei_yakei, 0x26A48E0);
+VoidFunc(HighwayMaskBlock, 0x60FEE0); // checkCamera
+VoidFunc(RdHighwayManageLandMask, 0x60FEE0); // ?
 
-static void __cdecl RdHighwayCheckArriveAtTheBuilding_r(task* tp);
-static void __cdecl subRd_Highway_r(task* tp);
-
-FastUsercallHookPtr<decltype(&RdHighwayCheckArriveAtTheBuilding_r), noret, rEAX> RdHighwayCheckArriveAtTheBuilding_t(0x610050);
-FastFunctionHookPtr<decltype(&subRd_Highway_r)> subRd_Highway_t(0x6104C0);
+FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> RdHighwayCheckArriveAtTheBuilding_t(0x610050);
+FastFunctionHookPtr<TaskFuncPtr> subRd_Highway_t(0x6104C0);
+FastFunctionHookPtr<TaskFuncPtr> dispBgHighway_t(0x610570);
 
 static void RdHighwayAct2Multi(taskwk* twp)
 {
@@ -169,10 +171,55 @@ static void __cdecl RdHighwayCheckArriveAtTheBuilding_r(task* tp)
 	}
 }
 
+// Fix display masks
+static void __cdecl dispBgHighway_r(task* tp)
+{
+	if (tp->twp->mode == 4 && SplitScreen::IsActive())
+	{
+		auto cam_twp = camera_twp;
+
+		if (camera_twp)
+		{
+			LoopTaskC(tp);
+
+			njControl3D_Backup();
+			njControl3D_Add(NJD_CONTROL_3D_NO_CLIP_CHECK);
+			njControl3D_Remove(NJD_CONTROL_3D_DEPTH_QUEUE);
+			___njFogDisable();
+			___njClipZ(gClipSky.f32Near, gClipSky.f32Far);
+			if (cam_twp->pos.y > -10400.0f)
+			{
+				njPushMatrixEx();
+				njTranslateEx(&cam_twp->pos);
+				njScaleEx(&gSkyScale);
+				njSetTexture(&bg_highway_TEXLIST);
+				dsDrawModel(object_s1_nbg1_nbg1.basicdxmodel);
+				njTranslate(0, 0.0f, -10000.0f - cam_twp->pos.y * 0.2f, 0.0f);
+				njSetTexture(&bg_highway02_TEXLIST);
+				dsDrawModel(object_s2_yakei_yakei.basicdxmodel);
+				njPopMatrixEx();
+			}
+			___njClipZ(gClipMap.f32Near, gClipMap.f32Far);
+			___njFogEnable();
+			njControl3D_Restore();
+
+			HighwayMaskBlock();
+		}
+	}
+	else
+	{
+		dispBgHighway_t.Original(tp);
+	}
+}
+
 void patch_rd_highway_init()
 {
 	RdHighwayCheckArriveAtTheBuilding_t.Hook(RdHighwayCheckArriveAtTheBuilding_r);
 	subRd_Highway_t.Hook(subRd_Highway_r);
+	dispBgHighway_t.Hook(dispBgHighway_r);
+
+	WriteData((taskwk***)0x610765, &camera_twp); // Use camera instead of player to check when to hide skybox
+	WriteData((void**)0x610A7E, (void*)0x6109E0); // Patch skybox mode
 }
 
 RegisterPatch patch_rd_highway(patch_rd_highway_init);
