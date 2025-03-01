@@ -4,16 +4,6 @@
 #include "teleport.h"
 #include "utils.h"
 
-short tolevelnum(short num)
-{
-	return num >> 8;
-}
-
-short toactnum(short num)
-{
-	return num & 0xf;
-}
-
 float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2)
 {
 	return sqrtf((v2->x - v1->x) * (v2->x - v1->x) +
@@ -134,30 +124,6 @@ int IsPlayerOnDyncol(task* tp)
 	return 0;
 }
 
-void njRotateX_(Angle ang)
-{
-	if (ang)
-	{
-		njRotateX(nullptr, (uint16_t)ang);
-	}
-}
-
-void njRotateY_(Angle ang)
-{
-	if (ang)
-	{
-		njRotateY(nullptr, (uint16_t)ang);
-	}
-}
-
-void njRotateZ_(Angle ang)
-{
-	if (ang)
-	{
-		njRotateZ(nullptr, (uint16_t)ang);
-	}
-}
-
 void ChangeActM(int amount)
 {
 	ADX_Close();
@@ -168,25 +134,12 @@ void ChangeActM(int amount)
 	TeleportPlayersToStart();
 }
 
-void __cdecl SetAndDisp(task* obj, TaskFuncPtr disp)
-{
-	auto data = obj->twp;
-
-	if (!data->mode)
-	{
-		obj->disp = disp;
-		data->mode++;
-	}
-
-	obj->disp(obj);
-}
-
-bool isInHubWorld()
+bool IsInAdventureField()
 {
 	return CurrentLevel >= LevelIDs_StationSquare && CurrentLevel <= LevelIDs_Past;
 }
 
-bool isPlayerInCart(char pnum)
+bool IsPlayerInCart(char pnum)
 {
 	auto p = playertwp[pnum];
 
@@ -214,38 +167,21 @@ bool isPlayerInCart(char pnum)
 	return false;
 }
 
-bool isPlayerOnSnowBoard(char pnum)
+bool IsPlayerOnSnowboard(char pnum)
 {
 	auto p = playertwp[pnum];
 
 	if (p)
 	{
-		auto mde = p->mode;
-		if (p->counter.b[1] == Characters_Sonic)
+		switch (TASKWK_CHARID(p))
 		{
-			return mde >= 62 && mde <= 68;
-		}
-		else if (p->counter.b[1] == Characters_Tails)
-		{
-			return mde >= 48 && mde <= 54;
+		case Characters_Sonic:
+			return p->mode >= 62 && p->mode <= 68;
+		case Characters_Tails:
+			return p->mode >= 48 && p->mode <= 54;
 		}
 	}
 
-	return false;
-}
-
-bool isOnePlayerSpecifiedChar(char charID)
-{
-	if (multiplayer::IsActive())
-	{
-		for (int i = 0; i < PLAYER_MAX; ++i)
-		{
-			if (playertwp[i] && TASKWK_CHARID(playertwp[i]) == charID)
-			{
-				return true;
-			}
-		}
-	}
 	return false;
 }
 

@@ -5,7 +5,8 @@ namespace multiplayer
 	enum class mode
 	{
 		coop,
-		battle
+		battle,
+		fight
 	};
 
 	unsigned int GetPlayerCount();

@@ -30,7 +30,7 @@ static void ExecATask_m(task* tp)
 			NJS_VECTOR dir = { ptwp->pos.x - twp->pos.x, 0.0f, ptwp->pos.z - twp->pos.z };
 
 			njPushMatrix(_nj_unit_matrix_);
-			njRotateY_(ang_spd);
+			ROTATEY(0, ang_spd);
 			njCalcVector(0, &dir, &pos);
 			njPopMatrixEx();
 			njSubVector(&pos, &dir);

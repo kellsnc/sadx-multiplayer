@@ -185,7 +185,7 @@ static void moveFishingKaeru_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
 		v.x *= 2.0f;
 
 		njPushMatrix(_nj_unit_matrix_);
-		ROTATEY(0, twp->ang.y);
+		ROTATEY(0, 0, twp->ang.y);
 		njCalcVector(0, &v, &mwp->spd);
 		njPopMatrixEx();
 
@@ -230,9 +230,9 @@ static void moveCatchingKaeru_m(taskwk* twp, int pnum)
 	auto ppwp = playerpwp[pnum];
 	auto ptwp = playertwp[pnum];
 	njPushMatrix(_nj_unit_matrix_);
-	ROTATEZ(0, ptwp->ang.z);
-	ROTATEX(0, ptwp->ang.x);
-	ROTATEY(0, 0x8000 - ptwp->ang.y);
+	ROTATEZ(0, 0, ptwp->ang.z);
+	ROTATEX(0, 0, ptwp->ang.x);
+	ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 	NJS_POINT3 v;
 	v.x = ppwp->righthand_pos.x;
 	v.y = ppwp->righthand_pos.y + ppwp->p.center_height;
@@ -267,7 +267,7 @@ bool chkLureKaeru_m(taskwk* twp, motionwk* mwp, BIGETC* etc)
 	NJS_POINT3 v2 = { -1.0f, 0.0f, 0.0f };
 
 	njPushMatrix(_nj_unit_matrix_);
-	ROTATEY(0, twp->ang.y);
+	ROTATEY(0, 0, twp->ang.y);
 	njCalcVector(0, &v2, &v2);
 	njPopMatrixEx();
 

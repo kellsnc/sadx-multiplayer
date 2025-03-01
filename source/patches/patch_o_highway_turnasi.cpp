@@ -48,8 +48,8 @@ static void AsiCollisionCollision_m(task* tp)
 		NJS_VECTOR v{ 0.0f, 0.0f, 0.0f };
 		njPushMatrix(_nj_unit_matrix_);
 		njTranslate(0, turnasi_twp->pos.x, turnasi_twp->pos.y, turnasi_twp->pos.z);
-		njRotateY_(turnasi_twp->ang.y);
-		njRotateX_(turnasi_twp->ang.x + twp->ang.x);
+		ROTATEY(0, turnasi_twp->ang.y);
+		ROTATEX(0, turnasi_twp->ang.x + twp->ang.x);
 		njTranslate(0, object_turnasi_oya_koa.pos[0], object_turnasi_oya_koa.pos[1], object_turnasi_oya_koa.pos[2]);
 		njTranslate(0, object_turnasi_oya_kob.pos[0], object_turnasi_oya_kob.pos[1], object_turnasi_oya_kob.pos[2]);
 		njCalcPoint(0, &v, &v);
@@ -227,7 +227,7 @@ static void ObjectHighwayTurnasiHit_m(taskwk* twp)
 
 			NJS_VECTOR v{ 0.0f, 0.0f, twp->value.f + 2.0f };
 			njPushMatrix(_nj_unit_matrix_);
-			njRotateY_(twp->ang.y);
+			ROTATEY(0, twp->ang.y);
 			njCalcPoint(0, &v, &v);
 			njPopMatrixEx();
 			SetVelocityP(pnum, v.x, v.y, v.z);

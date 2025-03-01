@@ -27,9 +27,9 @@ static void MissleLockOn_m(enemywk* ewp, task* tp)
 		ewp->velo = pewp->velo;
 		njPushMatrix(_nj_unit_matrix_);
 		njTranslate(0, ptwp->pos.x, ptwp->pos.y, ptwp->pos.z);
-		njRotateY_(twp->ang.y);
-		njRotateZ_(twp->ang.z);
-		njRotateX_(twp->ang.x);
+		ROTATEY(0, twp->ang.y);
+		ROTATEZ(0, twp->ang.z);
+		ROTATEX(0, twp->ang.x);
 		njRotateY(0, 0x8000);
 		njSetTexture(&E_AIRCRAFT_TEXLIST);
 		if (twp->smode)

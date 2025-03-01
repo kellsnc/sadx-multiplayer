@@ -28,7 +28,7 @@ static void __cdecl objSkyEVStep_r(task* tp)
 			njPushMatrix(_nj_unit_matrix_);
 			if (twp->ang.y != 0x10000)
 			{
-				njRotateY_(-twp->ang.y);
+				ROTATEY(0, -twp->ang.y);
 			}
 			njCalcVector(0, &v, &v);
 			njPopMatrixEx();

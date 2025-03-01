@@ -104,8 +104,8 @@ void gravDispose3_m(int pnum)
 		njUnitVector(&up);
 		njPushMatrix(0);
 		njUnitMatrix(0);
-		njRotateZ_(gz);
-		njRotateX_(gx);
+		ROTATEZ(0, gz);
+		ROTATEX(0, gx);
 		njCalcVector(0, &up, &up);
 		njPopMatrix(1);
 
@@ -289,9 +289,9 @@ void calcCartCamTgt_m(int pnum)
 	v.z = camCartData[camcont_wp->cammode].transTgt.z;
 
 	njPushMatrix(nj_unit_matrix_);
-	njRotateZ_(CamAnyParam->camAnyParamAng.z);
-	njRotateX_(CamAnyParam->camAnyParamAng.x);
-	njRotateY_(CamAnyParam->camAnyParamAng.y);
+	ROTATEZ(0, CamAnyParam->camAnyParamAng.z);
+	ROTATEX(0, CamAnyParam->camAnyParamAng.x);
+	ROTATEY(0, CamAnyParam->camAnyParamAng.y);
 	njCalcVector(0, &v, &v);
 	njPopMatrixEx();
 
@@ -582,9 +582,9 @@ void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)
 	v.z = 0.0f;
 	njPushMatrix(_nj_unit_matrix_);
 	njTranslateEx(&ptwp->pos);
-	njRotateZ_(ptwp->ang.z);
-	njRotateX_(ptwp->ang.x);
-	njRotateY_(ptwp->ang.y);
+	ROTATEZ(0, ptwp->ang.z);
+	ROTATEX(0, ptwp->ang.x);
+	ROTATEY(0, ptwp->ang.y);
 	njCalcPoint(0, &v, &orig);
 	njPopMatrixEx();
 
@@ -1377,7 +1377,7 @@ void __cdecl CameraLocalPath_m(_OBJ_CAMERAPARAM* pParam)
 
 		NJS_VECTOR pos = { pi.xpos, pi.ypos, pi.zpos };
 		njPushMatrix(nj_unit_matrix_);
-		ROTATEY(0, 0x8000 - ptwp->ang.y);
+		ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 		njCalcVector(0, &pos, &pos);
 		pi.xpos = pos.x;
 		pi.ypos = pos.y;

@@ -4,6 +4,11 @@
 
 #include "UsercallFunctionHandler.h"
 
+// Patch collisions
+// - Dynamic collision precalculations for all players
+// - Some collision checks
+// - Expand the enemy/rings collision lists for Homing Attack / LSA
+
 FastUsercallHookPtr<void(*)(taskwk* twp1, taskwk* twp2, Float dist2), noret, rECX, rEDX, stack4> CCL_CheckHoming_h(0x418BE0);
 FastUsercallHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp), noret, rEDI, rEBX, stack4> pLockingOnTargetEnemy2_h(0x7984B0);
 FastUsercallHookPtr<void(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), noret, rESI, rEDI, stack4> SonicHomingOnTarget_h(0x492300);

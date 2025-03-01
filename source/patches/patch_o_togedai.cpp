@@ -34,9 +34,9 @@ static void effect(taskwk* twp)
 	p.z = njCos(ang) * 20.0f;
 
 	njPushMatrix(_nj_unit_matrix_);
-	njRotateZ_(twp->ang.z);
-	njRotateX_(twp->ang.x);
-	njRotateY_(twp->ang.y);
+	ROTATEZ(0, twp->ang.z);
+	ROTATEX(0, twp->ang.x);
+	ROTATEY(0, twp->ang.y);
 	njCalcVector(0, &p, &p);
 	njPopMatrixEx();
 	njAddVector(&p, &twp->pos);
@@ -52,9 +52,9 @@ static void move(taskwk* twp, float y)
 	{
 		NJS_VECTOR p = { 0.0f, y, 0.0f };
 		njPushMatrix(_nj_unit_matrix_);
-		njRotateZ_(twp->ang.z);
-		njRotateX_(twp->ang.x);
-		njRotateY_(twp->ang.y);
+		ROTATEZ(0, twp->ang.z);
+		ROTATEX(0, twp->ang.x);
+		ROTATEY(0, twp->ang.y);
 		njCalcVector(0, &p, &p);
 		njPopMatrixEx();
 		njAddVector(&twp->pos, &p);

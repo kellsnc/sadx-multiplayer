@@ -1,7 +1,9 @@
 #include "pch.h"
 #include "gravity.h"
 
-// Allow per-player gravity
+// Allow gravity to be configured per player
+// Once SetUserGravity is called, the player is no longer using global gravity. Calling ResetUserGravity reverts this.
+// Mods may use multi_set_gravity, multi_get_gravity and multi_reset_gravity
 
 FastFunctionHook<void> SetDefaultGravity_t(0x43B490);
 FastFunctionHook<void, Angle, Angle> SetUserGravityXZ_t(0x43B4C0);
@@ -17,6 +19,7 @@ namespace gravity
 
 	GravityInfo globalGravity;
 
+	// Backup global gravity
 	void SaveGlobalGravity()
 	{
 		globalGravity.angGx = GravityAngle_Z;
@@ -24,6 +27,7 @@ namespace gravity
 		globalGravity.vG = Gravity;
 	}
 
+	// Replace global gravity with player's gravity
 	void SwapGlobalToUserGravity(int pnum)
 	{
 		if (GetUserGravity(pnum, &Gravity, &GravityAngle_Z, &GravityAngle_X))
@@ -32,6 +36,7 @@ namespace gravity
 		}
 	}
 
+	// Restore backed up global gravity
 	void RestoreGlobalGravity()
 	{
 		if (globalGravity.enabled)
@@ -42,6 +47,7 @@ namespace gravity
 		}
 	}
 
+	// Get custom gravity for a player if it exists, returns false if it doesn't.
 	bool GetUserGravity(int pnum, NJS_POINT3* v, Angle* angx, Angle* angz)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -63,6 +69,7 @@ namespace gravity
 		return false;
 	}
 
+	// Set custom gravity data for a specific player, no longer using global gravity.
 	void SetUserGravity(Angle angx, Angle angz, int pnum)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -81,6 +88,7 @@ namespace gravity
 		}
 	}
 
+	// Undo custom gravity data for a player, reverting to global gravity.
 	void ResetUserGravity(int pnum)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -104,6 +112,7 @@ static void __cdecl SetDefaultGravity_r()
 	gravity::Disable();
 }
 
+// Changing global gravity overwrites player specific ones
 static void __cdecl SetUserGravityXZ_r(Angle angx, Angle angz)
 {
 	if (angx == 0 && angz == 0)

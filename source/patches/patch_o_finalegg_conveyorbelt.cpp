@@ -38,7 +38,7 @@ static void __cdecl ConveyorBelt_ReserveColli_r(task* tp)
 			((NJS_POINT3*)0x3C74668)->z = (float)twp->ang.x * twp->scl.z * 0.079f;
 			fwp[i].ang_spd = { 0, 0, 0 };
 			njPushMatrix(_nj_unit_matrix_);
-			njRotateY_(twp->ang.y);
+			ROTATEY(0, twp->ang.y);
 			njCalcVector(0, (NJS_POINT3*)0x3C74668, &fwp[i].pos_spd);
 			njPopMatrixEx();
 		}

@@ -17,7 +17,7 @@ static void ExecATask_m(task* tp)
 	v.z = njSin(twp->ang.x) * twp->scl.z;
 
 	njPushMatrix(_nj_unit_matrix_);
-	njRotateY_(twp->ang.y);
+	ROTATEY(0, twp->ang.y);
 	njCalcVector(0, &v, &v);
 	njPopMatrixEx();
 

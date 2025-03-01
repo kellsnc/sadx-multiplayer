@@ -205,7 +205,7 @@ static void Normal_m(task* tp)
 
 				njPushMatrix(_nj_unit_matrix_);
 				njTranslateEx(&twp->pos);
-				njRotateY_(twp->ang.y);
+				ROTATEY(0, twp->ang.y);
 				njCalcPoint(0, &pos, &pos);
 				njCalcPoint(0, &tgt, &tgt);
 				njCalcVector(0, &vel, &vel);

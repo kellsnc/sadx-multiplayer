@@ -213,7 +213,7 @@ void GetPlayerInitialPositionM(NJS_POINT3* pos, Angle3* ang)
 		return;
 	}
 
-	if (isInHubWorld())
+	if (IsInAdventureField())
 	{
 		ADVPOS* adpos;
 

@@ -41,9 +41,9 @@ void ExecHosin_m(task* tp)
 
 			njPushMatrix(_nj_unit_matrix_);
 			njTranslateEx(&twp->pos);
-			njRotateZ_(twp->ang.z);
-			njRotateX_(twp->ang.x);
-			njRotateY_(twp->ang.y);
+			ROTATEZ(0, twp->ang.z);
+			ROTATEX(0, twp->ang.x);
+			ROTATEY(0, twp->ang.y);
 			njCalcVector(0, &vec, &vec);
 			njCalcVector(0, &spd, &spd);
 			njCalcPoint(0, &dir, &dir);

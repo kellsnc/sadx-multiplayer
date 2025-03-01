@@ -124,9 +124,9 @@ static void DrawMirror_m(task* tp)
 		SetObjectTexture();
 		njPushMatrixEx();
 		njTranslateEx(&twp->pos);
-		njRotateZ_(twp->ang.z);
-		njRotateX_(twp->ang.x);
-		njRotateY_(twp->ang.y);
+		ROTATEZ(0, twp->ang.z);
+		ROTATEX(0, twp->ang.x);
+		ROTATEY(0, twp->ang.y);
 		dsDrawObject((NJS_OBJECT*)0x2028BB8);
 		if (wk->ruin_m_flag == 1)
 		{
@@ -134,8 +134,8 @@ static void DrawMirror_m(task* tp)
 
 			if (cam_ang)
 			{
-				njRotateZ_(-cam_ang->z);
-				njRotateX_(-cam_ang->x);
+				ROTATEZ(0, -cam_ang->z);
+				ROTATEX(0, -cam_ang->x);
 			}
 		}
 		late_DrawModelClip((NJS_MODEL_SADX*)0x2028C98, LATE_MAT, 1.0f);
@@ -533,9 +533,9 @@ static void __cdecl DrawFogLitht(task* tp)
 			___njFogDisable();
 			njPushMatrixEx();
 			njTranslateEx(&twp->pos);
-			njRotateZ_(twp->ang.z);
-			njRotateX_(twp->ang.x);
-			njRotateY_(twp->ang.y);
+			ROTATEZ(0, twp->ang.z);
+			ROTATEX(0, twp->ang.x);
+			ROTATEY(0, twp->ang.y);
 			late_DrawModelClip((NJS_MODEL_SADX*)0x20275AC, LATE_MAT, 1.0f);
 			njPopMatrixEx();
 			___njFogEnable();
@@ -577,9 +577,9 @@ static void DrawFogHasira_m(task* tp)
 		SetObjectTexture();
 		njPushMatrixEx();
 		njTranslateEx(&twp->pos);
-		njRotateZ_(twp->ang.z);
-		njRotateX_(twp->ang.x);
-		njRotateY_(twp->ang.y);
+		ROTATEZ(0, twp->ang.z);
+		ROTATEX(0, 0, twp->ang.x);
+		ROTATEY(0, twp->ang.y);
 		ds_DrawModelClip((NJS_MODEL_SADX*)0x20062E0, 1.0f);
 		njPopMatrixEx();
 

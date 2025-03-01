@@ -101,7 +101,6 @@
     <ClInclude Include="collision.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="d3d8vars.h" />
-    <ClInclude Include="drawqueue.h" />
     <ClInclude Include="emeraldhunt.h" />
     <ClInclude Include="event.h" />
     <ClInclude Include="fishing.h" />
@@ -152,9 +151,7 @@
     <ClCompile Include="camerafunc.cpp" />
     <ClCompile Include="collision.cpp" />
     <ClCompile Include="config.cpp" />
-    <ClCompile Include="death.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="drawqueue.cpp" />
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="event.cpp" />
     <ClCompile Include="FastFunctionHook.cpp" />

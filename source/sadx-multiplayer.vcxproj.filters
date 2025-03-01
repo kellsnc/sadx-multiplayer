@@ -31,12 +31,6 @@
     <ClCompile Include="hud_multi.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
-    <ClCompile Include="drawqueue.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="death.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="set.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -690,9 +684,6 @@
     <ClInclude Include="menu_multi.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
-    <ClInclude Include="drawqueue.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
     <ClInclude Include="d3d8vars.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
@@ -798,9 +789,6 @@
     <ClInclude Include="hud_emerald.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
-    <ClInclude Include="hud_itembox.h">
-      <Filter>Source Files\gui</Filter>
-    </ClInclude>
     <ClInclude Include="logic.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
@@ -809,6 +797,9 @@
     </ClInclude>
     <ClInclude Include="patches\patch_o_sky_cyl_cmn.h">
       <Filter>Header Files\patches\stg06_skydeck</Filter>
+    </ClInclude>
+    <ClInclude Include="hud_itembox.h">
+      <Filter>Header FIles\gui</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

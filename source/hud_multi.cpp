@@ -276,7 +276,7 @@ void DisplayMultiHud(int num)
 
 	float x = MULTIHUD_SPRITE.p.x = 16.0f * scale + screenX;
 
-	if (HideTimerAndRings >= 0 && (!isInHubWorld() && !IsLevelChaoGarden()))
+	if (HideTimerAndRings >= 0 && (!IsInAdventureField() && !IsLevelChaoGarden()))
 	{
 		MULTIHUD_SPRITE.p.y = 16.0f * scaleY + screenY;
 		njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);

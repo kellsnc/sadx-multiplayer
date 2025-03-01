@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "result.h"
 #include "hud_result.h"
 #include "splitscreen.h"
 #include "camerafunc.h"

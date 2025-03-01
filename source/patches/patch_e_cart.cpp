@@ -112,11 +112,11 @@ void cartDisplayM(task* tp)
 		njPushMatrixEx();
 		// Use the previous position to prevent player offset (SADX calls the display before physics, but we can't do that in splitscreen)
 		njTranslate(0, cart_data->last_pos.x, cart_data->last_pos.y + cartOffset[cart_data->cart_type], cart_data->last_pos.z);
-		njRotateZ_(twp->ang.z);
-		njRotateX_(twp->ang.x);
-		njRotateY_(twp->ang.y + 0x4000);
-		njRotateZ_(cart_data->unstable.z);
-		njRotateX_(cart_data->unstable.x);
+		ROTATEZ(0, twp->ang.z);
+		ROTATEX(0, twp->ang.x);
+		ROTATEY(0, twp->ang.y + 0x4000);
+		ROTATEZ(0, cart_data->unstable.z);
+		ROTATEX(0, cart_data->unstable.x);
 
 		switch (cart_data->cart_type)
 		{

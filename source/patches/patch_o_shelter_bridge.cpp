@@ -21,7 +21,7 @@ static void ObjShelterBridgeExec_m(task* tp)
 	NJS_VECTOR dir = { 0.0f, 0.0f, twp->scl.z };
 	njPushMatrix(_nj_unit_matrix_);
 	njTranslateEx(&twp->pos);
-	njRotateY_(twp->ang.y);
+	ROTATEY(0, twp->ang.y);
 	njCalcPoint(0, &dir, (NJS_VECTOR*)&sub_twp->counter);
 	njPopMatrixEx();
 
@@ -37,7 +37,7 @@ static void ObjShelterBridgeExec_m(task* tp)
 			dir = { ptwp->pos.x - twp->pos.x, 0.0f, ptwp->pos.z - twp->pos.z };
 
 			njPushMatrix(_nj_unit_matrix_);
-			njRotateY_(ang_spd);
+			ROTATEY(0, ang_spd);
 			njCalcVector(0, &dir, &pos);
 			njPopMatrixEx();
 			njSubVector(&pos, &dir);
@@ -72,7 +72,7 @@ static void ObjShelterBridgeShrink_m(task* tp)
 	NJS_VECTOR dir = { 0.0f, 0.0f, twp->scl.z };
 	njPushMatrix(_nj_unit_matrix_);
 	njTranslateEx(&twp->pos);
-	njRotateY_(twp->ang.y);
+	ROTATEY(0, twp->ang.y);
 	njCalcPoint(0, &dir, (NJS_VECTOR*)&sub_twp->counter);
 	njPopMatrixEx();
 
@@ -87,7 +87,7 @@ static void ObjShelterBridgeShrink_m(task* tp)
 			auto ptwp = playertwp[i];
 
 			njPushMatrix(_nj_unit_matrix_);
-			njRotateY_(twp->ang.y);
+			ROTATEY(0, twp->ang.y);
 			njCalcVector(0, &dir, &fwp[i].pos_spd);
 			njPopMatrixEx();
 

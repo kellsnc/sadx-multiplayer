@@ -109,7 +109,7 @@ static int PlayerRange_m(taskwk* twp) // Get if player is in front of the handle
 			NJS_POINT3 v = ptwp->pos;
 			njSubVector(&v, &twp->pos);
 			njPushMatrix(_nj_unit_matrix_);
-			njRotateY_(-twp->ang.y);
+			ROTATEY(0, -twp->ang.y);
 			njCalcVector(0, &v, &v);
 			njPopMatrixEx();
 

@@ -24,8 +24,8 @@ void __cdecl ListGroundForDrawing_r()
 		NJS_POINT3 center = { 0.0f, 0.0f, MaxDrawDistance * -0.5f };
 
 		njPushMatrix(_nj_unit_matrix_);
-		njRotateY_(cam_ang->y);
-		njRotateX_(cam_ang->x);
+		ROTATEY(0, cam_ang->y);
+		ROTATEX(0, cam_ang->x);
 		njCalcPoint(0, &center, &center);
 		njPopMatrixEx();
 

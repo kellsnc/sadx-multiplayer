@@ -40,8 +40,8 @@ void __cdecl drawEffectChaos0EffectBDisplay(task* tp)
 			auto ctwp = (taskwk*)BigEntityArray[i];
 			njPushMatrixEx();
 			njTranslateV(0, &ctwp->pos);
-			njRotateY_(camera_twp->ang.y);
-			njRotateX_(camera_twp->ang.x);
+			ROTATEY(0, camera_twp->ang.y);
+			ROTATEX(0, camera_twp->ang.x);
 			njScale(0, ctwp->scl.x, ctwp->scl.x, ctwp->scl.x);
 			late_DrawSprite3D((NJS_SPRITE*)0x3D0D714, (Sint32)ctwp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 			njPopMatrixEx();
@@ -100,8 +100,8 @@ void __cdecl drawEffectChaos0LightParticleDisplay(task* tp)
 			___njSetConstantMaterial(&color);
 
 			njTranslateV(0, &ctwp->pos);
-			njRotateY_(camera_twp->ang.y);
-			njRotateX_(camera_twp->ang.x);
+			ROTATEY(0, camera_twp->ang.y);
+			ROTATEX(0, camera_twp->ang.x);
 			njScale(0, ctwp->scl.x, ctwp->scl.x, ctwp->scl.x);
 			late_DrawSprite3D((NJS_SPRITE*)0x3D0D73C, (Sint32)ctwp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 			njPopMatrixEx();
@@ -147,8 +147,8 @@ void __cdecl dispEffectChaos0AttackADisplay(task* tp)
 
 			njPushMatrixEx();
 			njTranslateV(0, &twp->pos);
-			njRotateY_(camera_twp->ang.y);
-			njRotateX_(camera_twp->ang.x);
+			ROTATEY(0, camera_twp->ang.y);
+			ROTATEX(0, camera_twp->ang.x);
 			auto scl = twp->scl.x + 0.5f;
 			njScale(0, scl, scl, scl);
 			late_DrawSprite3D((NJS_SPRITE*)0x3D0D56C, (Sint32)twp->counter.f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);

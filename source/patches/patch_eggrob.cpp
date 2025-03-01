@@ -111,8 +111,8 @@ static void __cdecl Eggrob_LockOnCursor_disp(task* tp)
 		ghDefaultBlendingMode();
 		njPushMatrixEx();
 		njTranslateEx((NJS_POINT3*)0x3C5C61C);
-		njRotateX_(twp->ang.x);
-		njRotateY_(twp->ang.y);
+		ROTATEX(0, twp->ang.x);
+		ROTATEY(0, twp->ang.y);
 		njScale(0, twp->scl.x, twp->scl.x, twp->scl.x);
 		DrawLine3D_Queue((NJS_POINT3COL*)0x9BE678, 6, NJD_TRANSPARENT, QueuedModelFlagsB_EnableZWrite);
 		njPopMatrixEx();
@@ -160,9 +160,9 @@ static void DrawWeapon(taskwk* twp)
 		njPushMatrixEx();
 		___dsSetPalette(6);
 		njTranslateEx((NJS_POINT3*)0x3C5C648);
-		njRotateY_(*(Angle*)0x3C5C834);
+		ROTATEY(0, *(Angle*)0x3C5C834);
 		njRotateX(0, 0x8000);
-		njRotateZ_(*(Angle*)0x3C5C654);
+		ROTATEZ(0, *(Angle*)0x3C5C654);
 		njSetTexture(&EGGROB_TEXLIST);
 		dsDrawObject((NJS_OBJECT*)0x98B98C);
 		___dsSetPalette(0);

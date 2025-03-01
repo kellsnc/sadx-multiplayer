@@ -19,8 +19,8 @@ static void __cdecl dispE102LaserDraw(task* tp)
 
 		njPushMatrixEx();
 		njTranslateEx(&twp->pos);
-		njRotateY_(twp->ang.y);
-		njRotateZ_(twp->ang.z);
+		ROTATEY(0, twp->ang.y);
+		ROTATEZ(0, twp->ang.z);
 		njColorBlendingMode(NJD_SOURCE_COLOR, NJD_COLOR_BLENDING_ONE);
 		njColorBlendingMode(NJD_DESTINATION_COLOR, NJD_COLOR_BLENDING_ONE);
 

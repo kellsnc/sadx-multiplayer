@@ -61,9 +61,9 @@ static Bool CameraExec_m(taskwk* twp, taskwk* ptwp, taskwk* ctwp)
 
 	njPushMatrix(nj_unit_matrix_);
 	njTranslateV(0, &ptwp->pos);
-	ROTATEZ(0, ptwp->ang.z);
-	ROTATEX(0, ptwp->ang.x);
-	ROTATEY(0, 0x8000 - ptwp->ang.y);
+	ROTATEZ(0, 0, ptwp->ang.z);
+	ROTATEX(0, 0, ptwp->ang.x);
+	ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 	njCalcPoint(0, &v1, &postgt);
 	//njCalcVector(0, &v1, &dir1);
 	//njCalcVector(0, &v2, &dir2);

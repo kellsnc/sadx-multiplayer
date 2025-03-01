@@ -37,7 +37,7 @@ void __cdecl ObjectMysticRuinTorokko_ExecATask_r(task* tp)
 	case 0:
 		njPushMatrix(nj_unit_matrix_);
 		njTranslateV(0, &twp->pos);
-		ROTATEY(0, twp->ang.y);
+		ROTATEY(0, 0, twp->ang.y);
 		njInvertMatrix(0);
 		njCalcPoint(0, &pData->pos, &pos);
 		njPopMatrix(1u);
@@ -112,7 +112,7 @@ void __cdecl ObjectMysticRuinTorokko_ExecATask_r(task* tp)
 		{
 			njPushMatrix(nj_unit_matrix_);
 			njTranslateV(0, &twp->pos);
-			ROTATEY(0, twp->ang.y);
+			ROTATEY(0, 0, twp->ang.y);
 			njInvertMatrix(0);
 			njCalcPoint(0, &pData->pos, &RidePos);
 			njPopMatrix(1u);

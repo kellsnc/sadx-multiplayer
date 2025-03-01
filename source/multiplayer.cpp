@@ -62,7 +62,7 @@ namespace multiplayer
 
 	bool IsFightMode()
 	{
-		return IsBattleMode() && CurrentLevel >= LevelIDs_Chaos0 && CurrentLevel <= LevelIDs_E101R;
+		return IsActive() && gMode == mode::fight;
 	}
 
 	bool IsAdventureMode()

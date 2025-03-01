@@ -552,9 +552,9 @@ void CameraViewSet_m(int pnum)
 
 		njPushMatrix(_nj_unit_matrix_);
 
-		njRotateY_(loc.ang.y);
-		njRotateX_(loc.ang.x);
-		njRotateZ_(loc.ang.z);
+		ROTATEY(0, loc.ang.y);
+		ROTATEX(0, loc.ang.x);
+		ROTATEZ(0, loc.ang.z);
 
 		njCalcVector(0, &vs, &vd);
 		njPopMatrix(1u);
@@ -614,8 +614,8 @@ void CameraFilter_m(int pnum)
 	NJS_VECTOR v = { 0.0f, 0.0f, -1.5f };
 	njPushMatrix(_nj_unit_matrix_);
 	njTranslateV(0, &loc.pos);
-	njRotateY_(loc.ang.y);
-	njRotateX_(loc.ang.x);
+	ROTATEY(0, loc.ang.y);
+	ROTATEX(0, loc.ang.x);
 	njCalcPoint(0, &v, &v);
 
 	NJS_PLANE pl1;
@@ -825,9 +825,9 @@ void InitCameraParam_m(int pnum)
 
 	NJS_VECTOR v = { 0.0f, 20.0f, 0.0f };
 	njPushMatrix(_nj_unit_matrix_);
-	njRotateZ_(ptwp->ang.z);
-	njRotateX_(ptwp->ang.x);
-	njRotateY_(0x4000 - ptwp->ang.y);
+	ROTATEZ(0, ptwp->ang.z);
+	ROTATEX(0, ptwp->ang.x);
+	ROTATEY(0, 0x4000 - ptwp->ang.y);
 	njCalcVector(0, &v, &v);
 	njPopMatrix(1);
 

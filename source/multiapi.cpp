@@ -30,6 +30,11 @@ void splitscreen_disable()
 	SplitScreen::Disable();
 }
 
+uint32_t splitscreen_get_current_screen()
+{
+	return SplitScreen::GetCurrentScreenNum();
+}
+
 bool viewport_is_enabled(int32_t num)
 {
 	return SplitScreen::IsScreenEnabled(num);
@@ -38,11 +43,6 @@ bool viewport_is_enabled(int32_t num)
 void viewport_set_num(int32_t num)
 {
 	SplitScreen::ChangeViewPort(num);
-}
-
-int32_t viewport_get_num()
-{
-	return SplitScreen::GetCurrentViewPortNum();
 }
 
 bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h)

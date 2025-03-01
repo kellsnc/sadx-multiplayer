@@ -51,7 +51,7 @@ static void ExecATask_m(task* tp, NJS_OBJECT* object)
 			NJS_POINT3 v;
 
 			njPushMatrix(_nj_unit_matrix_);
-			njRotateZ_(add_ang);
+			ROTATEZ(0, add_ang);
 			njCalcVector(0, &o, &v);
 			njPopMatrixEx();
 			njSubVector(&v, &o);

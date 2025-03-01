@@ -106,7 +106,7 @@ static bool moveEscapeSakana_m(task* tp)
 	NJS_POINT3 v = { -0.3f, 0.0f, 0.0f };
 
 	njPushMatrix(_nj_unit_matrix_);
-	ROTATEY(0, twp->ang.y);
+	ROTATEY(0, 0, twp->ang.y);
 	njCalcVector(0, &v, &mwp->spd);
 	njPopMatrixEx();
 
@@ -254,7 +254,7 @@ static void moveFishingSakana_m(task* tp)
 		}
 
 		njPushMatrix(_nj_unit_matrix_);
-		ROTATEY(0, twp->ang.y);
+		ROTATEY(0, 0, twp->ang.y);
 		njCalcVector(0, &v, &mwp->spd);
 		njPopMatrixEx();
 
@@ -394,9 +394,9 @@ static void moveCatchingSakana_m(task* tp)
 	if (ptwp)
 	{
 		njPushMatrix(_nj_unit_matrix_);
-		ROTATEZ(0, ptwp->ang.z);
-		ROTATEX(0, ptwp->ang.x);
-		ROTATEY(0, 0x8000 - ptwp->ang.y);
+		ROTATEZ(0, 0, ptwp->ang.z);
+		ROTATEX(0, 0, ptwp->ang.x);
+		ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 
 		auto ppwp = playerpwp[pnum];
 		NJS_VECTOR v;

@@ -31,7 +31,7 @@ static void execTPFloor_m(task* tp)
 				v.y = 0.0f;
 				v.z = ptwp->pos.z - twp->pos.z;
 				njPushMatrix(_nj_unit_matrix_);
-				njRotateY_(add_ang);
+				ROTATEY(0, add_ang);
 				njCalcVector(0, &v, &v);
 				njPopMatrixEx();
 				ptwp->pos.x = v.x + twp->pos.x;

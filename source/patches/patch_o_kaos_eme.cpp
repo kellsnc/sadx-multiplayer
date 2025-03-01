@@ -26,7 +26,7 @@ static void __cdecl ObjectKaosEmeDisp(task* tp)
 	njSetTexture(&KAOS_EME_TEXLIST);
 	njPushMatrixEx();
 	njTranslate(0, twp->pos.x, twp->pos.y + 10.0f, twp->pos.z);
-	njRotateY_(twp->ang.y);
+	ROTATEY(0, twp->ang.y);
 
 	auto id = static_cast<int>(twp->scl.y);
 

@@ -58,7 +58,7 @@ void __cdecl ObjShelterGate2_ExecATask_r(task* tp)
 	auto twp = tp->twp;
 
 	//if none of the player is Amy 
-	if (!isOnePlayerSpecifiedChar(Characters_Amy))
+	if (CurrentCharacter != PLNO_AMY)
 	{
 		if (twp->mode < 2)
 			twp->mode = 2; //force the door to open

@@ -16,8 +16,8 @@ static void EffBarrierPosSet_m(taskwk* twp, taskwk* ptwp)
 
 	njPushMatrix(_nj_unit_matrix_);
 	njTranslateV(0, &ptwp->pos);
-	njRotateZ_(ptwp->ang.z);
-	njRotateX_(ptwp->ang.x);
+	ROTATEZ(0, ptwp->ang.z);
+	ROTATEX(0, ptwp->ang.x);
 	njTranslate(0, 0.0f, twp->scl.y, 0.0f);
 	njGetTranslation(0, &twp->pos);
 	njPopMatrixEx();

@@ -86,9 +86,9 @@ void CalcHookPos_m(BIGETC* etc, NJS_POINT3* ret)
 		NJS_POINT3 v = { 0.6f, -0.45f, 0.0f };
 
 		njPushMatrix(_nj_unit_matrix_);
-		ROTATEZ(0, twp->ang.z);
-		ROTATEX(0, twp->ang.x);
-		ROTATEY(0, -twp->ang.y);
+		ROTATEZ(0, 0, twp->ang.z);
+		ROTATEX(0, 0, twp->ang.x);
+		ROTATEY(0, 0, -twp->ang.y);
 		njCalcVector(0, &v, ret);
 		njPopMatrixEx();
 
@@ -275,9 +275,9 @@ static void __cdecl dispFishingLure_m(task* tp)
 		{
 			njPushMatrixEx();
 			njTranslateEx(&twp->pos);
-			ROTATEY(0, -twp->ang.y);
-			ROTATEX(0, twp->ang.x);
-			ROTATEZ(0, twp->ang.z);
+			ROTATEY(0, 0, -twp->ang.y);
+			ROTATEX(0, 0, twp->ang.x);
+			ROTATEZ(0, 0, twp->ang.z);
 			if (twp->mode < 3.0f)
 				njTranslate(0, 0.6f, -0.3f, 0.0f);
 			njScale(0, 0.3f, 0.3f, 0.3f);
@@ -606,9 +606,9 @@ static void setCatchCameraPos_m(taskwk* twp, int pnum)
 		auto ptwp = playertwp[pnum];
 		njPushMatrix(_nj_unit_matrix_);
 
-		ROTATEZ(0, ptwp->ang.z);
-		ROTATEX(0, ptwp->ang.x);
-		ROTATEY(0, 0x8000 - ptwp->ang.y);
+		ROTATEZ(0, 0, ptwp->ang.z);
+		ROTATEX(0, 0, ptwp->ang.x);
+		ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 
 		NJS_VECTOR v = { 100.0f, 0.0f, 0.0f };
 		njCalcVector(0, &v, &v);
@@ -929,7 +929,7 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 			{
 				NJS_POINT3 v = { 0.0f, 0.0f, 1.0f };
 				njPushMatrix(_nj_unit_matrix_);
-				ROTATEY(0, -twp->ang.y);
+				ROTATEY(0, 0, -twp->ang.y);
 				njCalcVector(0, &v, &v);
 				njPopMatrixEx();
 				njAddVector(&mwp->spd, &v);
@@ -958,7 +958,7 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 			{
 				NJS_POINT3 v = { 0.0f, 0.0f, -1.0f };
 				njPushMatrix(_nj_unit_matrix_);
-				ROTATEY(0, -twp->ang.y);
+				ROTATEY(0, 0, -twp->ang.y);
 				njCalcVector(0, &v, &v);
 				njPopMatrixEx();
 				njAddVector(&mwp->spd, &v);
@@ -1392,9 +1392,9 @@ static void CalcLinePos_m(taskwk* twp, NJS_POINT3* ret)
 {
 	*ret = { -0.6f, 0.3f, 0.0f };
 	njPushMatrix(_nj_unit_matrix_);
-	ROTATEY(0, -twp->ang.y);
-	ROTATEX(0, twp->ang.x);
-	ROTATEZ(0, twp->ang.z);
+	ROTATEY(0, 0, -twp->ang.y);
+	ROTATEX(0, 0, twp->ang.x);
+	ROTATEZ(0, 0, twp->ang.z);
 	njCalcVector(0, ret, ret);
 	ret->x = twp->pos.x + ret->x;
 	ret->y = twp->pos.y + ret->y;
@@ -1421,9 +1421,9 @@ static void CalcRodPos_m(taskwk* ptwp, playerwk* ppwp, NJS_POINT3* rod_pos_p)
 {
 	NJS_VECTOR v = { 0.0f, ppwp->p.center_height, 0.0f };
 	njPushMatrix(_nj_unit_matrix_);
-	ROTATEZ(0, ptwp->ang.z);
-	ROTATEX(0, ptwp->ang.x);
-	ROTATEY(0, 0x8000 - ptwp->ang.y);
+	ROTATEZ(0, 0, ptwp->ang.z);
+	ROTATEX(0, 0, ptwp->ang.x);
+	ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 	njCalcVector(0, &v, rod_pos_p);
 
 	float dist = (ppwp->equipment & Upgrades_PowerRod) != 0 ? 17.0f : 16.0f;

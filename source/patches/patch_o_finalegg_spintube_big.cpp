@@ -23,9 +23,9 @@ static void ExecATask_m(task* tp)
 
 		njPushMatrix(_nj_unit_matrix_);
 		njTranslateEx(&twp->pos);
-		njRotateZ_(twp->ang.z);
-		njRotateY_(twp->ang.y);
-		njRotateX_(twp->ang.x);
+		ROTATEZ(0, twp->ang.z);
+		ROTATEY(0, twp->ang.y);
+		ROTATEX(0, twp->ang.x);
 		njPushMatrixEx();
 		njInvertMatrix(0);
 		NJS_POINT3 v;
