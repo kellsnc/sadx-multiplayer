@@ -4,13 +4,13 @@
 
 // Mystic Ruin minecarts
 
-FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> ObjectMysticRuinTorokko_ExecATask_t(0x53D830);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> ObjectMysticRuinTorokko_ExecATask_h(0x53D830);
 
 void __cdecl ObjectMysticRuinTorokko_ExecATask_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		ObjectMysticRuinTorokko_ExecATask_t.Original(tp);
+		ObjectMysticRuinTorokko_ExecATask_h.Original(tp);
 		return;
 	}
 
@@ -186,7 +186,7 @@ void __cdecl ObjectMysticRuinTorokko_ExecATask_r(task* tp)
 
 void patch_o_mysticruin_torokko_init()
 {
-	ObjectMysticRuinTorokko_ExecATask_t.Hook(ObjectMysticRuinTorokko_ExecATask_r);
+	ObjectMysticRuinTorokko_ExecATask_h.Hook(ObjectMysticRuinTorokko_ExecATask_r);
 }
 
 RegisterPatch patch_o_mysticruin_torokko(patch_o_mysticruin_torokko_init);

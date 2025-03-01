@@ -24,7 +24,7 @@ static auto sub_5A4E60 = GenerateUsercallWrapper<Bool(*)(float*, float, float)>(
 static auto SetColli = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x5A4E90, rEAX);
 
 static void __cdecl ObjShelterCrane_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjShelterCrane_r)> ObjShelterCrane_t(0x5A5110);
+FastFunctionHookPtr<decltype(&ObjShelterCrane_r)> ObjShelterCrane_h(0x5A5110);
 
 static void ObjShelterCrane_m(task* tp)
 {
@@ -179,13 +179,13 @@ static void __cdecl ObjShelterCrane_r(task* tp)
 	}
 	else
 	{
-		ObjShelterCrane_t.Original(tp);
+		ObjShelterCrane_h.Original(tp);
 	}
 }
 
 void patch_shelter_crane_init()
 {
-	ObjShelterCrane_t.Hook(ObjShelterCrane_r);
+	ObjShelterCrane_h.Hook(ObjShelterCrane_r);
 }
 
 RegisterPatch patch_shelter_crane(patch_shelter_crane_init);

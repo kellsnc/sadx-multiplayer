@@ -3,13 +3,13 @@
 #include "RegisterPatch.hpp"
 #include "multiplayer.h"
 
-FastFunctionHook<void, task*> Bg_MysticRuin_t(0x530670);
+FastFunctionHook<void, task*> Bg_MysticRuin_h(0x530670);
 
 void __cdecl Bg_MysticRuin_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		Bg_MysticRuin_t.Original(tp);
+		Bg_MysticRuin_h.Original(tp);
 		return;
 	}
 
@@ -51,7 +51,7 @@ void __cdecl Bg_MysticRuin_r(task* tp)
 
 void patch_rd_mysticruin_init()
 {
-	Bg_MysticRuin_t.Hook(Bg_MysticRuin_r);
+	Bg_MysticRuin_h.Hook(Bg_MysticRuin_r);
 }
 
 RegisterPatch patch_rd_mysticruin(patch_rd_mysticruin_init);

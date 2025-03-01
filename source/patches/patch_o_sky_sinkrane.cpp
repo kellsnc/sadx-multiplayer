@@ -6,8 +6,8 @@
 static void __cdecl execSkySinkRane_r(task* tp);
 static void __cdecl AirLiftSleep_r(task* tp);
 
-FastUsercallHookPtr<decltype(&execSkySinkRane_r), noret, rEAX> execSkySinkRane_t(0x5F5E50);
-FastUsercallHookPtr<decltype(&AirLiftSleep_r), noret, rEDI> AirLiftSleep_t(0x4AA430);
+FastUsercallHookPtr<decltype(&execSkySinkRane_r), noret, rEAX> execSkySinkRane_h(0x5F5E50);
+FastUsercallHookPtr<decltype(&AirLiftSleep_r), noret, rEDI> AirLiftSleep_h(0x4AA430);
 
 static void __cdecl execSkySinkRane_r(task* tp)
 {
@@ -32,7 +32,7 @@ static void __cdecl execSkySinkRane_r(task* tp)
 	}
 	else
 	{
-		execSkySinkRane_t.Original(tp);
+		execSkySinkRane_h.Original(tp);
 	}
 }
 
@@ -95,14 +95,14 @@ static void __cdecl AirLiftSleep_r(task* tp)
 	}
 	else
 	{
-		AirLiftSleep_t.Original(tp);
+		AirLiftSleep_h.Original(tp);
 	}
 }
 
 void patch_sky_sinkrane_init()
 {
-	execSkySinkRane_t.Hook(execSkySinkRane_r);
-	AirLiftSleep_t.Hook(AirLiftSleep_r);
+	execSkySinkRane_h.Hook(execSkySinkRane_r);
+	AirLiftSleep_h.Hook(AirLiftSleep_r);
 }
 
 RegisterPatch patch_sky_sinkrane(patch_sky_sinkrane_init);

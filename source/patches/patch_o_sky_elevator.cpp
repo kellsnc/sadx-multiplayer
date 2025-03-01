@@ -4,7 +4,7 @@
 #include "multiplayer.h"
 
 static void __cdecl objSkyEVStep_r(task* tp);
-FastFunctionHookPtr<decltype(&objSkyEVStep_r)> objSkyEVStep_t(0x5F5A70);
+FastFunctionHookPtr<decltype(&objSkyEVStep_r)> objSkyEVStep_h(0x5F5A70);
 
 static void __cdecl objSkyEVStep_r(task* tp)
 {
@@ -40,13 +40,13 @@ static void __cdecl objSkyEVStep_r(task* tp)
 	}
 	else
 	{
-		objSkyEVStep_t.Original(tp);
+		objSkyEVStep_h.Original(tp);
 	}
 }
 
 void patch_sky_elevator_init()
 {
-	objSkyEVStep_t.Hook(objSkyEVStep_r);
+	objSkyEVStep_h.Hook(objSkyEVStep_r);
 }
 
 RegisterPatch patch_sky_elevator(patch_sky_elevator_init);

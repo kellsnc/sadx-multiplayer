@@ -7,7 +7,7 @@
 #define WATER_PNUM(twp) twp->smode
 
 static void __cdecl ObjectWater_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectWater_r)> ObjectWater_t(0x5E3830);
+FastFunctionHookPtr<decltype(&ObjectWater_r)> ObjectWater_h(0x5E3830);
 
 static void __cdecl Wait_m(task* tp);
 
@@ -195,7 +195,7 @@ static void __cdecl ObjectWater_r(task* tp)
 
 void patch_water_init()
 {
-	ObjectWater_t.Hook(ObjectWater_r);
+	ObjectWater_h.Hook(ObjectWater_r);
 }
 
 RegisterPatch patch_water(patch_water_init);

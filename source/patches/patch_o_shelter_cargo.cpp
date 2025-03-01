@@ -1,7 +1,7 @@
 #include "pch.h"
 
 static void ObjShelterCargoC_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjShelterCargoC_Exec_r)> ObjShelterCargoC_Exec_t(0x59C4D0);
+FastFunctionHookPtr<decltype(&ObjShelterCargoC_Exec_r)> ObjShelterCargoC_Exec_h(0x59C4D0);
 
 static void ExecC_m(task* tp)
 {
@@ -37,13 +37,13 @@ static void ObjShelterCargoC_Exec_r(task* tp)
 	}
 	else
 	{
-		ObjShelterCargoC_Exec_t.Original(tp);
+		ObjShelterCargoC_Exec_h.Original(tp);
 	}
 }
 
 void patch_shelter_cargo_init()
 {
-	ObjShelterCargoC_Exec_t.Hook(ObjShelterCargoC_Exec_r);
+	ObjShelterCargoC_Exec_h.Hook(ObjShelterCargoC_Exec_r);
 }
 
 RegisterPatch patch_shelter_cargo(patch_shelter_cargo_init);

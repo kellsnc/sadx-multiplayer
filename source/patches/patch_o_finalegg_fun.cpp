@@ -8,7 +8,7 @@ DataPointer(float, FunAcc, 0x1AC4854);
 DataPointer(float, FunAccRate, 0x1AC4858);
 
 static void __cdecl Fun_ExecATask_r(task* tp);
-FastUsercallHookPtr<decltype(&Fun_ExecATask_r), noret, rEDI> Fun_ExecATask_t(0x5B7480);
+FastUsercallHookPtr<decltype(&Fun_ExecATask_r), noret, rEDI> Fun_ExecATask_h(0x5B7480);
 
 static void ExecATask_m(task* tp)
 {
@@ -62,13 +62,13 @@ static void __cdecl Fun_ExecATask_r(task* tp)
 	}
 	else
 	{
-		Fun_ExecATask_t.Original(tp);
+		Fun_ExecATask_h.Original(tp);
 	}
 }
 
 void patch_finalegg_fun_init()
 {
-	Fun_ExecATask_t.Hook(Fun_ExecATask_r);
+	Fun_ExecATask_h.Hook(Fun_ExecATask_r);
 }
 
 RegisterPatch patch_finalegg_fun(patch_finalegg_fun_init);

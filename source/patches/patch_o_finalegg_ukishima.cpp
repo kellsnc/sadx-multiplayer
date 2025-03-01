@@ -6,7 +6,7 @@
 // Moving platforms in Final Egg
 
 static void __cdecl Ukishima_ExecATask_r(task* tp);
-FastUsercallHookPtr<decltype(&Ukishima_ExecATask_r), noret, rEAX> Ukishima_ExecATask_t(0x5B7950);
+FastUsercallHookPtr<decltype(&Ukishima_ExecATask_r), noret, rEAX> Ukishima_ExecATask_h(0x5B7950);
 
 static void ExecATask_m(task* tp)
 {
@@ -57,13 +57,13 @@ static void __cdecl Ukishima_ExecATask_r(task* tp)
 	}
 	else
 	{
-		Ukishima_ExecATask_t.Original(tp);
+		Ukishima_ExecATask_h.Original(tp);
 	}
 }
 
 void patch_finalegg_ukishima_init()
 {
-	Ukishima_ExecATask_t.Hook(Ukishima_ExecATask_r);
+	Ukishima_ExecATask_h.Hook(Ukishima_ExecATask_r);
 }
 
 RegisterPatch patch_finalegg_ukishima(patch_finalegg_ukishima_init);

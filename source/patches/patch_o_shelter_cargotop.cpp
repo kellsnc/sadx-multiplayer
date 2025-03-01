@@ -3,7 +3,7 @@
 DataPointer(NJS_ACTION, action_cargo_crgfront, 0x17F1CBC);
 
 static void ObjShelterCargotopC_Exec_r(task* tp); // "ExecC"
-FastFunctionHookPtr<decltype(&ObjShelterCargotopC_Exec_r)> ObjShelterCargotopC_Exec_t(0x59C230);
+FastFunctionHookPtr<decltype(&ObjShelterCargotopC_Exec_r)> ObjShelterCargotopC_Exec_h(0x59C230);
 
 static void ExecC_m(task* tp)
 {
@@ -53,13 +53,13 @@ static void ObjShelterCargotopC_Exec_r(task* tp)
 	}
 	else
 	{
-		ObjShelterCargotopC_Exec_t.Original(tp);
+		ObjShelterCargotopC_Exec_h.Original(tp);
 	}
 }
 
 void patch_shelter_cargotop_init()
 {
-	ObjShelterCargotopC_Exec_t.Hook(ObjShelterCargotopC_Exec_r);
+	ObjShelterCargotopC_Exec_h.Hook(ObjShelterCargotopC_Exec_r);
 }
 
 RegisterPatch patch_shelter_cargotop(patch_shelter_cargotop_init);

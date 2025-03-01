@@ -7,8 +7,8 @@
 void DakkoControl_r(task* tp);
 Bool AL_CheckDakko_r(task* tp);
 
-FastFunctionHookPtr<decltype(&DakkoControl_r)> DakkoControl_t(0x00739050);
-FastFunctionHookPtr<decltype(&AL_CheckDakko_r)> AL_CheckDakko_t(0x00739670);
+FastFunctionHookPtr<decltype(&DakkoControl_r)> DakkoControl_h(0x00739050);
+FastFunctionHookPtr<decltype(&AL_CheckDakko_r)> AL_CheckDakko_h(0x00739670);
 
 void DakkoControl_r(task* tp)
 {
@@ -22,12 +22,12 @@ void DakkoControl_r(task* tp)
 
 		taskwk* orig_twp = playertwp[0];
 		playertwp[0] = playertwp[twp->Behavior.SubMode];
-		DakkoControl_t.Original(tp);
+		DakkoControl_h.Original(tp);
 		playertwp[0] = orig_twp;
 	}
 	else
 	{
-		DakkoControl_t.Original(tp);
+		DakkoControl_h.Original(tp);
 	}
 }
 
@@ -37,20 +37,20 @@ Bool AL_CheckDakko_r(task* tp)
 	{
 		taskwk* orig_twp = playertwp[0];
 		playertwp[0] = playertwp[GetClosestPlayerNum(&tp->twp->pos)];
-		Bool result = AL_CheckDakko_t.Original(tp);
+		Bool result = AL_CheckDakko_h.Original(tp);
 		playertwp[0] = orig_twp;
 		return result;
 	}
 	else
 	{
-		return AL_CheckDakko_t.Original(tp);
+		return AL_CheckDakko_h.Original(tp);
 	}
 }
 
 void patch_albhv_dakko_init()
 {
-	DakkoControl_t.Hook(DakkoControl_r);
-	AL_CheckDakko_t.Hook(AL_CheckDakko_r);
+	DakkoControl_h.Hook(DakkoControl_r);
+	AL_CheckDakko_h.Hook(AL_CheckDakko_r);
 }
 
 RegisterPatch patch_albhv_dakko(patch_albhv_dakko_init);

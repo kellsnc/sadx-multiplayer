@@ -15,7 +15,7 @@ enum : Sint8
 };
 
 static void __cdecl ObjectWindyPoline_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectWindyPoline_r)> ObjectWindyPoline_t(0x4E3200);
+FastFunctionHookPtr<decltype(&ObjectWindyPoline_r)> ObjectWindyPoline_h(0x4E3200);
 
 /*
  * Custom task to run one logic per player simultaneously
@@ -293,13 +293,13 @@ static void __cdecl ObjectWindyPoline_r(task* tp)
 	}
 	else
 	{
-		ObjectWindyPoline_t.Original(tp);
+		ObjectWindyPoline_h.Original(tp);
 	}
 }
 
 void patch_windy_poline_init()
 {
-	ObjectWindyPoline_t.Hook(ObjectWindyPoline_r);
+	ObjectWindyPoline_h.Hook(ObjectWindyPoline_r);
 }
 
 RegisterPatch patch_windy_poline(patch_windy_poline_init);

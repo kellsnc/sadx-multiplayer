@@ -2,10 +2,10 @@
 #include "hud_multi.h"
 #include "splitscreen.h"
 
-FastFunctionHook<void> DisplayScore_t(0x425F90);
-FastFunctionHook<void> DisplayTimer_t(0x427F50);
-FastFunctionHook<void, int> LoadTextureForEachGameMode_t(0x4212E0);
-FastFunctionHook<void> ReleaseTextureForEachGameMode_t(0x420F40);
+FastFunctionHook<void> DisplayScore_h(0x425F90);
+FastFunctionHook<void> DisplayTimer_h(0x427F50);
+FastFunctionHook<void, int> LoadTextureForEachGameMode_h(0x4212E0);
+FastFunctionHook<void> ReleaseTextureForEachGameMode_h(0x420F40);
 
 NJS_TEXNAME CON_MULTI_TEXNAME[18]{};
 NJS_TEXLIST CON_MULTI_TEXLIST = { arrayptrandlength(CON_MULTI_TEXNAME) };
@@ -91,13 +91,13 @@ static int ringtimer[PLAYER_MAX]{};
 void LoadTextureForEachGameMode_r(int gamemode)
 {
 	LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
-	LoadTextureForEachGameMode_t.Original(gamemode);
+	LoadTextureForEachGameMode_h.Original(gamemode);
 }
 
 void ReleaseTextureForEachGameMode_r()
 {
 	njReleaseTexture(&CON_MULTI_TEXLIST);
-	ReleaseTextureForEachGameMode_t.Original();
+	ReleaseTextureForEachGameMode_h.Original();
 }
 
 void DrawWaitScreen(int num)
@@ -322,7 +322,7 @@ void __cdecl DisplayScore_r()
 {
 	if (!multiplayer::IsActive())
 	{
-		DisplayScore_t.Original();
+		DisplayScore_h.Original();
 	}
 }
 
@@ -330,16 +330,16 @@ void __cdecl DisplayTimer_r()
 {
 	if (!multiplayer::IsActive())
 	{
-		DisplayTimer_t.Original();
+		DisplayTimer_h.Original();
 	}
 }
 
 void patch_hud_init()
 {
-	DisplayScore_t.Hook(DisplayScore_r);
-	DisplayTimer_t.Hook(DisplayTimer_r);
-	LoadTextureForEachGameMode_t.Hook(LoadTextureForEachGameMode_r);
-	ReleaseTextureForEachGameMode_t.Hook(ReleaseTextureForEachGameMode_r);
+	DisplayScore_h.Hook(DisplayScore_r);
+	DisplayTimer_h.Hook(DisplayTimer_r);
+	LoadTextureForEachGameMode_h.Hook(LoadTextureForEachGameMode_r);
+	ReleaseTextureForEachGameMode_h.Hook(ReleaseTextureForEachGameMode_r);
 }
 
 RegisterPatch patch_hud(patch_hud_init);

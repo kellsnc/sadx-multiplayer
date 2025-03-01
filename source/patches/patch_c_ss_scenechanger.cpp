@@ -2,13 +2,13 @@
 #include "FastFunctionHook.hpp"
 #include "RegisterPatch.hpp"
 
-FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rESI> CollisionSceneChangerSS_CheckCollision_t(0x640550);
+FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rESI> CollisionSceneChangerSS_CheckCollision_h(0x640550);
 
 Bool __cdecl CollisionSceneChangerSS_CheckCollision_r(taskwk* twp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return CollisionSceneChangerSS_CheckCollision_t.Original(twp);
+		return CollisionSceneChangerSS_CheckCollision_h.Original(twp);
 	}
 
 	NJS_POINT3 ppos;
@@ -35,7 +35,7 @@ Bool __cdecl CollisionSceneChangerSS_CheckCollision_r(taskwk* twp)
 
 void patch_c_ss_scenechanger_init()
 {
-	CollisionSceneChangerSS_CheckCollision_t.Hook(CollisionSceneChangerSS_CheckCollision_r);
+	CollisionSceneChangerSS_CheckCollision_h.Hook(CollisionSceneChangerSS_CheckCollision_r);
 }
 
 RegisterPatch patch_c_ss_scenechanger(patch_c_ss_scenechanger_init);

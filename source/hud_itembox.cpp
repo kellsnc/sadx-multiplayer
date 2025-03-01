@@ -13,8 +13,8 @@ enum : __int8
 	MODE_SHRINK // custom name
 };
 
-FastFunctionHook<void, task*> manager_Disp_t(0x4C0790);
-FastFunctionHook<void, task*> itemBoxManager_t(0x4C09B0);
+FastFunctionHook<void, task*> manager_Disp_h(0x4C0790);
+FastFunctionHook<void, task*> itemBoxManager_h(0x4C09B0);
 
 VariableHook<ITEM_MANAGER, 0x3C5A9D8> manager_data_m;
 
@@ -131,7 +131,7 @@ static void __cdecl manager_Disp_r(task* tp)
 	}
 	else
 	{
-		manager_Disp_t.Original(tp);
+		manager_Disp_h.Original(tp);
 	}
 }
 
@@ -241,7 +241,7 @@ static void __cdecl itemBoxManager_r(task* tp)
 	}
 	else
 	{
-		itemBoxManager_t.Original(tp);
+		itemBoxManager_h.Original(tp);
 	}
 }
 
@@ -258,8 +258,8 @@ void EntryItemBoxPanel_m(int panel, int pnum)
 
 void patch_hud_itembox_init()
 {
-	manager_Disp_t.Hook(manager_Disp_r);
-	itemBoxManager_t.Hook(itemBoxManager_r);
+	manager_Disp_h.Hook(manager_Disp_r);
+	itemBoxManager_h.Hook(itemBoxManager_r);
 }
 
 RegisterPatch patch_hud_itembox(patch_hud_itembox_init);

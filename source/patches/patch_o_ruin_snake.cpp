@@ -13,8 +13,8 @@ DataPointer(float, up_up_speed, 0x3C7ED70);
 static void __cdecl MoveSnake_r(pathtbl* ptag, float onpathpos, task* tp);
 static void __cdecl ObjectRuinSnake_r(task* tp);
 
-FastUsercallHookPtr<decltype(&MoveSnake_r), noret, rEAX, stack4, stack4> MoveSnake_t(0x5E4360);
-FastFunctionHookPtr<decltype(&ObjectRuinSnake_r)> ObjectRuinSnake_t(0x5E45C0);
+FastUsercallHookPtr<decltype(&MoveSnake_r), noret, rEAX, stack4, stack4> MoveSnake_h(0x5E4360);
+FastFunctionHookPtr<decltype(&ObjectRuinSnake_r)> ObjectRuinSnake_h(0x5E45C0);
 
 static void MoveSnake_m(pathtbl* ptag, float onpathpos, task* tp)
 {
@@ -111,7 +111,7 @@ static void __cdecl MoveSnake_r(pathtbl* ptag, float onpathpos, task* tp)
 	}
 	else
 	{
-		MoveSnake_t.Original(ptag, onpathpos, tp);
+		MoveSnake_h.Original(ptag, onpathpos, tp);
 	}
 }
 
@@ -157,14 +157,14 @@ static void __cdecl ObjectRuinSnake_r(task* tp)
 	}
 	else
 	{
-		ObjectRuinSnake_t.Original(tp);
+		ObjectRuinSnake_h.Original(tp);
 	}
 }
 
 void patch_ruin_snake_init()
 {
-	MoveSnake_t.Hook(MoveSnake_r);
-	ObjectRuinSnake_t.Hook(ObjectRuinSnake_r);
+	MoveSnake_h.Hook(MoveSnake_r);
+	ObjectRuinSnake_h.Hook(ObjectRuinSnake_r);
 }
 
 RegisterPatch patch_ruin_snake(patch_ruin_snake_init);

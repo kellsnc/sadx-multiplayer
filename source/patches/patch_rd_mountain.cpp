@@ -3,7 +3,7 @@
 #include "RegisterPatch.hpp"
 #include "multiplayer.h"
 
-FastFunctionHook<void, task*> Rd_Mountain_t(0x601550);
+FastFunctionHook<void, task*> Rd_Mountain_h(0x601550);
 
 // Patch act swaps
 void __cdecl Rd_Mountain_r(task* tp)
@@ -33,13 +33,13 @@ void __cdecl Rd_Mountain_r(task* tp)
 
 		//patch an issue where the original function was taking priority for act swap
 		if (tp->twp->mode != 1)
-			Rd_Mountain_t.Original(tp);
+			Rd_Mountain_h.Original(tp);
 		else
 			LoopTaskC(tp);
 	}
 	else
 	{
-		Rd_Mountain_t.Original(tp);
+		Rd_Mountain_h.Original(tp);
 	}
 }
 
@@ -51,7 +51,7 @@ static void __cdecl Create_Mountain_Cloud()
 
 void patch_rd_mountain_init()
 {
-	Rd_Mountain_t.Hook(Rd_Mountain_r);
+	Rd_Mountain_h.Hook(Rd_Mountain_r);
 
 	// Red Mountain cloud layer
 	WriteCall((void*)0x60147B, Create_Mountain_Cloud);

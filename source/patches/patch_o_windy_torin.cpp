@@ -12,7 +12,7 @@ enum : __int8
 };
 
 static void __cdecl torin_r(task* tp);
-FastFunctionHookPtr<decltype(&torin_r)> torin_t(0x4DF5A0);
+FastFunctionHookPtr<decltype(&torin_r)> torin_h(0x4DF5A0);
 
 static void torin_m(task* tp)
 {
@@ -58,13 +58,13 @@ static void __cdecl torin_r(task* tp)
 	}
 	else
 	{
-		torin_t.Original(tp);
+		torin_h.Original(tp);
 	}
 }
 
 void patch_windy_torin_init()
 {
-	torin_t.Hook(torin_r);
+	torin_h.Hook(torin_r);
 }
 
 RegisterPatch patch_windy_torin(patch_windy_torin_init);

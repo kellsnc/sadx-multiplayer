@@ -7,7 +7,7 @@
 #include "camera.h"
 
 static void __cdecl execRound_Sandboard_r(task* tp);
-FastFunctionHookPtr<decltype(&execRound_Sandboard_r)> execRound_Sandboard_t(0x597BD0);
+FastFunctionHookPtr<decltype(&execRound_Sandboard_r)> execRound_Sandboard_h(0x597BD0);
 
 static void Normal()
 {
@@ -101,13 +101,13 @@ static void __cdecl execRound_Sandboard_r(task* tp)
 	}
 	else
 	{
-		execRound_Sandboard_t.Original(tp);
+		execRound_Sandboard_h.Original(tp);
 	}
 }
 
 void patch_rd_sandboard_init()
 {
-	execRound_Sandboard_t.Hook(execRound_Sandboard_r);
+	execRound_Sandboard_h.Hook(execRound_Sandboard_r);
 }
 
 RegisterPatch patch_rd_sandboard(patch_rd_sandboard_init);

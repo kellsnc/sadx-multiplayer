@@ -26,7 +26,7 @@ DataArray(int, fanstat, 0x3C75058, 5);
 FunctionPointer(void, ExecKazu, (float yacc, taskwk* twp), 0x5CB6B0);
 
 static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectCasinoFanfan_Exec_r)> ObjectCasinoFanfan_Exec_t(0x5CBAF0);
+FastFunctionHookPtr<decltype(&ObjectCasinoFanfan_Exec_r)> ObjectCasinoFanfan_Exec_h(0x5CBAF0);
 
 UsercallFunc(Bool, IsRangeIn, (taskwk* twp, NJS_POINT3* pos, float mul_), (twp, pos, mul_), 0x5CB9B0, rEAX, rEAX, rECX, stack4);
 UsercallFuncVoid(InitKuzu, (taskwk* twp), (twp), 0x5CB9B0, rEBX);
@@ -193,13 +193,13 @@ static void __cdecl ObjectCasinoFanfan_Exec_r(task* tp)
 	}
 	else
 	{
-		ObjectCasinoFanfan_Exec_t.Original(tp);
+		ObjectCasinoFanfan_Exec_h.Original(tp);
 	}
 }
 
 void patch_casino_fanfan_init()
 {
-	ObjectCasinoFanfan_Exec_t.Hook(ObjectCasinoFanfan_Exec_r);
+	ObjectCasinoFanfan_Exec_h.Hook(ObjectCasinoFanfan_Exec_r);
 }
 
 RegisterPatch patch_casino_fanfan(patch_casino_fanfan_init);

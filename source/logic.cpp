@@ -17,10 +17,10 @@ static int netActNumber;
 static int oldTimerWake;
 static int oldPauseEnabled;
 
-FastFunctionHook<void, int> AdvanceActLocal_t(0x4146E0);
-FastFunctionHook<void, Sint16> SetChangeGameMode_t(0x413C90);
-FastFunctionHook<void, Sint8, Sint8> ChangeStageWithFadeOut_t(0x4145D0);
-FastFunctionHook<void> RestartStageWithFadeOut_t(0x414600);
+FastFunctionHook<void, int> AdvanceActLocal_h(0x4146E0);
+FastFunctionHook<void, Sint16> SetChangeGameMode_h(0x413C90);
+FastFunctionHook<void, Sint8, Sint8> ChangeStageWithFadeOut_h(0x4145D0);
+FastFunctionHook<void> RestartStageWithFadeOut_h(0x414600);
 
 static bool LogicListener(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM pnum)
 {
@@ -112,7 +112,7 @@ static bool LogicSender(Packet& packet, Netplay::PACKET_TYPE type, Netplay::PNUM
 
 static void AdvanceActLocal_r(int ssActAddition)
 {
-	AdvanceActLocal_t.Original(ssActAddition);
+	AdvanceActLocal_h.Original(ssActAddition);
 	netplay.Send(Netplay::PACKET_LOGIC_EXIT, LogicSender, -1, true);
 }
 
@@ -121,7 +121,7 @@ static void SetChangeGameMode_r(Sint16 mode)
 	if (netplay.IsConnected())
 	{
 		auto old = ssGameModeChange;
-		SetChangeGameMode_t.Original(mode);
+		SetChangeGameMode_h.Original(mode);
 
 		if (ssGameModeChange != old)
 		{
@@ -130,19 +130,19 @@ static void SetChangeGameMode_r(Sint16 mode)
 	}
 	else
 	{
-		SetChangeGameMode_t.Original(mode);
+		SetChangeGameMode_h.Original(mode);
 	}
 }
 
 static void ChangeStageWithFadeOut_r(Sint8 stg, Sint8 act)
 {
-	ChangeStageWithFadeOut_t.Original(stg, act);
+	ChangeStageWithFadeOut_h.Original(stg, act);
 	netplay.Send(Netplay::PACKET_LOGIC_STAGECHG, LogicSender, -1, true);
 }
 
 static void RestartStageWithFadeOut_r()
 {
-	RestartStageWithFadeOut_t.Original();
+	RestartStageWithFadeOut_h.Original();
 	netplay.Send(Netplay::PACKET_LOGIC_EXIT, LogicSender, -1, true);
 }
 #endif
@@ -252,9 +252,9 @@ void InitLogic()
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_PAUSE, LogicListener);
 	netplay.RegisterListener(Netplay::PACKET_LOGIC_RAND, LogicListener);
 
-	AdvanceActLocal_t.Hook(AdvanceActLocal_r);
-	SetChangeGameMode_t.Hook(SetChangeGameMode_r);
-	ChangeStageWithFadeOut_t.Hook(ChangeStageWithFadeOut_r);
-	RestartStageWithFadeOut_t.Hook(RestartStageWithFadeOut_r);
+	AdvanceActLocal_h.Hook(AdvanceActLocal_r);
+	SetChangeGameMode_h.Hook(SetChangeGameMode_r);
+	ChangeStageWithFadeOut_h.Hook(ChangeStageWithFadeOut_r);
+	RestartStageWithFadeOut_h.Hook(RestartStageWithFadeOut_r);
 #endif
 }

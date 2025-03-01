@@ -10,12 +10,12 @@
 #define HOMING_TIMER1(pwp) (pwp->free.sw[2])
 #define HOMING_TIMER2(pwp) (pwp->free.sw[3])
 
-FastFunctionHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp)> SonicHomingOnRings_t(0x492AB0);
-FastFunctionHookPtr<taskwk*(*)(taskwk* twp, playerwk* pwp)> SonicCheckLSSTargetEnemy_t(0x492710);
-FastFunctionHookPtr<TaskFuncPtr> SonicDirectAhead_t((intptr_t)0x493C70);
-FastFunctionHookPtr<TaskFuncPtr> SonicJiggle_t(0x4937B0);
+FastFunctionHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp)> SonicHomingOnRings_h(0x492AB0);
+FastFunctionHookPtr<taskwk*(*)(taskwk* twp, playerwk* pwp)> SonicCheckLSSTargetEnemy_h(0x492710);
+FastFunctionHookPtr<TaskFuncPtr> SonicDirectAhead_h((intptr_t)0x493C70);
+FastFunctionHookPtr<TaskFuncPtr> SonicJiggle_h(0x4937B0);
 FastUsercallHookPtr<Bool(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), rEAX, rEAX, rEDI, stack4> Sonic_CheckInput_hook(0x495FA0);
-FastFunctionHookPtr<TaskFuncPtr> SonicTheHedgehog_t(0x49A9B0);
+FastFunctionHookPtr<TaskFuncPtr> SonicTheHedgehog_h(0x49A9B0);
 
 static void SonicHomingOnRings_m(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
@@ -98,7 +98,7 @@ static void __cdecl SonicHomingOnRings_r(taskwk* twp, motionwk2* mwp, playerwk* 
 	}
 	else
 	{
-		SonicHomingOnRings_t.Original(twp, mwp, pwp);
+		SonicHomingOnRings_h.Original(twp, mwp, pwp);
 	}
 }
 
@@ -155,7 +155,7 @@ static taskwk* __cdecl SonicCheckLSSTargetEnemy_r(taskwk* twp, playerwk* pwp)
 	}
 	else
 	{
-		return SonicCheckLSSTargetEnemy_t.Original(twp, pwp);
+		return SonicCheckLSSTargetEnemy_h.Original(twp, pwp);
 	}
 }
 
@@ -166,7 +166,7 @@ static void __cdecl SonicDirectAhead_r(task* tp)
 		return;
 	}
 
-	SonicDirectAhead_t.Original(tp);
+	SonicDirectAhead_h.Original(tp);
 }
 
 static void __cdecl SonicJiggle_r(task* tp)
@@ -176,7 +176,7 @@ static void __cdecl SonicJiggle_r(task* tp)
 		return;
 	}
 
-	SonicJiggle_t.Original(tp);
+	SonicJiggle_h.Original(tp);
 }
 
 static Bool Sonic_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
@@ -224,23 +224,23 @@ static void __cdecl SonicTheHedgehog_r(task* tp)
 		auto pnum = TASKWK_PLAYERID(tp->twp);
 		gravity::SaveGlobalGravity();
 		gravity::SwapGlobalToUserGravity(pnum);
-		SonicTheHedgehog_t.Original(tp);
+		SonicTheHedgehog_h.Original(tp);
 		gravity::RestoreGlobalGravity();
 	}
 	else
 	{
-		SonicTheHedgehog_t.Original(tp);
+		SonicTheHedgehog_h.Original(tp);
 	}
 }
 
 void patch_sonic_init()
 {
-	SonicHomingOnRings_t.Hook(SonicHomingOnRings_r);
-	SonicCheckLSSTargetEnemy_t.Hook(SonicCheckLSSTargetEnemy_r);
-	SonicDirectAhead_t.Hook(SonicDirectAhead_r);
-	SonicJiggle_t.Hook(SonicJiggle_r);
+	SonicHomingOnRings_h.Hook(SonicHomingOnRings_r);
+	SonicCheckLSSTargetEnemy_h.Hook(SonicCheckLSSTargetEnemy_r);
+	SonicDirectAhead_h.Hook(SonicDirectAhead_r);
+	SonicJiggle_h.Hook(SonicJiggle_r);
 	Sonic_CheckInput_hook.Hook(Sonic_CheckInput_r);
-	SonicTheHedgehog_t.Hook(SonicTheHedgehog_r);
+	SonicTheHedgehog_h.Hook(SonicTheHedgehog_r);
 }
 
 RegisterPatch patch_sonic(patch_sonic_init);

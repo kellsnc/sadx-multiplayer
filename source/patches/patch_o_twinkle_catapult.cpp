@@ -21,7 +21,7 @@ auto rotateArms = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x621EF0
 auto manipulateArm = GenerateUsercallWrapper<void (*)(taskwk* twp)>(noret, 0x6220F0, rEDI);
 
 static void __cdecl ObjectTPCatapult_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectTPCatapult_r)> ObjectTPCatapult_t(0x6223C0);
+FastFunctionHookPtr<decltype(&ObjectTPCatapult_r)> ObjectTPCatapult_h(0x6223C0);
 
 static void inhallPlayer_m(taskwk* twp)
 {
@@ -331,13 +331,13 @@ static void __cdecl ObjectTPCatapult_r(task* tp)
 	}
 	else
 	{
-		ObjectTPCatapult_t.Original(tp);
+		ObjectTPCatapult_h.Original(tp);
 	}
 }
 
 void patch_twinkle_catapult_init()
 {
-	ObjectTPCatapult_t.Hook(ObjectTPCatapult_r);
+	ObjectTPCatapult_h.Hook(ObjectTPCatapult_r);
 }
 
 RegisterPatch patch_twinkle_catapult(patch_twinkle_catapult_init);

@@ -40,10 +40,10 @@ DataPointer(ADVPOS**, vInitialPositionEC_C_Ptr, 0x52D861);
 DataPointer(ADVPOS**, vInitialPositionMR_Ptr, 0x5307AE);
 DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
 
-FastFunctionHook<void, taskwk*> SetPlayerInitialPosition_t(0x414810);
-FastFunctionHook<void, char> DamegeRingScatter_t(DamegeRingScatter);
-FastFunctionHook<void> SetPlayer_t(SetPlayer);
-FastFunctionHook<Bool, taskwk*> isInDeathZone_t((intptr_t)IsInDeathZone_);
+FastFunctionHook<void, taskwk*> SetPlayerInitialPosition_h(0x414810);
+FastFunctionHook<void, char> DamegeRingScatter_h(DamegeRingScatter);
+FastFunctionHook<void> SetPlayer_h(SetPlayer);
+FastFunctionHook<Bool, taskwk*> isInDeathZone_h((intptr_t)IsInDeathZone_);
 
 VariableHook<int16_t, 0x3B0F0E4> ssNumRing_m;
 VariableHook<int8_t, 0x3B0EF34> scNumPlayer_m;
@@ -55,7 +55,7 @@ static bool isCharSel = false;
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
 static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack | Status_LightDash;
-FastFunctionHook<int> GetRaceWinnerPlayer_t(GetRaceWinnerPlayer);
+FastFunctionHook<int> GetRaceWinnerPlayer_h(GetRaceWinnerPlayer);
 
 TaskFuncPtr charfuncs[] = {
 	SonicTheHedgehog,
@@ -294,7 +294,7 @@ void SetPlayerInitialPosition_r(taskwk* twp)
 	}
 	else
 	{
-		SetPlayerInitialPosition_t.Original(twp);
+		SetPlayerInitialPosition_h.Original(twp);
 	}
 }
 
@@ -333,7 +333,7 @@ void DamegeRingScatter_r(char pno)
 	}
 	else
 	{
-		return DamegeRingScatter_t.Original(pno);
+		return DamegeRingScatter_h.Original(pno);
 	}
 }
 
@@ -638,7 +638,7 @@ void SetPlayer_r()
 	}
 	else
 	{
-		return SetPlayer_t.Original();
+		return SetPlayer_h.Original();
 	}
 }
 
@@ -659,7 +659,7 @@ int GetRaceWinnerPlayer_r()
 		}
 	}
 
-	return GetRaceWinnerPlayer_t.Original();
+	return GetRaceWinnerPlayer_h.Original();
 }
 
 Bool isInDeathZone_r(taskwk* a1)
@@ -669,7 +669,7 @@ Bool isInDeathZone_r(taskwk* a1)
 		return 0;
 	}
 
-	return isInDeathZone_t.Original(a1);
+	return isInDeathZone_h.Original(a1);
 }
 
 bool DeleteJiggle(task* tp)
@@ -687,16 +687,16 @@ void InitPlayerPatches()
 {
 	isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
 
-	SetPlayerInitialPosition_t.Hook(SetPlayerInitialPosition_r);
-	DamegeRingScatter_t.Hook(DamegeRingScatter_r);
-	SetPlayer_t.Hook(SetPlayer_r);
-	isInDeathZone_t.Hook(isInDeathZone_r);
+	SetPlayerInitialPosition_h.Hook(SetPlayerInitialPosition_r);
+	DamegeRingScatter_h.Hook(DamegeRingScatter_r);
+	SetPlayer_h.Hook(SetPlayer_r);
+	isInDeathZone_h.Hook(isInDeathZone_r);
 
 	WriteJump(ResetNumPlayer, ResetNumPlayerM);
 	WriteJump(ResetNumRing, ResetNumRingM);
 	WriteJump(InitActionScore, ResetEnemyScoreM);
 	WriteJump(InitScore, InitScore_r);
-	GetRaceWinnerPlayer_t.Hook(GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
+	GetRaceWinnerPlayer_h.Hook(GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
 
 #ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_LOCATION, PlayerListener);

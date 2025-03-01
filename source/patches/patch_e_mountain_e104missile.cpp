@@ -9,7 +9,7 @@ static auto smoke = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x60F100,
 static auto addVectorAng = GenerateUsercallWrapper<void (*)(Angle3* ang, MISSILE_WK* wk, float force)>(noret, 0x568280, rEDI, rESI, stack4); // custom name
 
 static void __cdecl EnemyMountainTgtMissile_exec_r(task* tp);
-FastFunctionHookPtr<decltype(&EnemyMountainTgtMissile_exec_r)> EnemyMountainTgtMissile_exec_t(0x60F360);
+FastFunctionHookPtr<decltype(&EnemyMountainTgtMissile_exec_r)> EnemyMountainTgtMissile_exec_h(0x60F360);
 
 static void updownHeight_m(taskwk* twp, MISSILE_WK* wk, taskwk* ptwp)
 {
@@ -89,13 +89,13 @@ static void __cdecl EnemyMountainTgtMissile_exec_r(task* tp)
 	}
 	else
 	{
-		EnemyMountainTgtMissile_exec_t.Original(tp);
+		EnemyMountainTgtMissile_exec_h.Original(tp);
 	}
 }
 
 void patch_mountain_e104missile_init()
 {
-	EnemyMountainTgtMissile_exec_t.Hook(EnemyMountainTgtMissile_exec_r);
+	EnemyMountainTgtMissile_exec_h.Hook(EnemyMountainTgtMissile_exec_r);
 }
 
 RegisterPatch patch_mountain_e104missile(patch_mountain_e104missile_init);

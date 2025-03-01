@@ -5,9 +5,9 @@
 #include "splitscreen.h"
 #include "hud_itembox.h"
 
-FastUsercallHookPtr<void(*)(task*), noret, rEAX> ObjectItemboxNormal_t(0x4D6670);
-FastUsercallHookPtr<void(*)(task*), noret, rEDI> itembox_airCollisitonBefore_t(0x4C0610);
-FastFunctionHook<void, task*> ItemBoxAir_t((intptr_t)ItemBoxAir_Main);
+FastUsercallHookPtr<void(*)(task*), noret, rEAX> ObjectItemboxNormal_h(0x4D6670);
+FastUsercallHookPtr<void(*)(task*), noret, rEDI> itembox_airCollisitonBefore_h(0x4C0610);
+FastFunctionHook<void, task*> ItemBoxAir_h((intptr_t)ItemBoxAir_Main);
 
 static bool CheckHitByPlayerOrBullet(taskwk* twp)
 {
@@ -211,7 +211,7 @@ static void __cdecl ObjectItemboxNormal_r(task* tp)
 	}
 	else
 	{
-		ObjectItemboxNormal_t.Original(tp);
+		ObjectItemboxNormal_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -261,7 +261,7 @@ static void __cdecl itembox_airCollisitonBefore_r(task* tp)
 	}
 	else
 	{
-		itembox_airCollisitonBefore_t.Original(tp);
+		itembox_airCollisitonBefore_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -287,7 +287,7 @@ void __cdecl ItemBoxAir_Main_r(task* obj)
 
 	}
 
-	ItemBoxAir_t.Original(obj);
+	ItemBoxAir_h.Original(obj);
 }
 
 static void DeleteAirBox(task* obj)
@@ -302,8 +302,8 @@ static void DeleteAirBox(task* obj)
 
 static void patch_itembox_init()
 {
-	ObjectItemboxNormal_t.Hook(ObjectItemboxNormal_r);
-	itembox_airCollisitonBefore_t.Hook(itembox_airCollisitonBefore_r);
+	ObjectItemboxNormal_h.Hook(ObjectItemboxNormal_r);
+	itembox_airCollisitonBefore_h.Hook(itembox_airCollisitonBefore_r);
 
 	item_info[1].effect_func = ef_muteki_r;
 	item_info[2].effect_func = ef_5ring_r;
@@ -315,7 +315,7 @@ static void patch_itembox_init()
 	item_info[8].effect_func = ef_th_baria_r;
 
 	WriteCall((void*)0x4C097C, DeleteAirBox);
-	ItemBoxAir_t.Hook(ItemBoxAir_Main_r);
+	ItemBoxAir_h.Hook(ItemBoxAir_Main_r);
 }
 
 RegisterPatch patch_itembox(patch_itembox_init);

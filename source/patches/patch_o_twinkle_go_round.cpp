@@ -5,7 +5,7 @@
 // Patches the carousel floor to work with multiple players
 
 static void __cdecl execTPFloor_r(task* tp);
-FastFunctionHookPtr<decltype(&execTPFloor_r)> execTPFloor_t(0x6210B0);
+FastFunctionHookPtr<decltype(&execTPFloor_r)> execTPFloor_h(0x6210B0);
 
 static void execTPFloor_m(task* tp)
 {
@@ -51,13 +51,13 @@ static void __cdecl execTPFloor_r(task* tp)
 	}
 	else
 	{
-		execTPFloor_t.Original(tp);
+		execTPFloor_h.Original(tp);
 	}
 }
 
 void patch_twinkle_go_round_init()
 {
-	execTPFloor_t.Hook(execTPFloor_r);
+	execTPFloor_h.Hook(execTPFloor_r);
 }
 
 RegisterPatch patch_twinkle_go_round(patch_twinkle_go_round_init);

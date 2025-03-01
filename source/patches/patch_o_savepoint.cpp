@@ -4,8 +4,8 @@
 #include "splitscreen.h"
 #include "multiplayer.h"
 
-FastUsercallHookPtr<void(*)(task*, taskwk*), noret, rEDI, rESI> savepointCollision_t(0x44F430);
-FastFunctionHook<void, CUSTUM_PRINT_NUMBER*, Sint32, Sint32> PrintTimer_t(0x4BABE0);
+FastUsercallHookPtr<void(*)(task*, taskwk*), noret, rEDI, rESI> savepointCollision_h(0x44F430);
+FastFunctionHook<void, CUSTUM_PRINT_NUMBER*, Sint32, Sint32> PrintTimer_h(0x4BABE0);
 
 float savepointGetSpeed_m(taskwk* twp, int pID)
 {
@@ -61,7 +61,7 @@ void __cdecl savepointCollision_r(task* tp, taskwk* twp)
 	}
 	else
 	{
-		savepointCollision_t.Original(tp, twp);
+		savepointCollision_h.Original(tp, twp);
 	}
 }
 
@@ -69,14 +69,14 @@ void __cdecl PrintTimer_r(CUSTUM_PRINT_NUMBER* custom, Sint32 min, Sint32 sec)
 {
 	if (!SplitScreen::IsActive())
 	{
-		PrintTimer_t.Original(custom, min, sec);
+		PrintTimer_h.Original(custom, min, sec);
 	}
 }
 
 void patch_savepoint_init()
 {
-	savepointCollision_t.Hook(savepointCollision_r);
-	PrintTimer_t.Hook(PrintTimer_r);
+	savepointCollision_h.Hook(savepointCollision_r);
+	PrintTimer_h.Hook(PrintTimer_r);
 }
 
 RegisterPatch patch_savepoint(patch_savepoint_init);

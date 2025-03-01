@@ -6,8 +6,8 @@
 static Bool __cdecl checkPlayerRideOnTheCage_r(task* tp);
 static void __cdecl execCage_r(task* tp);
 
-FastUsercallHookPtr<decltype(&checkPlayerRideOnTheCage_r), rEAX, rEAX> checkPlayerRideOnTheCage_t(0x61B060);
-FastFunctionHookPtr<decltype(&execCage_r)> execCage_t(0x61B190);
+FastUsercallHookPtr<decltype(&checkPlayerRideOnTheCage_r), rEAX, rEAX> checkPlayerRideOnTheCage_h(0x61B060);
+FastFunctionHookPtr<decltype(&execCage_r)> execCage_h(0x61B190);
 
 static Bool __cdecl checkPlayerRideOnTheCage_r(task* tp)
 {
@@ -45,13 +45,13 @@ static Bool __cdecl checkPlayerRideOnTheCage_r(task* tp)
 	}
 	else
 	{
-		return checkPlayerRideOnTheCage_t.Original(tp);
+		return checkPlayerRideOnTheCage_h.Original(tp);
 	}
 }
 
 static void __cdecl execCage_r(task* tp)
 {
-	execCage_t.Original(tp);
+	execCage_h.Original(tp);
 
 	for (int i = 2; i < PLAYER_MAX; ++i)
 	{
@@ -64,8 +64,8 @@ static void __cdecl execCage_r(task* tp)
 
 void patch_crane_init()
 {
-	checkPlayerRideOnTheCage_t.Hook(checkPlayerRideOnTheCage_r);
-	execCage_t.Hook(execCage_r);
+	checkPlayerRideOnTheCage_h.Hook(checkPlayerRideOnTheCage_r);
+	execCage_h.Hook(execCage_r);
 }
 
 RegisterPatch patch_crane(patch_crane_init);

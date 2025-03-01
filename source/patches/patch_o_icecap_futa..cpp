@@ -4,7 +4,7 @@
 // Breakable ice in Big's Ice Cap
 
 Bool __cdecl CheckBreakFuta_r(task* tp);
-FastUsercallHookPtr<decltype(&CheckBreakFuta_r), rEAX, rEDI> CheckBreakFuta_t(0x4EEA10);
+FastUsercallHookPtr<decltype(&CheckBreakFuta_r), rEAX, rEDI> CheckBreakFuta_h(0x4EEA10);
 
 Bool CheckBreakFuta_m(task* tp)
 {
@@ -61,13 +61,13 @@ Bool __cdecl CheckBreakFuta_r(task* tp)
 	}
 	else
 	{
-		return CheckBreakFuta_t.Original(tp);
+		return CheckBreakFuta_h.Original(tp);
 	}
 }
 
 void patch_icecap_futa_init()
 {
-	CheckBreakFuta_t.Hook(CheckBreakFuta_r);
+	CheckBreakFuta_h.Hook(CheckBreakFuta_r);
 }
 
 RegisterPatch patch_icecap_futa(patch_icecap_futa_init);

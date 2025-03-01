@@ -4,7 +4,7 @@
 DataPointer(NJS_OBJECT, object_kaiten_kaitendaiz_kaitendaiz, 0x18300C8);
 
 static void __cdecl ObjShelterKaitendai_ExecATask_r(task* tp);
-FastUsercallHookPtr<decltype(&ObjShelterKaitendai_ExecATask_r), noret, rEDI> ObjShelterKaitendai_ExecATask_t(0x59E760);
+FastUsercallHookPtr<decltype(&ObjShelterKaitendai_ExecATask_r), noret, rEDI> ObjShelterKaitendai_ExecATask_h(0x59E760);
 
 static void ExecATask_m(task* tp)
 {
@@ -49,13 +49,13 @@ static void __cdecl ObjShelterKaitendai_ExecATask_r(task* tp)
 	}
 	else
 	{
-		ObjShelterKaitendai_ExecATask_t.Original(tp);
+		ObjShelterKaitendai_ExecATask_h.Original(tp);
 	}
 }
 
 void patch_shelter_kaitendai_init()
 {
-	ObjShelterKaitendai_ExecATask_t.Hook(ObjShelterKaitendai_ExecATask_r);
+	ObjShelterKaitendai_ExecATask_h.Hook(ObjShelterKaitendai_ExecATask_r);
 }
 
 RegisterPatch patch_shelter_kaitendai(patch_shelter_kaitendai_init);

@@ -4,11 +4,11 @@
 #include "multiplayer.h"
 
 static void __cdecl ObjectTPBarrel_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectTPBarrel_r)> ObjectTPBarrel_t(0x624020);
+FastFunctionHookPtr<decltype(&ObjectTPBarrel_r)> ObjectTPBarrel_h(0x624020);
 
 static void __cdecl ObjectTPBarrel_r(task* tp)
 {
-	ObjectTPBarrel_t.Original(tp);
+	ObjectTPBarrel_h.Original(tp);
 
 	if (multiplayer::IsActive())
 	{
@@ -23,7 +23,7 @@ static void __cdecl ObjectTPBarrel_r(task* tp)
 
 void patch_twinkle_barrel_init()
 {
-	ObjectTPBarrel_t.Hook(ObjectTPBarrel_r);
+	ObjectTPBarrel_h.Hook(ObjectTPBarrel_r);
 }
 
 RegisterPatch patch_twinkle_barrel(patch_twinkle_barrel_init);

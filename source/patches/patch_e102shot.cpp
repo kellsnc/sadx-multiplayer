@@ -8,7 +8,7 @@
 DataArray(uint8_t, color_tbl_0, 0x98204C, 6);
 
 static void __cdecl dispE102Laser_r(task* tp);
-FastFunctionHookPtr<decltype(&dispE102Laser_r)> dispE102Laser_t(0x4C4C20);
+FastFunctionHookPtr<decltype(&dispE102Laser_r)> dispE102Laser_h(0x4C4C20);
 
 static void __cdecl dispE102LaserDraw(task* tp)
 {
@@ -65,12 +65,12 @@ static void __cdecl dispE102Laser_r(task* tp)
 		}
 	}
 
-	dispE102Laser_t.Original(tp);
+	dispE102Laser_h.Original(tp);
 }
 
 void patch_e102shot_init()
 {
-	dispE102Laser_t.Hook(dispE102Laser_r);
+	dispE102Laser_h.Hook(dispE102Laser_r);
 }
 
 RegisterPatch patch_e102shot(patch_e102shot_init);

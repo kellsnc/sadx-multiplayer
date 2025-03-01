@@ -4,8 +4,8 @@
 #include "multiplayer.h"
 #include "camera.h"
 
-FastFunctionHook<void, task*> ObjectRocket_Wait_t(0x4CA1F0);
-FastFunctionHook<void, task*> ObjectRocket_Hold_V_t(0x4C9C60);
+FastFunctionHook<void, task*> ObjectRocket_Wait_h(0x4CA1F0);
+FastFunctionHook<void, task*> ObjectRocket_Hold_V_h(0x4C9C60);
 FastUserpurgeHookPtr<void(*)(task* tp), noret, rEDX> ObjectRocket_Hold_H(0x4C9BC0);
 
 static void __cdecl ObjectRocket_Hold_V_r(task* tp)
@@ -44,7 +44,7 @@ static void __cdecl ObjectRocket_Hold_V_r(task* tp)
 	}
 	else
 	{
-		ObjectRocket_Hold_V_t.Original(tp);
+		ObjectRocket_Hold_V_h.Original(tp);
 	}
 }
 
@@ -99,13 +99,13 @@ static void __cdecl ObjectRocket_Wait_r(task* tp)
 		}
 	}
 
-	ObjectRocket_Wait_t.Original(tp);
+	ObjectRocket_Wait_h.Original(tp);
 }
 
 void patch_rocket_init()
 {
-	ObjectRocket_Wait_t.Hook(ObjectRocket_Wait_r);
-	ObjectRocket_Hold_V_t.Hook(ObjectRocket_Hold_V_r);
+	ObjectRocket_Wait_h.Hook(ObjectRocket_Wait_r);
+	ObjectRocket_Hold_V_h.Hook(ObjectRocket_Hold_V_r);
 	ObjectRocket_Hold_H.Hook(ObjectRocket_Hold_H_r);
 }
 

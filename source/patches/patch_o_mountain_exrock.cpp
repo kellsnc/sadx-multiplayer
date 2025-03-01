@@ -19,9 +19,9 @@ static void __cdecl ObjectMountainExplosionRock1_r(task* tp);
 static void __cdecl ObjectMountainExplosionRock2_r(task* tp);
 static void __cdecl MiddleRock_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock1_r)> ObjectMountainExplosionRock1_t(0x602130);
-FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock2_r)> ObjectMountainExplosionRock2_t(0x602320);
-FastFunctionHookPtr<decltype(&MiddleRock_r)> MiddleRock_t(0x601EC0);
+FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock1_r)> ObjectMountainExplosionRock1_h(0x602130);
+FastFunctionHookPtr<decltype(&ObjectMountainExplosionRock2_r)> ObjectMountainExplosionRock2_h(0x602320);
+FastFunctionHookPtr<decltype(&MiddleRock_r)> MiddleRock_h(0x601EC0);
 
 #pragma region MiddleRock
 static void MiddleRock_m(task* tp)
@@ -54,7 +54,7 @@ static void __cdecl MiddleRock_r(task* tp)
 {
 	if (!multiplayer::IsActive() || tp->twp->mode == 0)
 	{
-		MiddleRock_t.Original(tp);
+		MiddleRock_h.Original(tp);
 	}
 	else
 	{
@@ -121,7 +121,7 @@ static void __cdecl ObjectMountainExplosionRock2_r(task* tp)
 {
 	if (!multiplayer::IsActive() || tp->twp->mode == 0)
 	{
-		ObjectMountainExplosionRock2_t.Original(tp);
+		ObjectMountainExplosionRock2_h.Original(tp);
 	}
 	else
 	{
@@ -198,7 +198,7 @@ static void __cdecl ObjectMountainExplosionRock1_r(task* tp)
 {
 	if (!multiplayer::IsActive() || tp->twp->mode == 0)
 	{
-		ObjectMountainExplosionRock1_t.Original(tp);
+		ObjectMountainExplosionRock1_h.Original(tp);
 	}
 	else
 	{
@@ -209,9 +209,9 @@ static void __cdecl ObjectMountainExplosionRock1_r(task* tp)
 
 void patch_mountain_exrock_init()
 {
-	ObjectMountainExplosionRock1_t.Hook(ObjectMountainExplosionRock1_r);
-	ObjectMountainExplosionRock2_t.Hook(ObjectMountainExplosionRock2_r);
-	MiddleRock_t.Hook(MiddleRock_r);
+	ObjectMountainExplosionRock1_h.Hook(ObjectMountainExplosionRock1_r);
+	ObjectMountainExplosionRock2_h.Hook(ObjectMountainExplosionRock2_r);
+	MiddleRock_h.Hook(MiddleRock_r);
 }
 
 RegisterPatch patch_mountain_exrock(patch_mountain_exrock_init);

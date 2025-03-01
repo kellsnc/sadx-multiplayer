@@ -14,7 +14,7 @@ enum : __int8
 };
 
 static void __cdecl ObjectBaloon_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectBaloon_r)> ObjectBaloon_t(0x7A21C0);
+FastFunctionHookPtr<decltype(&ObjectBaloon_r)> ObjectBaloon_h(0x7A21C0);
 
 static void Normal_m(taskwk* twp)
 {
@@ -128,13 +128,13 @@ static void __cdecl ObjectBaloon_r(task* tp)
 	}
 	else
 	{
-		ObjectBaloon_t.Original(tp);
+		ObjectBaloon_h.Original(tp);
 	}
 }
 
 void patch_baloon_init()
 {
-	ObjectBaloon_t.Hook(ObjectBaloon_r);
+	ObjectBaloon_h.Hook(ObjectBaloon_r);
 }
 
 RegisterPatch patch_baloon(patch_baloon_init);

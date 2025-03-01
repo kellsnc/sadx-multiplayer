@@ -53,14 +53,14 @@ static auto calcFishingLureY = GenerateUsercallWrapper<void (*)(taskwk* twp, Big
 static auto moveFishingRotY = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46E380, rEAX);
 static auto chkKabeAngle2 = GenerateUsercallWrapper<Bool(*)(Angle3* angle3_p)>(rEAX, 0x46C6A0, rESI);
 
-FastFunctionHook<void, task*> dispFishWeightTexture_t(0x46F580);
-FastFunctionHook<void, task*> exitFishWeightTexture_t(0x470160);
-FastFunctionHook<void, task*> dispFishingLure_t(0x470580);
-FastFunctionHook<void, task*> dispFishingLureSwitch_t(0x4703F0);
-FastFunctionHook<void, task*> fishingLureCtrl_t(0x471580);
-FastFunctionHook<task*, task*> SetFishingLureTask_t(0x471ED0);
-FastFunctionHook<void, task*> fishingCursorCtrl_t(0x46FA10);
-FastFunctionHook<task*, task*> SetFishingCursorTask_t(0x470330);
+FastFunctionHook<void, task*> dispFishWeightTexture_h(0x46F580);
+FastFunctionHook<void, task*> exitFishWeightTexture_h(0x470160);
+FastFunctionHook<void, task*> dispFishingLure_h(0x470580);
+FastFunctionHook<void, task*> dispFishingLureSwitch_h(0x4703F0);
+FastFunctionHook<void, task*> fishingLureCtrl_h(0x471580);
+FastFunctionHook<task*, task*> SetFishingLureTask_h(0x471ED0);
+FastFunctionHook<void, task*> fishingCursorCtrl_h(0x46FA10);
+FastFunctionHook<task*, task*> SetFishingCursorTask_h(0x470330);
 
 BIGETC* GetBigEtc(int pnum)
 {
@@ -201,12 +201,12 @@ static void __cdecl dispFishWeightTexture_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		dispFishWeightTexture_t.Original(tp);
+		dispFishWeightTexture_h.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		dispFishWeightTexture_t.Original(tp);
+		dispFishWeightTexture_h.Original(tp);
 	}
 }
 
@@ -227,7 +227,7 @@ static void __cdecl exitFishWeightTexture_r(task* tp)
 	}
 	else
 	{
-		exitFishWeightTexture_t.Original(tp);
+		exitFishWeightTexture_h.Original(tp);
 	}
 }
 
@@ -308,7 +308,7 @@ static void __cdecl dispFishingLure_r(task* tp)
 			return;
 		}
 
-		dispFishingLure_t.Original(tp);
+		dispFishingLure_h.Original(tp);
 	}
 }
 
@@ -320,7 +320,7 @@ static void __cdecl dispFishingLureSwitch_r(task* tp)
 	}
 	else
 	{
-		dispFishingLureSwitch_t.Original(tp);
+		dispFishingLureSwitch_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -1923,13 +1923,13 @@ static void __cdecl fishingLureCtrl_r(task* tp)
 			return;
 		}
 
-		fishingLureCtrl_t.Original(tp);
+		fishingLureCtrl_h.Original(tp);
 	}
 }
 
 static task* __cdecl SetFishingLureTask_r(task* tp)
 {
-	auto lure_tp = SetFishingLureTask_t.Original(tp);
+	auto lure_tp = SetFishingLureTask_h.Original(tp);
 	auto pnum = lure_tp->twp->btimer = TASKWK_PLAYERID(tp->twp);
 
 	auto etc = GetBigEtc(pnum);
@@ -2018,13 +2018,13 @@ static void __cdecl fishingCursorCtrl_r(task* tp)
 	}
 	else
 	{
-		fishingCursorCtrl_t.Original(tp);
+		fishingCursorCtrl_h.Original(tp);
 	}
 }
 
 static task* __cdecl SetFishingCursorTask_r(task* tp)
 {
-	auto cursor_tp = SetFishingCursorTask_t.Original(tp);
+	auto cursor_tp = SetFishingCursorTask_h.Original(tp);
 	TASKWK_PLAYERID(cursor_tp->twp) = TASKWK_PLAYERID(tp->twp);
 	return cursor_tp;
 }
@@ -2046,14 +2046,14 @@ static void BigStateInit_r()
 
 void InitFishing()
 {
-	dispFishWeightTexture_t.Hook(dispFishWeightTexture_r);
-	exitFishWeightTexture_t.Hook(exitFishWeightTexture_r);
-	dispFishingLure_t.Hook(dispFishingLure_r);
-	dispFishingLureSwitch_t.Hook(dispFishingLureSwitch_r);
-	fishingLureCtrl_t.Hook(fishingLureCtrl_r);
-	SetFishingLureTask_t.Hook(SetFishingLureTask_r);
-	fishingCursorCtrl_t.Hook(fishingCursorCtrl_r);
-	SetFishingCursorTask_t.Hook(SetFishingCursorTask_r);
+	dispFishWeightTexture_h.Hook(dispFishWeightTexture_r);
+	exitFishWeightTexture_h.Hook(exitFishWeightTexture_r);
+	dispFishingLure_h.Hook(dispFishingLure_r);
+	dispFishingLureSwitch_h.Hook(dispFishingLureSwitch_r);
+	fishingLureCtrl_h.Hook(fishingLureCtrl_r);
+	SetFishingLureTask_h.Hook(SetFishingLureTask_r);
+	fishingCursorCtrl_h.Hook(fishingCursorCtrl_r);
+	SetFishingCursorTask_h.Hook(SetFishingCursorTask_r);
 
 	WriteJump((void*)0x470120, BigStateInit_r);
 	WriteCall((void*)0x48CCE4, Big_CreateBigDisplayFishWeight_j);

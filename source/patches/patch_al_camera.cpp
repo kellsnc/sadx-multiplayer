@@ -8,8 +8,8 @@
 void AL_CreateNormalCameraTask_r();
 void ALCAM_CreateCameraManager_r();
 
-FastFunctionHookPtr<decltype(&AL_CreateNormalCameraTask_r)> AL_CreateNormalCameraTask_t(0x0072A570);
-FastFunctionHookPtr<decltype(&ALCAM_CreateCameraManager_r)> ALCAM_CreateCameraManager_t(0x0072A750);
+FastFunctionHookPtr<decltype(&AL_CreateNormalCameraTask_r)> AL_CreateNormalCameraTask_h(0x0072A570);
+FastFunctionHookPtr<decltype(&ALCAM_CreateCameraManager_r)> ALCAM_CreateCameraManager_h(0x0072A750);
 
 struct AL_CAMERA_WORK {
 	Sint8 mode;
@@ -291,7 +291,7 @@ task* AL_CreateNormalCameraTask_m(int pnum)
 
 void AL_CreateNormalCameraTask_r()
 {
-	AL_CreateNormalCameraTask_t.Original();
+	AL_CreateNormalCameraTask_h.Original();
 
 	if (multiplayer::IsActive())
 	{
@@ -325,7 +325,7 @@ void ALCAM_ModeSystem_m(_OBJ_CAMERAPARAM* pParam)
 
 void ALCAM_CreateCameraManager_r()
 {
-	ALCAM_CreateCameraManager_t.Original();
+	ALCAM_CreateCameraManager_h.Original();
 	if (multiplayer::IsActive())
 	{
 		for (int i = 1; i < PLAYER_MAX; ++i)
@@ -338,8 +338,8 @@ void ALCAM_CreateCameraManager_r()
 
 void patch_al_camera_init()
 {
-	ALCAM_CreateCameraManager_t.Hook(ALCAM_CreateCameraManager_r);
-	AL_CreateNormalCameraTask_t.Hook(AL_CreateNormalCameraTask_r);
+	ALCAM_CreateCameraManager_h.Hook(ALCAM_CreateCameraManager_r);
+	AL_CreateNormalCameraTask_h.Hook(AL_CreateNormalCameraTask_r);
 }
 
 RegisterPatch patch_al_camera(patch_al_camera_init);

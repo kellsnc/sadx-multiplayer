@@ -2,7 +2,7 @@
 #include "multiplayer.h"
 
 static void __cdecl ObjectHebigate_Normal_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectHebigate_Normal_r)> ObjectHebigate_Normal_t(0x5EADE0);
+FastFunctionHookPtr<decltype(&ObjectHebigate_Normal_r)> ObjectHebigate_Normal_h(0x5EADE0);
 
 static void Normal_m(task* tp)
 {
@@ -53,13 +53,13 @@ static void __cdecl ObjectHebigate_Normal_r(task* tp)
 	}
 	else
 	{
-		ObjectHebigate_Normal_t.Original(tp);
+		ObjectHebigate_Normal_h.Original(tp);
 	}
 }
 
 void patch_hebigate_init()
 {
-	ObjectHebigate_Normal_t.Hook(ObjectHebigate_Normal_r);
+	ObjectHebigate_Normal_h.Hook(ObjectHebigate_Normal_r);
 }
 
 RegisterPatch patch_hebigate(patch_hebigate_init);

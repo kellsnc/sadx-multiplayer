@@ -3,10 +3,10 @@
 #include "FastFunctionHook.hpp"
 #include "RegisterPatch.hpp"
 
-FastFunctionHook<void, task*> Ring_t(0x450370);
-FastFunctionHook<void, task*> ObjectTPRing_t(0x61F4A0);
-FastFunctionHook<void, task*> Tobitiri_t(0x44FD10);
-FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rEDI> PlayerVacumedRing_t(0x44FA90);
+FastFunctionHook<void, task*> Ring_h(0x450370);
+FastFunctionHook<void, task*> ObjectTPRing_h(0x61F4A0);
+FastFunctionHook<void, task*> Tobitiri_h(0x44FD10);
+FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rEDI> PlayerVacumedRing_h(0x44FA90);
 
 bool GrabRingMulti(taskwk* twp, task* tp)
 {
@@ -43,7 +43,7 @@ void __cdecl Ring_r(task* tp)
 		}
 	}
 
-	Ring_t.Original(tp);
+	Ring_h.Original(tp);
 }
 
 void __cdecl ObjectTPRing_r(task* tp)
@@ -59,7 +59,7 @@ void __cdecl ObjectTPRing_r(task* tp)
 		}
 	}
 
-	ObjectTPRing_t.Original(tp);
+	ObjectTPRing_h.Original(tp);
 }
 
 // Patch for other players to collect scattered rings
@@ -96,7 +96,7 @@ void __cdecl Tobitiri_r(task* tp)
 		}
 	}
 
-	Tobitiri_t.Original(tp);
+	Tobitiri_h.Original(tp);
 }
 
 static Bool PlayerVacumedRing_r(taskwk* twp)
@@ -172,16 +172,16 @@ static Bool PlayerVacumedRing_r(taskwk* twp)
 	}
 	else
 	{
-		return PlayerVacumedRing_t.Original(twp);
+		return PlayerVacumedRing_h.Original(twp);
 	}
 }
 
 void patch_ring_init()
 {
-	Ring_t.Hook(Ring_r);
-	ObjectTPRing_t.Hook(ObjectTPRing_r);
-	Tobitiri_t.Hook(Tobitiri_r);
-	PlayerVacumedRing_t.Hook(PlayerVacumedRing_r);
+	Ring_h.Hook(Ring_r);
+	ObjectTPRing_h.Hook(ObjectTPRing_r);
+	Tobitiri_h.Hook(Tobitiri_r);
+	PlayerVacumedRing_h.Hook(PlayerVacumedRing_r);
 }
 
 RegisterPatch patch_ring(patch_ring_init);

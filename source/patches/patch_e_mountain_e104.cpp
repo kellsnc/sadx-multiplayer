@@ -5,12 +5,12 @@
 
 // E104 is almost entirely a copy paste of E103
 
-FastFunctionHookPtr<TaskFuncPtr> e104_waitPlayer_t(0x6046A0);
-FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> e104_move_t(0x6048B0);
-FastUsercallHookPtr<void(*)(task* pTask, NJS_POINT3* posTarget, Angle angMax), noret, rECX, rEAX, rEDI> e104_turnBody_t(0x604480);
-FastUsercallHookPtr<TaskFuncPtr, noret, rESI> e104_chkDamage_t(0x604310);
-FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> e104_execMode_t(0x605400);
-FastUsercallHookPtr<Bool(*)(task* tp, Float r), noret, rEAX, stack4> e104_chkPlayerRadius_t(0x566D80);
+FastFunctionHookPtr<TaskFuncPtr> e104_waitPlayer_h(0x6046A0);
+FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> e104_move_h(0x6048B0);
+FastUsercallHookPtr<void(*)(task* pTask, NJS_POINT3* posTarget, Angle angMax), noret, rECX, rEAX, rEDI> e104_turnBody_h(0x604480);
+FastUsercallHookPtr<TaskFuncPtr, noret, rESI> e104_chkDamage_h(0x604310);
+FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> e104_execMode_h(0x605400);
+FastUsercallHookPtr<Bool(*)(task* tp, Float r), noret, rEAX, stack4> e104_chkPlayerRadius_h(0x566D80);
 
 static void SetE104Camera(task* tp)
 {
@@ -118,7 +118,7 @@ static void __cdecl e104_move_r(task* tp)
 	}
 	else
 	{
-		e104_move_t.Original(tp);
+		e104_move_h.Original(tp);
 	}
 }
 
@@ -158,7 +158,7 @@ static void __cdecl e104_waitPlayer_r(task* tp)
 	}
 	else
 	{
-		e104_waitPlayer_t.Original(tp);
+		e104_waitPlayer_h.Original(tp);
 	}
 }
 
@@ -188,7 +188,7 @@ static Bool __cdecl e104_chkPlayerRadius_r(task* tp, Float r)
 	}
 	else
 	{
-		return e104_chkPlayerRadius_t.Original(tp, r);
+		return e104_chkPlayerRadius_h.Original(tp, r);
 	}
 }
 
@@ -200,12 +200,12 @@ static void __cdecl e104_turnBody_r(task* pTask, NJS_POINT3* posTarget, Angle an
 
 		if (ptwp)
 		{
-			e104_turnBody_t.Original(pTask, &ptwp->pos, angMax);
+			e104_turnBody_h.Original(pTask, &ptwp->pos, angMax);
 		}
 	}
 	else
 	{
-		e104_turnBody_t.Original(pTask, posTarget, angMax);
+		e104_turnBody_h.Original(pTask, posTarget, angMax);
 	}
 }
 
@@ -236,7 +236,7 @@ static void __cdecl e104_chkDamage_r(task* tp)
 		}
 	}
 
-	e104_chkDamage_t.Original(tp);
+	e104_chkDamage_h.Original(tp);
 }
 
 static void __cdecl e104_execMode_r(task* tp)
@@ -253,17 +253,17 @@ static void __cdecl e104_execMode_r(task* tp)
 		return;
 	}
 
-	e104_execMode_t.Original(tp);
+	e104_execMode_h.Original(tp);
 }
 
 void patch_mountain_e104_init()
 {
-	e104_move_t.Hook(e104_move_r);
-	e104_waitPlayer_t.Hook(e104_waitPlayer_r);
-	e104_turnBody_t.Hook(e104_turnBody_r);
-	e104_chkDamage_t.Hook(e104_chkDamage_r);
-	e104_execMode_t.Hook(e104_execMode_r);
-	e104_chkPlayerRadius_t.Hook(e104_chkPlayerRadius_r);
+	e104_move_h.Hook(e104_move_r);
+	e104_waitPlayer_h.Hook(e104_waitPlayer_r);
+	e104_turnBody_h.Hook(e104_turnBody_r);
+	e104_chkDamage_h.Hook(e104_chkDamage_r);
+	e104_execMode_h.Hook(e104_execMode_r);
+	e104_chkPlayerRadius_h.Hook(e104_chkPlayerRadius_r);
 }
 
 RegisterPatch patch_mountain_e104(patch_mountain_e104_init);

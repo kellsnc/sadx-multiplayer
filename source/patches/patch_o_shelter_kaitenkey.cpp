@@ -7,8 +7,8 @@
 // Amy key handles in Final Egg
 // It's done properly in the player's task, but the object itself is hardcoded to p1
 
-FastUsercallHookPtr<void(*)(taskwk*), noret, rEAX> HandleTest_t(0x5A2840);
-FastFunctionHook<Bool, Angle*> AmyHndlGetHandleAngle_t(0x4C56D0);
+FastUsercallHookPtr<void(*)(taskwk*), noret, rEAX> HandleTest_h(0x5A2840);
+FastFunctionHook<Bool, Angle*> AmyHndlGetHandleAngle_h(0x4C56D0);
 
 VariableHook<amyhndlstr, 0x3C5B300> amyhndlstatus_m; // Add handle information for all players
 
@@ -49,7 +49,7 @@ static Bool AmyHndlGetHandleAngle_r(Angle* ang)
 	}
 	else
 	{
-		return AmyHndlGetHandleAngle_t.Original(ang);
+		return AmyHndlGetHandleAngle_h.Original(ang);
 	}
 }
 
@@ -163,15 +163,15 @@ static void __cdecl HandleTest_r(taskwk* twp)
 	}
 	else
 	{
-		HandleTest_t.Original(twp);
+		HandleTest_h.Original(twp);
 	}
 }
 
 void patch_shelter_kaitenkey_init()
 {
 	WriteJump((void*)0x4C5800, AmyHndlGetInfoStrP_r); // Too small to hook
-	AmyHndlGetHandleAngle_t.Hook(AmyHndlGetHandleAngle_r);
-	HandleTest_t.Hook(HandleTest_r);
+	AmyHndlGetHandleAngle_h.Hook(AmyHndlGetHandleAngle_r);
+	HandleTest_h.Hook(HandleTest_r);
 }
 
 RegisterPatch patch_shelter_kaitenkey(patch_shelter_kaitenkey_init);

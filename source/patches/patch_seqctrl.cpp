@@ -4,7 +4,7 @@
 
 // Change character boss ID from 1 to 7 to avoid conflict with other players.
 
-FastFunctionHook<void, int> SeqExecBossPlayer_t(0x413840);
+FastFunctionHook<void, int> SeqExecBossPlayer_h(0x413840);
 
 static uint8_t aiPAD = 7;
 
@@ -42,12 +42,12 @@ void __cdecl SeqExecBossPlayer_r(int boss_id)
 		}
 	}
 
-	SeqExecBossPlayer_t.Original(boss_id);
+	SeqExecBossPlayer_h.Original(boss_id);
 }
 
 void patch_seqctrl_init()
 {
-	SeqExecBossPlayer_t.Hook(SeqExecBossPlayer_r);
+	SeqExecBossPlayer_h.Hook(SeqExecBossPlayer_r);
 }
 
 RegisterPatch patch_seqctrl(patch_seqctrl_init);

@@ -53,10 +53,10 @@ void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd);
 void __cdecl CartGetOffPlayer_r(task* tp);
 void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang);
 
-FastFunctionHookPtr<decltype(&EnemyCart_r)> EnemyCart_t(0x79A9E0);
-FastFunctionHookPtr<decltype(&SetCartVelocity_r)> SetCartVelocity_t(0x79AF90);
-FastFunctionHookPtr<decltype(&CartGetOffPlayer_r)> CartGetOffPlayer_t(0x798C60);
-FastFunctionHookPtr<decltype(&SetCartPos_r)> SetCartPos_t(0x796C50);
+FastFunctionHookPtr<decltype(&EnemyCart_r)> EnemyCart_h(0x79A9E0);
+FastFunctionHookPtr<decltype(&SetCartVelocity_r)> SetCartVelocity_h(0x79AF90);
+FastFunctionHookPtr<decltype(&CartGetOffPlayer_r)> CartGetOffPlayer_h(0x798C60);
+FastFunctionHookPtr<decltype(&SetCartPos_r)> SetCartPos_h(0x796C50);
 
 task* taskOfPlayerOn_m[PLAYER_MAX];
 
@@ -803,7 +803,7 @@ void __cdecl EnemyCart_r(task* tp)
 	}
 	else
 	{
-		EnemyCart_t.Original(tp);
+		EnemyCart_h.Original(tp);
 	}
 }
 
@@ -867,7 +867,7 @@ void __cdecl SetCartVelocity_r(task* tp, NJS_POINT3* spd)
 	}
 	else
 	{
-		SetCartVelocity_t.Original(tp, spd);
+		SetCartVelocity_h.Original(tp, spd);
 	}
 }
 
@@ -890,7 +890,7 @@ void __cdecl CartGetOffPlayer_r(task* tp)
 	}
 	else
 	{
-		CartGetOffPlayer_t.Original(tp);
+		CartGetOffPlayer_h.Original(tp);
 	}
 }
 
@@ -909,7 +909,7 @@ void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 	}
 	else
 	{
-		return SetCartPos_t.Original(tp, pos, ang);
+		return SetCartPos_h.Original(tp, pos, ang);
 	}
 }
 
@@ -927,10 +927,10 @@ void KillPlayerInKart(taskwk* data, playerwk* co2, char mode, uint16_t anm)
 
 void patch_cart_init()
 {
-	EnemyCart_t.Hook(EnemyCart_r);
-	SetCartVelocity_t.Hook(SetCartVelocity_r);
-	CartGetOffPlayer_t.Hook(CartGetOffPlayer_r);
-	SetCartPos_t.Hook(SetCartPos_r);
+	EnemyCart_h.Hook(EnemyCart_r);
+	SetCartVelocity_h.Hook(SetCartVelocity_r);
+	CartGetOffPlayer_h.Hook(CartGetOffPlayer_r);
+	SetCartPos_h.Hook(SetCartPos_r);
 }
 
 RegisterPatch patch_cart(patch_cart_init);

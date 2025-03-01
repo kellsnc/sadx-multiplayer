@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "multiplayer.h"
 
-FastFunctionHook<void, task*> dispMirrorTaskP_t(0x61E1B0);
-FastFunctionHook<void, task*> execMirrorTaskP_t(0x61E230);
+FastFunctionHook<void, task*> dispMirrorTaskP_h(0x61E1B0);
+FastFunctionHook<void, task*> execMirrorTaskP_h(0x61E230);
 
 static auto getMirror = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x61E070, rESI);
 
@@ -25,7 +25,7 @@ static void __cdecl dispMirrorTaskP_r(task* tp)
 	}
 	else
 	{
-		dispMirrorTaskP_t.Original(tp);
+		dispMirrorTaskP_h.Original(tp);
 	}
 }
 
@@ -55,14 +55,14 @@ static void __cdecl execMirrorTaskP_r(task* tp)
 	}
 	else
 	{
-		execMirrorTaskP_t.Original(tp);
+		execMirrorTaskP_h.Original(tp);
 	}
 }
 
 void patch_mirror_init()
 {
-	dispMirrorTaskP_t.Hook(dispMirrorTaskP_r);
-	execMirrorTaskP_t.Hook(execMirrorTaskP_r);
+	dispMirrorTaskP_h.Hook(dispMirrorTaskP_r);
+	execMirrorTaskP_h.Hook(execMirrorTaskP_r);
 }
 
 RegisterPatch patch_mirror(patch_mirror_init);

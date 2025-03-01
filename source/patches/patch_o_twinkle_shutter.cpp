@@ -13,7 +13,7 @@ enum : __int8
 };
 
 static void __cdecl ObjectTPShutter_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectTPShutter_r)> ObjectTPShutter_t(0x624380);
+FastFunctionHookPtr<decltype(&ObjectTPShutter_r)> ObjectTPShutter_h(0x624380);
 
 static bool IsPlayerInCart()
 {
@@ -151,13 +151,13 @@ static void __cdecl ObjectTPShutter_r(task* tp)
 	}
 	else
 	{
-		ObjectTPShutter_t.Original(tp);
+		ObjectTPShutter_h.Original(tp);
 	}
 }
 
 void patch_twinkle_shutter_init()
 {
-	ObjectTPShutter_t.Hook(ObjectTPShutter_r);
+	ObjectTPShutter_h.Hook(ObjectTPShutter_r);
 }
 
 RegisterPatch patch_twinkle_shutter(patch_twinkle_shutter_init);

@@ -14,11 +14,11 @@ int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, 
 void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float rad, taskwk* pTaskwk);
 
 FastFunctionHook<void> dsLoadStageSound_h(0x424C80);
-FastUsercallHookPtr<int(*)(int), rEAX, rEAX> dsGetVolume_t(0x4244A0);
-FastFunctionHookPtr<decltype(&dsPlay_timer_v_r)> dsPlay_timer_v_t(0x424000);
-FastFunctionHookPtr<decltype(&dsPlay_timer_vq_r)> dsPlay_timer_vq_t(0x424100);
-FastFunctionHookPtr<decltype(&dsPlay_oneshot_v_r)> dsPlay_oneshot_v_t(0x424FC0);
-FastFunctionHookPtr<decltype(&dsPlay_Dolby_timer_vq_r)> dsPlay_Dolby_timer_vq_t(0x4249E0);
+FastUsercallHookPtr<int(*)(int), rEAX, rEAX> dsGetVolume_h(0x4244A0);
+FastFunctionHookPtr<decltype(&dsPlay_timer_v_r)> dsPlay_timer_v_h(0x424000);
+FastFunctionHookPtr<decltype(&dsPlay_timer_vq_r)> dsPlay_timer_vq_h(0x424100);
+FastFunctionHookPtr<decltype(&dsPlay_oneshot_v_r)> dsPlay_oneshot_v_h(0x424FC0);
+FastFunctionHookPtr<decltype(&dsPlay_Dolby_timer_vq_r)> dsPlay_Dolby_timer_vq_h(0x4249E0);
 
 int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z)
 {
@@ -55,7 +55,7 @@ int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, 
 	}
 	else
 	{
-		return dsPlay_timer_v_t.Original(tone, id, pri, volofs, timer, x, y, z);
+		return dsPlay_timer_v_h.Original(tone, id, pri, volofs, timer, x, y, z);
 	}
 }
 
@@ -95,7 +95,7 @@ int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x,
 	}
 	else
 	{
-		return dsPlay_timer_vq_t.Original(tone, id, pri, volofs, timer, x, y, z, rad);
+		return dsPlay_timer_vq_h.Original(tone, id, pri, volofs, timer, x, y, z, rad);
 	}
 }
 
@@ -134,7 +134,7 @@ int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, 
 	}
 	else
 	{
-		return dsPlay_oneshot_v_t.Original(tone, id, pri, volofs, x, y, z);
+		return dsPlay_oneshot_v_h.Original(tone, id, pri, volofs, x, y, z);
 	}
 }
 
@@ -185,7 +185,7 @@ void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, f
 	}
 	else
 	{
-		dsPlay_Dolby_timer_vq_t.Original(tone, id, pri, volofs, timer, rad, pTaskwk);
+		dsPlay_Dolby_timer_vq_h.Original(tone, id, pri, volofs, timer, rad, pTaskwk);
 	}
 }
 
@@ -204,7 +204,7 @@ int __cdecl dsGetVolume_r(int ii)
 		auto pnum = GetClosestPlayerNum(&se->pos);
 
 		if (pnum < 0)
-			return dsGetVolume_t.Original(ii);
+			return dsGetVolume_h.Original(ii);
 
 		auto cam_pos = GetCameraPosition(pnum);
 		float dist = GetDistance(&se->pos, cam_pos ? cam_pos : &playertwp[pnum]->pos);
@@ -239,7 +239,7 @@ int __cdecl dsGetVolume_r(int ii)
 	}
 	else
 	{
-		return dsGetVolume_t.Original(ii);
+		return dsGetVolume_h.Original(ii);
 	}
 }
 
@@ -400,11 +400,11 @@ void dsLoadStageSound_r()
 /// </summary>
 void InitSoundPatches()
 {
-	dsGetVolume_t.Hook(dsGetVolume_r);
-	dsPlay_timer_v_t.Hook(dsPlay_timer_v_r);
-	dsPlay_timer_vq_t.Hook(dsPlay_timer_vq_r);
-	dsPlay_oneshot_v_t.Hook(dsPlay_oneshot_v_r);
-	dsPlay_Dolby_timer_vq_t.Hook(dsPlay_Dolby_timer_vq_r);
+	dsGetVolume_h.Hook(dsGetVolume_r);
+	dsPlay_timer_v_h.Hook(dsPlay_timer_v_r);
+	dsPlay_timer_vq_h.Hook(dsPlay_timer_vq_r);
+	dsPlay_oneshot_v_h.Hook(dsPlay_oneshot_v_r);
+	dsPlay_Dolby_timer_vq_h.Hook(dsPlay_Dolby_timer_vq_r);
 	WriteJump((void*)0x4253B1, dsDolbySound_w); // Mid-function hook because the original function was inlined
 
 	dsLoadStageSound_h.Hook(dsLoadStageSound_r);

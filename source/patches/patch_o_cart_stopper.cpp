@@ -32,7 +32,7 @@ static auto setCart = GenerateUsercallWrapper<Bool(*)(task* tp)>(rEAX, 0x7B1240,
 static auto slideStopper = GenerateUsercallWrapper<Bool(*)(task* tp)>(rEAX, 0x7B1040, rEAX);
 
 static void __cdecl ObjectCartStopper_execObject_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectCartStopper_execObject_r)> ObjectCartStopper_execObject_t(0x7B13D0);
+FastFunctionHookPtr<decltype(&ObjectCartStopper_execObject_r)> ObjectCartStopper_execObject_h(0x7B13D0);
 
 static void execObject_m(task* tp)
 {
@@ -100,13 +100,13 @@ static void __cdecl ObjectCartStopper_execObject_r(task* tp)
 	}
 	else
 	{
-		ObjectCartStopper_execObject_t.Original(tp);
+		ObjectCartStopper_execObject_h.Original(tp);
 	}
 }
 
 void patch_cart_stopper_init()
 {
-	ObjectCartStopper_execObject_t.Hook(ObjectCartStopper_execObject_r);
+	ObjectCartStopper_execObject_h.Hook(ObjectCartStopper_execObject_r);
 }
 
 RegisterPatch patch_cart_stopper(patch_cart_stopper_init);

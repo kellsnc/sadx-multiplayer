@@ -5,7 +5,7 @@
 #include "splitscreen.h"
 #include "camera.h"
 
-FastFunctionHook<void> ListGroundForDrawing_t(0x43A900);
+FastFunctionHook<void> ListGroundForDrawing_h(0x43A900);
 
 void __cdecl ListGroundForDrawing_r()
 {
@@ -51,13 +51,13 @@ void __cdecl ListGroundForDrawing_r()
 	}
 	else
 	{
-		ListGroundForDrawing_t.Original();
+		ListGroundForDrawing_h.Original();
 	}
 }
 
 void patch_land_init()
 {
-	ListGroundForDrawing_t.Hook(ListGroundForDrawing_r);
+	ListGroundForDrawing_h.Hook(ListGroundForDrawing_r);
 }
 
 RegisterPatch patch_land(patch_land_init);

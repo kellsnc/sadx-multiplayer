@@ -19,15 +19,15 @@ static void __cdecl ObjectRuinFogChange_r(task* tp);
 static void __cdecl ObjectRuinFogLight_r(task* tp);
 static void __cdecl DrawFogHasira_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjectRuinFogSwitch_r)> ObjectRuinFogSwitch_t(0x5E25A0);
-FastFunctionHookPtr<decltype(&DrawMirror_r)> DrawMirror_t(0x5E2380);
-FastFunctionHookPtr<decltype(&ObjectRuinMirror_r)> ObjectRuinMirror_t(0x5E2850);
-FastFunctionHookPtr<decltype(&BigMirrorDraw_r)> BigMirrorDraw_t(0x5E2EA0);
-FastFunctionHookPtr<decltype(&FogEnd_r)> FogEnd_t(0x5E2530);
-FastFunctionHookPtr<decltype(&ObjectRuinBigMirror_r)> ObjectRuinBigMirror_t(0x5E3310);
-FastFunctionHookPtr<decltype(&ObjectRuinFogChange_r)> ObjectRuinFogChange_t(0x5E3020);
-FastFunctionHookPtr<decltype(&ObjectRuinFogLight_r)> ObjectRuinFogLight_t(0x5E3240);
-FastFunctionHookPtr<decltype(&DrawFogHasira_r)> DrawFogHasira_t(0x5E27A0);
+FastFunctionHookPtr<decltype(&ObjectRuinFogSwitch_r)> ObjectRuinFogSwitch_h(0x5E25A0);
+FastFunctionHookPtr<decltype(&DrawMirror_r)> DrawMirror_h(0x5E2380);
+FastFunctionHookPtr<decltype(&ObjectRuinMirror_r)> ObjectRuinMirror_h(0x5E2850);
+FastFunctionHookPtr<decltype(&BigMirrorDraw_r)> BigMirrorDraw_h(0x5E2EA0);
+FastFunctionHookPtr<decltype(&FogEnd_r)> FogEnd_h(0x5E2530);
+FastFunctionHookPtr<decltype(&ObjectRuinBigMirror_r)> ObjectRuinBigMirror_h(0x5E3310);
+FastFunctionHookPtr<decltype(&ObjectRuinFogChange_r)> ObjectRuinFogChange_h(0x5E3020);
+FastFunctionHookPtr<decltype(&ObjectRuinFogLight_r)> ObjectRuinFogLight_h(0x5E3240);
+FastFunctionHookPtr<decltype(&DrawFogHasira_r)> DrawFogHasira_h(0x5E27A0);
 
 DataPointer(CCL_INFO, c_colli_mirror, 0x2038C38);
 DataPointer(float, max_dist, 0x2038CA0);
@@ -107,7 +107,7 @@ static void __cdecl ObjectRuinFogSwitch_r(task* tp)
 	}
 	else
 	{
-		ObjectRuinFogSwitch_t.Original(tp);
+		ObjectRuinFogSwitch_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -151,7 +151,7 @@ static void __cdecl DrawMirror_r(task* tp)
 	}
 	else
 	{
-		DrawMirror_t.Original(tp);
+		DrawMirror_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -295,7 +295,7 @@ static void __cdecl ObjectRuinMirror_r(task* tp)
 	}
 	else
 	{
-		ObjectRuinMirror_t.Original(tp);
+		ObjectRuinMirror_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -338,7 +338,7 @@ static void __cdecl BigMirrorDraw_r(task* tp)
 		}
 	}
 
-	BigMirrorDraw_t.Original(tp);
+	BigMirrorDraw_h.Original(tp);
 }
 
 static void ObjectRuinBigMirror_m(task* tp)
@@ -369,7 +369,7 @@ static void __cdecl ObjectRuinBigMirror_r(task* tp)
 	}
 	else
 	{
-		ObjectRuinBigMirror_t.Original(tp);
+		ObjectRuinBigMirror_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -391,7 +391,7 @@ static void __cdecl FogEnd_r(task* tp)
 		fog::ResetUserFog(i);
 	}
 
-	FogEnd_t.Original(tp);
+	FogEnd_h.Original(tp);
 }
 
 static void GetClosestActiveMirror(NJS_POINT3* plpos, NJS_POINT3* aim_pos)
@@ -515,7 +515,7 @@ static void __cdecl ObjectRuinFogChange_r(task* tp)
 	}
 	else
 	{
-		ObjectRuinFogChange_t.Original(tp);
+		ObjectRuinFogChange_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -559,7 +559,7 @@ static void __cdecl ObjectRuinFogLight_r(task* tp)
 	}
 	else
 	{
-		ObjectRuinFogLight_t.Original(tp);
+		ObjectRuinFogLight_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -596,22 +596,22 @@ static void __cdecl DrawFogHasira_r(task* tp)
 	}
 	else
 	{
-		DrawFogHasira_t.Original(tp);
+		DrawFogHasira_h.Original(tp);
 	}
 }
 #pragma endregion
 
 void patch_ruin_mirror_init()
 {
-	ObjectRuinFogSwitch_t.Hook(ObjectRuinFogSwitch_r);
-	DrawMirror_t.Hook(DrawMirror_r);
-	ObjectRuinMirror_t.Hook(ObjectRuinMirror_r);
-	BigMirrorDraw_t.Hook(BigMirrorDraw_r);
-	FogEnd_t.Hook(FogEnd_r);
-	ObjectRuinBigMirror_t.Hook(ObjectRuinBigMirror_r);
-	ObjectRuinFogChange_t.Hook(ObjectRuinFogChange_r);
-	ObjectRuinFogLight_t.Hook(ObjectRuinFogLight_r);
-	DrawFogHasira_t.Hook(DrawFogHasira_r);
+	ObjectRuinFogSwitch_h.Hook(ObjectRuinFogSwitch_r);
+	DrawMirror_h.Hook(DrawMirror_r);
+	ObjectRuinMirror_h.Hook(ObjectRuinMirror_r);
+	BigMirrorDraw_h.Hook(BigMirrorDraw_r);
+	FogEnd_h.Hook(FogEnd_r);
+	ObjectRuinBigMirror_h.Hook(ObjectRuinBigMirror_r);
+	ObjectRuinFogChange_h.Hook(ObjectRuinFogChange_r);
+	ObjectRuinFogLight_h.Hook(ObjectRuinFogLight_r);
+	DrawFogHasira_h.Hook(DrawFogHasira_r);
 }
 
 RegisterPatch patch_ruin_mirror(patch_ruin_mirror_init);

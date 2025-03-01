@@ -12,7 +12,7 @@ TaskFunc(C_Fire, 0x5E3AC0);
 DataArray(int, FirePosi, 0x2038D40, 8);
 
 static void __cdecl ObjectRockRoll_Normal_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectRockRoll_Normal_r)> ObjectRockRoll_Normal_t(0x5E3CB0);
+FastFunctionHookPtr<decltype(&ObjectRockRoll_Normal_r)> ObjectRockRoll_Normal_h(0x5E3CB0);
 
 static void Normal_m(task* tp)
 {
@@ -137,13 +137,13 @@ static void __cdecl ObjectRockRoll_Normal_r(task* tp)
 	}
 	else
 	{
-		ObjectRockRoll_Normal_t.Original(tp);
+		ObjectRockRoll_Normal_h.Original(tp);
 	}
 }
 
 void patch_rockroll_init()
 {
-	ObjectRockRoll_Normal_t.Hook(ObjectRockRoll_Normal_r);
+	ObjectRockRoll_Normal_h.Hook(ObjectRockRoll_Normal_r);
 }
 
 RegisterPatch patch_rockroll(patch_rockroll_init);

@@ -5,7 +5,7 @@
 #include "multiplayer.h"
 
 void ALO_ObakeHeadHeldP_r(task* tp);
-static FastUsercallHookPtr<decltype(&ALO_ObakeHeadHeldP_r), noret, rEAX> ALO_ObakeHeadHeldP_t(0x007230C0);
+static FastUsercallHookPtr<decltype(&ALO_ObakeHeadHeldP_r), noret, rEAX> ALO_ObakeHeadHeldP_h(0x007230C0);
 
 void ALO_ObakeHeadHeldP_r(task* tp)
 {
@@ -19,18 +19,18 @@ void ALO_ObakeHeadHeldP_r(task* tp)
 
 		taskwk* orig_twp = playertwp[0];
 		playertwp[0] = playertwp[twp->smode - 1];
-		ALO_ObakeHeadHeldP_t.Original(tp);
+		ALO_ObakeHeadHeldP_h.Original(tp);
 		playertwp[0] = orig_twp;
 	}
 	else
 	{
-		ALO_ObakeHeadHeldP_t.Original(tp);
+		ALO_ObakeHeadHeldP_h.Original(tp);
 	}
 }
 
 void patch_alo_obake_head_init()
 {
-	ALO_ObakeHeadHeldP_t.Hook(ALO_ObakeHeadHeldP_r);
+	ALO_ObakeHeadHeldP_h.Hook(ALO_ObakeHeadHeldP_r);
 }
 
 RegisterPatch patch_alo_obake_head(patch_alo_obake_head_init);

@@ -10,10 +10,10 @@ static signed int CanIMakePanelJump_r(taskwk* twp);
 static void StartPlayerPanelJump_r(taskwk* twp);
 static Bool CheckCollisionedForJumpPanel_r(taskwk* twp);
 
-FastUsercallHookPtr<decltype(&ObjectJumpPanelCollision_r), noret, rEAX> ObjectJumpPanelCollision_t(0x4B8600);
-FastFunctionHookPtr<decltype(&CanIMakePanelJump_r)> CanIMakePanelJump_t(0x4B83F0);
-FastFunctionHookPtr<decltype(&StartPlayerPanelJump_r)> StartPlayerPanelJump_t(0x4B8470);
-FastFunctionHookPtr<decltype(&CheckCollisionedForJumpPanel_r)> CheckCollisionedForJumpPanel_t(0x4B83C0);
+FastUsercallHookPtr<decltype(&ObjectJumpPanelCollision_r), noret, rEAX> ObjectJumpPanelCollision_h(0x4B8600);
+FastFunctionHookPtr<decltype(&CanIMakePanelJump_r)> CanIMakePanelJump_h(0x4B83F0);
+FastFunctionHookPtr<decltype(&StartPlayerPanelJump_r)> StartPlayerPanelJump_h(0x4B8470);
+FastFunctionHookPtr<decltype(&CheckCollisionedForJumpPanel_r)> CheckCollisionedForJumpPanel_h(0x4B83C0);
 
 DataArray(task*, jumppanel_tp_list, 0x3C5A27C, 10);
 
@@ -81,7 +81,7 @@ static Bool __cdecl CheckCollisionedForJumpPanel_r(taskwk* twp)
 	}
 	else
 	{
-		return CheckCollisionedForJumpPanel_t.Original(twp);
+		return CheckCollisionedForJumpPanel_h.Original(twp);
 	}
 }
 #pragma endregion
@@ -120,7 +120,7 @@ static void __cdecl StartPlayerPanelJump_r(taskwk* twp)
 	}
 	else
 	{
-		StartPlayerPanelJump_t.Original(twp);
+		StartPlayerPanelJump_h.Original(twp);
 	}
 }
 #pragma endregion
@@ -168,7 +168,7 @@ static signed int __cdecl CanIMakePanelJump_r(taskwk* twp)
 	}
 	else
 	{
-		return CanIMakePanelJump_t.Original(twp);
+		return CanIMakePanelJump_h.Original(twp);
 	}
 }
 #pragma endregion
@@ -199,17 +199,17 @@ static void __cdecl ObjectJumpPanelCollision_r(task* tp)
 	}
 	else
 	{
-		ObjectJumpPanelCollision_t.Original(tp);
+		ObjectJumpPanelCollision_h.Original(tp);
 	}
 }
 #pragma endregion
 
 void patch_jumppanel_init()
 {
-	ObjectJumpPanelCollision_t.Hook(ObjectJumpPanelCollision_r);
-	CanIMakePanelJump_t.Hook(CanIMakePanelJump_r);
-	StartPlayerPanelJump_t.Hook(StartPlayerPanelJump_r);
-	CheckCollisionedForJumpPanel_t.Hook(CheckCollisionedForJumpPanel_r);
+	ObjectJumpPanelCollision_h.Hook(ObjectJumpPanelCollision_r);
+	CanIMakePanelJump_h.Hook(CanIMakePanelJump_r);
+	StartPlayerPanelJump_h.Hook(StartPlayerPanelJump_r);
+	CheckCollisionedForJumpPanel_h.Hook(CheckCollisionedForJumpPanel_r);
 }
 
 RegisterPatch patch_jumppanel(patch_jumppanel_init);

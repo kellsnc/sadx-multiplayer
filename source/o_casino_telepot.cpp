@@ -3,13 +3,13 @@
 #include "FastFunctionHook.hpp"
 
 static void ObjectCasinoTelepotExec_r(task* tp);
-FastFunctionHook<void, task*> ObjectCasinoTelepotExec_t(0x5D10C0);
+FastFunctionHook<void, task*> ObjectCasinoTelepotExec_h(0x5D10C0);
 
 static void ObjectCasinoTelepotExec_r(task* tp)
 {
 	if (!multiplayer::IsActive() || ObjectSelectedDebug((ObjectMaster*)tp))
 	{
-		return ObjectCasinoTelepotExec_t.Original(tp);
+		return ObjectCasinoTelepotExec_h.Original(tp);
 	}
 
 	if (CheckRangeOutWithR(tp, 360010.0f))
@@ -131,7 +131,7 @@ static void ObjectCasinoTelepotExec_r(task* tp)
 
 void patch_casino_telepot_init()
 {
-    ObjectCasinoTelepotExec_t.Hook(ObjectCasinoTelepotExec_r);
+    ObjectCasinoTelepotExec_h.Hook(ObjectCasinoTelepotExec_r);
 }
 
 RegisterPatch patch_casino_telepot(patch_casino_telepot_init);

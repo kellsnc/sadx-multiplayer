@@ -20,7 +20,7 @@ DataPointer(int, sen_flag, 0x3C72A4C);
 DataPointer(int, aquarium_sequence_flag, 0x3C72A50);
 
 static void __cdecl execObjShelterSen_r(task* tp);
-FastFunctionHookPtr<decltype(&execObjShelterSen_r)> execObjShelterSen_t(0x5AAB10);
+FastFunctionHookPtr<decltype(&execObjShelterSen_r)> execObjShelterSen_h(0x5AAB10);
 
 static void execObjShelterSen_m(task* tp)
 {
@@ -163,13 +163,13 @@ static void __cdecl execObjShelterSen_r(task* tp)
 	}
 	else
 	{
-		execObjShelterSen_t.Original(tp);
+		execObjShelterSen_h.Original(tp);
 	}
 }
 
 void patch_shelter_sen_init()
 {
-	execObjShelterSen_t.Hook(execObjShelterSen_r);
+	execObjShelterSen_h.Hook(execObjShelterSen_r);
 }
 
 RegisterPatch patch_shelter_sen(patch_shelter_sen_init);

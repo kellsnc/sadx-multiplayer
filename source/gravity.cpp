@@ -5,8 +5,8 @@
 // Once SetUserGravity is called, the player is no longer using global gravity. Calling ResetUserGravity reverts this.
 // Mods may use multi_set_gravity, multi_get_gravity and multi_reset_gravity
 
-FastFunctionHook<void> SetDefaultGravity_t(0x43B490);
-FastFunctionHook<void, Angle, Angle> SetUserGravityXZ_t(0x43B4C0);
+FastFunctionHook<void> SetDefaultGravity_h(0x43B490);
+FastFunctionHook<void, Angle, Angle> SetUserGravityXZ_h(0x43B4C0);
 
 namespace gravity
 {
@@ -108,7 +108,7 @@ namespace gravity
 
 static void __cdecl SetDefaultGravity_r()
 {
-	SetDefaultGravity_t.Original();
+	SetDefaultGravity_h.Original();
 	gravity::Disable();
 }
 
@@ -121,13 +121,13 @@ static void __cdecl SetUserGravityXZ_r(Angle angx, Angle angz)
 	}
 	else
 	{
-		SetUserGravityXZ_t.Original(angx, angz);
+		SetUserGravityXZ_h.Original(angx, angz);
 		gravity::Disable();
 	}
 }
 
 void InitGravityPatches()
 {
-	SetDefaultGravity_t.Hook(SetDefaultGravity_r);
-	SetUserGravityXZ_t.Hook(SetUserGravityXZ_r);
+	SetDefaultGravity_h.Hook(SetDefaultGravity_r);
+	SetUserGravityXZ_h.Hook(SetUserGravityXZ_r);
 }

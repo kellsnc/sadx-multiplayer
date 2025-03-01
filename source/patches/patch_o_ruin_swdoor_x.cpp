@@ -11,7 +11,7 @@ enum : __int8
 };
 
 static void __cdecl ObjectRuinSwdoorX_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectRuinSwdoorX_r)> ObjectRuinSwdoorX_t(0x5E7660);
+FastFunctionHookPtr<decltype(&ObjectRuinSwdoorX_r)> ObjectRuinSwdoorX_h(0x5E7660);
 
 static void ObjectRuinSwdoorX_m(task* tp)
 {
@@ -48,13 +48,13 @@ static void __cdecl ObjectRuinSwdoorX_r(task* tp)
 	}
 	else
 	{
-		ObjectRuinSwdoorX_t.Original(tp);
+		ObjectRuinSwdoorX_h.Original(tp);
 	}
 }
 
 void patch_ruin_swdoor_x_init()
 {
-	ObjectRuinSwdoorX_t.Hook(ObjectRuinSwdoorX_r);
+	ObjectRuinSwdoorX_h.Hook(ObjectRuinSwdoorX_r);
 }
 
 RegisterPatch patch_ruin_swdoor_x(patch_ruin_swdoor_x_init);

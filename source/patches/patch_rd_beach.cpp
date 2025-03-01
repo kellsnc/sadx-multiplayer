@@ -4,7 +4,7 @@
 #include "multiplayer.h"
 #include "camera.h"
 
-FastFunctionHook<void, task*> Rd_Beach_t(0x4F6D60);
+FastFunctionHook<void, task*> Rd_Beach_h(0x4F6D60);
 
 static void __cdecl Rd_Beach_r(task* tp)
 {
@@ -27,12 +27,12 @@ static void __cdecl Rd_Beach_r(task* tp)
 		}
 	}
 
-	Rd_Beach_t.Original(tp);
+	Rd_Beach_h.Original(tp);
 }
 
 void patch_rd_beach_init()
 {
-	Rd_Beach_t.Hook(Rd_Beach_r);
+	Rd_Beach_h.Hook(Rd_Beach_r);
 	WriteData((void**)0x4F723E, (void*)0x4F71A0); // Patch skybox mode
 }
 

@@ -3,8 +3,8 @@
 #include "splitscreen.h"
 #include "hud_emerald.h"
 
-FastFunctionHook<void, task*> Knuckles_KakeraGameExec_t(0x475E50);
-FastFunctionHook<void, task*> Knuckles_KakeraGamePutRadar1C_t(0x475A70);
+FastFunctionHook<void, task*> Knuckles_KakeraGameExec_h(0x475E50);
+FastFunctionHook<void, task*> Knuckles_KakeraGamePutRadar1C_h(0x475A70);
 
 void DrawBattleEmeRadar(int pnum, int scalors)
 {
@@ -73,12 +73,12 @@ void __cdecl Knuckles_KakeraGameExec_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		Knuckles_KakeraGameExec_t.Original(tp);
+		Knuckles_KakeraGameExec_h.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		Knuckles_KakeraGameExec_t.Original(tp);
+		Knuckles_KakeraGameExec_h.Original(tp);
 	}
 }
 
@@ -88,19 +88,19 @@ void __cdecl Knuckles_KakeraGamePutRadar1C_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		Knuckles_KakeraGamePutRadar1C_t.Original(tp);
+		Knuckles_KakeraGamePutRadar1C_h.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		Knuckles_KakeraGamePutRadar1C_t.Original(tp);
+		Knuckles_KakeraGamePutRadar1C_h.Original(tp);
 	}
 }
 
 void patch_hud_emerald_init()
 {
-	Knuckles_KakeraGameExec_t.Hook(Knuckles_KakeraGameExec_r);
-	Knuckles_KakeraGamePutRadar1C_t.Hook(Knuckles_KakeraGamePutRadar1C_r);
+	Knuckles_KakeraGameExec_h.Hook(Knuckles_KakeraGameExec_r);
+	Knuckles_KakeraGamePutRadar1C_h.Hook(Knuckles_KakeraGamePutRadar1C_r);
 }
 
 RegisterPatch patch_hud_emerald(patch_hud_emerald_init);

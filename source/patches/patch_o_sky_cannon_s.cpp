@@ -2,7 +2,7 @@
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
 
-FastFunctionHook<void, task*> ObjectSkydeck_cannon_s_Exec_t(0x5FC7A0);
+FastFunctionHook<void, task*> ObjectSkydeck_cannon_s_Exec_h(0x5FC7A0);
 
 static char PInCannon[PLAYER_MAX];
 
@@ -56,7 +56,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 {
 	if (!multiplayer::IsActive())
 	{
-		return ObjectSkydeck_cannon_s_Exec_t.Original(a1);
+		return ObjectSkydeck_cannon_s_Exec_h.Original(a1);
 	}
 
 	int timer = 0;
@@ -70,7 +70,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 	{
 	case 0:
 	case 1:
-		ObjectSkydeck_cannon_s_Exec_t.Original(a1);
+		ObjectSkydeck_cannon_s_Exec_h.Original(a1);
 		SDSetPlayerPos(data);
 		return;
 	case 2:
@@ -165,7 +165,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		break;
 	}
 
-	ObjectSkydeck_cannon_s_Exec_t.Original(a1);
+	ObjectSkydeck_cannon_s_Exec_h.Original(a1);
 }
 
 void __cdecl SDIntroPatch(Uint8 charIndex, float x, float y, float z)
@@ -211,7 +211,7 @@ void CannonModePhysics(taskwk* data, motionwk2* data2, playerwk* co2)
 
 void patch_sky_cannon_s_init()
 {
-	ObjectSkydeck_cannon_s_Exec_t.Hook(ObjectSkydeck_cannon_s_Exec_r);
+	ObjectSkydeck_cannon_s_Exec_h.Hook(ObjectSkydeck_cannon_s_Exec_r);
 
 	WriteCall((void*)0x5FC82D, SDIntroPatch);
 	WriteCall((void*)0x5FC84C, SDIntroPatch);

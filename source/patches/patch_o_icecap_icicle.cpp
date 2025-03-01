@@ -4,7 +4,7 @@
 #include "multiplayer.h"
 
 static void __cdecl ObjectIcicleExecute_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectIcicleExecute_r)> ObjectIcicleExecute_t(0x4F4C20);
+FastFunctionHookPtr<decltype(&ObjectIcicleExecute_r)> ObjectIcicleExecute_h(0x4F4C20);
 
 static void ObjectIcicleExecute_m(task* tp)
 {
@@ -55,13 +55,13 @@ static void __cdecl ObjectIcicleExecute_r(task* tp)
 	}
 	else
 	{
-		ObjectIcicleExecute_t.Original(tp);
+		ObjectIcicleExecute_h.Original(tp);
 	}
 }
 
 void patch_icecap_icicle_init()
 {
-	ObjectIcicleExecute_t.Hook(ObjectIcicleExecute_r);
+	ObjectIcicleExecute_h.Hook(ObjectIcicleExecute_r);
 }
 
 RegisterPatch patch_icecap_icicle(patch_icecap_icicle_init);

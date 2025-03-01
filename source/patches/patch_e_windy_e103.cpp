@@ -4,12 +4,12 @@
 #include "result.h"
 #include "camera.h"
 
-FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> e103_move_t(0x4E6D00);
-FastUsercallHookPtr<Bool(*)(task* tp, Float r), rEAX, rEAX, stack4> e103_chkPlayerRadius_t(0x4E6900);
-FastFunctionHook<void, task*> e103_waitPlayer_t(0x4E6B90);
-FastUsercallHookPtr<void(*)(task*, NJS_POINT3*, int), noret, rEAX, rECX, rEDI> e103_turnBody_t(0x4E6940);
-FastUsercallHookPtr<void(*)(task* tp), noret, rESI> e103_chkDamage_t(0x4E6790);
-FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> e103_normal_t(0x4E6ED0);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> e103_move_h(0x4E6D00);
+FastUsercallHookPtr<Bool(*)(task* tp, Float r), rEAX, rEAX, stack4> e103_chkPlayerRadius_h(0x4E6900);
+FastFunctionHook<void, task*> e103_waitPlayer_h(0x4E6B90);
+FastUsercallHookPtr<void(*)(task*, NJS_POINT3*, int), noret, rEAX, rECX, rEDI> e103_turnBody_h(0x4E6940);
+FastUsercallHookPtr<void(*)(task* tp), noret, rESI> e103_chkDamage_h(0x4E6790);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> e103_normal_h(0x4E6ED0);
 
 static void SetE103Camera(task* tp)
 {
@@ -118,7 +118,7 @@ static void __cdecl e103_move_r(task* tp)
 	}
 	else
 	{
-		e103_move_t.Original(tp);
+		e103_move_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -149,7 +149,7 @@ static Bool __cdecl e103_chkPlayerRadius_r(task* tp, float r)
 	}
 	else
 	{
-		return e103_chkPlayerRadius_t.Original(tp, r);
+		return e103_chkPlayerRadius_h.Original(tp, r);
 	}
 }
 
@@ -188,7 +188,7 @@ static void __cdecl e103_waitPlayer_r(task* tp)
 	}
 	else
 	{
-		e103_waitPlayer_t.Original(tp);
+		e103_waitPlayer_h.Original(tp);
 	}
 }
 
@@ -200,12 +200,12 @@ static void __cdecl e103_turnBody_r(task* pTask, NJS_POINT3* posTarget, Angle an
 
 		if (ptwp)
 		{
-			e103_turnBody_t.Original(pTask, &ptwp->pos, angMax);
+			e103_turnBody_h.Original(pTask, &ptwp->pos, angMax);
 		}
 	}
 	else
 	{
-		e103_turnBody_t.Original(pTask, posTarget, angMax);
+		e103_turnBody_h.Original(pTask, posTarget, angMax);
 	}
 }
 
@@ -236,7 +236,7 @@ static void __cdecl e103_chkDamage_r(task* tp)
 		}
 	}
 
-	e103_chkDamage_t.Original(tp);
+	e103_chkDamage_h.Original(tp);
 }
 
 static void __cdecl e103_normal_r(task* tp)
@@ -253,17 +253,17 @@ static void __cdecl e103_normal_r(task* tp)
 		return;
 	}
 
-	e103_normal_t.Original(tp);
+	e103_normal_h.Original(tp);
 }
 
 void patch_windy_e103_init()
 {
-	e103_move_t.Hook(e103_move_r);
-	e103_chkPlayerRadius_t.Hook(e103_chkPlayerRadius_r);
-	e103_waitPlayer_t.Hook(e103_waitPlayer_r);
-	e103_turnBody_t.Hook(e103_turnBody_r);
-	e103_chkDamage_t.Hook(e103_chkDamage_r);
-	e103_normal_t.Hook(e103_normal_r);
+	e103_move_h.Hook(e103_move_r);
+	e103_chkPlayerRadius_h.Hook(e103_chkPlayerRadius_r);
+	e103_waitPlayer_h.Hook(e103_waitPlayer_r);
+	e103_turnBody_h.Hook(e103_turnBody_r);
+	e103_chkDamage_h.Hook(e103_chkDamage_r);
+	e103_normal_h.Hook(e103_normal_r);
 }
 
 RegisterPatch patch_windy_e103(patch_windy_e103_init);

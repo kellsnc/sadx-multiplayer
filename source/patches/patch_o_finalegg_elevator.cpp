@@ -17,7 +17,7 @@ enum : __int8
 DataPointer(NJS_OBJECT, object_elevator_hontai_bmerge1, 0x1A37A38);
 
 static void __cdecl ObjectFinalEggElevator_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectFinalEggElevator_r)> ObjectFinalEggElevator_t(0x5B7210);
+FastFunctionHookPtr<decltype(&ObjectFinalEggElevator_r)> ObjectFinalEggElevator_h(0x5B7210);
 
 static void ExecATask_m(taskwk* twp) // inline symbols
 {
@@ -215,13 +215,13 @@ static void __cdecl ObjectFinalEggElevator_r(task* tp)
 	}
 	else
 	{
-		ObjectFinalEggElevator_t.Original(tp);
+		ObjectFinalEggElevator_h.Original(tp);
 	}
 }
 
 void patch_finalegg_elevator_init()
 {
-	ObjectFinalEggElevator_t.Hook(ObjectFinalEggElevator_r);
+	ObjectFinalEggElevator_h.Hook(ObjectFinalEggElevator_r);
 }
 
 RegisterPatch patch_finalegg_elevator(patch_finalegg_elevator_init);

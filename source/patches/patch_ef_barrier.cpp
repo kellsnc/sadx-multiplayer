@@ -5,9 +5,9 @@ static void __cdecl TBarrier_r(task* tp);
 static void __cdecl NBarrier_r(task* tp);
 static void __cdecl Muteki_r(task* tp);
 
-FastFunctionHookPtr<decltype(&TBarrier_r)> TBarrier_t(0x4BA2A0);
-FastFunctionHookPtr<decltype(&NBarrier_r)> NBarrier_t(0x4BA380);
-FastFunctionHookPtr<decltype(&Muteki_r)> Muteki_t(0x4BA440);
+FastFunctionHookPtr<decltype(&TBarrier_r)> TBarrier_h(0x4BA2A0);
+FastFunctionHookPtr<decltype(&NBarrier_r)> NBarrier_h(0x4BA380);
+FastFunctionHookPtr<decltype(&Muteki_r)> Muteki_h(0x4BA440);
 
 static void EffBarrierPosSet_m(taskwk* twp, taskwk* ptwp)
 {
@@ -58,7 +58,7 @@ static void __cdecl TBarrier_r(task* tp)
 	}
 	else
 	{
-		TBarrier_t.Original(tp);
+		TBarrier_h.Original(tp);
 	}
 }
 
@@ -94,7 +94,7 @@ static void __cdecl NBarrier_r(task* tp)
 	}
 	else
 	{
-		NBarrier_t.Original(tp);
+		NBarrier_h.Original(tp);
 	}
 }
 
@@ -142,15 +142,15 @@ static void __cdecl Muteki_r(task* tp)
 	}
 	else
 	{
-		Muteki_t.Original(tp);
+		Muteki_h.Original(tp);
 	}
 }
 
 void patch_ef_barrier_init()
 {
-	TBarrier_t.Hook(TBarrier_r);
-	NBarrier_t.Hook(NBarrier_r);
-	Muteki_t.Hook(Muteki_r);
+	TBarrier_h.Hook(TBarrier_r);
+	NBarrier_h.Hook(NBarrier_r);
+	Muteki_h.Hook(Muteki_r);
 }
 
 RegisterPatch patch_ef_barrier(patch_ef_barrier_init);

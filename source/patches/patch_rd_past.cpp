@@ -3,13 +3,13 @@
 #include "RegisterPatch.hpp"
 #include "multiplayer.h"
 
-FastFunctionHook<void, task*> Bg_Past_t(0x542030);
+FastFunctionHook<void, task*> Bg_Past_h(0x542030);
 
 void __cdecl Bg_Past_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		Bg_Past_t.Original(tp);
+		Bg_Past_h.Original(tp);
 		return;
 	}
 
@@ -52,7 +52,7 @@ void __cdecl Bg_Past_r(task* tp)
 
 void patch_rd_past_init()
 {
-	Bg_Past_t.Hook(Bg_Past_r);
+	Bg_Past_h.Hook(Bg_Past_r);
 }
 
 RegisterPatch patch_rd_past(patch_rd_past_init);

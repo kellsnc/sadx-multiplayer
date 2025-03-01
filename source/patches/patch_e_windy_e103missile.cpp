@@ -7,7 +7,7 @@ static auto smoke = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x4E8260,
 static auto addVectorAng = GenerateUsercallWrapper<void (*)(Angle3* ang, MISSILE_WK* wk, float force)>(noret, 0x568280, rEDI, rESI, stack4); // custom name
 
 static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp);
-FastFunctionHookPtr<decltype(&EnemyWindyTgtMissile_exec_r)> EnemyWindyTgtMissile_exec_t(0x4E84B0);
+FastFunctionHookPtr<decltype(&EnemyWindyTgtMissile_exec_r)> EnemyWindyTgtMissile_exec_h(0x4E84B0);
 
 static void updownHeight_m(taskwk* twp, MISSILE_WK* wk, taskwk* ptwp)
 {
@@ -87,13 +87,13 @@ static void __cdecl EnemyWindyTgtMissile_exec_r(task* tp)
 	}
 	else
 	{
-		EnemyWindyTgtMissile_exec_t.Original(tp);
+		EnemyWindyTgtMissile_exec_h.Original(tp);
 	}
 }
 
 void patch_windy_e103missile_init()
 {
-	EnemyWindyTgtMissile_exec_t.Hook(EnemyWindyTgtMissile_exec_r);
+	EnemyWindyTgtMissile_exec_h.Hook(EnemyWindyTgtMissile_exec_r);
 }
 
 RegisterPatch patch_windy_e103missile(patch_windy_e103missile_init);

@@ -12,9 +12,9 @@ DataPointer(NJS_OBJECT, object_s2_yakei_yakei, 0x26A48E0);
 VoidFunc(HighwayMaskBlock, 0x60FEE0); // checkCamera
 VoidFunc(RdHighwayManageLandMask, 0x60FEE0); // ?
 
-FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> RdHighwayCheckArriveAtTheBuilding_t(0x610050);
-FastFunctionHookPtr<TaskFuncPtr> subRd_Highway_t(0x6104C0);
-FastFunctionHookPtr<TaskFuncPtr> dispBgHighway_t(0x610570);
+FastUsercallHookPtr<TaskFuncPtr, noret, rEAX> RdHighwayCheckArriveAtTheBuilding_h(0x610050);
+FastFunctionHookPtr<TaskFuncPtr> subRd_Highway_h(0x6104C0);
+FastFunctionHookPtr<TaskFuncPtr> dispBgHighway_h(0x610570);
 
 static void RdHighwayAct2Multi(taskwk* twp)
 {
@@ -155,7 +155,7 @@ static void __cdecl subRd_Highway_r(task* tp)
 	}
 	else
 	{
-		subRd_Highway_t.Original(tp);
+		subRd_Highway_h.Original(tp);
 	}
 }
 
@@ -167,7 +167,7 @@ static void __cdecl RdHighwayCheckArriveAtTheBuilding_r(task* tp)
 	}
 	else
 	{
-		RdHighwayCheckArriveAtTheBuilding_t.Original(tp);
+		RdHighwayCheckArriveAtTheBuilding_h.Original(tp);
 	}
 }
 
@@ -208,15 +208,15 @@ static void __cdecl dispBgHighway_r(task* tp)
 	}
 	else
 	{
-		dispBgHighway_t.Original(tp);
+		dispBgHighway_h.Original(tp);
 	}
 }
 
 void patch_rd_highway_init()
 {
-	RdHighwayCheckArriveAtTheBuilding_t.Hook(RdHighwayCheckArriveAtTheBuilding_r);
-	subRd_Highway_t.Hook(subRd_Highway_r);
-	dispBgHighway_t.Hook(dispBgHighway_r);
+	RdHighwayCheckArriveAtTheBuilding_h.Hook(RdHighwayCheckArriveAtTheBuilding_r);
+	subRd_Highway_h.Hook(subRd_Highway_r);
+	dispBgHighway_h.Hook(dispBgHighway_r);
 
 	WriteData((taskwk***)0x610765, &camera_twp); // Use camera instead of player to check when to hide skybox
 	WriteData((void**)0x610A7E, (void*)0x6109E0); // Patch skybox mode

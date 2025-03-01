@@ -10,7 +10,7 @@ DataPointer(int, ring_kiran, 0x38D8D64);
 
 static auto RdRuinInit = GenerateUsercallWrapper<void (*)(task * tp)>(noret, 0x5E1670, rEDI);
 
-FastFunctionHook<void, task*> Rd_Ruin_t(0x5E18B0);
+FastFunctionHook<void, task*> Rd_Ruin_h(0x5E18B0);
 
 // Patch act swaps
 void __cdecl Rd_Ruin_r(task* tp)
@@ -87,13 +87,13 @@ void __cdecl Rd_Ruin_r(task* tp)
 	}
 	else
 	{
-		Rd_Ruin_t.Original(tp);
+		Rd_Ruin_h.Original(tp);
 	}
 }
 
 void patch_rd_ruin_init()
 {
-	Rd_Ruin_t.Hook(Rd_Ruin_r);
+	Rd_Ruin_h.Hook(Rd_Ruin_r);
 	WriteData((void**)0x5E1FCE, (void*)0x5E1F30); // Patch skybox mode
 }
 

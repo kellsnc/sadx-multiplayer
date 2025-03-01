@@ -6,15 +6,15 @@
 #include "result.h"
 #include "patch_o_sky_cyl_cmn.h"
 
-FastUsercallHookPtr<Bool(*)(playerwk* pwp, motionwk2* mwp, taskwk* twp), rEAX, rECX, rEDI, rESI> Amy_CheckInput_t(0x487810);
-FastFunctionHook<void, task*> AmyRose_t((intptr_t)Amy_Main);
-FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunsActions_t((intptr_t)0x488880);
-FastFunctionHook<void, task*> AmyJiggle_t((intptr_t)0x485C50);
-FastFunctionHook<void, task*> AmySkirtShape_t(0x485F40);
-FastFunctionHook<void, task*> AmyEyeTracker_t(0x486410);
-FastFunctionHook<void, task*> AmyBirdExe_t(0x4C63F0);
-FastFunctionHook<void, task*> LoadAmyBird_t(0x4C6790);
-FastFunctionHook<void> AmySetRoboConChecker_t(0x486A40);
+FastUsercallHookPtr<Bool(*)(playerwk* pwp, motionwk2* mwp, taskwk* twp), rEAX, rECX, rEDI, rESI> Amy_CheckInput_h(0x487810);
+FastFunctionHook<void, task*> AmyRose_h((intptr_t)Amy_Main);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> Amy_RunsActions_h(0x488880);
+FastFunctionHook<void, task*> AmyJiggle_h(0x485C50);
+FastFunctionHook<void, task*> AmySkirtShape_h(0x485F40);
+FastFunctionHook<void, task*> AmyEyeTracker_h(0x486410);
+FastFunctionHook<void, task*> AmyBirdExe_h(0x4C63F0);
+FastFunctionHook<void, task*> LoadAmyBird_h(0x4C6790);
+FastFunctionHook<void> AmySetRoboConChecker_h(0x486A40);
 
 task* AmyBirdM[PLAYER_MAX] = { 0 };
 
@@ -25,7 +25,7 @@ void AmySetRoboConChecker_r()
 	{
 		return;
 	}
-	AmySetRoboConChecker_t.Original();
+	AmySetRoboConChecker_h.Original();
 }
 
 void AmyBird_Del(task* obj)
@@ -48,7 +48,7 @@ void __cdecl AmyBird_Main_r(task* obj)
 {
 	if (!multiplayer::IsActive() || EV_MainThread_ptr)
 	{
-		return AmyBirdExe_t.Original(obj);
+		return AmyBirdExe_h.Original(obj);
 	}
 
 	auto data = obj->twp;
@@ -108,7 +108,7 @@ void __cdecl Init_AmyBird(task* tp)
 {
 	if (!multiplayer::IsActive() || EV_MainThread_ptr)
 	{
-		return LoadAmyBird_t.Original(tp);
+		return LoadAmyBird_h.Original(tp);
 	}
 
 	for (int i = 0; i < PLAYER_MAX; i++)
@@ -128,7 +128,7 @@ static void __cdecl AmyEyeTracker_r(task* tp)
 		return;
 	}
 
-	AmyEyeTracker_t.Original(tp);
+	AmyEyeTracker_h.Original(tp);
 }
 
 static void __cdecl AmyJiggle_r(task* tp)
@@ -138,7 +138,7 @@ static void __cdecl AmyJiggle_r(task* tp)
 		return;
 	}
 
-	AmyJiggle_t.Original(tp);
+	AmyJiggle_h.Original(tp);
 }
 
 static void __cdecl AmySkirtShape_r(task* tp)
@@ -148,7 +148,7 @@ static void __cdecl AmySkirtShape_r(task* tp)
 		return;
 	}
 
-	AmySkirtShape_t.Original(tp);
+	AmySkirtShape_h.Original(tp);
 }
 
 static Uint16 GetAmyVictoryAnim(unsigned __int8 a1)
@@ -180,7 +180,7 @@ Bool Amy_CheckInput_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return Amy_CheckInput_t.Original(pwp, mwp, twp);
+			return Amy_CheckInput_h.Original(pwp, mwp, twp);
 		}
 
 		switch (twp->smode)
@@ -209,7 +209,7 @@ Bool Amy_CheckInput_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 		}
 	}
 	
-	return Amy_CheckInput_t.Original(pwp, mwp, twp);
+	return Amy_CheckInput_h.Original(pwp, mwp, twp);
 }
 
 void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -298,7 +298,7 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		}
 	}
 
-	Amy_RunsActions_t.Original(twp, mwp, pwp);
+	Amy_RunsActions_h.Original(twp, mwp, pwp);
 }
 
 void AmyRose_m(task* tp)
@@ -326,7 +326,7 @@ void AmyRose_m(task* tp)
 		break;
 	}
 
-	AmyRose_t.Original(tp);
+	AmyRose_h.Original(tp);
 }
 
 void __cdecl AmyRose_r(task* tp)
@@ -340,21 +340,21 @@ void __cdecl AmyRose_r(task* tp)
 	}
 	else
 	{
-		AmyRose_t.Original(tp);
+		AmyRose_h.Original(tp);
 	}
 }
 
 void patch_amy_init()
 {
-	AmyRose_t.Hook(AmyRose_r);
-	Amy_CheckInput_t.Hook(Amy_CheckInput_r);
-	Amy_RunsActions_t.Hook(Amy_RunsActions_r);
-	AmyJiggle_t.Hook(AmyJiggle_r);
-	AmySkirtShape_t.Hook(AmySkirtShape_r);
-	AmyEyeTracker_t.Hook(AmyEyeTracker_r);
-	LoadAmyBird_t.Hook(Init_AmyBird);
-	AmyBirdExe_t.Hook(AmyBird_Main_r);
-	AmySetRoboConChecker_t.Hook(AmySetRoboConChecker_r);
+	AmyRose_h.Hook(AmyRose_r);
+	Amy_CheckInput_h.Hook(Amy_CheckInput_r);
+	Amy_RunsActions_h.Hook(Amy_RunsActions_r);
+	AmyJiggle_h.Hook(AmyJiggle_r);
+	AmySkirtShape_h.Hook(AmySkirtShape_r);
+	AmyEyeTracker_h.Hook(AmyEyeTracker_r);
+	LoadAmyBird_h.Hook(Init_AmyBird);
+	AmyBirdExe_h.Hook(AmyBird_Main_r);
+	AmySetRoboConChecker_h.Hook(AmySetRoboConChecker_r);
 }
 
 RegisterPatch patch_amy(patch_amy_init);

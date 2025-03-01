@@ -3,7 +3,7 @@
 #include "FastFunctionHook.hpp"
 
 void __cdecl Magmacnt_Main_r(task* obj);
-FastFunctionHook<void, task*> Magmacnt_Main_t(0x608730);
+FastFunctionHook<void, task*> Magmacnt_Main_h(0x608730);
 
 void __cdecl Magmacnt_Main_r(task* tp)
 {
@@ -11,7 +11,7 @@ void __cdecl Magmacnt_Main_r(task* tp)
 
 	if (!multiplayer::IsActive() || !twp->mode)
 	{
-		return Magmacnt_Main_t.Original(tp);
+		return Magmacnt_Main_h.Original(tp);
 	}
 
 	if (!CheckRangeOut(tp))
@@ -41,7 +41,7 @@ void __cdecl Magmacnt_Main_r(task* tp)
 
 void patch_mountain_magmacnt_init()
 {
-	Magmacnt_Main_t.Hook(Magmacnt_Main_r);
+	Magmacnt_Main_h.Hook(Magmacnt_Main_r);
 	WriteData<2>((void*)0x6087D6, 0x90ui8); // Remove explicit P1 check. Note: this makesP1 tails able to trigger lava
 }
 

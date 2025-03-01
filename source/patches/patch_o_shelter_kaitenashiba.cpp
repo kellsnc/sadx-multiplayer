@@ -10,7 +10,7 @@ enum : __int8
 FunctionPointer(void, GetKaitenKeyCount, (int no, Angle* r, Angle* l), 0x5A27F0);
 
 static void __cdecl execShelterKaitenashiba_r(task* tp); // "Exec"
-FastFunctionHookPtr<decltype(&execShelterKaitenashiba_r)> execShelterKaitenashiba_t(0x59CB40);
+FastFunctionHookPtr<decltype(&execShelterKaitenashiba_r)> execShelterKaitenashiba_h(0x59CB40);
 
 static void execShelterKaitenashiba_m(task* tp)
 {
@@ -103,13 +103,13 @@ static void __cdecl execShelterKaitenashiba_r(task* tp)
 	}
 	else
 	{
-		execShelterKaitenashiba_t.Original(tp);
+		execShelterKaitenashiba_h.Original(tp);
 	}
 }
 
 void patch_shelter_kaitenashiba_init()
 {
-	execShelterKaitenashiba_t.Hook(execShelterKaitenashiba_r);
+	execShelterKaitenashiba_h.Hook(execShelterKaitenashiba_r);
 }
 
 RegisterPatch patch_shelter_kaitenashiba(patch_shelter_kaitenashiba_init);

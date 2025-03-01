@@ -6,8 +6,8 @@ DataPointer(int, fakeroot_correct, 0x3C7457C);
 static void __cdecl ColliFinalEggFakeRoot_r(task* tp);
 static void __cdecl ObjectFinalEggRainbowDoor_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ColliFinalEggFakeRoot_r)> ColliFinalEggFakeRoot_t(0x5B07A0);
-FastFunctionHookPtr<decltype(&ObjectFinalEggRainbowDoor_r)> ObjectFinalEggRainbowDoor_t(0x5B0910);
+FastFunctionHookPtr<decltype(&ColliFinalEggFakeRoot_r)> ColliFinalEggFakeRoot_h(0x5B07A0);
+FastFunctionHookPtr<decltype(&ObjectFinalEggRainbowDoor_r)> ObjectFinalEggRainbowDoor_h(0x5B0910);
 
 static void ColliFinalEggFakeRoot_m(task* tp)
 {
@@ -49,7 +49,7 @@ static void __cdecl ColliFinalEggFakeRoot_r(task* tp)
 	}
 	else
 	{
-		ColliFinalEggFakeRoot_t.Original(tp);
+		ColliFinalEggFakeRoot_h.Original(tp);
 	}
 }
 
@@ -70,14 +70,14 @@ static void __cdecl ObjectFinalEggRainbowDoor_r(task* tp)
 	}
 	else
 	{
-		ObjectFinalEggRainbowDoor_t.Original(tp);
+		ObjectFinalEggRainbowDoor_h.Original(tp);
 	}
 }
 
 void patch_finalegg_rainbowdoor_init()
 {
-	ColliFinalEggFakeRoot_t.Hook(ColliFinalEggFakeRoot_r);
-	ObjectFinalEggRainbowDoor_t.Hook(ObjectFinalEggRainbowDoor_r);
+	ColliFinalEggFakeRoot_h.Hook(ColliFinalEggFakeRoot_r);
+	ObjectFinalEggRainbowDoor_h.Hook(ObjectFinalEggRainbowDoor_r);
 }
 
 RegisterPatch patch_finalegg_rainbowdoor(patch_finalegg_rainbowdoor_init);

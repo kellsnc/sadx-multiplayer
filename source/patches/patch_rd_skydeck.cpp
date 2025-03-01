@@ -14,9 +14,9 @@ static void __cdecl ObjectSkydeck_Wall_r(task* tp);
 static void __cdecl RdSkydeckWind_r(__int16 act);
 static void __cdecl Skydeck_EggcarrierCtrl_r(__int16 act);
 
-FastFunctionHookPtr<decltype(&ObjectSkydeck_Wall_r)> ObjectSkydeck_Wall_t(0x5EF2B0);
-FastFunctionHookPtr<decltype(&RdSkydeckWind_r)> RdSkydeckWind_t(0x5EF300);
-FastFunctionHookPtr<decltype(&Skydeck_EggcarrierCtrl_r)> Skydeck_EggcarrierCtrl_t(0x5ECA80);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_Wall_r)> ObjectSkydeck_Wall_h(0x5EF2B0);
+FastFunctionHookPtr<decltype(&RdSkydeckWind_r)> RdSkydeckWind_h(0x5EF300);
+FastFunctionHookPtr<decltype(&Skydeck_EggcarrierCtrl_r)> Skydeck_EggcarrierCtrl_h(0x5ECA80);
 
 static void Skydeck_EggcarrierCtrl_m(__int16 act)
 {
@@ -183,7 +183,7 @@ static void __cdecl Skydeck_EggcarrierCtrl_r(__int16 act)
 	}
 	else
 	{
-		Skydeck_EggcarrierCtrl_t.Original(act);
+		Skydeck_EggcarrierCtrl_h.Original(act);
 	}
 }
 
@@ -282,7 +282,7 @@ static void __cdecl RdSkydeckWind_r(__int16 act)
 	}
 	else
 	{
-		RdSkydeckWind_t.Original(act);
+		RdSkydeckWind_h.Original(act);
 	}
 }
 
@@ -300,15 +300,15 @@ static void __cdecl ObjectSkydeck_Wall_r(task* tp)
 	}
 	else
 	{
-		ObjectSkydeck_Wall_t.Original(tp);
+		ObjectSkydeck_Wall_h.Original(tp);
 	}
 }
 
 void patch_rd_skydeck_init()
 {
-	ObjectSkydeck_Wall_t.Hook(ObjectSkydeck_Wall_r);
-	RdSkydeckWind_t.Hook(RdSkydeckWind_r);
-	Skydeck_EggcarrierCtrl_t.Hook(Skydeck_EggcarrierCtrl_r);
+	ObjectSkydeck_Wall_h.Hook(ObjectSkydeck_Wall_r);
+	RdSkydeckWind_h.Hook(RdSkydeckWind_r);
+	Skydeck_EggcarrierCtrl_h.Hook(Skydeck_EggcarrierCtrl_r);
 }
 
 RegisterPatch patch_rd_skydeck(patch_rd_skydeck_init);

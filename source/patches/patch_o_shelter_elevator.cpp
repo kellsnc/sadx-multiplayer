@@ -19,7 +19,7 @@ static auto OpenDoor = GenerateUsercallWrapper<void (*)(task * tp)>(noret, 0x5A1
 DataArray(NJS_POINT3, ElevatorPos, 0x1873100, 3 * 2); // [3][2]
 
 static void __cdecl ObjShelterElevator_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjShelterElevator_r)> ObjShelterElevator_t(0x5A1D70);
+FastFunctionHookPtr<decltype(&ObjShelterElevator_r)> ObjShelterElevator_h(0x5A1D70);
 
 static void chkPlayer(task* tp) // custom
 {
@@ -133,13 +133,13 @@ static void __cdecl ObjShelterElevator_r(task* tp)
 	}
 	else
 	{
-		ObjShelterElevator_t.Original(tp);
+		ObjShelterElevator_h.Original(tp);
 	}
 }
 
 void patch_shelter_elevator_init()
 {
-	ObjShelterElevator_t.Hook(ObjShelterElevator_r);
+	ObjShelterElevator_h.Hook(ObjShelterElevator_r);
 }
 
 RegisterPatch patch_shelter_elevator(patch_shelter_elevator_init);

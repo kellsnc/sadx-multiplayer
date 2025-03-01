@@ -5,9 +5,9 @@
 #include "splitscreen.h"
 #include "emeraldhunt.h"
 
-FastFunctionHook<void, int, NJS_POINT3*> Knuckles_KakeraGame_Set_PutEme_t(0x477D90);
-FastFunctionHook<void> Knuckles_KakeraGameInit_t(0x475840);
-FastFunctionHook<void, task*> Knuckles_KakeraGame_t(0x476440);
+FastFunctionHook<void, int, NJS_POINT3*> Knuckles_KakeraGame_Set_PutEme_h(0x477D90);
+FastFunctionHook<void> Knuckles_KakeraGameInit_h(0x475840);
+FastFunctionHook<void, task*> Knuckles_KakeraGame_h(0x476440);
 
 static int found_feme_nmb_m[PLAYER_MAX]{};
 static int scales[PLAYER_MAX]{};
@@ -158,7 +158,7 @@ static void __cdecl Knuckles_KakeraGame_r(task* tp)
 	}
 	else
 	{
-		Knuckles_KakeraGame_t.Original(tp);
+		Knuckles_KakeraGame_h.Original(tp);
 	}
 }
 
@@ -185,7 +185,7 @@ void Knuckles_KakeraGame_Set_PutEme_m(int pnum, unsigned __int8 emeid, NJS_POINT
 {
 	if (!multiplayer::IsActive())
 	{
-		Knuckles_KakeraGame_Set_PutEme_t.Original(emeid, emepos);
+		Knuckles_KakeraGame_Set_PutEme_h.Original(emeid, emepos);
 		return;
 	}
 
@@ -264,13 +264,13 @@ static void __cdecl Knuckles_KakeraGame_Set_PutEme_r(int emeid, NJS_POINT3* emep
 	}
 	else
 	{
-		Knuckles_KakeraGame_Set_PutEme_t.Original(emeid, emepos);
+		Knuckles_KakeraGame_Set_PutEme_h.Original(emeid, emepos);
 	}
 }
 
 static void __cdecl Knuckles_KakeraGameInit_r()
 {
-	Knuckles_KakeraGameInit_t.Original();
+	Knuckles_KakeraGameInit_h.Original();
 
 	is_enabled = false;
 	for (auto& i : found_feme_nmb_m)
@@ -281,7 +281,7 @@ static void __cdecl Knuckles_KakeraGameInit_r()
 
 void InitEmeraldHunt()
 {
-	Knuckles_KakeraGame_Set_PutEme_t.Hook(Knuckles_KakeraGame_Set_PutEme_r);
-	Knuckles_KakeraGameInit_t.Hook(Knuckles_KakeraGameInit_r);
-	Knuckles_KakeraGame_t.Hook(Knuckles_KakeraGame_r);
+	Knuckles_KakeraGame_Set_PutEme_h.Hook(Knuckles_KakeraGame_Set_PutEme_r);
+	Knuckles_KakeraGameInit_h.Hook(Knuckles_KakeraGameInit_r);
+	Knuckles_KakeraGame_h.Hook(Knuckles_KakeraGame_r);
 }

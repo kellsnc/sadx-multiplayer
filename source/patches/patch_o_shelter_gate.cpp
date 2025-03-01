@@ -12,8 +12,8 @@ enum : __int8
 	MODE_END
 };
 
-FastFunctionHook<void, task*> ObjShelterGate1_ExecATask_t(0x5A1F70);
-FastFunctionHook<void, task*> ObjShelterGate2_ExecATask_t(0x59C850);
+FastFunctionHook<void, task*> ObjShelterGate1_ExecATask_h(0x5A1F70);
+FastFunctionHook<void, task*> ObjShelterGate2_ExecATask_h(0x59C850);
 
 static bool CheckCollisionCylinder(NJS_POINT3* pt, NJS_POINT3* vp, float r, float h)
 {
@@ -49,7 +49,7 @@ static void __cdecl ObjShelterGate1_ExecATask_r(task* tp)
 	}
 	else
 	{
-		ObjShelterGate1_ExecATask_t.Original(tp);
+		ObjShelterGate1_ExecATask_h.Original(tp);
 	}
 }
 
@@ -64,13 +64,13 @@ void __cdecl ObjShelterGate2_ExecATask_r(task* tp)
 			twp->mode = 2; //force the door to open
 	}
 
-	ObjShelterGate2_ExecATask_t.Original(tp);
+	ObjShelterGate2_ExecATask_h.Original(tp);
 }
 
 void patch_shelter_gate_init()
 {
-	ObjShelterGate1_ExecATask_t.Hook(ObjShelterGate1_ExecATask_r);
-	ObjShelterGate2_ExecATask_t.Hook(ObjShelterGate2_ExecATask_r);
+	ObjShelterGate1_ExecATask_h.Hook(ObjShelterGate1_ExecATask_r);
+	ObjShelterGate2_ExecATask_h.Hook(ObjShelterGate2_ExecATask_r);
 }
 
 RegisterPatch patch_shelter_gate(patch_shelter_gate_init);

@@ -19,7 +19,7 @@ enum : char
 };
 
 static void __cdecl ObjectTogedai_Normal_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectTogedai_Normal_r)> ObjectTogedai_Normal_t(0x5EA7A0);
+FastFunctionHookPtr<decltype(&ObjectTogedai_Normal_r)> ObjectTogedai_Normal_h(0x5EA7A0);
 
 static void effect(taskwk* twp)
 {
@@ -155,13 +155,13 @@ static void __cdecl ObjectTogedai_Normal_r(task* tp)
 	}
 	else
 	{
-		ObjectTogedai_Normal_t.Original(tp);
+		ObjectTogedai_Normal_h.Original(tp);
 	}
 }
 
 void patch_togedai_init()
 {
-	ObjectTogedai_Normal_t.Hook(ObjectTogedai_Normal_r);
+	ObjectTogedai_Normal_h.Hook(ObjectTogedai_Normal_r);
 }
 
 RegisterPatch patch_togedai(patch_togedai_init);

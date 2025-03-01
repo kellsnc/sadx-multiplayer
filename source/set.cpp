@@ -5,11 +5,11 @@
 
 #define SQUARE(x)((x) * (x))
 
-FastFunctionHook<void> ProcessStatusTable_t(0x46BCE0);
-FastFunctionHook<Bool, task*, float> CheckRangeWithR_t(0x46BFA0);
-FastFunctionHook<Bool, task*, float> CheckRangeOutWithR_t(0x46C010);
-FastFunctionHook<Bool, task*, float> SDCheckRangeOutWithR_t(0x5EDB10);
-FastUsercallHookPtr<void(*)(Uint32 u32SetType, const char* pcFileName), noret, rECX, stack4> LoadSetFile_t(0x422930);
+FastFunctionHook<void> ProcessStatusTable_h(0x46BCE0);
+FastFunctionHook<Bool, task*, float> CheckRangeWithR_h(0x46BFA0);
+FastFunctionHook<Bool, task*, float> CheckRangeOutWithR_h(0x46C010);
+FastFunctionHook<Bool, task*, float> SDCheckRangeOutWithR_h(0x5EDB10);
+FastUsercallHookPtr<void(*)(Uint32 u32SetType, const char* pcFileName), noret, rECX, stack4> LoadSetFile_h(0x422930);
 
 DataPointer(OBJ_CONDITION*, pObjStatusEntry, 0x46B817); // Get objStatusEntry pointer from function to be compatible with mods that overwrite it (LimitBreak, Windy Valley Beta)
 
@@ -206,7 +206,7 @@ void __cdecl ProcessStatusTable_r()
 	}
 	else
 	{
-		ProcessStatusTable_t.Original();
+		ProcessStatusTable_h.Original();
 	}
 }
 
@@ -234,7 +234,7 @@ Bool __cdecl CheckRangeWithR_r(task* tp, float fRange)
 	}
 	else
 	{
-		return CheckRangeWithR_t.Original(tp, fRange);
+		return CheckRangeWithR_h.Original(tp, fRange);
 	}
 }
 
@@ -253,7 +253,7 @@ Bool __cdecl CheckRangeOutWithR_r(task* tp, float fRange)
 	}
 	else
 	{
-		return CheckRangeOutWithR_t.Original(tp, fRange);
+		return CheckRangeOutWithR_h.Original(tp, fRange);
 	}
 }
 
@@ -272,7 +272,7 @@ Bool __cdecl SDCheckRangeOutWithR_r(task* tp, float fRange)
 	}
 	else
 	{
-		return SDCheckRangeOutWithR_t.Original(tp, fRange);
+		return SDCheckRangeOutWithR_h.Original(tp, fRange);
 	}
 }
 
@@ -283,7 +283,7 @@ void __cdecl LoadSetFile_r(Uint32 u32SetType, const char* pcFileName)
 	{
 		std::string temp = (std::string)"M" + (std::string)pcFileName;
 
-		LoadSetFile_t.Original(u32SetType, temp.c_str());
+		LoadSetFile_h.Original(u32SetType, temp.c_str());
 
 		// If loaded properly exit, otherwise run original behaviour
 		if (SetFiles[u32SetType])
@@ -292,14 +292,14 @@ void __cdecl LoadSetFile_r(Uint32 u32SetType, const char* pcFileName)
 		}
 	}
 
-	LoadSetFile_t.Original(u32SetType, pcFileName);
+	LoadSetFile_h.Original(u32SetType, pcFileName);
 }
 
 void InitSET()
 {
-	ProcessStatusTable_t.Hook(ProcessStatusTable_r);
-	CheckRangeWithR_t.Hook(CheckRangeWithR_r);
-	CheckRangeOutWithR_t.Hook(CheckRangeOutWithR_r);
-	SDCheckRangeOutWithR_t.Hook(SDCheckRangeOutWithR_r);
-	LoadSetFile_t.Hook(LoadSetFile_r);
+	ProcessStatusTable_h.Hook(ProcessStatusTable_r);
+	CheckRangeWithR_h.Hook(CheckRangeWithR_r);
+	CheckRangeOutWithR_h.Hook(CheckRangeOutWithR_r);
+	SDCheckRangeOutWithR_h.Hook(SDCheckRangeOutWithR_r);
+	LoadSetFile_h.Hook(LoadSetFile_r);
 }

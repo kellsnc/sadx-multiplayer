@@ -5,8 +5,8 @@
 #include "splitscreen.h"
 #include "camera.h"
 
-FastUsercallHookPtr<LATE_RQ* (*)(Sint32, Sint32, Sint32, Sint32), rEAX, rEAX, stack4, stack4, stack4> late_setOdr_t(0x403F60);
-FastFunctionHook<void> late_exec_t(0x4086F0);
+FastUsercallHookPtr<LATE_RQ* (*)(Sint32, Sint32, Sint32, Sint32), rEAX, rEAX, stack4, stack4, stack4> late_setOdr_h(0x403F60);
+FastFunctionHook<void> late_exec_h(0x4086F0);
 
 void njSetScreenDist_(Angle bams)
 {
@@ -285,13 +285,13 @@ void __cdecl late_exec_r()
 	}
 	else
 	{
-		late_exec_t.Original();
+		late_exec_h.Original();
 	}
 }
 
 LATE_RQ* __cdecl late_setOdr_r(Sint32 no, Sint32 sz, Sint32 odr, Sint32 flgs)
 {
-	auto rq = late_setOdr_t.Original(no, sz, odr, flgs);
+	auto rq = late_setOdr_h.Original(no, sz, odr, flgs);
 
 	if (rq && SplitScreen::IsActive() && SplitScreen::numViewPort != -1)
 	{
@@ -318,8 +318,8 @@ Bool __cdecl dsCheckViewV_ExecHack(NJS_POINT3* ft, float radius)
 
 void patch_draw_init()
 {
-	late_exec_t.Hook(late_exec_r);
-	late_setOdr_t.Hook(late_setOdr_r);
+	late_exec_h.Hook(late_exec_r);
+	late_setOdr_h.Hook(late_setOdr_r);
 
 	// Expand draw queue memory pool
 	WriteData((Uint32*)0x408643, 0x100000ui32);

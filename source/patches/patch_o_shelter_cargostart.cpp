@@ -21,7 +21,7 @@ enum MD_CARGO // made up
 };
 
 static void __cdecl ObjShelterCargostart_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjShelterCargostart_Exec_r)> ObjShelterCargostart_Exec_t(0x5A4B30);
+FastFunctionHookPtr<decltype(&ObjShelterCargostart_Exec_r)> ObjShelterCargostart_Exec_h(0x5A4B30);
 
 static void CheckPlayerGround(task* tp)
 {
@@ -200,13 +200,13 @@ static void __cdecl ObjShelterCargostart_Exec_r(task* tp)
 	}
 	else
 	{
-		ObjShelterCargostart_Exec_t.Original(tp);
+		ObjShelterCargostart_Exec_h.Original(tp);
 	}
 }
 
 void patch_shelter_cargostart_init()
 {
-	ObjShelterCargostart_Exec_t.Hook(ObjShelterCargostart_Exec_r);
+	ObjShelterCargostart_Exec_h.Hook(ObjShelterCargostart_Exec_r);
 }
 
 RegisterPatch patch_shelter_cargostart(patch_shelter_cargostart_init);

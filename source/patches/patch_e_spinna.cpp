@@ -4,7 +4,7 @@
 #include "RegisterPatch.hpp"
 #include "splitscreen.h"
 
-FastFunctionHook<void, task*> SpinnaDisplayer_t(0x4AFD80);
+FastFunctionHook<void, task*> SpinnaDisplayer_h(0x4AFD80);
 
 void SpinnaDrawShield(taskwk* twp)
 {
@@ -72,13 +72,13 @@ void __cdecl SpinnaDisplayer_r(task* tp)
 	}
 	else
 	{
-		SpinnaDisplayer_t.Original(tp);
+		SpinnaDisplayer_h.Original(tp);
 	}
 }
 
 void patch_spinna_init()
 {
-	SpinnaDisplayer_t.Hook(SpinnaDisplayer_r);
+	SpinnaDisplayer_h.Hook(SpinnaDisplayer_r);
 }
 
 RegisterPatch patch_spinna(patch_spinna_init);

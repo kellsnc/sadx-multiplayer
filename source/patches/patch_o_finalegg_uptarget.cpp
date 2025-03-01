@@ -5,8 +5,8 @@
 static void __cdecl uptarget_exec_wait_r(task* tp);
 static void __cdecl dummytarget_exec_r(task* tp);
 
-FastFunctionHookPtr<decltype(&uptarget_exec_wait_r)> uptarget_exec_wait_t(0x5B5740);
-FastFunctionHookPtr<decltype(&dummytarget_exec_r)> dummytarget_exec_t(0x5B5960);
+FastFunctionHookPtr<decltype(&uptarget_exec_wait_r)> uptarget_exec_wait_h(0x5B5740);
+FastFunctionHookPtr<decltype(&dummytarget_exec_r)> dummytarget_exec_h(0x5B5960);
 
 static void __cdecl uptarget_exec_wait_r(task* tp)
 {
@@ -22,7 +22,7 @@ static void __cdecl uptarget_exec_wait_r(task* tp)
 	}
 	else
 	{
-		uptarget_exec_wait_t.Original(tp);
+		uptarget_exec_wait_h.Original(tp);
 	}
 }
 
@@ -40,13 +40,13 @@ static void __cdecl dummytarget_exec_r(task* tp)
 		}
 	}
 
-	dummytarget_exec_t.Original(tp);
+	dummytarget_exec_h.Original(tp);
 }
 
 void patch_finalegg_uptarget_init()
 {
-	uptarget_exec_wait_t.Hook(uptarget_exec_wait_r);
-	dummytarget_exec_t.Hook(dummytarget_exec_r);
+	uptarget_exec_wait_h.Hook(uptarget_exec_wait_r);
+	dummytarget_exec_h.Hook(dummytarget_exec_r);
 }
 
 RegisterPatch patch_finalegg_uptarget(patch_finalegg_uptarget_init);

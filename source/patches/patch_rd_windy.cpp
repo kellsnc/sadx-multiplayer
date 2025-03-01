@@ -3,7 +3,7 @@
 #include "RegisterPatch.hpp"
 #include "multiplayer.h"
 
-FastFunctionHook<void, task*> Rd_Windy_t(0x4DDB30);
+FastFunctionHook<void, task*> Rd_Windy_h(0x4DDB30);
 
 // Patch act swaps
 void __cdecl Rd_Windy_r(task* tp)
@@ -21,12 +21,12 @@ void __cdecl Rd_Windy_r(task* tp)
 		}
 	}
 
-	Rd_Windy_t.Original(tp);
+	Rd_Windy_h.Original(tp);
 }
 
 void patch_rd_windy_init()
 {
-	Rd_Windy_t.Hook(Rd_Windy_r);
+	Rd_Windy_h.Hook(Rd_Windy_r);
 	WriteData((void**)0x4DDBFE, (void*)0x4DDB60); // Patch skybox mode
 }
 

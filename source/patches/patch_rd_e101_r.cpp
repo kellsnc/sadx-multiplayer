@@ -4,7 +4,7 @@
 #include "patch_boss_common.h"
 #include "result.h"
 
-FastFunctionHook<void, task*> execE101R_t(0x56C0B0);
+FastFunctionHook<void, task*> execE101R_h(0x56C0B0);
 
 static void __cdecl execE101R_r(task* tp)
 {
@@ -17,12 +17,12 @@ static void __cdecl execE101R_r(task* tp)
 		twp->flag |= Status_Hurt;
 	}
 
-	execE101R_t.Original(tp);
+	execE101R_h.Original(tp);
 }
 
 void patch_e101r_init()
 {
-	execE101R_t.Hook(execE101R_r);
+	execE101R_h.Hook(execE101R_r);
 }
 
 #ifdef MULTI_TEST

@@ -15,7 +15,7 @@ enum : __int8
 };
 
 static void __cdecl ObjectFinalEggElevator2_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectFinalEggElevator2_r)> ObjectFinalEggElevator2_t(0x5B4B30);
+FastFunctionHookPtr<decltype(&ObjectFinalEggElevator2_r)> ObjectFinalEggElevator2_h(0x5B4B30);
 
 static void End_m(task* tp)
 {
@@ -107,13 +107,13 @@ static void __cdecl ObjectFinalEggElevator2_r(task* tp)
 	}
 	else
 	{
-		ObjectFinalEggElevator2_t.Original(tp);
+		ObjectFinalEggElevator2_h.Original(tp);
 	}
 }
 
 void patch_finalegg_elevator2_init()
 {
-	ObjectFinalEggElevator2_t.Hook(ObjectFinalEggElevator2_r);
+	ObjectFinalEggElevator2_h.Hook(ObjectFinalEggElevator2_r);
 }
 
 RegisterPatch patch_finalegg_elevator2(patch_finalegg_elevator2_init);

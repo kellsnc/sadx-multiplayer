@@ -7,8 +7,8 @@ auto ObjectEmeraldDisplay = GenerateUsercallWrapper<void (*)(Angle* angy, NJS_PO
 static void __cdecl ObjectEmeraldPRegular_r(task* tp);
 static void __cdecl FragmEmeraldDigDisplay_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjectEmeraldPRegular_r)> ObjectEmeraldPRegular_t(0x4A2FD0);
-FastFunctionHookPtr<decltype(&FragmEmeraldDigDisplay_r)> FragmEmeraldDigDisplay_t(0x4A31D0);
+FastFunctionHookPtr<decltype(&ObjectEmeraldPRegular_r)> ObjectEmeraldPRegular_h(0x4A2FD0);
+FastFunctionHookPtr<decltype(&FragmEmeraldDigDisplay_r)> FragmEmeraldDigDisplay_h(0x4A31D0);
 
 static void ObjectEmeraldPRegular_m(task* tp)
 {
@@ -63,7 +63,7 @@ static void __cdecl ObjectEmeraldPRegular_r(task* tp)
 	}
 	else
 	{
-		ObjectEmeraldPRegular_t.Original(tp);
+		ObjectEmeraldPRegular_h.Original(tp);
 	}
 }
 
@@ -163,14 +163,14 @@ static void __cdecl FragmEmeraldDigDisplay_r(task* tp)
 	}
 	else
 	{
-		FragmEmeraldDigDisplay_t.Original(tp);
+		FragmEmeraldDigDisplay_h.Original(tp);
 	}
 }
 
 void patch_eme_init()
 {
-	ObjectEmeraldPRegular_t.Hook(ObjectEmeraldPRegular_r);
-	FragmEmeraldDigDisplay_t.Hook(FragmEmeraldDigDisplay_r);
+	ObjectEmeraldPRegular_h.Hook(ObjectEmeraldPRegular_r);
+	FragmEmeraldDigDisplay_h.Hook(FragmEmeraldDigDisplay_r);
 }
 
 RegisterPatch patch_eme(patch_eme_init);

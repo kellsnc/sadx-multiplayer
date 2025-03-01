@@ -15,10 +15,10 @@ static void __cdecl ObjShelterHaguruma3_ExecATask_r(task* tp);
 static void __cdecl ObjShelterHaguruma4_ExecATask_r(task* tp);
 static void __cdecl ObjShelterHaguruma6_ExecATask_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjShelterHaguruma1_ExecATask_r)> ObjShelterHaguruma1_ExecATask_t(0x5A0310);
-FastFunctionHookPtr<decltype(&ObjShelterHaguruma3_ExecATask_r)> ObjShelterHaguruma3_ExecATask_t(0x5A0010);
-FastFunctionHookPtr<decltype(&ObjShelterHaguruma4_ExecATask_r)> ObjShelterHaguruma4_ExecATask_t(0x59FB20);
-FastFunctionHookPtr<decltype(&ObjShelterHaguruma6_ExecATask_r)> ObjShelterHaguruma6_ExecATask_t(0x59F820);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma1_ExecATask_r)> ObjShelterHaguruma1_ExecATask_h(0x5A0310);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma3_ExecATask_r)> ObjShelterHaguruma3_ExecATask_h(0x5A0010);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma4_ExecATask_r)> ObjShelterHaguruma4_ExecATask_h(0x59FB20);
+FastFunctionHookPtr<decltype(&ObjShelterHaguruma6_ExecATask_r)> ObjShelterHaguruma6_ExecATask_h(0x59F820);
 
 static void ExecATask_m(task* tp, NJS_OBJECT* object)
 {
@@ -71,7 +71,7 @@ static void __cdecl ObjShelterHaguruma6_ExecATask_r(task* tp)
 	}
 	else
 	{
-		ObjShelterHaguruma6_ExecATask_t.Original(tp);
+		ObjShelterHaguruma6_ExecATask_h.Original(tp);
 	}
 }
 
@@ -83,7 +83,7 @@ static void __cdecl ObjShelterHaguruma4_ExecATask_r(task* tp)
 	}
 	else
 	{
-		ObjShelterHaguruma4_ExecATask_t.Original(tp);
+		ObjShelterHaguruma4_ExecATask_h.Original(tp);
 	}
 }
 
@@ -95,7 +95,7 @@ static void __cdecl ObjShelterHaguruma3_ExecATask_r(task* tp)
 	}
 	else
 	{
-		ObjShelterHaguruma3_ExecATask_t.Original(tp);
+		ObjShelterHaguruma3_ExecATask_h.Original(tp);
 	}
 }
 
@@ -107,16 +107,16 @@ static void __cdecl ObjShelterHaguruma1_ExecATask_r(task* tp)
 	}
 	else
 	{
-		ObjShelterHaguruma1_ExecATask_t.Original(tp);
+		ObjShelterHaguruma1_ExecATask_h.Original(tp);
 	}
 }
 
 void patch_shelter_haguruma_init()
 {
-	ObjShelterHaguruma1_ExecATask_t.Hook(ObjShelterHaguruma1_ExecATask_r);
-	ObjShelterHaguruma3_ExecATask_t.Hook(ObjShelterHaguruma3_ExecATask_r);
-	ObjShelterHaguruma4_ExecATask_t.Hook(ObjShelterHaguruma4_ExecATask_r);
-	ObjShelterHaguruma6_ExecATask_t.Hook(ObjShelterHaguruma6_ExecATask_r);
+	ObjShelterHaguruma1_ExecATask_h.Hook(ObjShelterHaguruma1_ExecATask_r);
+	ObjShelterHaguruma3_ExecATask_h.Hook(ObjShelterHaguruma3_ExecATask_r);
+	ObjShelterHaguruma4_ExecATask_h.Hook(ObjShelterHaguruma4_ExecATask_r);
+	ObjShelterHaguruma6_ExecATask_h.Hook(ObjShelterHaguruma6_ExecATask_r);
 }
 
 RegisterPatch patch_shelter_haguruma(patch_shelter_haguruma_init);

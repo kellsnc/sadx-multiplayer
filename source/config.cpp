@@ -8,7 +8,7 @@ Config config;
 void Config::read(const char* path)
 {
 	std::unique_ptr<IniFile> config(new IniFile(std::string(path) + "\\config.ini"));
-	const IniGroup* ini_general = config->getGroup("");
+	const auto ini_general = config->getGroup("");
 
 	if (ini_general)
 	{
@@ -17,7 +17,7 @@ void Config::read(const char* path)
 		mIndicator = ini_general->getBool("Indicator", mIndicator);
 	}
 
-	const IniGroup* ini_netplay = config->getGroup("Netplay");
+	const auto ini_netplay = config->getGroup("Netplay");
 
 	if (ini_netplay)
 	{
@@ -25,7 +25,7 @@ void Config::read(const char* path)
 		netplay.mDefaultPort = ini_netplay->getInt("DefaultPort", netplay.mDefaultPort);
 	}
 
-	const IniGroup* ini_cheats = config->getGroup("Cheats");
+	const auto ini_cheats = config->getGroup("Cheats");
 
 	if (ini_cheats)
 	{

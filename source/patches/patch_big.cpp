@@ -9,14 +9,14 @@
 #include "result.h"
 #include "patch_o_sky_cyl_cmn.h"
 
-FastFunctionHook<void, task*> BigTheCat_t((intptr_t)Big_Main);
-FastUsercallHookPtr<void(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), noret, rEAX, stack4, stack4> BigChkMode_t(0x48E640);
-FastUsercallHookPtr<Bool(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), rEAX, rEAX, rEDI, stack4> Big_CheckInput_t(0x48D400);
-FastFunctionHook<void, task*> Big_Jiggle_t((intptr_t)0x48C720);
-FastFunctionHook<void, task*> BigEyeTracker_t(0x48E2E0);
-FastFunctionHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp)> bigActMissSet_t(0x48CD50);
-FastFunctionHook<void> sub_48CDE0_t(0x48CDE0);
-FastFunctionHook<void> sub_48CE10_t(0x48CE10);
+FastFunctionHook<void, task*> BigTheCat_h((intptr_t)Big_Main);
+FastUsercallHookPtr<void(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), noret, rEAX, stack4, stack4> BigChkMode_h(0x48E640);
+FastUsercallHookPtr<Bool(*)(playerwk* pwp, taskwk* twp, motionwk2* mwp), rEAX, rEAX, rEDI, stack4> Big_CheckInput_h(0x48D400);
+FastFunctionHook<void, task*> Big_Jiggle_h((intptr_t)0x48C720);
+FastFunctionHook<void, task*> BigEyeTracker_h(0x48E2E0);
+FastFunctionHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp)> bigActMissSet_h(0x48CD50);
+FastFunctionHook<void> sub_48CDE0_h(0x48CDE0);
+FastFunctionHook<void> sub_48CE10_h(0x48CE10);
 
 void __cdecl BigEyeTracker_r(task* tp)
 {
@@ -25,7 +25,7 @@ void __cdecl BigEyeTracker_r(task* tp)
 		return;
 	}
 
-	BigEyeTracker_t.Original(tp);
+	BigEyeTracker_h.Original(tp);
 }
 
 void __cdecl Big_Jiggle_r(task* tp)
@@ -35,7 +35,7 @@ void __cdecl Big_Jiggle_r(task* tp)
 		return;
 	}
 
-	Big_Jiggle_t.Original(tp);
+	Big_Jiggle_h.Original(tp);
 }
 
 void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -62,7 +62,7 @@ void __cdecl bigActMissSet_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	}
 	else
 	{
-		bigActMissSet_t.Original(twp, mwp, pwp);
+		bigActMissSet_h.Original(twp, mwp, pwp);
 	}
 }
 
@@ -83,7 +83,7 @@ void __cdecl sub_48CDE0_r()
 	}
 	else
 	{
-		sub_48CDE0_t.Original();
+		sub_48CDE0_h.Original();
 	}
 }
 
@@ -105,7 +105,7 @@ void __cdecl sub_48CE10_r()
 	}
 	else
 	{
-		sub_48CE10_t.Original();
+		sub_48CE10_h.Original();
 	}
 }
 
@@ -118,7 +118,7 @@ Bool Big_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return Big_CheckInput_t.Original(pwp, twp, mwp);
+			return Big_CheckInput_h.Original(pwp, twp, mwp);
 		}
 
 		switch (twp->smode)
@@ -147,7 +147,7 @@ Bool Big_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 		}
 	}
 	
-	return Big_CheckInput_t.Original(pwp, twp, mwp);
+	return Big_CheckInput_h.Original(pwp, twp, mwp);
 }
 
 void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
@@ -219,7 +219,7 @@ void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 		}
 	}
 
-	BigChkMode_t.Original(pwp, twp, mwp);
+	BigChkMode_h.Original(pwp, twp, mwp);
 }
 
 void BigTheCat_m(task* tp)
@@ -261,7 +261,7 @@ void BigTheCat_m(task* tp)
 		Big_Lure_Ptr = etc->Big_Lure_Ptr;
 		Big_Fish_Flag = etc->Big_Fish_Flag;
 		Big_Fish_Ptr = etc->Big_Fish_Ptr;
-		BigTheCat_t.Original(tp);
+		BigTheCat_h.Original(tp);
 		etc->Big_Lure_Ptr = Big_Lure_Ptr;
 		etc->Big_Fish_Flag = Big_Fish_Flag;
 		Big_Lure_Ptr = backup_ptr;
@@ -270,7 +270,7 @@ void BigTheCat_m(task* tp)
 	}
 	else
 	{
-		BigTheCat_t.Original(tp);
+		BigTheCat_h.Original(tp);
 	}
 
 	gravity::RestoreGlobalGravity();
@@ -284,20 +284,20 @@ void __cdecl BigTheCat_r(task* tp)
 	}
 	else
 	{
-		BigTheCat_t.Original(tp);
+		BigTheCat_h.Original(tp);
 	}
 }
 
 void patch_big_init()
 {
-	BigTheCat_t.Hook(BigTheCat_r);
-	Big_CheckInput_t.Hook(Big_CheckInput_r);
-	BigChkMode_t.Hook(BigChkMode_r);
-	Big_Jiggle_t.Hook(Big_Jiggle_r);
-	BigEyeTracker_t.Hook(BigEyeTracker_r);
-	bigActMissSet_t.Hook(bigActMissSet_r);
-	sub_48CDE0_t.Hook(sub_48CDE0_r);
-	sub_48CE10_t.Hook(sub_48CE10_r);
+	BigTheCat_h.Hook(BigTheCat_r);
+	Big_CheckInput_h.Hook(Big_CheckInput_r);
+	BigChkMode_h.Hook(BigChkMode_r);
+	Big_Jiggle_h.Hook(Big_Jiggle_r);
+	BigEyeTracker_h.Hook(BigEyeTracker_r);
+	bigActMissSet_h.Hook(bigActMissSet_r);
+	sub_48CDE0_h.Hook(sub_48CDE0_r);
+	sub_48CE10_h.Hook(sub_48CE10_r);
 }
 
 RegisterPatch patch_big(patch_big_init);

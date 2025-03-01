@@ -21,8 +21,8 @@ auto DrawWire = GenerateUsercallWrapper<TaskFuncPtr>(noret, 0x602DF0, rEAX);
 static void KasshaDisplayer_r(task* tp);
 static void PathKassha_r(task* tp);
 
-FastFunctionHookPtr<decltype(&KasshaDisplayer_r)> KasshaDisplayer_t(0x603590);
-FastFunctionHookPtr<decltype(&PathKassha_r)> PathKassha_t(0x603640);
+FastFunctionHookPtr<decltype(&KasshaDisplayer_r)> KasshaDisplayer_h(0x603590);
+FastFunctionHookPtr<decltype(&PathKassha_r)> PathKassha_h(0x603640);
 
 // The wire displayer also moves the player for some reason
 // Luckily they put a "mode == 2" check before even though the function is only called during mode 2
@@ -58,7 +58,7 @@ static void KasshaDisplayer_r(task* tp)
 {
 	if (!SplitScreen::IsActive())
 	{
-		return KasshaDisplayer_t.Original(tp);
+		return KasshaDisplayer_h.Original(tp);
 	}
 
 	if (!MissedFrames)
@@ -93,7 +93,7 @@ static void PathKassha_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return PathKassha_t.Original(tp);
+		return PathKassha_h.Original(tp);
 	}
 
 	auto twp = tp->twp;
@@ -181,8 +181,8 @@ static void PathKassha_r(task* tp)
 
 void patch_mountain_palley_init()
 {
-	KasshaDisplayer_t.Hook(KasshaDisplayer_r);
-	PathKassha_t.Hook(PathKassha_r);
+	KasshaDisplayer_h.Hook(KasshaDisplayer_r);
+	PathKassha_h.Hook(PathKassha_r);
 }
 
 RegisterPatch patch_mountain_palley(patch_mountain_palley_init);

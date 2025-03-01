@@ -9,9 +9,9 @@ void __cdecl ObjectBeachWaveBG_r(task* tp);
 void __cdecl ObjectBeachWaveBG2_r(task* tp);
 void __cdecl ObjectBeachWaveBG3_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjectBeachWaveBG_r)> ObjectBeachWaveBG_t(0x501970);
-FastFunctionHookPtr<decltype(&ObjectBeachWaveBG2_r)> ObjectBeachWaveBG2_t(0x4F79C0);
-FastFunctionHookPtr<decltype(&ObjectBeachWaveBG3_r)> ObjectBeachWaveBG3_t(0x4F7A00);
+FastFunctionHookPtr<decltype(&ObjectBeachWaveBG_r)> ObjectBeachWaveBG_h(0x501970);
+FastFunctionHookPtr<decltype(&ObjectBeachWaveBG2_r)> ObjectBeachWaveBG2_h(0x4F79C0);
+FastFunctionHookPtr<decltype(&ObjectBeachWaveBG3_r)> ObjectBeachWaveBG3_h(0x4F7A00);
 
 void __cdecl ObjectBeachWaveBG_Exec_m(task* tp)
 {
@@ -40,7 +40,7 @@ void __cdecl ObjectBeachWaveBG_Disp_m(task* tp)
 
 void __cdecl ObjectBeachWaveBG_r(task* tp)
 {
-	ObjectBeachWaveBG_t.Original(tp);
+	ObjectBeachWaveBG_h.Original(tp);
 	tp->disp = ObjectBeachWaveBG_Disp_m;
 
 	// Load one more per player since movement is calculated in main
@@ -64,7 +64,7 @@ void __cdecl ObjectBeachWaveBG_Disp2_m(task* tp)
 
 void __cdecl ObjectBeachWaveBG2_r(task* tp)
 {
-	ObjectBeachWaveBG2_t.Original(tp);
+	ObjectBeachWaveBG2_h.Original(tp);
 	tp->disp = ObjectBeachWaveBG_Disp2_m;
 
 	// Load one more per player since movement is calculated in main
@@ -88,7 +88,7 @@ void __cdecl ObjectBeachWaveBG_Disp3_m(task* tp)
 
 void __cdecl ObjectBeachWaveBG3_r(task* tp)
 {
-	ObjectBeachWaveBG3_t.Original(tp);
+	ObjectBeachWaveBG3_h.Original(tp);
 	tp->disp = ObjectBeachWaveBG_Disp3_m;
 
 	// Load one more per player since movement is calculated in main
@@ -103,9 +103,9 @@ void __cdecl ObjectBeachWaveBG3_r(task* tp)
 
 void patch_beach_wavebg_init()
 {
-	ObjectBeachWaveBG_t.Hook(ObjectBeachWaveBG_r);
-	ObjectBeachWaveBG2_t.Hook(ObjectBeachWaveBG2_r);
-	ObjectBeachWaveBG3_t.Hook(ObjectBeachWaveBG3_r);
+	ObjectBeachWaveBG_h.Hook(ObjectBeachWaveBG_r);
+	ObjectBeachWaveBG2_h.Hook(ObjectBeachWaveBG2_r);
+	ObjectBeachWaveBG3_h.Hook(ObjectBeachWaveBG3_r);
 }
 
 RegisterPatch patch_beach_wavebg(patch_beach_wavebg_init);

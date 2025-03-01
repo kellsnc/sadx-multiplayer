@@ -6,16 +6,16 @@
 #include "camera.h"
 #include "teleport.h"
 
-FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetRotation_t(0x44BB60);
-FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetAcceleration_t(0x44C270);
-FastFunctionHook<void, taskwk*, motionwk2*, playerwk*, float> PGetAccelerationSnowBoard_t(0x448550);
-FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetAccelerationForBuilding_t(0x448150);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetRotation_h(0x44BB60);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetAcceleration_h(0x44C270);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*, float> PGetAccelerationSnowBoard_h(0x448550);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> PGetAccelerationForBuilding_h(0x448150);
 FastUsercallHookPtr<void(*)(taskwk* twp), noret, rESI> SonicMotionCheckEdition(0x492170);
-FastFunctionHook<void, taskwk*> PPlayADXAsWaiting_t(0x442360); //idle
-FastFunctionHook<void, int> KillHimP_t(KillHimP);
-FastFunctionHook<void, int> KillHimByFallingDownP_t(KillHimByFallingDownP);
-FastFunctionHook<void, task*> KillPlayerFallingDownStageP_t(0x44AE80);
-FastFunctionHook<void, task*> BreathCounterP_t(0x446B10);
+FastFunctionHook<void, taskwk*> PPlayADXAsWaiting_h(0x442360); //idle
+FastFunctionHook<void, int> KillHimP_h(KillHimP);
+FastFunctionHook<void, int> KillHimByFallingDownP_h(KillHimByFallingDownP);
+FastFunctionHook<void, task*> KillPlayerFallingDownStageP_h(0x44AE80);
+FastFunctionHook<void, task*> BreathCounterP_h(0x446B10);
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
@@ -27,13 +27,13 @@ void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo:
 		{
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
-			PGetRotation_t.Original(twp, mwp, pwp);
+			PGetRotation_h.Original(twp, mwp, pwp);
 			camera_twp->ang = backup;
 			return;
 		}
 	}
 
-	PGetRotation_t.Original(twp, mwp, pwp);
+	PGetRotation_h.Original(twp, mwp, pwp);
 }
 
 void __cdecl PGetAcceleration_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -46,13 +46,13 @@ void __cdecl PGetAcceleration_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		{
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
-			PGetAcceleration_t.Original(twp, mwp, pwp);
+			PGetAcceleration_h.Original(twp, mwp, pwp);
 			camera_twp->ang = backup;
 			return;
 		}
 	}
 
-	PGetAcceleration_t.Original(twp, mwp, pwp);
+	PGetAcceleration_h.Original(twp, mwp, pwp);
 }
 
 void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* pwp, float Max_Speed)
@@ -66,14 +66,14 @@ void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* 
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
 			camera_twp->smode = GetStageNumber() == 0x802 && twp->pos.x > -5400.0f && twp->pos.y > -3900.0f ? 1 : 0;
-			PGetAccelerationSnowBoard_t.Original(twp, mwp, pwp, Max_Speed);
+			PGetAccelerationSnowBoard_h.Original(twp, mwp, pwp, Max_Speed);
 			camera_twp->ang = backup;
 			camera_twp->smode = 0;
 			return;
 		}
 	}
 
-	PGetAccelerationSnowBoard_t.Original(twp, mwp, pwp, Max_Speed);
+	PGetAccelerationSnowBoard_h.Original(twp, mwp, pwp, Max_Speed);
 }
 
 void __cdecl PGetAccelerationForBuilding_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -86,13 +86,13 @@ void __cdecl PGetAccelerationForBuilding_r(taskwk* twp, motionwk2* mwp, playerwk
 		{
 			auto backup = camera_twp->ang;
 			camera_twp->ang = *cam_ang;
-			PGetAccelerationForBuilding_t.Original(twp, mwp, pwp);
+			PGetAccelerationForBuilding_h.Original(twp, mwp, pwp);
 			camera_twp->ang = backup;
 			return;
 		}
 	}
 
-	PGetAccelerationForBuilding_t.Original(twp, mwp, pwp);
+	PGetAccelerationForBuilding_h.Original(twp, mwp, pwp);
 }
 
 void __cdecl SonicMotionCheckEdition_r(taskwk* twp)
@@ -152,7 +152,7 @@ void __cdecl PPlayADXAsWaiting_r(taskwk* pTwp)
 {
 	if (!multiplayer::IsActive() || !pTwp || !pTwp->counter.b[0])
 	{
-		return PPlayADXAsWaiting_t.Original(pTwp);
+		return PPlayADXAsWaiting_h.Original(pTwp);
 	}
 
 	const uint8_t charID = pTwp->counter.b[1];
@@ -375,7 +375,7 @@ static void __cdecl KillHimP_r(int pNum)
 	}
 	else
 	{
-		KillHimP_t.Original(pNum);
+		KillHimP_h.Original(pNum);
 	}
 }
 
@@ -441,7 +441,7 @@ static void __cdecl KillHimByFallingDownP_r(int pno)
 	}
 	else
 	{
-		KillHimByFallingDownP_t.Original(pno);
+		KillHimByFallingDownP_h.Original(pno);
 	}
 }
 
@@ -449,7 +449,7 @@ static void __cdecl KillPlayerFallingDownStageP_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return KillPlayerFallingDownStageP_t.Original(tp);
+		return KillPlayerFallingDownStageP_h.Original(tp);
 	}
 
 	LoopTaskC(tp);
@@ -512,7 +512,7 @@ static void __cdecl BreathCounterP_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return BreathCounterP_t.Original(tp);
+		return BreathCounterP_h.Original(tp);
 	}
 
 	int DrownVoice = 1506;
@@ -610,18 +610,18 @@ Bool CheckPlayerRideOnMobileLandObjectP_P1_Hack(unsigned __int8 pno, task* ttp)
 
 void patch_player_init()
 {
-	PGetRotation_t.Hook(PGetRotation_r);
-	PGetAcceleration_t.Hook(PGetAcceleration_r);
-	PGetAccelerationSnowBoard_t.Hook(PGetAccelerationSnowBoard_r);
-	PGetAccelerationForBuilding_t.Hook(PGetAccelerationForBuilding_r);
+	PGetRotation_h.Hook(PGetRotation_r);
+	PGetAcceleration_h.Hook(PGetAcceleration_r);
+	PGetAccelerationSnowBoard_h.Hook(PGetAccelerationSnowBoard_r);
+	PGetAccelerationForBuilding_h.Hook(PGetAccelerationForBuilding_r);
 	SonicMotionCheckEdition.Hook(SonicMotionCheckEdition_r);
-	PPlayADXAsWaiting_t.Hook(PPlayADXAsWaiting_r); //patch idle voice multiplayer
+	PPlayADXAsWaiting_h.Hook(PPlayADXAsWaiting_r); //patch idle voice multiplayer
 	WriteJump(HoldOnIcicleP, HoldOnIcicleP_r); // Disable free camera for the proper player on icicles
 
-	KillHimP_t.Hook(KillHimP_r);
-	KillHimByFallingDownP_t.Hook(KillHimByFallingDownP_r);
-	KillPlayerFallingDownStageP_t.Hook(KillPlayerFallingDownStageP_r);
-	BreathCounterP_t.Hook(BreathCounterP_r);
+	KillHimP_h.Hook(KillHimP_r);
+	KillHimByFallingDownP_h.Hook(KillHimByFallingDownP_r);
+	KillPlayerFallingDownStageP_h.Hook(KillPlayerFallingDownStageP_r);
+	BreathCounterP_h.Hook(BreathCounterP_r);
 
 	// Game draws shadow in logic sub but also in display sub *if* game is paused.
 	// To keep compatibility with mods (like SA2 Sonic), I just force the display for the other screens.

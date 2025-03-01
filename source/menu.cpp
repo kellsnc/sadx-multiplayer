@@ -37,8 +37,8 @@ PanelPrmType PanelPrmTitleMenuMulti[]
 
 const DialogPrmType MainMenuMultiDialog = { DLG_PNLSTYLE_SIKAKU2, nullptr, &ava_title_e_TEXLIST, PanelPrmTitleMenuMulti, (DlgSndPrmType*)0x7DFE08, 0x7812B4FF, 0x7812B4FF, 316.0f, 236.0f, 20.0f, 232.0f, 160.0f, 0.719f, 0.5, 2, 2 };
 
-FastFunctionHook<void, TitleMenuWk*> title_menu_sub_exec_t(0x50B630);
-FastFunctionHook<void, task*> dialog_disp_t(0x432480);
+FastFunctionHook<void, TitleMenuWk*> title_menu_sub_exec_h(0x50B630);
+FastFunctionHook<void, task*> dialog_disp_h(0x432480);
 int selected_multi_mode = 0;
 
 // Make sure ingame dialogs draw widescreen
@@ -48,12 +48,12 @@ static void __cdecl dialog_disp_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		dialog_disp_t.Original(tp);
+		dialog_disp_h.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		dialog_disp_t.Original(tp);
+		dialog_disp_h.Original(tp);
 	}
 }
 
@@ -140,7 +140,7 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 		case 0: // Adventure
 		case 1: // Trial
 		case 2: // Mission
-			title_menu_sub_exec_t.Original(wkp); // first three items do not need adjusting so original is fine
+			title_menu_sub_exec_h.Original(wkp); // first three items do not need adjusting so original is fine
 			break;
 		case 3: // Multiplayer (custom)
 			OpenMultiModeDialog();
@@ -187,14 +187,14 @@ void title_menu_sub_exec_r(TitleMenuWk* wkp)
 	}
 	else
 	{
-		title_menu_sub_exec_t.Original(wkp);
+		title_menu_sub_exec_h.Original(wkp);
 	}
 }
 
 void __cdecl InitMenu()
 {
-	title_menu_sub_exec_t.Hook(title_menu_sub_exec_r);
-	dialog_disp_t.Hook(dialog_disp_r);
+	title_menu_sub_exec_h.Hook(title_menu_sub_exec_r);
+	dialog_disp_h.Hook(dialog_disp_r);
 
 	DialogPrm[2].PnlPrmPtr = PanelPrmTitleMenu1;
 	DialogPrm[2].CsrMax = 7;

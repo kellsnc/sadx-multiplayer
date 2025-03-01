@@ -14,14 +14,14 @@ DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
 VariableHook<char, 0x3C53C40> e102_hover_flag_m;
 VariableHook<char, 0x3C53C41> e102_hover_flag_p_m;
 
-FastFunctionHook<void, task*, motionwk2*, playerwk*> E102_RunsActions_t((intptr_t)0x481460);
-FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> E102_CheckInput_t(0x480870);
-FastFunctionHook<void, task*> E102_t((intptr_t)0x483430);
-FastFunctionHook<void, task*> E102DispTimeUpWarning_t(0x4C51D0);
-FastFunctionHookPtr<TaskFuncPtr> E102LockOnCursor_t(0x4CF090);
-FastFunctionHookPtr<TaskFuncPtr> E102Beam_t(0x4C40B0);
-FastFunctionHookPtr<TaskFuncPtr> E102AddSecTotalNewDisplay_t(0x49FDA0);
-FastFunctionHookPtr<TaskFuncPtr> E102AddSecTotalNew_t(0x49FF10);
+FastFunctionHook<void, task*, motionwk2*, playerwk*> E102_RunsActions_h(0x481460);
+FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> E102_CheckInput_h(0x480870);
+FastFunctionHook<void, task*> E102_h(0x483430);
+FastFunctionHook<void, task*> E102DispTimeUpWarning_h(0x4C51D0);
+FastFunctionHookPtr<TaskFuncPtr> E102LockOnCursor_h(0x4CF090);
+FastFunctionHookPtr<TaskFuncPtr> E102Beam_h(0x4C40B0);
+FastFunctionHookPtr<TaskFuncPtr> E102AddSecTotalNewDisplay_h(0x49FDA0);
+FastFunctionHookPtr<TaskFuncPtr> E102AddSecTotalNew_h(0x49FF10);
 
 bool IsCountingDown()
 {
@@ -64,12 +64,12 @@ static void E102DispTimeUpWarning_r(task* tp)
 		{
 			SplitScreen::SaveViewPort();
 			SplitScreen::ChangeViewPort(-1);
-			E102DispTimeUpWarning_t.Original(tp);
+			E102DispTimeUpWarning_h.Original(tp);
 			SplitScreen::RestoreViewPort();
 		}
 		else
 		{
-			E102DispTimeUpWarning_t.Original(tp);
+			E102DispTimeUpWarning_h.Original(tp);
 		}
 	}
 }
@@ -162,7 +162,7 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 		}
 	}
 
-	E102_RunsActions_t.Original(tp, mwp, pwp);
+	E102_RunsActions_h.Original(tp, mwp, pwp);
 }
 
 signed int E102_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
@@ -174,7 +174,7 @@ signed int E102_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return E102_CheckInput_t.Original(twp, pwp, mwp);
+			return E102_CheckInput_h.Original(twp, pwp, mwp);
 		}
 
 		switch (twp->smode)
@@ -207,11 +207,11 @@ signed int E102_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 		}
 	}
 
-	return E102_CheckInput_t.Original(twp, pwp, mwp);
+	return E102_CheckInput_h.Original(twp, pwp, mwp);
 }
 
 static void __cdecl E102Display_r(task* tp);
-FastFunctionHookPtr<decltype(&E102Display_r)> E102Display_t(0x47FD50, E102Display_r);
+FastFunctionHookPtr<decltype(&E102Display_r)> E102Display_h(0x47FD50, E102Display_r);
 static void __cdecl E102Display_r(task* tp)
 {
 	if (multiplayer::IsActive())
@@ -257,7 +257,7 @@ static void __cdecl E102Display_r(task* tp)
 		}
 	}
 
-	E102Display_t.Original(tp);
+	E102Display_h.Original(tp);
 }
 
 static void E102_m(task* tp)
@@ -277,7 +277,7 @@ static void E102_m(task* tp)
 		auto backup_p = e102_hover_flag_p;
 		e102_hover_flag = e102_hover_flag_m[pnum];
 		e102_hover_flag_p = e102_hover_flag_p_m[pnum];
-		E102_t.Original(tp);
+		E102_h.Original(tp);
 		e102_hover_flag_m[pnum] = e102_hover_flag;
 		e102_hover_flag_p_m[pnum] = e102_hover_flag_p;
 		e102_hover_flag = backup;
@@ -285,7 +285,7 @@ static void E102_m(task* tp)
 	}
 	else
 	{
-		E102_t.Original(tp);
+		E102_h.Original(tp);
 	}
 
 	gravity::RestoreGlobalGravity();
@@ -299,14 +299,14 @@ void __cdecl E102_r(task* tp)
 	}
 	else
 	{
-		E102_t.Original(tp);
+		E102_h.Original(tp);
 	}
 }
 
 static void __cdecl E102LockOnCursor_r(task* tp)
 {
 	e102_work_ptr = (E102WK*)tp->awp[1].work.ul[0];
-	E102LockOnCursor_t.Original(tp);
+	E102LockOnCursor_h.Original(tp);
 }
 
 static void __cdecl E102Beam_r(task* tp)
@@ -323,7 +323,7 @@ static void __cdecl E102Beam_r(task* tp)
 		}
 	}
 
-	E102Beam_t.Original(tp);
+	E102Beam_h.Original(tp);
 }
 
 static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
@@ -334,12 +334,12 @@ static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
 		{
 			SplitScreen::SaveViewPort();
 			SplitScreen::ChangeViewPort(-1);
-			E102AddSecTotalNewDisplay_t.Original(tp);
+			E102AddSecTotalNewDisplay_h.Original(tp);
 			SplitScreen::RestoreViewPort();
 		}
 		else
 		{
-			E102AddSecTotalNewDisplay_t.Original(tp);
+			E102AddSecTotalNewDisplay_h.Original(tp);
 		}
 	}
 }
@@ -348,20 +348,20 @@ static void __cdecl E102AddSecTotalNew_r(task* tp)
 {
 	if (IsCountingDown())
 	{
-		E102AddSecTotalNew_t.Original(tp);
+		E102AddSecTotalNew_h.Original(tp);
 	}
 }
 
 void patch_e102_init()
 {
-	E102_t.Hook(E102_r);
-	E102_CheckInput_t.Hook(E102_CheckInput_r);
-	E102_RunsActions_t.Hook(E102_RunActions_r);
-	E102DispTimeUpWarning_t.Hook(E102DispTimeUpWarning_r);
-	E102LockOnCursor_t.Hook(E102LockOnCursor_r);
-	E102Beam_t.Hook(E102Beam_r);
-	E102AddSecTotalNewDisplay_t.Hook(E102AddSecTotalNewDisplay_r);
-	E102AddSecTotalNew_t.Hook(E102AddSecTotalNew_r);
+	E102_h.Hook(E102_r);
+	E102_CheckInput_h.Hook(E102_CheckInput_r);
+	E102_RunsActions_h.Hook(E102_RunActions_r);
+	E102DispTimeUpWarning_h.Hook(E102DispTimeUpWarning_r);
+	E102LockOnCursor_h.Hook(E102LockOnCursor_r);
+	E102Beam_h.Hook(E102Beam_r);
+	E102AddSecTotalNewDisplay_h.Hook(E102AddSecTotalNewDisplay_r);
+	E102AddSecTotalNew_h.Hook(E102AddSecTotalNew_r);
 	WriteCall((void*)0x49FD54, E102AddSeconds_r);
 	WriteCall((void*)0x47FC17, E102TimeOverHook);
 	WriteCall((void*)0x426081, GammaTickTimePatch);

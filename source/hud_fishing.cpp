@@ -10,8 +10,8 @@ static NJS_SPRITE reel_sprite = { { 1.0f, 1.0f, 1.0f }, 1.0f, 1.0f, 0, &FISHING_
 static void __cdecl dispZankiTexturePause_r(task* tp);
 static void __cdecl dispHitTexturePause_r(task* tp);
 
-FastFunctionHookPtr<decltype(&dispZankiTexturePause_r)> dispZankiTexturePause_t(0x46FB00);
-FastFunctionHookPtr<decltype(&dispHitTexturePause_r)> dispHitTexturePause_t(0x46C920);
+FastFunctionHookPtr<decltype(&dispZankiTexturePause_r)> dispZankiTexturePause_h(0x46FB00);
+FastFunctionHookPtr<decltype(&dispHitTexturePause_r)> dispHitTexturePause_h(0x46C920);
 
 #pragma region HUD
 static void DrawBigHUDMulti(int pnum)
@@ -100,12 +100,12 @@ static void __cdecl dispZankiTexturePause_r(task* tp)
 	{
 		SplitScreen::SaveViewPort();
 		SplitScreen::ChangeViewPort(-1);
-		dispZankiTexturePause_t.Original(tp);
+		dispZankiTexturePause_h.Original(tp);
 		SplitScreen::RestoreViewPort();
 	}
 	else
 	{
-		dispZankiTexturePause_t.Original(tp);
+		dispZankiTexturePause_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -212,7 +212,7 @@ static void __cdecl dispHitTexturePause_r(task* tp)
 	}
 	else
 	{
-		dispHitTexturePause_t.Original(tp);
+		dispHitTexturePause_h.Original(tp);
 	}
 }
 
@@ -332,8 +332,8 @@ void DrawFishingMeter(int pnum, float _reel_length_d, float _reel_tension, Angle
 
 void patch_hud_fishing_init()
 {
-	dispZankiTexturePause_t.Hook(dispZankiTexturePause_r);
-	dispHitTexturePause_t.Hook(dispHitTexturePause_r);
+	dispZankiTexturePause_h.Hook(dispZankiTexturePause_r);
+	dispHitTexturePause_h.Hook(dispHitTexturePause_r);
 }
 
 RegisterPatch patch_hud_fishing(patch_hud_fishing_init);

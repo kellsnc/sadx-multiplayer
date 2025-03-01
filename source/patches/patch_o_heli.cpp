@@ -14,9 +14,9 @@ static void __cdecl ObjectHeliExec_r(task* tp);
 static void __cdecl HeliWriteSub_r(task* tp, taskwk* twp);
 static void __cdecl HeliWrite_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjectHeliExec_r)> ObjectHeliExec_t(0x6139F0);
-FastUsercallHookPtr<decltype(&HeliWriteSub_r), noret, rEBX, rEAX> HeliWriteSub_t(0x6137B0);
-FastFunctionHookPtr<decltype(&HeliWrite_r)> HeliWrite_t(0x6136C0);
+FastFunctionHookPtr<decltype(&ObjectHeliExec_r)> ObjectHeliExec_h(0x6139F0);
+FastUsercallHookPtr<decltype(&HeliWriteSub_r), noret, rEBX, rEAX> HeliWriteSub_h(0x6137B0);
+FastFunctionHookPtr<decltype(&HeliWrite_r)> HeliWrite_h(0x6136C0);
 
 enum MD_HELI // made up
 {
@@ -42,12 +42,12 @@ static void __cdecl HeliWrite_r(task* tp)
 	{
 		if (IsCameraInSphere(&tp->twp->pos, 1000.0f))
 		{
-			HeliWrite_t.Original(tp);
+			HeliWrite_h.Original(tp);
 		}
 	}
 	else
 	{
-		HeliWrite_t.Original(tp);
+		HeliWrite_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -138,7 +138,7 @@ static void HeliWriteSub_m(task* tp, taskwk* ptwp)
 	twp->pos.y += twp->scl.z;
 	twp->counter.l += twp->wtimer;
 
-	HeliWriteSub_t.Original(tp, twp);
+	HeliWriteSub_h.Original(tp, twp);
 }
 
 static void __cdecl HeliWriteSub_r(task* tp, taskwk* twp)
@@ -149,7 +149,7 @@ static void __cdecl HeliWriteSub_r(task* tp, taskwk* twp)
 	}
 	else
 	{
-		HeliWriteSub_t.Original(tp, twp);
+		HeliWriteSub_h.Original(tp, twp);
 	}
 }
 #pragma endregion
@@ -347,16 +347,16 @@ static void __cdecl ObjectHeliExec_r(task* tp)
 	}
 	else
 	{
-		ObjectHeliExec_t.Original(tp);
+		ObjectHeliExec_h.Original(tp);
 	}
 }
 #pragma endregion
 
 void patch_heli_init()
 {
-	ObjectHeliExec_t.Hook(ObjectHeliExec_r);
-	HeliWriteSub_t.Hook(HeliWriteSub_r);
-	HeliWrite_t.Hook(HeliWrite_r);
+	ObjectHeliExec_h.Hook(ObjectHeliExec_r);
+	HeliWriteSub_h.Hook(HeliWriteSub_r);
+	HeliWrite_h.Hook(HeliWrite_r);
 }
 
 RegisterPatch patch_heli(patch_heli_init);

@@ -13,9 +13,9 @@ static NJS_VECTOR vel_spdman = { 4.0f, 0.4f, 0.0f };
 static NJS_VECTOR vel_hardcodedgap = { 14.0f, 0.4f, 0.0f };
 static Angle3 ang_spdman = { 0, 0xB200, 0 };
 
-FastFunctionHookPtr<TaskFuncPtr> Rd_Snow_t(0x4E9D90);
+FastFunctionHookPtr<TaskFuncPtr> Rd_Snow_h(0x4E9D90);
 FastFunctionHookPtr<TaskFuncPtr> SetPlayerSnowBoard_Hook(0x4E9660);
-FastFunctionHook<void, task*> dispBgSnow_t(0x4E9950);
+FastFunctionHook<void, task*> dispBgSnow_h(0x4E9950);
 
 static void __cdecl RdSnowBoardingSpeedManager_m(task* tp)
 {
@@ -179,7 +179,7 @@ static void __cdecl Rd_Snow_r(task* tp)
 	}
 	else
 	{
-		Rd_Snow_t.Original(tp);
+		Rd_Snow_h.Original(tp);
 	}
 }
 
@@ -224,7 +224,7 @@ static void __cdecl SetPlayerSnowBoard_r(task* tp)
 // Fix display masks
 static void __cdecl dispBgSnow_r(task* tp)
 {
-	dispBgSnow_t.Original(tp);
+	dispBgSnow_h.Original(tp);
 
 	if (camera_twp && tp->twp->mode == 10 && SplitScreen::IsActive())
 	{
@@ -268,9 +268,9 @@ static void __cdecl dispBgSnow_r(task* tp)
 
 void patch_rd_snow_init()
 {
-	Rd_Snow_t.Hook(Rd_Snow_r);
+	Rd_Snow_h.Hook(Rd_Snow_r);
 	SetPlayerSnowBoard_Hook.Hook(SetPlayerSnowBoard_r);
-	dispBgSnow_t.Hook(dispBgSnow_r);
+	dispBgSnow_h.Hook(dispBgSnow_r);
 	
 	WriteData((uint8_t*)0x4E91C0, 0xC3ui8); // Remove landtable collision chunk optimisation
 	WriteData((void**)0x4EA26E, (void*)0x4EA1D0); // Patch skybox mode

@@ -10,9 +10,9 @@ static void __cdecl ObjectKaosEme_r(task* tp);
 static void __cdecl ObjectKaosEmeIC_r(task* tp);
 static void __cdecl ObjectKaosEmeCA_r(task* tp);
 
-FastFunctionHookPtr<decltype(&ObjectKaosEme_r)> ObjectKaosEme_t(0x4DF3B0);
-FastFunctionHookPtr<decltype(&ObjectKaosEmeIC_r)> ObjectKaosEmeIC_t(0x4ECFA0);
-FastFunctionHookPtr<decltype(&ObjectKaosEmeCA_r)> ObjectKaosEmeCA_t(0x5DD0A0);
+FastFunctionHookPtr<decltype(&ObjectKaosEme_r)> ObjectKaosEme_h(0x4DF3B0);
+FastFunctionHookPtr<decltype(&ObjectKaosEmeIC_r)> ObjectKaosEmeIC_h(0x4ECFA0);
+FastFunctionHookPtr<decltype(&ObjectKaosEmeCA_r)> ObjectKaosEmeCA_h(0x5DD0A0);
 
 static void __cdecl ObjectKaosEmeDisp(task* tp)
 {
@@ -73,7 +73,7 @@ static void __cdecl ObjectKaosEme_r(task* tp)
 		}
 	}
 
-	ObjectKaosEme_t.Original(tp);
+	ObjectKaosEme_h.Original(tp);
 }
 
 static void __cdecl ObjectKaosEmeIC_r(task* tp)
@@ -91,7 +91,7 @@ static void __cdecl ObjectKaosEmeIC_r(task* tp)
 		}
 	}
 
-	ObjectKaosEmeIC_t.Original(tp);
+	ObjectKaosEmeIC_h.Original(tp);
 }
 
 static void __cdecl ObjectKaosEmeCA_r(task* tp)
@@ -109,14 +109,14 @@ static void __cdecl ObjectKaosEmeCA_r(task* tp)
 		}
 	}
 
-	ObjectKaosEmeCA_t.Original(tp);
+	ObjectKaosEmeCA_h.Original(tp);
 }
 
 void patch_kaos_eme_init()
 {
-	ObjectKaosEme_t.Hook(ObjectKaosEme_r);
-	ObjectKaosEmeIC_t.Hook(ObjectKaosEmeIC_r);
-	ObjectKaosEmeCA_t.Hook(ObjectKaosEmeCA_r);
+	ObjectKaosEme_h.Hook(ObjectKaosEme_r);
+	ObjectKaosEmeIC_h.Hook(ObjectKaosEmeIC_r);
+	ObjectKaosEmeCA_h.Hook(ObjectKaosEmeCA_r);
 }
 
 RegisterPatch patch_kaos_eme(patch_kaos_eme_init);

@@ -7,16 +7,16 @@
 #include "collision.h"
 #include "patch_o_sky_cyl_cmn.h"
 
-FastFunctionHook<void> KnuEffectPutCharge0_t(0x4C2210);
-FastFunctionHook<void> KnuEffectPutCharge1_t(0x4C2260);
-FastUsercallHookPtr<taskwk*(*)(taskwk* twp), rEAX, rEBX> KnucklesGetNearEnemyTWP_t(0x4756C0);
-FastFunctionHook<void, task*> KnucklesChargeEffectExe_t((intptr_t)0x473FE0);
-FastFunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_t((intptr_t)0x4C1330);
-FastFunctionHook<void, task*> KnucklesJiggle_t(0x473CE0);
-FastFunctionHook<void, task*> KnuxEyeTracker_t(0x475260);
-FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> Knux_CheckInput_t(0x476970);
-FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_t(Knux_RunsActions);
-FastFunctionHook<void, task*> KnucklesTheEchidna_t((intptr_t)Knuckles_Main);
+FastFunctionHook<void> KnuEffectPutCharge0_h(0x4C2210);
+FastFunctionHook<void> KnuEffectPutCharge1_h(0x4C2260);
+FastUsercallHookPtr<taskwk*(*)(taskwk* twp), rEAX, rEBX> KnucklesGetNearEnemyTWP_h(0x4756C0);
+FastFunctionHook<void, task*> KnucklesChargeEffectExe_h((intptr_t)0x473FE0);
+FastFunctionHook<void, NJS_VECTOR*, float> KnuEffectPutChargeComp_h((intptr_t)0x4C1330);
+FastFunctionHook<void, task*> KnucklesJiggle_h(0x473CE0);
+FastFunctionHook<void, task*> KnuxEyeTracker_h(0x475260);
+FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> Knux_CheckInput_h(0x476970);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_h(Knux_RunsActions);
+FastFunctionHook<void, task*> KnucklesTheEchidna_h((intptr_t)Knuckles_Main);
 
 static void __cdecl dispKnuEffectChargeScl_m(task* tp)
 {
@@ -63,7 +63,7 @@ static void __cdecl KnuEffectPutCharge0_r()
 {
 	if (!multiplayer::IsActive())
 	{
-		KnuEffectPutCharge0_t.Original();
+		KnuEffectPutCharge0_h.Original();
 		return;
 	}
 
@@ -85,7 +85,7 @@ static void __cdecl KnuEffectPutCharge1_r()
 {
 	if (!multiplayer::IsActive())
 	{
-		KnuEffectPutCharge1_t.Original();
+		KnuEffectPutCharge1_h.Original();
 		return;
 	}
 
@@ -155,7 +155,7 @@ static taskwk* __cdecl KnucklesGetNearEnemyTWP_r(taskwk* twp)
 	}
 	else
 	{
-		return KnucklesGetNearEnemyTWP_t.Original(twp);
+		return KnucklesGetNearEnemyTWP_h.Original(twp);
 	}
 }
 
@@ -163,7 +163,7 @@ void __cdecl KnuEffectPutChargeComp_r(NJS_VECTOR* position, float alpha)
 {
 	if (!multiplayer::IsActive())
 	{
-		return KnuEffectPutChargeComp_t.Original(position, alpha);
+		return KnuEffectPutChargeComp_h.Original(position, alpha);
 	}
 
 	auto y = 0.0f;
@@ -264,7 +264,7 @@ void __cdecl KnucklesChargeEffectExe_r(task* tp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return KnucklesChargeEffectExe_t.Original(tp);
+		return KnucklesChargeEffectExe_h.Original(tp);
 	}
 
 	auto twp = tp->twp;
@@ -304,7 +304,7 @@ static void __cdecl KnuxEyeTracker_r(task* tp)
 		return;
 	}
 
-	KnuxEyeTracker_t.Original(tp);
+	KnuxEyeTracker_h.Original(tp);
 }
 
 static void __cdecl KnucklesJiggle_r(task* tp)
@@ -314,7 +314,7 @@ static void __cdecl KnucklesJiggle_r(task* tp)
 		return;
 	}
 
-	KnucklesJiggle_t.Original(tp);
+	KnucklesJiggle_h.Original(tp);
 }
 
 Bool Knux_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
@@ -326,7 +326,7 @@ Bool Knux_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return Knux_CheckInput_t.Original(twp, pwp, mwp);
+			return Knux_CheckInput_h.Original(twp, pwp, mwp);
 		}
 
 		switch (twp->smode)
@@ -360,7 +360,7 @@ Bool Knux_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 		}
 	}
 	
-	return Knux_CheckInput_t.Original(twp, pwp, mwp);
+	return Knux_CheckInput_h.Original(twp, pwp, mwp);
 }
 
 void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
@@ -449,7 +449,7 @@ void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 		}
 	}
 	
-	Knux_RunsActions_t.Original(twp, mwp, pwp);
+	Knux_RunsActions_h.Original(twp, mwp, pwp);
 }
 
 void KnucklesTheEchidna_m(task* tp)
@@ -477,7 +477,7 @@ void KnucklesTheEchidna_m(task* tp)
 		break;
 	}
 
-	KnucklesTheEchidna_t.Original(tp);
+	KnucklesTheEchidna_h.Original(tp);
 }
 
 void __cdecl KnucklesTheEchidna_r(task* tp)
@@ -491,22 +491,22 @@ void __cdecl KnucklesTheEchidna_r(task* tp)
 	}
 	else
 	{
-		KnucklesTheEchidna_t.Original(tp);
+		KnucklesTheEchidna_h.Original(tp);
 	}
 }
 
 void patch_knuckles_init()
 {
-	KnuEffectPutCharge0_t.Hook(KnuEffectPutCharge0_r);
-	KnuEffectPutCharge1_t.Hook(KnuEffectPutCharge1_r);
-	KnucklesGetNearEnemyTWP_t.Hook(KnucklesGetNearEnemyTWP_r);
-	KnucklesChargeEffectExe_t.Hook(KnucklesChargeEffectExe_r);
-	KnuEffectPutChargeComp_t.Hook(KnuEffectPutChargeComp_r);
-	KnucklesJiggle_t.Hook(KnucklesJiggle_r);
-	KnuxEyeTracker_t.Hook(KnuxEyeTracker_r);
-	Knux_CheckInput_t.Hook(Knux_CheckInput_r);
-	Knux_RunsActions_t.Hook(Knux_RunsActions_r);
-	KnucklesTheEchidna_t.Hook(KnucklesTheEchidna_r);
+	KnuEffectPutCharge0_h.Hook(KnuEffectPutCharge0_r);
+	KnuEffectPutCharge1_h.Hook(KnuEffectPutCharge1_r);
+	KnucklesGetNearEnemyTWP_h.Hook(KnucklesGetNearEnemyTWP_r);
+	KnucklesChargeEffectExe_h.Hook(KnucklesChargeEffectExe_r);
+	KnuEffectPutChargeComp_h.Hook(KnuEffectPutChargeComp_r);
+	KnucklesJiggle_h.Hook(KnucklesJiggle_r);
+	KnuxEyeTracker_h.Hook(KnuxEyeTracker_r);
+	Knux_CheckInput_h.Hook(Knux_CheckInput_r);
+	Knux_RunsActions_h.Hook(Knux_RunsActions_r);
+	KnucklesTheEchidna_h.Hook(KnucklesTheEchidna_r);
 }
 
 RegisterPatch patch_knuckles(patch_knuckles_init);

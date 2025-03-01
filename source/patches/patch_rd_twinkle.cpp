@@ -10,8 +10,8 @@ static auto setTPFog = GenerateUsercallWrapper<void (*)(unsigned __int8 mode)>(n
 
 FunctionPointer(void, TwinkleMaskBlock, (taskwk* twp), 0x60FEE0); // checkCamera
 
-FastFunctionHook<void, task*> Rd_Twinkle_t(0x61D150);
-FastFunctionHook<void, task*> dispBgTwinkle_t(0x61D1F0);
+FastFunctionHook<void, task*> Rd_Twinkle_h(0x61D150);
+FastFunctionHook<void, task*> dispBgTwinkle_h(0x61D1F0);
 
 // Patch act swaps
 void __cdecl Rd_Twinkle_r(task* tp)
@@ -82,14 +82,14 @@ void __cdecl Rd_Twinkle_r(task* tp)
 	}
 	else
 	{
-		Rd_Twinkle_t.Original(tp);
+		Rd_Twinkle_h.Original(tp);
 	}
 }
 
 // Fix display masks
 static void __cdecl dispBgTwinkle_r(task* tp)
 {
-	dispBgTwinkle_t.Original(tp);
+	dispBgTwinkle_h.Original(tp);
 
 	if (camera_twp && pRd_Master && SplitScreen::IsActive())
 	{
@@ -110,8 +110,8 @@ Sint32 __cdecl GetPlayerCharacterName_TP_Hack(Uint8 pno)
 
 void patch_rd_twinkle_init()
 {
-	Rd_Twinkle_t.Hook(Rd_Twinkle_r);
-	dispBgTwinkle_t.Hook(dispBgTwinkle_r);
+	Rd_Twinkle_h.Hook(Rd_Twinkle_r);
+	dispBgTwinkle_h.Hook(dispBgTwinkle_r);
 
 	WriteCall((void*)0x61CB77, GetPlayerCharacterName_TP_Hack);
 	WriteData((void**)0x61D57E, (void*)0x61D4E0); // Patch skybox mode

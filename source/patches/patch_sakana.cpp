@@ -39,8 +39,8 @@ DataPointer(CCL_INFO, seabass_colli_tbl, 0x173BAF0);
 static void __cdecl SakanaGenerater_r(task* tp);
 static void __cdecl BigSakana_r(task* tp);
 
-FastFunctionHookPtr<decltype(&SakanaGenerater_r)> SakanaGenerater_t(0x597660);
-FastFunctionHookPtr<decltype(&BigSakana_r)> BigSakana_t(0x597010);
+FastFunctionHookPtr<decltype(&SakanaGenerater_r)> SakanaGenerater_h(0x597660);
+FastFunctionHookPtr<decltype(&BigSakana_r)> BigSakana_h(0x597010);
 
 static bool FishingEnabled()
 {
@@ -698,7 +698,7 @@ static void __cdecl BigSakana_r(task* tp)
 	}
 	else
 	{
-		BigSakana_t.Original(tp);
+		BigSakana_h.Original(tp);
 	}
 }
 
@@ -768,14 +768,14 @@ static void __cdecl SakanaGenerater_r(task* tp)
 	}
 	else
 	{
-		SakanaGenerater_t.Original(tp);
+		SakanaGenerater_h.Original(tp);
 	}
 }
 
 void patch_sakana_init()
 {
-	SakanaGenerater_t.Hook(SakanaGenerater_r);
-	BigSakana_t.Hook(BigSakana_r);
+	SakanaGenerater_h.Hook(SakanaGenerater_r);
+	BigSakana_h.Hook(BigSakana_r);
 }
 
 RegisterPatch patch_sakana(patch_sakana_init);

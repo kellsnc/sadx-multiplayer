@@ -8,12 +8,12 @@
 
 static const int timeLimit = 300;
 
-FastFunctionHook<void, taskwk*, chaoswk*> turnToPlayer_t(0x7AE660);
-FastFunctionHook<void, task*> BossChaos0_t(0x548640);
-FastFunctionHook<void, task*> Bg_Chaos0_t(0x545DF0);
-FastUsercallHookPtr<Angle(*)(chaoswk* cwk), rEAX, rEDI> setApartTargetPos_t(0x546460);
-FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp), noret, rECX, rESI> chaos0Pole_t(0x547260);
-FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp, bosswk* bwk), noret, rEDI, rESI, stack4> chaos0Punch_t(0x546790);
+FastFunctionHook<void, taskwk*, chaoswk*> turnToPlayer_h(0x7AE660);
+FastFunctionHook<void, task*> BossChaos0_h(0x548640);
+FastFunctionHook<void, task*> Bg_Chaos0_h(0x545DF0);
+FastUsercallHookPtr<Angle(*)(chaoswk* cwk), rEAX, rEDI> setApartTargetPos_h(0x546460);
+FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp), noret, rECX, rESI> chaos0Pole_h(0x547260);
+FastUsercallHookPtr<void(*)(chaoswk* cwk, taskwk* twp, bosswk* bwk), noret, rEDI, rESI, stack4> chaos0Punch_h(0x546790);
 
 UsercallFuncVoid(SetChaos0LandFlags, (Bool flag), (flag), 0x5485E0, rEDX);
 
@@ -191,7 +191,7 @@ void turnToPlayer_r(taskwk* twp, chaoswk* bwp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return turnToPlayer_t.Original(twp, bwp);
+		return turnToPlayer_h.Original(twp, bwp);
 	}
 
 	float dist = 0.0f;
@@ -213,7 +213,7 @@ Angle setApartTargetPos_r(chaoswk* cwk)
 
 	if (!multiplayer::IsEnabled() || !ptwp)
 	{
-		return setApartTargetPos_t.Original(cwk);
+		return setApartTargetPos_h.Original(cwk);
 	}
 
 	Angle ang = njArcTan2(chaosparam->field_center_pos.z - ptwp->pos.z, chaosparam->field_center_pos.x - ptwp->pos.x);
@@ -230,7 +230,7 @@ void chaos0Pole_r(chaoswk* cwk, taskwk* data)
 
 	if (!multiplayer::IsEnabled() || !ptwp)
 	{
-		return chaos0Pole_t.Original(cwk, data);
+		return chaos0Pole_h.Original(cwk, data);
 	}
 
 	if (data->smode)
@@ -300,7 +300,7 @@ void chaos0Punch_r(chaoswk* cwk, taskwk* data, bosswk* bwk)
 
 	if (data->smode != 3)
 	{
-		return chaos0Punch_t.Original(cwk, data, bwk);
+		return chaos0Punch_h.Original(cwk, data, bwk);
 	}
 	else
 	{
@@ -348,7 +348,7 @@ void Bg_Chaos0_r(task* tp)
 	}
 
 	SetChaos0LandFlags(GetCameraMode_m(SplitScreen::GetCurrentScreenNum()) != CAMMD_CHAOS_P);
-	Bg_Chaos0_t.Original(tp);
+	Bg_Chaos0_h.Original(tp);
 }
 
 void BossChaos0_r(task* tp)
@@ -363,13 +363,13 @@ void BossChaos0_r(task* tp)
 	if (!twp || !wk)
 	{
 		SetDefaultNormalCameraMode(CAMMD_CHAOS, CAMADJ_NONE);
-		BossChaos0_t.Original(tp);
+		BossChaos0_h.Original(tp);
 		return;
 	}
 
 	auto oldcam = wk->camera_mode;
 
-	BossChaos0_t.Original(tp);
+	BossChaos0_h.Original(tp);
 
 	if (oldcam != wk->camera_mode)
 	{
@@ -387,12 +387,12 @@ void patch_chaos0_init()
 	WriteJump(drawEffectChaos0EffectB, drawEffectChaos0EffectB_r);
 	WriteJump(drawEffectChaos0LightParticle, drawEffectChaos0LightParticle_r);
 	WriteJump(dispEffectChaos0AttackA, dispEffectChaos0AttackA_r);
-	turnToPlayer_t.Hook(turnToPlayer_r);
-	BossChaos0_t.Hook(BossChaos0_r);
-	Bg_Chaos0_t.Hook(Bg_Chaos0_r);
-	setApartTargetPos_t.Hook(setApartTargetPos_r);
-	chaos0Pole_t.Hook(chaos0Pole_r);
-	chaos0Punch_t.Hook(chaos0Punch_r);
+	turnToPlayer_h.Hook(turnToPlayer_r);
+	BossChaos0_h.Hook(BossChaos0_r);
+	Bg_Chaos0_h.Hook(Bg_Chaos0_r);
+	setApartTargetPos_h.Hook(setApartTargetPos_r);
+	chaos0Pole_h.Hook(chaos0Pole_r);
+	chaos0Punch_h.Hook(chaos0Punch_r);
 }
 
 #ifdef MULTI_TEST

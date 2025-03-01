@@ -23,13 +23,13 @@ static void __cdecl RoboDisplayer_r(task* tp);
 static Bool __cdecl RoboHearSound_r(taskwk* twp);
 static Bool __cdecl RoboSearchPlayer_r(taskwk* twp, enemywk* ewp);
 
-FastFunctionHookPtr<decltype(&RoboHeadDisplayer_r)> RoboHeadDisplayer_t(0x4A4220, RoboHeadDisplayer_r);
-FastUsercallHookPtr<decltype(&RoboHeadChase_r), noret, rEBX, rEAX> RoboHeadChase_t(0x4A4520, RoboHeadChase_r);
-FastFunctionHookPtr<decltype(&RoboDisplayer_r)> RoboDisplayer_t(0x4A4DA0, RoboDisplayer_r);
-FastUsercallHookPtr<decltype(&RoboHearSound_r), rEAX, rECX> RoboHearSound_t(0x4A5190, RoboHearSound_r);
-FastUsercallHookPtr<decltype(&RoboSearchPlayer_r), rEAX, rESI, rEBX> RoboSearchPlayer_t(0x4A51F0, RoboSearchPlayer_r);
+FastFunctionHookPtr<decltype(&RoboHeadDisplayer_r)> RoboHeadDisplayer_h(0x4A4220, RoboHeadDisplayer_r);
+FastUsercallHookPtr<decltype(&RoboHeadChase_r), noret, rEBX, rEAX> RoboHeadChase_h(0x4A4520, RoboHeadChase_r);
+FastFunctionHookPtr<decltype(&RoboDisplayer_r)> RoboDisplayer_h(0x4A4DA0, RoboDisplayer_r);
+FastUsercallHookPtr<decltype(&RoboHearSound_r), rEAX, rECX> RoboHearSound_h(0x4A5190, RoboHearSound_r);
+FastUsercallHookPtr<decltype(&RoboSearchPlayer_r), rEAX, rESI, rEBX> RoboSearchPlayer_h(0x4A51F0, RoboSearchPlayer_r);
 
-FastUsercallHookPtr<void(*)(taskwk* twp, enemywk* ewp), noret, rECX, rEAX> RoboSwing_t(0x4A5840);
+FastUsercallHookPtr<void(*)(taskwk* twp, enemywk* ewp), noret, rECX, rEAX> RoboSwing_h(0x4A5840);
 
 static auto RoboCombo = GenerateUsercallWrapper<void(*)(enemywk* wk, taskwk* ewp)>(noret, 0x4A4AA0, rEAX, rECX);
 
@@ -52,7 +52,7 @@ void RoboSwing_r(taskwk* twp, enemywk* ewp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return RoboSwing_t.Original(twp, ewp);
+		return RoboSwing_h.Original(twp, ewp);
 	}
 
 	auto pnum = GetTheNearestPlayerNumber(&twp->pos);
@@ -126,7 +126,7 @@ static void __cdecl RoboHeadDisplayer_r(task* tp)
 	}
 	else
 	{
-		RoboHeadDisplayer_t.Original(tp);
+		RoboHeadDisplayer_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -177,7 +177,7 @@ static void __cdecl RoboHeadChase_r(task* tp, enemywk* ewp)
 	}
 	else
 	{
-		RoboHeadChase_t.Original(tp, ewp);
+		RoboHeadChase_h.Original(tp, ewp);
 	}
 }
 #pragma endregion
@@ -191,7 +191,7 @@ static void __cdecl RoboDisplayer_r(task* tp)
 	}
 	else
 	{
-		RoboDisplayer_t.Original(tp);
+		RoboDisplayer_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -230,7 +230,7 @@ static Bool __cdecl RoboHearSound_r(taskwk* twp)
 	}
 	else
 	{
-		return RoboHearSound_t.Original(twp);
+		return RoboHearSound_h.Original(twp);
 	}
 }
 #pragma endregion
@@ -288,14 +288,14 @@ static Bool __cdecl RoboSearchPlayer_r(taskwk* twp, enemywk* ewp)
 	}
 	else
 	{
-		return RoboSearchPlayer_t.Original(twp, ewp);
+		return RoboSearchPlayer_h.Original(twp, ewp);
 	}
 }
 #pragma endregion
 
 void patch_robo_init()
 {
-	RoboSwing_t.Hook(RoboSwing_r);
+	RoboSwing_h.Hook(RoboSwing_r);
 }
 
 RegisterPatch patch_robo(patch_robo_init);

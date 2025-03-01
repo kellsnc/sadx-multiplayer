@@ -5,14 +5,14 @@
 
 // Egg Hornet
 
-FastFunctionHook<void, task*> Egm1_t(0x572010);
-FastFunctionHook<int> EH_PosPlayerCheck_t(0x573310);
-FastFunctionHook<int, taskwk*> EH_GetVsPlayerAng_t(0x573160);
+FastFunctionHook<void, task*> Egm1_h(0x572010);
+FastFunctionHook<int> EH_PosPlayerCheck_h(0x573310);
+FastFunctionHook<int, taskwk*> EH_GetVsPlayerAng_h(0x573160);
 
-FastUsercallHookPtr<void(*)(task* tp, taskwk* data, bossextwk* egm), noret, rECX, rEAX, rESI> SetEgm1MoveRoute_t(0x5733E0);
-FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> SetEgm1Ud_t(0x5736D0);
-FastUsercallHookPtr<void(*)(taskwk* twp), noret, rEAX> setEgm1Missile_t(0x573730);
-FastUsercallHookPtr<void(*)(bossextwk* egm, taskwk* twp), noret, rECX, rEAX> SetEgm1AtkRoute_t(0x5735B0);
+FastUsercallHookPtr<void(*)(task* tp, taskwk* data, bossextwk* egm), noret, rECX, rEAX, rESI> SetEgm1MoveRoute_h(0x5733E0);
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> SetEgm1Ud_h(0x5736D0);
+FastUsercallHookPtr<void(*)(taskwk* twp), noret, rEAX> setEgm1Missile_h(0x573730);
+FastUsercallHookPtr<void(*)(bossextwk* egm, taskwk* twp), noret, rECX, rEAX> SetEgm1AtkRoute_h(0x5735B0);
 
 static const int timeLimit = 400;
 
@@ -20,7 +20,7 @@ void SetEgm1AtkRoute_r(bossextwk* egm, taskwk* data)
 {
 	if (!multiplayer::IsActive())
 	{
-		return SetEgm1AtkRoute_t.Original(egm, data);
+		return SetEgm1AtkRoute_h.Original(egm, data);
 	}
 
 	auto player = playertwp[randomPnum];
@@ -46,7 +46,7 @@ void setEgm1Missile_r(taskwk* data)
 {
 	if (!multiplayer::IsActive())
 	{
-		return setEgm1Missile_t.Original(data);
+		return setEgm1Missile_h.Original(data);
 	}
 
 	Egm1MissilesPrm egm1Mis;
@@ -63,7 +63,7 @@ void setEgm1Ud_r(task* a1)
 {
 	if (!multiplayer::IsActive())
 	{
-		return SetEgm1Ud_t.Original(a1);
+		return SetEgm1Ud_h.Original(a1);
 	}
 
 	auto egm = (bossextwk*)a1->awp;
@@ -83,7 +83,7 @@ int __cdecl EH_GetVsPlayerAng_r(taskwk* a1)
 {
 	if (!multiplayer::IsActive())
 	{
-		return EH_GetVsPlayerAng_t.Original(a1);
+		return EH_GetVsPlayerAng_h.Original(a1);
 	}
 
 	return -16384
@@ -96,7 +96,7 @@ void SetEgm1MoveRoute_r(task* tp, taskwk* data, bossextwk* egm)
 {
 	if (!multiplayer::IsActive())
 	{
-		return SetEgm1MoveRoute_t.Original(tp, data, egm);
+		return SetEgm1MoveRoute_h.Original(tp, data, egm);
 	}
 
 	float posZ = 0.0f;
@@ -184,7 +184,7 @@ int EH_PosPlayerCheck_r()
 	}
 	else
 	{
-		return EH_PosPlayerCheck_t.Original();
+		return EH_PosPlayerCheck_h.Original();
 	}
 }
 
@@ -193,19 +193,19 @@ void Egm1_r(task* tp)
 	if (tp->twp && !tp->twp->mode)
 		ResetBossRNG();
 
-	Egm1_t.Original(tp);
+	Egm1_h.Original(tp);
 	Boss_SetNextPlayerToAttack(timeLimit);
 }
 
 void patch_egm1_init()
 {
-	Egm1_t.Hook(Egm1_r);
-	EH_PosPlayerCheck_t.Hook(EH_PosPlayerCheck_r);
-	EH_GetVsPlayerAng_t.Hook(EH_GetVsPlayerAng_r);
-	SetEgm1MoveRoute_t.Hook(SetEgm1MoveRoute_r);
-	SetEgm1Ud_t.Hook(setEgm1Ud_r);
-	setEgm1Missile_t.Hook(setEgm1Missile_r);
-	SetEgm1AtkRoute_t.Hook(SetEgm1AtkRoute_r);
+	Egm1_h.Hook(Egm1_r);
+	EH_PosPlayerCheck_h.Hook(EH_PosPlayerCheck_r);
+	EH_GetVsPlayerAng_h.Hook(EH_GetVsPlayerAng_r);
+	SetEgm1MoveRoute_h.Hook(SetEgm1MoveRoute_r);
+	SetEgm1Ud_h.Hook(setEgm1Ud_r);
+	setEgm1Missile_h.Hook(setEgm1Missile_r);
+	SetEgm1AtkRoute_h.Hook(SetEgm1AtkRoute_r);
 }
 
 #ifdef MULTI_TEST

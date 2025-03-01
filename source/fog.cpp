@@ -9,7 +9,7 @@
 // Once SetUserFog is called, the player is no longer using global fog. Calling ResetUserFog reverts this.
 // Mods may use multi_set_fog, multi_get_fog and multi_reset_fog
 
-FastFunctionHook<void> ___njFogEnable_t(0x411AF0);
+FastFunctionHook<void> ___njFogEnable_h(0x411AF0);
 
 namespace fog
 {
@@ -126,11 +126,11 @@ static void __cdecl ___njFogEnable_r()
 	}
 	else
 	{
-		___njFogEnable_t.Original();
+		___njFogEnable_h.Original();
 	}
 }
 
 void InitFogPatches()
 {
-	___njFogEnable_t.Hook(___njFogEnable_r);
+	___njFogEnable_h.Hook(___njFogEnable_r);
 }

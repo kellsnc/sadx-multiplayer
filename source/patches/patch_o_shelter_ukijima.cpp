@@ -12,7 +12,7 @@ enum : __int8
 };
 
 static void __cdecl ObjShelterUkijima_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjShelterUkijima_Exec_r)> ObjShelterUkijima_Exec_t(0x59DC20);
+FastFunctionHookPtr<decltype(&ObjShelterUkijima_Exec_r)> ObjShelterUkijima_Exec_h(0x59DC20);
 
 static void ObjShelterUkijima_Exec_m(task* tp)
 {
@@ -118,13 +118,13 @@ static void __cdecl ObjShelterUkijima_Exec_r(task* tp)
 	}
 	else
 	{
-		ObjShelterUkijima_Exec_t.Original(tp);
+		ObjShelterUkijima_Exec_h.Original(tp);
 	}
 }
 
 void patch_shelter_ukijima_init()
 {
-	ObjShelterUkijima_Exec_t.Hook(ObjShelterUkijima_Exec_r);
+	ObjShelterUkijima_Exec_h.Hook(ObjShelterUkijima_Exec_r);
 }
 
 RegisterPatch patch_shelter_ukijima(patch_shelter_ukijima_init);

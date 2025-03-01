@@ -28,7 +28,7 @@ DataPointer(NJS_ACTION, action_f_f0023_frog, 0x927594); // escape animation
 static auto motionBigKaeru = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x7A6C90, rEAX);
 
 static void __cdecl BigKaeru_r(task* tp);
-FastFunctionHookPtr<decltype(&BigKaeru_r)> BigKaeru_t(0x7A7AD0);
+FastFunctionHookPtr<decltype(&BigKaeru_r)> BigKaeru_h(0x7A7AD0);
 
 static void setActionPointer(taskwk* twp, int motion_type) // inlined in both
 {
@@ -588,13 +588,13 @@ static void __cdecl BigKaeru_r(task* tp)
 	}
 	else
 	{
-		BigKaeru_t.Original(tp);
+		BigKaeru_h.Original(tp);
 	}
 }
 
 void patch_bigkaeru_init()
 {
-	BigKaeru_t.Hook(BigKaeru_r);
+	BigKaeru_h.Hook(BigKaeru_r);
 }
 
 RegisterPatch patch_bigkaeru(patch_bigkaeru_init);

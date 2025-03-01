@@ -7,9 +7,9 @@ static void __cdecl ConveyorBelt_ExecATask_r(task* tp);
 static void __cdecl ConveyorBelt_ReserveColli_r(task* tp);
 static void __cdecl ConveyorBelt_SideTaskExec_r(task* tp);
 
-FastUsercallHookPtr<decltype(&ConveyorBelt_ExecATask_r), noret, rEBX> ConveyorBelt_ExecATask_t(0x5BD480);
-FastUsercallHookPtr<decltype(&ConveyorBelt_ReserveColli_r), noret, rEBX> ConveyorBelt_ReserveColli_t(0x5BD3B0);
-FastFunctionHookPtr<decltype(&ConveyorBelt_SideTaskExec_r)> ConveyorBelt_SideTaskExec_t(0x5BD6D0);
+FastUsercallHookPtr<decltype(&ConveyorBelt_ExecATask_r), noret, rEBX> ConveyorBelt_ExecATask_h(0x5BD480);
+FastUsercallHookPtr<decltype(&ConveyorBelt_ReserveColli_r), noret, rEBX> ConveyorBelt_ReserveColli_h(0x5BD3B0);
+FastFunctionHookPtr<decltype(&ConveyorBelt_SideTaskExec_r)> ConveyorBelt_SideTaskExec_h(0x5BD6D0);
 
 static void __cdecl ConveyorBelt_ExecATask_r(task* tp)
 {
@@ -22,7 +22,7 @@ static void __cdecl ConveyorBelt_ExecATask_r(task* tp)
 	}
 	else
 	{
-		ConveyorBelt_ExecATask_t.Original(tp);
+		ConveyorBelt_ExecATask_h.Original(tp);
 	}
 }
 
@@ -65,7 +65,7 @@ static void __cdecl ConveyorBelt_ReserveColli_r(task* tp)
 	}
 	else
 	{
-		ConveyorBelt_ReserveColli_t.Original(tp);
+		ConveyorBelt_ReserveColli_h.Original(tp);
 	}
 }
 
@@ -77,15 +77,15 @@ static void __cdecl ConveyorBelt_SideTaskExec_r(task* tp)
 	}
 	else
 	{
-		ConveyorBelt_SideTaskExec_t.Original(tp);
+		ConveyorBelt_SideTaskExec_h.Original(tp);
 	}
 }
 
 void patch_finalegg_conveyorbelt_init()
 {
-	ConveyorBelt_ExecATask_t.Hook(ConveyorBelt_ExecATask_r);
-	ConveyorBelt_ReserveColli_t.Hook(ConveyorBelt_ReserveColli_r);
-	ConveyorBelt_SideTaskExec_t.Hook(ConveyorBelt_SideTaskExec_r);
+	ConveyorBelt_ExecATask_h.Hook(ConveyorBelt_ExecATask_r);
+	ConveyorBelt_ReserveColli_h.Hook(ConveyorBelt_ReserveColli_r);
+	ConveyorBelt_SideTaskExec_h.Hook(ConveyorBelt_SideTaskExec_r);
 }
 
 RegisterPatch patch_finalegg_conveyorbelt(patch_finalegg_conveyorbelt_init);

@@ -5,7 +5,7 @@
 #include "camera.h"
 
 static void __cdecl ColliNoWaterRange_r(task* tp);
-FastFunctionHookPtr<decltype(&ColliNoWaterRange_r)> ColliNoWaterRange_t(0x4D4E10);
+FastFunctionHookPtr<decltype(&ColliNoWaterRange_r)> ColliNoWaterRange_h(0x4D4E10);
 
 static void ColliNoWaterRange_m(task* tp)
 {
@@ -63,13 +63,13 @@ static void __cdecl ColliNoWaterRange_r(task* tp)
 	}
 	else
 	{
-		ColliNoWaterRange_t.Original(tp);
+		ColliNoWaterRange_h.Original(tp);
 	}
 }
 
 void patch_colli_space_init()
 {
-	ColliNoWaterRange_t.Hook(ColliNoWaterRange_r);
+	ColliNoWaterRange_h.Hook(ColliNoWaterRange_r);
 }
 
 RegisterPatch patch_colli_space(patch_colli_space_init);

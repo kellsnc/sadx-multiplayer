@@ -5,12 +5,12 @@
 #include "result.h"
 #include "patch_e_cart.h"
 
-FastFunctionHook<void, task*> MilesJiggle_t((intptr_t)Tails_Jiggle_Main);
-FastFunctionHook<void, task*> MilesDirectAhead_t(0x45DAD0);
-FastFunctionHook<void, task*> MilesDirectAhead2_t(0x45DE20);
-FastFunctionHook<void, task*> MilesTalesPrower_t(0x461700);
-FastUsercallHookPtr<void(*)(playerwk* pwp, motionwk2* mwp, taskwk* twp), noret, rEAX, rECX, stack4> Miles_RunActions_t(0x45E5D0);
-FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> Miles_CheckInput_t(0x45C100);
+FastFunctionHook<void, task*> MilesJiggle_h((intptr_t)Tails_Jiggle_Main);
+FastFunctionHook<void, task*> MilesDirectAhead_h(0x45DAD0);
+FastFunctionHook<void, task*> MilesDirectAhead2_h(0x45DE20);
+FastFunctionHook<void, task*> MilesTalesPrower_h(0x461700);
+FastUsercallHookPtr<void(*)(playerwk* pwp, motionwk2* mwp, taskwk* twp), noret, rEAX, rECX, stack4> Miles_RunActions_h(0x45E5D0);
+FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> Miles_CheckInput_h(0x45C100);
 
 static Bool Miles_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 {
@@ -21,7 +21,7 @@ static Bool Miles_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 
 		if (even->move.mode || even->path.list || ((twp->flag & Status_DoNextAction) == 0))
 		{
-			return Miles_CheckInput_t.Original(twp, pwp, mwp);
+			return Miles_CheckInput_h.Original(twp, pwp, mwp);
 		}
 
 		switch (twp->smode)
@@ -43,7 +43,7 @@ static Bool Miles_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 		}
 	}
 	
-	return Miles_CheckInput_t.Original(twp, pwp, mwp);
+	return Miles_CheckInput_h.Original(twp, pwp, mwp);
 }
 
 static void __cdecl MilesDirectAhead2_r(task* tp)
@@ -53,7 +53,7 @@ static void __cdecl MilesDirectAhead2_r(task* tp)
 		return;
 	}
 
-	MilesDirectAhead2_t.Original(tp);
+	MilesDirectAhead2_h.Original(tp);
 }
 
 static void __cdecl MilesDirectAhead_r(task* tp)
@@ -63,7 +63,7 @@ static void __cdecl MilesDirectAhead_r(task* tp)
 		return;
 	}
 
-	MilesDirectAhead_t.Original(tp);
+	MilesDirectAhead_h.Original(tp);
 }
 
 static void __cdecl MilesJiggle_r(task* tp)
@@ -73,7 +73,7 @@ static void __cdecl MilesJiggle_r(task* tp)
 		return;
 	}
 
-	MilesJiggle_t.Original(tp);
+	MilesJiggle_h.Original(tp);
 }
 
 void Miles_RunAction_r(playerwk* co2, motionwk2* data2, taskwk* data1)
@@ -85,7 +85,7 @@ void Miles_RunAction_r(playerwk* co2, motionwk2* data2, taskwk* data1)
 		break;
 	}
 
-	Miles_RunActions_t.Original(co2, data2, data1);
+	Miles_RunActions_h.Original(co2, data2, data1);
 }
 
 void MilesTalesPrower_r(task* tp)
@@ -95,23 +95,23 @@ void MilesTalesPrower_r(task* tp)
 		auto pnum = TASKWK_PLAYERID(tp->twp);
 		gravity::SaveGlobalGravity();
 		gravity::SwapGlobalToUserGravity(pnum);
-		MilesTalesPrower_t.Original(tp);
+		MilesTalesPrower_h.Original(tp);
 		gravity::RestoreGlobalGravity();
 	}
 	else
 	{
-		MilesTalesPrower_t.Original(tp);
+		MilesTalesPrower_h.Original(tp);
 	}
 }
 
 void patch_miles_init()
 {
-	MilesJiggle_t.Hook(MilesJiggle_r);
-	MilesDirectAhead_t.Hook(MilesDirectAhead_r);
-	MilesDirectAhead2_t.Hook(MilesDirectAhead2_r);
-	Miles_RunActions_t.Hook(Miles_RunAction_r);
-	Miles_CheckInput_t.Hook(Miles_CheckInput_r);
-	MilesTalesPrower_t.Hook(MilesTalesPrower_r);
+	MilesJiggle_h.Hook(MilesJiggle_r);
+	MilesDirectAhead_h.Hook(MilesDirectAhead_r);
+	MilesDirectAhead2_h.Hook(MilesDirectAhead2_r);
+	Miles_RunActions_h.Hook(Miles_RunAction_r);
+	Miles_CheckInput_h.Hook(Miles_CheckInput_r);
+	MilesTalesPrower_h.Hook(MilesTalesPrower_r);
 }
 
 RegisterPatch patch_miles(patch_miles_init);

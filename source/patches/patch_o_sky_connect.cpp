@@ -3,11 +3,11 @@
 #include "multiplayer.h"
 
 static void __cdecl ObjectSkydeck_c_connect_Exec_r(task* tp);
-FastFunctionHookPtr<decltype(&ObjectSkydeck_c_connect_Exec_r)> ObjectSkydeck_c_connect_Exec_t(0x5FAE90);
+FastFunctionHookPtr<decltype(&ObjectSkydeck_c_connect_Exec_r)> ObjectSkydeck_c_connect_Exec_h(0x5FAE90);
 
 static void __cdecl ObjectSkydeck_c_connect_Exec_r(task* tp)
 {
-	ObjectSkydeck_c_connect_Exec_t.Original(tp);
+	ObjectSkydeck_c_connect_Exec_h.Original(tp);
 
 	if (multiplayer::IsActive())
 	{
@@ -29,7 +29,7 @@ static void __cdecl ObjectSkydeck_c_connect_Exec_r(task* tp)
 
 void patch_sky_connect_init()
 {
-	ObjectSkydeck_c_connect_Exec_t.Hook(ObjectSkydeck_c_connect_Exec_r);
+	ObjectSkydeck_c_connect_Exec_h.Hook(ObjectSkydeck_c_connect_Exec_r);
 }
 
 RegisterPatch patch_sky_connect(patch_sky_connect_init);

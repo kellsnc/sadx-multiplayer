@@ -13,7 +13,7 @@
 #define SPEED rd_mountain_twp->scl.y
 
 static void __cdecl Object_Mountain_Yougan_r(task* tp);
-FastFunctionHookPtr<decltype(&Object_Mountain_Yougan_r)> Object_Mountain_Yougan_t(0x602670);
+FastFunctionHookPtr<decltype(&Object_Mountain_Yougan_r)> Object_Mountain_Yougan_h(0x602670);
 
 static void __cdecl Object_Mountain_Yougan_m(task* tp)
 {
@@ -123,13 +123,13 @@ static void __cdecl Object_Mountain_Yougan_r(task* tp)
 	}
 	else
 	{
-		Object_Mountain_Yougan_t.Original(tp);
+		Object_Mountain_Yougan_h.Original(tp);
 	}
 }
 
 void patch_mountain_yougan_init()
 {
-	Object_Mountain_Yougan_t.Hook(Object_Mountain_Yougan_r);
+	Object_Mountain_Yougan_h.Hook(Object_Mountain_Yougan_r);
 }
 
 RegisterPatch patch_mountain_yougan(patch_mountain_yougan_init);

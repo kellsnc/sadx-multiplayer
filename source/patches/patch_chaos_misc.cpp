@@ -3,7 +3,7 @@
 #include "FastFunctionHook.hpp"
 #include "RegisterPatch.hpp"
 
-FastFunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_t(0x7AF3E0);
+FastFunctionHook<task*, NJS_POINT3*, NJS_POINT3*, float> SetCircleLimit_h(0x7AF3E0);
 
 task* __cdecl SetCircleLimit_r(NJS_POINT3* pos, NJS_POINT3* center, float radius)
 {
@@ -26,12 +26,12 @@ task* __cdecl SetCircleLimit_r(NJS_POINT3* pos, NJS_POINT3* center, float radius
 		}
 	}
 
-	return SetCircleLimit_t.Original(pos, center, radius);
+	return SetCircleLimit_h.Original(pos, center, radius);
 }
 
 void patch_chaos_misc_init()
 {
-	SetCircleLimit_t.Hook(SetCircleLimit_r);
+	SetCircleLimit_h.Hook(SetCircleLimit_r);
 }
 
 RegisterPatch patch_chaos_misc(patch_chaos_misc_init);
