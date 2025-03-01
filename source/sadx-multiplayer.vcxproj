@@ -132,7 +132,6 @@
     <ClInclude Include="patches\patch_o_sky_cyl_cmn.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="players.h" />
     <ClInclude Include="race.h" />
     <ClInclude Include="RegisterPatch.hpp" />
     <ClInclude Include="result.h" />
@@ -355,7 +354,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="players.cpp" />
     <ClCompile Include="race.cpp" />
     <ClCompile Include="RegisterPatch.cpp" />
     <ClCompile Include="result.cpp" />

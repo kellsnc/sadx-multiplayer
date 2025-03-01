@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "players.h"
+#include "multiplayer.h"
 
 FastFunctionHook<void, int> EV_Load2_h(EV_Load2);
 FastFunctionHook<void, int> EV_InitPlayer_h(EV_InitPlayer);

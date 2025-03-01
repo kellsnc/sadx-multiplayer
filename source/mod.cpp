@@ -36,11 +36,12 @@ extern "C"
 			DreamcastConversionEnabled = helperFunctions.Mods->find("sadx-dreamcast-conversion");
 		}
 
-		InitLogic();
+		InitMultiplayer();
 		InitSplitScreen();
+		InitLogic();
+
 		InitCamera();
 		InitInputPatches();
-		InitPlayerPatches();
 		InitMenu();
 		InitSET();
 		InitRace();
@@ -57,6 +58,14 @@ extern "C"
 		InitCollisionPatches();
 
 		InitPatches();
+	}
+
+	__declspec(dllexport) void __cdecl OnFrame()
+	{
+		ExecMultiplayer();
+		ExecLogic();
+
+		ExecPatches();
 	}
 
 	__declspec(dllexport) void __cdecl OnExit()

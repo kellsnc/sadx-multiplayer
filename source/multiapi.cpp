@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "splitscreen.h"
-#include "players.h"
+#include "multiplayer.h"
 #include "result.h"
 #include "camera.h"
 #include "gravity.h"
@@ -64,7 +64,7 @@ bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h)
 
 void multi_set_charid(uint32_t pnum, Characters character)
 {
-	SetCurrentCharacter(pnum, character);
+	multiplayer::SetCharacter(pnum, character);
 }
 
 void multi_score_reset()

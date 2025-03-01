@@ -24,7 +24,6 @@ struct IUnknown;
 #include "mod.h"
 #include "sadx_utils.h"
 #include "utils.h"
-#include "players.h"
 #include "multiplayer.h"
 
 #endif //PCH_H

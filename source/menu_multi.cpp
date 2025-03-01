@@ -896,7 +896,7 @@ void menu_multi_start(MultiMenuWK* wk, int act)
 
 	for (int i = 0; i < count; ++i)
 	{
-		SetCurrentCharacter(i, (Characters)menu_multi_getplayerno(selected_characters[i]));
+		multiplayer::SetCharacter(i, (Characters)menu_multi_getplayerno(selected_characters[i]));
 	}
 
 	ResetNumPlayerM();

@@ -2,7 +2,6 @@
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
 #include "multiplayer.h"
-#include "players.h"
 
 #define CHSEL_SMD_COOP CHSEL_SMD_MAX
 
@@ -110,7 +109,7 @@ void __cdecl char_sel_sub_exec_r(CharSelWk* wkp)
 		break;
 	case CHSEL_SMD_COOP:
 		multiplayer::Enable(2, multiplayer::mode::coop);
-		SetCurrentCharacter(1, Characters_Tails);
+		multiplayer::SetCharacter(1, Characters_Tails);
 		wkp->DlgStat = ADVDLG_KAISHI;
 		wkp->SubMode = CHSEL_SMD_DECIDE2;
 		break;

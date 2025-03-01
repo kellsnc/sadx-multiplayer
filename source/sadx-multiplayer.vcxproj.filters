@@ -19,9 +19,6 @@
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="players.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="splitscreen.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -661,9 +658,6 @@
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="mod.h">
-      <Filter>Header FIles</Filter>
-    </ClInclude>
-    <ClInclude Include="players.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="sadx_utils.h">

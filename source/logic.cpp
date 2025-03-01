@@ -3,7 +3,7 @@
 #include "utils.h"
 #include "netplay.h"
 #include "timer.h"
-#include "players.h"
+#include "multiplayer.h"
 #include "config.h"
 
 #ifdef MULTI_NETPLAY
@@ -147,59 +147,51 @@ static void RestartStageWithFadeOut_r()
 }
 #endif
 
-extern "C"
+void ExecLogic()
 {
-	__declspec(dllexport) void __cdecl OnFrame()
-	{
-		if (ChkGameMode())
-		{
-			UpdatePlayersInfo();
-		}
-
 #ifdef MULTI_NETPLAY
-		if (netplay.IsConnected())
+	if (netplay.IsConnected())
+	{
+		netplay.Poll();
+
+		if (netplay.GetPlayerNum() == 0)
 		{
-			netplay.Poll();
-
-			if (netplay.GetPlayerNum() == 0)
+			if (netGlobalMode != ulGlobalMode || netGameMode != ssGameMode)
 			{
-				if (netGlobalMode != ulGlobalMode || netGameMode != ssGameMode)
-				{
-					netplay.Send(Netplay::PACKET_LOGIC_MODE, LogicSender, -1, true);
-					netGlobalMode = ulGlobalMode;
-					netGameMode = ssGameMode;
-				}
-
-				if (netStageNumber != ssStageNumber || netActNumber != ssActNumber)
-				{
-					netplay.Send(Netplay::PACKET_LOGIC_LEVEL, LogicSender, -1, true);
-					netStageNumber = ssStageNumber;
-					netActNumber = ssActNumber;
-				}
-
-				if (ssGameMode == 16 || PauseEnabled != oldPauseEnabled)
-				{
-					netplay.Send(Netplay::PACKET_LOGIC_PAUSE, LogicSender);
-					oldPauseEnabled = PauseEnabled;
-				}
-
-				if (logic_timer.Finished())
-				{
-					netplay.Send(Netplay::PACKET_LOGIC_MODE, LogicSender);
-					netplay.Send(Netplay::PACKET_LOGIC_TIMER, LogicSender);
-
-					if (oldTimerWake != bWake || bWake == TRUE)
-					{
-						netplay.Send(Netplay::PACKET_LOGIC_CLOCK, LogicSender);
-						oldTimerWake = bWake;
-					}
-				}
-
-				netplay.Send(Netplay::PACKET_LOGIC_RAND, LogicSender, -1, true);
+				netplay.Send(Netplay::PACKET_LOGIC_MODE, LogicSender, -1, true);
+				netGlobalMode = ulGlobalMode;
+				netGameMode = ssGameMode;
 			}
+
+			if (netStageNumber != ssStageNumber || netActNumber != ssActNumber)
+			{
+				netplay.Send(Netplay::PACKET_LOGIC_LEVEL, LogicSender, -1, true);
+				netStageNumber = ssStageNumber;
+				netActNumber = ssActNumber;
+			}
+
+			if (ssGameMode == 16 || PauseEnabled != oldPauseEnabled)
+			{
+				netplay.Send(Netplay::PACKET_LOGIC_PAUSE, LogicSender);
+				oldPauseEnabled = PauseEnabled;
+			}
+
+			if (logic_timer.Finished())
+			{
+				netplay.Send(Netplay::PACKET_LOGIC_MODE, LogicSender);
+				netplay.Send(Netplay::PACKET_LOGIC_TIMER, LogicSender);
+
+				if (oldTimerWake != bWake || bWake == TRUE)
+				{
+					netplay.Send(Netplay::PACKET_LOGIC_CLOCK, LogicSender);
+					oldTimerWake = bWake;
+				}
+			}
+
+			netplay.Send(Netplay::PACKET_LOGIC_RAND, LogicSender, -1, true);
 		}
-#endif
 	}
+#endif
 }
 
 static void __cdecl InitTimer_r()
