@@ -60,12 +60,12 @@ static void E102DispTimeUpWarning_r(task* tp)
 {
 	if (IsCountingDown())
 	{
-		if (SplitScreen::IsActive())
+		if (splitscreen::IsActive())
 		{
-			SplitScreen::SaveViewPort();
-			SplitScreen::ChangeViewPort(-1);
+			splitscreen::SaveViewPort();
+			splitscreen::ChangeViewPort(-1);
 			E102DispTimeUpWarning_h.Original(tp);
-			SplitScreen::RestoreViewPort();
+			splitscreen::RestoreViewPort();
 		}
 		else
 		{
@@ -220,8 +220,8 @@ static void __cdecl E102Display_r(task* tp)
 		auto pwp = (playerwk*)tp->mwp->work.ptr;
 		auto ewk = (E102WK*)pwp->free.ptr[0];
 
-		// SplitScreen compatibility patches
-		if (SplitScreen::IsActive())
+		// splitscreen compatibility patches
+		if (splitscreen::IsActive())
 		{
 			// Set global variables again
 			e102_work_ptr = ewk;
@@ -330,12 +330,12 @@ static void __cdecl E102AddSecTotalNewDisplay_r(task* tp)
 {
 	if (IsCountingDown())
 	{
-		if (SplitScreen::IsActive())
+		if (splitscreen::IsActive())
 		{
-			SplitScreen::SaveViewPort();
-			SplitScreen::ChangeViewPort(-1);
+			splitscreen::SaveViewPort();
+			splitscreen::ChangeViewPort(-1);
 			E102AddSecTotalNewDisplay_h.Original(tp);
-			SplitScreen::RestoreViewPort();
+			splitscreen::RestoreViewPort();
 		}
 		else
 		{

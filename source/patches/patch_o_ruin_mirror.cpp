@@ -307,7 +307,7 @@ static void HitMirror_m(taskwk* twp, ruinfogwk* wk, int pnum)
 	NJS_POINT2 p2;
 	njProjectScreen(0, &pos, &p2);
 
-	auto ratio = SplitScreen::GetScreenRatio(pnum);
+	auto ratio = splitscreen::GetScreenRatio(pnum);
 	float w = HorizontalStretch * ratio->w * 340.0f;
 	float h = VerticalStretch * ratio->h * 240.0f;
 	float dist = sqrtf((w - p2.x) * (w - p2.x) + (h - p2.y) * (h - p2.y));
@@ -328,7 +328,7 @@ static void __cdecl BigMirrorDraw_r(task* tp)
 	{
 		auto twp = tp->twp;
 
-		auto pnum = SplitScreen::GetCurrentScreenNum();
+		auto pnum = splitscreen::GetCurrentScreenNum();
 		auto ptwp = playertwp[pnum];
 		auto wk = &ruinfogwp[pnum];
 

@@ -13,10 +13,10 @@ void __cdecl ExtraDisplayExecutor_r(task* tp)
 {
 	if (tp->twp->mode != 0)
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 		ExtraDisplayExecutor_h.Original(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{

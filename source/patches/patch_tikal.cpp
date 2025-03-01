@@ -10,7 +10,7 @@ void TikalDisplay_r(task* tp)
 {
 	TikalDisplay_h.Original(tp);
 
-	if (ChkPause() || SplitScreen::numScreen != 0)
+	if (ChkPause() || splitscreen::numScreen != 0)
 	{
 		DrawCharacterShadow(tp->twp, &((playerwk*)tp->mwp->work.ptr)->shadow);
 	}

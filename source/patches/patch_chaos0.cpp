@@ -347,7 +347,7 @@ void Bg_Chaos0_r(task* tp)
 		tp->disp = Bg_Chaos0_r;
 	}
 
-	SetChaos0LandFlags(GetCameraMode_m(SplitScreen::GetCurrentScreenNum()) != CAMMD_CHAOS_P);
+	SetChaos0LandFlags(GetCameraMode_m(splitscreen::GetCurrentScreenNum()) != CAMMD_CHAOS_P);
 	Bg_Chaos0_h.Original(tp);
 }
 

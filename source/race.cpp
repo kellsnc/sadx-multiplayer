@@ -61,7 +61,7 @@ static void DrawTimer(int time, float x, float y, float s)
 
 static void dispRaceSingle(RaceWk* rwp, int num)
 {
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 	const float scaleY = VerticalStretch * ratio->h;
 	const float scaleX = HorizontalStretch * ratio->w;
 	const float scale = min(scaleY, scaleX);
@@ -118,8 +118,8 @@ static void __cdecl dispRaceM(task* tp)
 	{
 		auto wk = (RaceWkM*)tp->mwp;
 
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 
 		//MirenEffSaveState:
 		ghDefaultBlendingMode();
@@ -131,7 +131,7 @@ static void __cdecl dispRaceM(task* tp)
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (SplitScreen::IsScreenEnabled(i))
+			if (splitscreen::IsScreenEnabled(i))
 			{
 				dispRaceSingle(&wk->work[i], i);
 			}
@@ -143,7 +143,7 @@ static void __cdecl dispRaceM(task* tp)
 		RestoreConstantAttr();
 		ResetMaterial();
 
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 }
 

@@ -18,18 +18,18 @@ static void __cdecl Knuckles_KakeraGame_MultiDisp(task* tp)
 {
 	if (!MissedFrames && HideHud >= 0 && !EV_CheckCansel())
 	{
-		if (SplitScreen::IsActive())
+		if (splitscreen::IsActive())
 		{
-			SplitScreen::SaveViewPort();
-			SplitScreen::ChangeViewPort(-1);
+			splitscreen::SaveViewPort();
+			splitscreen::ChangeViewPort(-1);
 			for (int i = 0; i < PLAYER_MAX; ++i)
 			{
-				if (SplitScreen::IsScreenEnabled(i))
+				if (splitscreen::IsScreenEnabled(i))
 				{
 					DrawBattleEmeRadar(i, scales[i]);
 				}
 			}
-			SplitScreen::RestoreViewPort();
+			splitscreen::RestoreViewPort();
 		}
 		else
 		{
@@ -118,7 +118,7 @@ static void __cdecl Knuckles_KakeraGame_MultiExec(task* tp)
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		if (SplitScreen::IsScreenEnabled(i))
+		if (splitscreen::IsScreenEnabled(i))
 		{
 			Knuckles_KakeraGame_Timer(i);
 		}

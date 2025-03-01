@@ -660,13 +660,13 @@ static void Icecap_Init_m(taskwk* twp, taskwk* stwp, taskwk* mtwp)
 
 static void __cdecl late_DispMilesMeter2P_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		if (SplitScreen::GetCurrentScreenNum() == 0)
+		if (splitscreen::GetCurrentScreenNum() == 0)
 		{
-			SplitScreen::ChangeViewPort(-1);
+			splitscreen::ChangeViewPort(-1);
 			late_DispMilesMeter2P_h.Original(tp);
-			SplitScreen::ChangeViewPort(0);
+			splitscreen::ChangeViewPort(0);
 		}
 	}
 	else

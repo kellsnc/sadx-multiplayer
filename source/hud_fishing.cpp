@@ -16,7 +16,7 @@ FastFunctionHookPtr<decltype(&dispHitTexturePause_r)> dispHitTexturePause_h(0x46
 #pragma region HUD
 static void DrawBigHUDMulti(int pnum)
 {
-	auto ratio = SplitScreen::GetScreenRatio(pnum);
+	auto ratio = splitscreen::GetScreenRatio(pnum);
 
 	float scaleY = VerticalStretch * ratio->h;
 	float scaleX = HorizontalStretch * ratio->w;
@@ -83,25 +83,25 @@ static void __cdecl dispZankiTexturePause_r(task* tp)
 			ghDefaultBlendingMode();
 			SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 
-			SplitScreen::SaveViewPort();
-			SplitScreen::ChangeViewPort(-1);
+			splitscreen::SaveViewPort();
+			splitscreen::ChangeViewPort(-1);
 			for (int i = 0; i < PLAYER_MAX; ++i)
 			{
-				if (SplitScreen::IsScreenEnabled(i))
+				if (splitscreen::IsScreenEnabled(i))
 				{
 					DrawBigHUDMulti(i);
 				}
 			}
-			SplitScreen::RestoreViewPort();
+			splitscreen::RestoreViewPort();
 			ResetMaterial();
 		}
 	}
-	else if (SplitScreen::IsActive())
+	else if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 		dispZankiTexturePause_h.Original(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{
@@ -113,15 +113,15 @@ static void __cdecl dispZankiTexturePause_r(task* tp)
 #pragma region dispFishWeightTexture
 void dispFishWeightTexture_m(taskwk* twp, int pnum)
 {
-	if (SplitScreen::IsScreenEnabled(pnum))
+	if (splitscreen::IsScreenEnabled(pnum))
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 
 		ghDefaultBlendingMode();
 		SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 
-		auto ratio = SplitScreen::GetScreenRatio(pnum);
+		auto ratio = splitscreen::GetScreenRatio(pnum);
 		float scaleX = HorizontalStretch * ratio->w;
 		float scaleY = VerticalStretch * ratio->h;
 		auto scale = min(scaleX, scaleY);
@@ -152,7 +152,7 @@ void dispFishWeightTexture_m(taskwk* twp, int pnum)
 		DrawSNumbers(&pscn);
 
 		ResetMaterial();
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 }
 #pragma endregion
@@ -167,10 +167,10 @@ static void dispHitTexturePause_m(task* tp)
 
 	auto pnum = TASKWK_PLAYERID(twp);
 
-	SplitScreen::SaveViewPort();
-	SplitScreen::ChangeViewPort(-1);
+	splitscreen::SaveViewPort();
+	splitscreen::ChangeViewPort(-1);
 
-	auto ratio = SplitScreen::GetScreenRatio(pnum);
+	auto ratio = splitscreen::GetScreenRatio(pnum);
 
 	float scaleX = HorizontalStretch * ratio->w;
 	float scaleY = VerticalStretch * ratio->h;
@@ -198,14 +198,14 @@ static void dispHitTexturePause_m(task* tp)
 	reel_sprite.p.y = y;
 	late_DrawSprite2D(&reel_sprite, 6, 22046.18f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 	ResetMaterial();
-	SplitScreen::RestoreViewPort();
+	splitscreen::RestoreViewPort();
 }
 
 static void __cdecl dispHitTexturePause_r(task* tp)
 {
 	if (multiplayer::IsActive())
 	{
-		if (SplitScreen::IsScreenEnabled(TASKWK_PLAYERID(tp->twp)))
+		if (splitscreen::IsScreenEnabled(TASKWK_PLAYERID(tp->twp)))
 		{
 			dispHitTexturePause_m(tp);
 		}
@@ -294,9 +294,9 @@ static void dispReelMeterAll(float x, float y, float scale, float _reel_length_d
 
 static void DrawFishingMeter_Screen(int pnum, float _reel_length_d, float _reel_tension, Angle _reel_angle)
 {
-	if (SplitScreen::GetCurrentScreenNum() == pnum)
+	if (splitscreen::GetCurrentScreenNum() == pnum)
 	{
-		auto ratio = SplitScreen::GetScreenRatio(pnum);
+		auto ratio = splitscreen::GetScreenRatio(pnum);
 
 		float scaleX = HorizontalStretch * ratio->w;
 		float scaleY = VerticalStretch * ratio->h;
@@ -316,12 +316,12 @@ void DrawFishingMeter(int pnum, float _reel_length_d, float _reel_tension, Angle
 
 	njSetTexture(&FISHING_TEXLIST);
 
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 		DrawFishingMeter_Screen(pnum, _reel_length_d, _reel_tension, _reel_angle);
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{

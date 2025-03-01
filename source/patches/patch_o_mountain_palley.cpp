@@ -56,7 +56,7 @@ static void DrawWireTarumi_m(task* tp)
 
 static void KasshaDisplayer_r(task* tp)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		return KasshaDisplayer_h.Original(tp);
 	}

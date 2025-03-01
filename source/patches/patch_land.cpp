@@ -9,10 +9,10 @@ FastFunctionHook<void> ListGroundForDrawing_h(0x43A900);
 
 void __cdecl ListGroundForDrawing_r()
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		auto cam_pos = GetCameraPosition(SplitScreen::GetCurrentScreenNum());
-		auto cam_ang = GetCameraAngle(SplitScreen::GetCurrentScreenNum());
+		auto cam_pos = GetCameraPosition(splitscreen::GetCurrentScreenNum());
+		auto cam_ang = GetCameraAngle(splitscreen::GetCurrentScreenNum());
 
 		if (!cam_pos || !cam_ang)
 		{

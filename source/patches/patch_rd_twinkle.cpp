@@ -91,7 +91,7 @@ static void __cdecl dispBgTwinkle_r(task* tp)
 {
 	dispBgTwinkle_h.Original(tp);
 
-	if (camera_twp && pRd_Master && SplitScreen::IsActive())
+	if (camera_twp && pRd_Master && splitscreen::IsActive())
 	{
 		TwinkleMaskBlock(pRd_Master->twp);
 	}

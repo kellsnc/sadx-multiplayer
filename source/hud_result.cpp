@@ -43,7 +43,7 @@ static bool CanShowDialog()
 
 static void DisplayMultiResultScreeen(taskwk* twp, int pnum)
 {
-	auto ratio = SplitScreen::GetScreenRatio(pnum);
+	auto ratio = splitscreen::GetScreenRatio(pnum);
 
 	float screenX = HorizontalResolution * ratio->x;
 	float screenY = VerticalResolution * ratio->y;
@@ -80,16 +80,16 @@ static void __cdecl late_DisplayTotalScoreM(task* tp)
 	njSetTexture(&MILESRACE_TEXLIST);
 	ghDefaultBlendingMode();
 
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		auto pnum = SplitScreen::GetCurrentScreenNum();
+		auto pnum = splitscreen::GetCurrentScreenNum();
 
-		if (SplitScreen::IsScreenEnabled(pnum))
+		if (splitscreen::IsScreenEnabled(pnum))
 		{
-			SplitScreen::SaveViewPort();
-			SplitScreen::ChangeViewPort(-1);
+			splitscreen::SaveViewPort();
+			splitscreen::ChangeViewPort(-1);
 			DisplayMultiResultScreeen(tp->twp, pnum);
-			SplitScreen::RestoreViewPort();
+			splitscreen::RestoreViewPort();
 		}
 	}
 	else

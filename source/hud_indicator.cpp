@@ -127,23 +127,23 @@ static void __cdecl dispIndicatorP(task* tp)
 	{
 		ghDefaultBlendingMode();
 
-		bool splitscreen = SplitScreen::IsActive();
+		bool splitscreen = splitscreen::IsActive();
 
-		if (SplitScreen::IsActive())
+		if (splitscreen::IsActive())
 		{
 			for (int i = 0; i < PLAYER_MAX; ++i)
 			{
-				auto ratio = SplitScreen::GetScreenRatio(SplitScreen::GetCurrentScreenNum());
+				auto ratio = splitscreen::GetScreenRatio(splitscreen::GetCurrentScreenNum());
 
-				SplitScreen::SaveViewPort();
-				SplitScreen::ChangeViewPort(-1);
+				splitscreen::SaveViewPort();
+				splitscreen::ChangeViewPort(-1);
 				dispIndicatorNum(i,
 					(float)HorizontalResolution * ratio->x,
 					(float)VerticalResolution * ratio->y,
 					(float)HorizontalResolution * ratio->w,
 					(float)VerticalResolution * ratio->h,
 					min(HorizontalStretch * ratio->w, VerticalStretch * ratio->h));
-				SplitScreen::RestoreViewPort();
+				splitscreen::RestoreViewPort();
 			}
 		}
 		else

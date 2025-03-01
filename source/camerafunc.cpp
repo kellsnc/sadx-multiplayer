@@ -145,7 +145,7 @@ void gravDispose3_m(int pnum)
 
 void __cdecl CameraKlamath_m(_OBJ_CAMERAPARAM* pParam)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		CameraKlamath(pParam);
 		return;
@@ -375,7 +375,7 @@ void cartCameraDemo_m(int pnum)
 
 void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		CameraCart(pParam);
 		return;
@@ -501,7 +501,7 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 // Make this use CamAnyParam as it should have...
 void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		CameraRuinWaka1(pParam);
 		return;
@@ -537,7 +537,7 @@ void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 
 void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		PathCamera1_h.Original(pParam);
 		return;
@@ -876,7 +876,7 @@ void __cdecl CameraAvoid_r(_OBJ_CAMERAPARAM* pParam)
 
 void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		AdjustNormal(pTaskWork, pOldTaskWork, pCameraAdjustWork);
 		return;
@@ -1015,7 +1015,7 @@ void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUST
 
 void __cdecl AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		AdjustForFreeCamera(pTaskWork, pOldTaskWork, pCameraAdjustWork);
 		return;
@@ -1225,7 +1225,7 @@ void sub_468790_m(int pnum, taskwk* twp, taskwk* ptwp, _OBJ_ADJUSTPARAM* adjwp)
 
 void __cdecl AdjustThreePoint_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		AdjustThreePoint(pTaskWork, pOldTaskWork, pCameraAdjustWork);
 		return;

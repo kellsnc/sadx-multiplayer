@@ -67,7 +67,7 @@ void __cdecl savepointCollision_r(task* tp, taskwk* twp)
 
 void __cdecl PrintTimer_r(CUSTUM_PRINT_NUMBER* custom, Sint32 min, Sint32 sec)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		PrintTimer_h.Original(custom, min, sec);
 	}

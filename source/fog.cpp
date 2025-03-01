@@ -90,7 +90,7 @@ static void ___njFogEnable_m()
 {
 	if (!loop_count)
 	{
-		auto num = SplitScreen::numViewPort;
+		auto num = splitscreen::numViewPort;
 
 		___stcFog fog = gFog;
 		fog::GetUserFog(num, &fog); // Overwrite fog if custom data exists
@@ -120,7 +120,7 @@ static void ___njFogEnable_m()
 
 static void __cdecl ___njFogEnable_r()
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		___njFogEnable_m();
 	}

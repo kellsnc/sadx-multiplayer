@@ -43,7 +43,7 @@ static auto Eggrob_DrawChain = GenerateUsercallWrapper<void (*)(NJS_POINT3* p, N
 
 static void __cdecl Eggrob_BeamKonseki_disp(task* tp)
 {
-	if (!MissedFrames && tp->twp->wtimer < 45ui16 && SplitScreen::IsActive() && SplitScreen::GetCurrentScreenNum() != 0)
+	if (!MissedFrames && tp->twp->wtimer < 45ui16 && splitscreen::IsActive() && splitscreen::GetCurrentScreenNum() != 0)
 	{
 		auto twp = tp->twp;
 		konseki_p[0] = twp->pos;
@@ -69,7 +69,7 @@ static void __cdecl Eggrob_BeamKonseki_r(task* tp)
 
 static void __cdecl Eggrob_BeamZanzo_disp(task* tp)
 {
-	if (!MissedFrames && tp->twp->wtimer < 9ui16 && SplitScreen::IsActive() && SplitScreen::GetCurrentScreenNum() != 0)
+	if (!MissedFrames && tp->twp->wtimer < 9ui16 && splitscreen::IsActive() && splitscreen::GetCurrentScreenNum() != 0)
 	{
 		auto twp = tp->twp;
 
@@ -105,7 +105,7 @@ static void __cdecl Eggrob_BeamZanzo_r(task* tp)
 
 static void __cdecl Eggrob_LockOnCursor_disp(task* tp)
 {
-	if (!MissedFrames && SplitScreen::IsActive() && SplitScreen::GetCurrentScreenNum() != 0)
+	if (!MissedFrames && splitscreen::IsActive() && splitscreen::GetCurrentScreenNum() != 0)
 	{
 		auto twp = tp->twp;
 		ghDefaultBlendingMode();
@@ -189,7 +189,7 @@ static void __cdecl Eggrob_Display_r(task* tp)
 {
 	Eggrob_Display_h.Original(tp);
 
-	if (!MissedFrames && SplitScreen::IsActive() && SplitScreen::GetCurrentScreenNum() != 0)
+	if (!MissedFrames && splitscreen::IsActive() && splitscreen::GetCurrentScreenNum() != 0)
 	{
 		DrawMainLaser(tp->twp);
 		DrawWeapon(tp->twp);

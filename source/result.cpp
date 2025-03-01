@@ -160,10 +160,10 @@ static void __cdecl SetFinishAction_r()
 
 static void __cdecl CalcTotalScore_r(task* tp)
 {
-	SplitScreen::SaveViewPort();
-	SplitScreen::ChangeViewPort(-1);
+	splitscreen::SaveViewPort();
+	splitscreen::ChangeViewPort(-1);
 	CalcTotalScore_h.Original(tp);
-	SplitScreen::RestoreViewPort();
+	splitscreen::RestoreViewPort();
 }
 
 void InitResult()

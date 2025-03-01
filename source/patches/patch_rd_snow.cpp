@@ -226,7 +226,7 @@ static void __cdecl dispBgSnow_r(task* tp)
 {
 	dispBgSnow_h.Original(tp);
 
-	if (camera_twp && tp->twp->mode == 10 && SplitScreen::IsActive())
+	if (camera_twp && tp->twp->mode == 10 && splitscreen::IsActive())
 	{
 		NJS_POINT3* pos = &camera_twp->pos;
 

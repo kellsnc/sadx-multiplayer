@@ -20,7 +20,7 @@ FastFunctionHook<void, NJS_QUAD_TEXTURE_EX*> njDrawQuadTextureEx_hook(0x77DE10);
 
 void __cdecl DisplayTask_r();
 
-namespace SplitScreen
+namespace splitscreen
 {
 	unsigned int numScreen = 0;
 	signed int numViewPort = -1;
@@ -235,19 +235,19 @@ namespace SplitScreen
 // Run sprites for each screen
 void __cdecl SpLoopOnlyDisplay_r()
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (SplitScreen::IsScreenEnabled(i))
+			if (splitscreen::IsScreenEnabled(i))
 			{
-				SplitScreen::ChangeViewPort(i);
+				splitscreen::ChangeViewPort(i);
 				ApplyMultiCamera(i);
 				SpLoopOnlyDisplay_hook.Original();
 			}
 		}
 
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::ChangeViewPort(-1);
 	}
 	else
 	{
@@ -282,9 +282,9 @@ static void DispTask_m(int level)
 
 static void DisplayTask_m(int num)
 {
-	if (SplitScreen::IsScreenEnabled(num))
+	if (splitscreen::IsScreenEnabled(num))
 	{
-		SplitScreen::ChangeViewPort(num);
+		splitscreen::ChangeViewPort(num);
 		ResetMaterial();
 		DispTask_m(8);
 		for (int i = 0; i < 7; ++i)
@@ -299,7 +299,7 @@ static void DisplayTask_m(int num)
 // Run task display subroutines for each screen during pause menu
 void __cdecl DisplayTask_r()
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		// If split screen is active, draw each screen:
 
@@ -308,7 +308,7 @@ void __cdecl DisplayTask_r()
 			DisplayTask_m(i);
 		}
 
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::ChangeViewPort(-1);
 	}
 	else
 	{
@@ -321,11 +321,11 @@ void __cdecl DisplayTask_r()
 // Run task display subroutines for each screen
 void __cdecl LoopTask_r()
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		// When unpaused run logic (which also runs display) for first screen, then only run display for the other screens.
 
-		SplitScreen::ChangeViewPort(0);
+		splitscreen::ChangeViewPort(0);
 		LoopTask_hook.Original();
 		DisplayMultiHud(0);
 
@@ -334,7 +334,7 @@ void __cdecl LoopTask_r()
 			DisplayTask_m(i);
 		}
 
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::ChangeViewPort(-1);
 	}
 	else
 	{
@@ -348,9 +348,9 @@ void __cdecl LoopTask_r()
 // Todo: improve scaling
 void __cdecl njDrawQuadTextureEx_r(NJS_QUAD_TEXTURE_EX* quad)
 {
-	if (SplitScreen::IsActive() && SplitScreen::GetCurrentViewPortNum() != -1)
+	if (splitscreen::IsActive() && splitscreen::GetCurrentViewPortNum() != -1)
 	{
-		auto ratio = SplitScreen::GetScreenRatio(SplitScreen::GetCurrentScreenNum());
+		auto ratio = splitscreen::GetScreenRatio(splitscreen::GetCurrentScreenNum());
 
 		quad->x = quad->x * ratio->w + HorizontalResolution * ratio->x;
 		quad->y = quad->y * ratio->h + VerticalResolution * ratio->y;
@@ -374,8 +374,8 @@ void InitSplitScreen()
 
 		if (config.mHorizontalLayout == true)
 		{
-			SplitScreen::ScreenRatios[0] = SplitScreen::ScreenRatio2H;
-			SplitScreen::ScreenRatios[1] = SplitScreen::ScreenRatio2H;
+			splitscreen::ScreenRatios[0] = splitscreen::ScreenRatio2H;
+			splitscreen::ScreenRatios[1] = splitscreen::ScreenRatio2H;
 		}
 	}
 }

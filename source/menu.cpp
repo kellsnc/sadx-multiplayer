@@ -44,12 +44,12 @@ int selected_multi_mode = 0;
 // Make sure ingame dialogs draw widescreen
 static void __cdecl dialog_disp_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 		dialog_disp_h.Original(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{

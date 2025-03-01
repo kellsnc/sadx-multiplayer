@@ -56,7 +56,7 @@ void SpinnaDrawShield(taskwk* twp)
 
 void __cdecl SpinnaDisplayer_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		if (!MissedFrames)
 		{
@@ -64,7 +64,7 @@ void __cdecl SpinnaDisplayer_r(task* tp)
 
 			SpinnaDraw(twp, (enemywk*)tp->mwp);
 
-			if (SplitScreen::GetCurrentScreenNum() > 0 && twp->smode == 0 && twp->wtimer != 0)
+			if (splitscreen::GetCurrentScreenNum() > 0 && twp->smode == 0 && twp->wtimer != 0)
 			{
 				SpinnaDrawShield(twp);
 			}

@@ -30,15 +30,15 @@ static void ObjShelterFadeDisp_m(task* tp)
 	auto twp = tp->twp;
 	auto pnum = twp->btimer;
 
-	if (SplitScreen::GetCurrentScreenNum() == pnum)
+	if (splitscreen::GetCurrentScreenNum() == pnum)
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 
 		ghDefaultBlendingMode();
 		SetMaterial(twp->counter.f, 0.0, 0.0, 0.0);
 
-		auto ratio = SplitScreen::GetScreenRatio(twp->btimer);
+		auto ratio = splitscreen::GetScreenRatio(twp->btimer);
 
 		sprite_fade.p.x = HorizontalStretch * 320.0f * ratio->w + ratio->x * HorizontalResolution;
 		sprite_fade.p.y = VerticalStretch * 240.0f * ratio->h + ratio->y * VerticalResolution;
@@ -48,13 +48,13 @@ static void ObjShelterFadeDisp_m(task* tp)
 		late_DrawSprite2D(&sprite_fade, 0, 22047.0f, NJD_SPRITE_ALPHA | NJD_SPRITE_COLOR, LATE_LIG);
 
 		ResetMaterial();
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 }
 
 static void __cdecl ObjShelterFadeDisp_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		ObjShelterFadeDisp_m(tp);
 	}
@@ -74,9 +74,9 @@ static void CreateObjShelterFade(char pnum)
 #pragma region ObjShelterTunnelscroll
 static void __cdecl ObjShelterTunnelscrollDisp_r(task* tp)
 {
-	if (SplitScreen::IsActive() && tunnel_flag)
+	if (splitscreen::IsActive() && tunnel_flag)
 	{
-		auto pnum = SplitScreen::GetCurrentScreenNum();
+		auto pnum = splitscreen::GetCurrentScreenNum();
 
 		if (pnum >= 0)
 		{

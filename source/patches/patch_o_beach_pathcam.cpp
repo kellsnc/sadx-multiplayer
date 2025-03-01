@@ -363,7 +363,7 @@ static void ObjectCamPathCam_Exec_m(task* tp)
 		return;
 	}
 
-	if (!ptwp || !SplitScreen::IsScreenEnabled(pnum))
+	if (!ptwp || !splitscreen::IsScreenEnabled(pnum))
 	{
 		return;
 	}

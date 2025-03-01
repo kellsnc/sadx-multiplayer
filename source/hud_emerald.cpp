@@ -8,7 +8,7 @@ FastFunctionHook<void, task*> Knuckles_KakeraGamePutRadar1C_h(0x475A70);
 
 void DrawBattleEmeRadar(int pnum, int scalors)
 {
-	auto ratio = SplitScreen::GetScreenRatio(pnum);
+	auto ratio = splitscreen::GetScreenRatio(pnum);
 
 	float screenX = HorizontalResolution * ratio->x;
 	float screenY = VerticalResolution * ratio->y;
@@ -69,12 +69,12 @@ void DrawBattleEmeRadar(int pnum, int scalors)
 
 void __cdecl Knuckles_KakeraGameExec_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 		Knuckles_KakeraGameExec_h.Original(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{
@@ -84,12 +84,12 @@ void __cdecl Knuckles_KakeraGameExec_r(task* tp)
 
 void __cdecl Knuckles_KakeraGamePutRadar1C_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 		Knuckles_KakeraGamePutRadar1C_h.Original(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{

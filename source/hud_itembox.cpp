@@ -20,7 +20,7 @@ VariableHook<ITEM_MANAGER, 0x3C5A9D8> manager_data_m;
 
 static void manager_DrawItems(ITEM_MANAGER* data, int num) // custom
 {
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 
 	float screenX = HorizontalResolution * ratio->x;
 	float screenY = VerticalResolution * ratio->y;
@@ -105,27 +105,27 @@ static void manager_Disp_m(task* tp)
 {
 	if (!MissedFrames && (GameMode != MD_GAME_FADEOUT_CHANGE2 || !GetMiClearStatus()))
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 		ghDefaultBlendingMode();
 		SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (SplitScreen::GetCurrentScreenNum() == i)
+			if (splitscreen::GetCurrentScreenNum() == i)
 			{
 				manager_DrawItems(&manager_data_m[i], i);
 			}
 		}
 
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 		ResetMaterial();
 	}
 }
 
 static void __cdecl manager_Disp_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		manager_Disp_m(tp);
 	}

@@ -129,7 +129,7 @@ bool CheckRangeM(Float rx0, Float ry0, Float rz0, Float R)
 			}
 		}
 
-		if (SplitScreen::IsScreenEnabled(i))
+		if (splitscreen::IsScreenEnabled(i))
 		{
 			auto cam_pos = GetCameraPosition(i);
 

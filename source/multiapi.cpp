@@ -12,42 +12,42 @@
 
 bool splitscreen_is_active()
 {
-	return SplitScreen::IsActive();
+	return splitscreen::IsActive();
 }
 
 bool splitscreen_is_enabled()
 {
-	return SplitScreen::IsEnabled();
+	return splitscreen::IsEnabled();
 }
 
 void splitscreen_enable()
 {
-	SplitScreen::Enable();
+	splitscreen::Enable();
 }
 
 void splitscreen_disable()
 {
-	SplitScreen::Disable();
+	splitscreen::Disable();
 }
 
 uint32_t splitscreen_get_current_screen()
 {
-	return SplitScreen::GetCurrentScreenNum();
+	return splitscreen::GetCurrentScreenNum();
 }
 
 bool viewport_is_enabled(int32_t num)
 {
-	return SplitScreen::IsScreenEnabled(num);
+	return splitscreen::IsScreenEnabled(num);
 }
 
 void viewport_set_num(int32_t num)
 {
-	SplitScreen::ChangeViewPort(num);
+	splitscreen::ChangeViewPort(num);
 }
 
 bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h)
 {
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 
 	if (ratio)
 	{

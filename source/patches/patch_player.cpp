@@ -19,7 +19,7 @@ FastFunctionHook<void, task*> BreathCounterP_h(0x446B10);
 
 void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo: rewrite
 {
-	if (SplitScreen::IsActive() && pwp->attr & 0x20000)
+	if (splitscreen::IsActive() && pwp->attr & 0x20000)
 	{
 		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
 
@@ -38,7 +38,7 @@ void __cdecl PGetRotation_r(taskwk* twp, motionwk2* mwp, playerwk* pwp) // todo:
 
 void __cdecl PGetAcceleration_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
-	if (SplitScreen::IsActive() && pwp->attr & 0x20000)
+	if (splitscreen::IsActive() && pwp->attr & 0x20000)
 	{
 		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
 
@@ -57,7 +57,7 @@ void __cdecl PGetAcceleration_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 
 void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* pwp, float Max_Speed)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
 
@@ -78,7 +78,7 @@ void __cdecl PGetAccelerationSnowBoard_r(taskwk* twp, motionwk2* mwp, playerwk* 
 
 void __cdecl PGetAccelerationForBuilding_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		auto cam_ang = GetCameraAngle(TASKWK_PLAYERID(twp));
 
@@ -97,7 +97,7 @@ void __cdecl PGetAccelerationForBuilding_r(taskwk* twp, motionwk2* mwp, playerwk
 
 void __cdecl SonicMotionCheckEdition_r(taskwk* twp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		auto pnum = TASKWK_PLAYERID(twp);
 		auto& per = perG[pnum];
@@ -591,7 +591,7 @@ static void __cdecl BreathCounterP_r(task* tp)
 // Trick the game to draw shadows on other screens
 Bool ChkPause_Shadow_Hack()
 {
-	return ChkPause() || SplitScreen::numScreen != 0;
+	return ChkPause() || splitscreen::numScreen != 0;
 }
 
 // The game sometimes wrongly check for player 1 while the rest of the code doesn't

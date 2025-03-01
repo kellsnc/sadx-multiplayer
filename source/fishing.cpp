@@ -197,12 +197,12 @@ static void __cdecl dispFishWeightTexture_r(task* tp)
 	{
 		dispFishWeightTexture_m(tp->twp, tp->twp->smode);
 	}
-	else if (SplitScreen::IsActive())
+	else if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 		dispFishWeightTexture_h.Original(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{

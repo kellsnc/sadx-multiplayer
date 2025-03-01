@@ -17,7 +17,7 @@ void __cdecl ObjectBeachWaveBG_Exec_m(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (SplitScreen::IsScreenEnabled(twp->id))
+	if (splitscreen::IsScreenEnabled(twp->id))
 	{
 		NJS_VECTOR plpos;
 		GetPlayerPosition(twp->id, 0, &plpos, 0);
@@ -32,7 +32,7 @@ void __cdecl ObjectBeachWaveBG_Exec_m(task* tp)
 void __cdecl ObjectBeachWaveBG_Disp_m(task* tp)
 {
 	// Draw only if object is coded for current screen id
-	if (SplitScreen::IsScreenEnabled(tp->twp->id) && tp->twp->id == SplitScreen::GetCurrentScreenNum())
+	if (splitscreen::IsScreenEnabled(tp->twp->id) && tp->twp->id == splitscreen::GetCurrentScreenNum())
 	{
 		ObjectBeachWaveBG_Disp(tp);
 	}
@@ -56,7 +56,7 @@ void __cdecl ObjectBeachWaveBG_r(task* tp)
 void __cdecl ObjectBeachWaveBG_Disp2_m(task* tp)
 {
 	// Draw only if object is coded for current screen id
-	if (SplitScreen::IsScreenEnabled(tp->twp->id) && tp->twp->id == SplitScreen::GetCurrentScreenNum())
+	if (splitscreen::IsScreenEnabled(tp->twp->id) && tp->twp->id == splitscreen::GetCurrentScreenNum())
 	{
 		ObjectBeachWaveBG_Disp2(tp);
 	}
@@ -80,7 +80,7 @@ void __cdecl ObjectBeachWaveBG2_r(task* tp)
 void __cdecl ObjectBeachWaveBG_Disp3_m(task* tp)
 {
 	// Draw only if object is coded for current screen id
-	if (SplitScreen::IsScreenEnabled(tp->twp->id) && tp->twp->id == SplitScreen::GetCurrentScreenNum())
+	if (splitscreen::IsScreenEnabled(tp->twp->id) && tp->twp->id == splitscreen::GetCurrentScreenNum())
 	{
 		ObjectBeachWaveBG_Disp3(tp);
 	}

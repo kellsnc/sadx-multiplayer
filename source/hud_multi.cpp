@@ -107,11 +107,11 @@ void DrawWaitScreen(int num)
 		return;
 	}
 
-	SplitScreen::SaveViewPort();
-	SplitScreen::ChangeViewPort(-1);
+	splitscreen::SaveViewPort();
+	splitscreen::ChangeViewPort(-1);
 
 	// Get subscreen information
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 
 	// Start position and scale
 	float scaleY = VerticalStretch * ratio->h;
@@ -147,7 +147,7 @@ void DrawWaitScreen(int num)
 	}
 
 	ResetMaterial();
-	SplitScreen::RestoreViewPort();
+	splitscreen::RestoreViewPort();
 }
 
 void MultiHudScore(int num)
@@ -257,12 +257,12 @@ void DisplayMultiHud(int num)
 		return;
 	}
 
-	SplitScreen::SaveViewPort();
-	SplitScreen::ChangeViewPort(-1);
+	splitscreen::SaveViewPort();
+	splitscreen::ChangeViewPort(-1);
 
 	SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 
 	float screenX = HorizontalResolution * ratio->x;
 	float screenY = VerticalResolution * ratio->y;
@@ -282,7 +282,7 @@ void DisplayMultiHud(int num)
 		njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
 		MultiHudScore(num);
 
-		if (SplitScreen::numScreen == 0 )
+		if (splitscreen::numScreen == 0 )
 		{
 			MULTIHUD_SPRITE.p.x = x;
 			MULTIHUD_SPRITE.p.y += 24 * scale;
@@ -315,7 +315,7 @@ void DisplayMultiHud(int num)
 	}
 
 	ResetMaterial();
-	SplitScreen::RestoreViewPort();
+	splitscreen::RestoreViewPort();
 }
 
 void __cdecl DisplayScore_r()

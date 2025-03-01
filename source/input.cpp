@@ -64,7 +64,7 @@ static void __cdecl PadReadOffP_r(int8_t pnum)
 // Patch analog forward calculation to use multiplayer cameras
 static void __cdecl GetPlayersInputData_r()
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		GetPlayersInputData_hook.Original();
 		return;

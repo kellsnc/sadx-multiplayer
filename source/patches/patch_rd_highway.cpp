@@ -174,7 +174,7 @@ static void __cdecl RdHighwayCheckArriveAtTheBuilding_r(task* tp)
 // Fix display masks
 static void __cdecl dispBgHighway_r(task* tp)
 {
-	if (tp->twp->mode == 4 && SplitScreen::IsActive())
+	if (tp->twp->mode == 4 && splitscreen::IsActive())
 	{
 		auto cam_twp = camera_twp;
 

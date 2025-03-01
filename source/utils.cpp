@@ -81,11 +81,11 @@ int IsPlayerInSphere(float x, float y, float z, float r)
 
 bool IsCameraInSphere(NJS_POINT3* p, float r)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (SplitScreen::IsScreenEnabled(i))
+			if (splitscreen::IsScreenEnabled(i))
 			{
 				if (GetDistance(GetCameraPosition(i), p) < r)
 				{

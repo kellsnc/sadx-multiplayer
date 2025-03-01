@@ -85,7 +85,7 @@ void DrawQueueItem_SetViewPort(LATE_RQ_T* data)
 {
 	int viewport = (BYTEn(data->rq.ctrl3dFlg, 3) & ~0x80) - 1;
 
-	if (SplitScreen::ChangeViewPort(viewport))
+	if (splitscreen::ChangeViewPort(viewport))
 	{
 		ApplyMultiCamera(viewport < 0 ? 0 : viewport);
 	}
@@ -215,7 +215,7 @@ void DrawQueue_DrawItem(LATE_RQ_T* data)
 
 void __cdecl late_exec_r()
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		NJS_MATRIX orig_matrix;
 		njGetMatrix(orig_matrix);
@@ -259,7 +259,7 @@ void __cdecl late_exec_r()
 			}
 		}
 
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::ChangeViewPort(-1);
 		njSetMatrix(0, orig_matrix);
 		njds_texList = 0;
 		___njSetConstantMaterial(&cur_argb);
@@ -293,9 +293,9 @@ LATE_RQ* __cdecl late_setOdr_r(Sint32 no, Sint32 sz, Sint32 odr, Sint32 flgs)
 {
 	auto rq = late_setOdr_h.Original(no, sz, odr, flgs);
 
-	if (rq && SplitScreen::IsActive() && SplitScreen::numViewPort != -1)
+	if (rq && splitscreen::IsActive() && splitscreen::numViewPort != -1)
 	{
-		BYTEn(rq->ctrl3dFlg, 3) += SplitScreen::numViewPort + 1; // place viewport id in the last available digits
+		BYTEn(rq->ctrl3dFlg, 3) += splitscreen::numViewPort + 1; // place viewport id in the last available digits
 	}
 
 	return rq;

@@ -55,7 +55,7 @@ static void __cdecl dispE102LaserDraw(task* tp)
 
 static void __cdecl dispE102Laser_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		auto twp = tp->twp;
 
