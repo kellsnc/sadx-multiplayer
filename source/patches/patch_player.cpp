@@ -516,11 +516,11 @@ static void __cdecl BreathCounterP_r(task* tp)
 	}
 
 	int DrownVoice = 1506;
-	auto data = tp->awp;
-	auto timer = data->work.ul[1]++;
+	auto twp = tp->awp;
+	auto timer = twp->work.ul[1]++;
 	static const int timeOver = 760;
 	_BOOL1 isTimeUp = timer == timeOver;
-	char pnum = data->work.ub[0];
+	char pnum = twp->work.ub[0];
 	auto player = playertwp[pnum];
 
 	if (!player)

@@ -224,18 +224,18 @@ Angle setApartTargetPos_r(chaoswk* cwk)
 	return ang;
 }
 
-void chaos0Pole_r(chaoswk* cwk, taskwk* data)
+void chaos0Pole_r(chaoswk* cwk, taskwk* twp)
 {
 	auto ptwp = playertwp[randomPnum];
 
 	if (!multiplayer::IsEnabled() || !ptwp)
 	{
-		return chaos0Pole_h.Original(cwk, data);
+		return chaos0Pole_h.Original(cwk, twp);
 	}
 
-	if (data->smode)
+	if (twp->smode)
 	{
-		if (data->smode != 1)
+		if (twp->smode != 1)
 		{
 			return;
 		}
@@ -244,95 +244,95 @@ void chaos0Pole_r(chaoswk* cwk, taskwk* data)
 	{
 		cwk->bwk.req_action = MD_CHAOS_STND;
 		bossmtn_flag &= 0xFDu;
-		if (data->counter.b[0] == 2)
+		if (twp->counter.b[0] == 2)
 		{
 			chaos_pole_punch_num = 5;
-			data->counter.b[0] = 3;
+			twp->counter.b[0] = 3;
 		}
-		data->smode = MD_CHAOS_STND;
+		twp->smode = MD_CHAOS_STND;
 	}
 
-	turnToPlayer_r(data, cwk);
+	turnToPlayer_r(twp, cwk);
 
 	if (chaos_pole_punch_num > 0)
 	{
-		float diffX = ptwp->pos.x - data->pos.x;
-		float diffZ = ptwp->pos.z - data->pos.z;
+		float diffX = ptwp->pos.x - twp->pos.x;
+		float diffZ = ptwp->pos.z - twp->pos.z;
 
 		if (diffZ * diffZ + diffX * diffX >= 6400.0f)
 		{
-			if (data->mode != 4)
+			if (twp->mode != 4)
 			{
 				chaos_reqmode = 4;
-				chaos_nextmode = data->mode;
+				chaos_nextmode = twp->mode;
 				chaos_oldmode = chaos_nextmode;
 			}
-			data->counter.b[0] = 3;
+			twp->counter.b[0] = 3;
 		}
 		else
 		{
 			chaos_punch_num = MD_CHAOS_STND;
 			--chaos_pole_punch_num;
-			if (data->mode != 6)
+			if (twp->mode != 6)
 			{
 				chaos_reqmode = 6;
-				chaos_nextmode = data->mode;
+				chaos_nextmode = twp->mode;
 				chaos_oldmode = chaos_nextmode;
 			}
 		}
 	}
 	else
 	{
-		if (data->mode != 4)
+		if (twp->mode != 4)
 		{
 			chaos_reqmode = 4;
-			chaos_nextmode = data->mode;
+			chaos_nextmode = twp->mode;
 			chaos_oldmode = chaos_nextmode;
 		}
 
-		data->counter.b[0] = MD_CHAOS_STND;
+		twp->counter.b[0] = MD_CHAOS_STND;
 	}
 }
 
-void chaos0Punch_r(chaoswk* cwk, taskwk* data, bosswk* bwk)
+void chaos0Punch_r(chaoswk* cwk, taskwk* twp, bosswk* bwk)
 {
 	auto ptwp = playertwp[randomPnum];
 
-	if (data->smode != 3)
+	if (twp->smode != 3)
 	{
-		return chaos0Punch_h.Original(cwk, data, bwk);
+		return chaos0Punch_h.Original(cwk, twp, bwk);
 	}
 	else
 	{
-		if (data->wtimer > 6)
+		if (twp->wtimer > 6)
 		{
 			float x, y, z;
-			turnToPlayer_r(data, cwk);
+			turnToPlayer_r(twp, cwk);
 
-			x = ptwp->pos.x - data->pos.x;
-			z = ptwp->pos.z - data->pos.z;
-			cwk->attack_zang = -njArcTan2(ptwp->pos.y - data->pos.y, njSqrt(z * z + x * x));
+			x = ptwp->pos.x - twp->pos.x;
+			z = ptwp->pos.z - twp->pos.z;
+			cwk->attack_zang = -njArcTan2(ptwp->pos.y - twp->pos.y, njSqrt(z * z + x * x));
 
-			x = data->pos.x - ptwp->pos.x;
-			y = data->pos.y - ptwp->pos.y;
-			z = data->pos.z - ptwp->pos.z;
+			x = twp->pos.x - ptwp->pos.x;
+			y = twp->pos.y - ptwp->pos.y;
+			z = twp->pos.z - ptwp->pos.z;
 			cwk->attack_dist = njSqrt(x * x + y * y + z * z);
 
 			SetEffectPunchTameParticle((NJS_POINT3*)0x3C63DDC, 0);
 		}
 
-		if (!--data->wtimer)
+		if (!--twp->wtimer)
 		{
 			bossmtn_flag &= 0xFCu;
 			bwk->work.l = 0;
-			data->smode = 4;
+			twp->smode = 4;
 			cwk->etcflag |= 2u;
-			setDrop(data, 10, 0.5f, 2.0f);
+			setDrop(twp, 10, 0.5f, 2.0f);
 			setShakeHeadParam(1.5f);
-			dsPlay_oneshot_Dolby(334, 0, 0, 207, 120, data);
+			dsPlay_oneshot_Dolby(334, 0, 0, 207, 120, twp);
 			flt_3C63CEC = 2.9166667f / cwk->attack_dist;
 
-			if (data->pos.y > 60.0f)
+			if (twp->pos.y > 60.0f)
 			{
 				flt_3C63CEC = flt_3C63CEC * 1.5f;
 			}

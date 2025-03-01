@@ -270,16 +270,16 @@ void __cdecl ItemBoxAir_Main_r(task* obj)
 {
 	if (multiplayer::IsActive())
 	{
-		auto data = obj->twp;
+		taskwk* twp = obj->twp;
 
 		if (CurrentLevel == LevelIDs_TwinklePark && CurrentAct == 0)
 		{
-			if (data->mode >= 3 && data->scl.x != 6) //respawn airbox in TP if it isn't a life
+			if (twp->mode >= 3 && twp->scl.x != 6) //respawn airbox in TP if it isn't a life
 			{
-				if (++data->wtimer == 120)
+				if (++twp->wtimer == 120)
 				{
-					data->mode = 0;
-					data->wtimer = 0;
+					twp->mode = 0;
+					twp->wtimer = 0;
 					return;
 				}
 			}

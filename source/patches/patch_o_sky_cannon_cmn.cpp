@@ -13,14 +13,14 @@ void dsHangPoleCom_r(taskwk* a1)
 	{
 		if (a1 && a1->cwp && a1->cwp->hit_cwp && a1->cwp->hit_cwp->mytask)
 		{
-			auto data = a1->cwp->hit_cwp->mytask->twp;
+			taskwk* twp = a1->cwp->hit_cwp->mytask->twp;
 
 			for (int i = 0; i < PLAYER_MAX; i++)
 			{
-				if (data == playertwp[i])
+				if (twp == playertwp[i])
 				{
 					EnemyBounceThing(i, 0.0f, 2.0f, 0.0f);
-					data->pos.y = data->pos.y + 1.0f;
+					twp->pos.y = twp->pos.y + 1.0f;
 					return;
 				}
 			}

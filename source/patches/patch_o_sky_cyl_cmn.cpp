@@ -6,33 +6,33 @@
 UsercallFunc(Bool, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
 FastFunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0);
 
-signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* pwp)
+signed int SetCylinderNextAction(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
-	if (data->mode >= SDCylStd && data->mode <= SDCylRight)
+	if (twp->mode >= SDCylStd && twp->mode <= SDCylRight)
 	{
-		data->smode = 0;
+		twp->smode = 0;
 		return 0;
 	}
 	else
 	{
-		if (pwp->htp->twp->pos.y + pwp->htp->twp->cwp->info->center.y - pwp->htp->twp->cwp->info->b >= data->pos.y)
+		if (pwp->htp->twp->pos.y + pwp->htp->twp->cwp->info->center.y - pwp->htp->twp->cwp->info->b >= twp->pos.y)
 		{
-			data->mode = SDCylStd;
+			twp->mode = SDCylStd;
 		}
 		else
 		{
-			data->mode = SDCylDown;
+			twp->mode = SDCylDown;
 		}
 
-		PClearSpeed(data2, pwp);
-		data->flag &= 0xDAu;
+		PClearSpeed(mwp, pwp);
+		twp->flag &= 0xDAu;
 		pwp->free.sw[3] = 0;
 	}
 
 	return 1;
 }
 
-void HoldOnPillar(playerwk* pwp, taskwk* data)
+void HoldOnPillar(playerwk* pwp, taskwk* twp)
 {
 	float v5 = 0.0f;
 	int v6 = 0;
@@ -55,86 +55,86 @@ void HoldOnPillar(playerwk* pwp, taskwk* data)
 			{
 				v7 = 30.0;
 			}
-			v5 = njCos(data->ang.y);
-			v6 = data->ang.y;
-			data->pos.x = htpData->pos.x - v5 * v7;
-			data->pos.z = htpData->pos.z - njSin(v6) * v7;
+			v5 = njCos(twp->ang.y);
+			v6 = twp->ang.y;
+			twp->pos.x = htpData->pos.x - v5 * v7;
+			twp->pos.z = htpData->pos.z - njSin(v6) * v7;
 		}
 	}
 	else
 	{
-		data->mode = 1;
+		twp->mode = 1;
 	}
 }
 
 //Functions used in character main
-void Mode_SDCylinderStd(taskwk* data, playerwk* pwp)
+void Mode_SDCylinderStd(taskwk* twp, playerwk* pwp)
 {
-	HoldOnPillar(pwp, data);
+	HoldOnPillar(pwp, twp);
 }
 
-void Mode_SDCylinderDown(taskwk* data, playerwk* pwp)
+void Mode_SDCylinderDown(taskwk* twp, playerwk* pwp)
 {
-	auto v18 = data->pos.y - 0.5f;
+	auto v18 = twp->pos.y - 0.5f;
 	auto v19 = pwp->htp->twp;
-	data->pos.y = v18;
+	twp->pos.y = v18;
 
 	auto v20 = v19->cwp->info->center.y + v19->pos.y - v19->cwp->info->b;
 	if (v20 >= v18)
 	{
-		data->pos.y = v20;
+		twp->pos.y = v20;
 	}
 
-	HoldOnPillar(pwp, data);
+	HoldOnPillar(pwp, twp);
 }
 
-void Mode_SDCylinderLeft(taskwk* data, playerwk* pwp)
+void Mode_SDCylinderLeft(taskwk* twp, playerwk* pwp)
 {
-	data->ang.y += SonicGetPillarRotSpeed(pwp);
-	HoldOnPillar(pwp, data);
+	twp->ang.y += SonicGetPillarRotSpeed(pwp);
+	HoldOnPillar(pwp, twp);
 }
 
-void Mode_SDCylinderRight(taskwk* data, playerwk* pwp)
+void Mode_SDCylinderRight(taskwk* twp, playerwk* pwp)
 {
-	data->ang.y -= SonicGetPillarRotSpeed(pwp);
-	HoldOnPillar(pwp, data);
+	twp->ang.y -= SonicGetPillarRotSpeed(pwp);
+	HoldOnPillar(pwp, twp);
 }
 
 //Functions used in character run actions (chk_mode)
-void Mode_SDCylStdChanges(taskwk* data1, playerwk* pwp)
+void Mode_SDCylStdChanges(taskwk* twp, playerwk* pwp)
 {
-	if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+	if (twp->mode < SDCylStd || twp->mode > SDCylRight)
 	{
 		pwp->htp = 0;
 		return;
 	}
 
-	if (!GetAnalog((EntityData1*)data1, 0, 0))
+	if (!GetAnalog((EntityData1*)twp, 0, 0))
 	{
 		return;
 	}
 
-	auto controllerAng = Controllers[(unsigned __int8)data1->counter.b[0]].LeftStickX << 8;
+	auto controllerAng = Controllers[(unsigned __int8)twp->counter.b[0]].LeftStickX << 8;
 
 	if (controllerAng >= -3072)
 	{
-		data1->mode = SDCylRight;
+		twp->mode = SDCylRight;
 	}
 	else if (controllerAng <= 3072)
 	{
-		data1->mode = SDCylLeft;
+		twp->mode = SDCylLeft;
 	}
 
 	return;
 }
 
-void Mode_SDCylDownChanges(taskwk* data1, playerwk* pwp)
+void Mode_SDCylDownChanges(taskwk* twp, playerwk* pwp)
 {
 	auto htpTsk = pwp->htp;
 
 	if (!htpTsk)
 	{
-		data1->mode = 1;
+		twp->mode = 1;
 		pwp->mj.reqaction = 0;
 		return;
 	}
@@ -149,22 +149,22 @@ void Mode_SDCylDownChanges(taskwk* data1, playerwk* pwp)
 		{
 			auto math = htpCol->info->center.y + htpData->pos.y - htpCol->info->b;
 
-			if (math < data1->pos.y)
+			if (math < twp->pos.y)
 			{
-				if (data1->mode < SDCylStd || data1->mode > SDCylRight)
+				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
 				{
 					pwp->htp = 0;
 				}
 			}
 			else
 			{
-				data1->mode = SDCylStd;
+				twp->mode = SDCylStd;
 			}
 		}
 	}
 	else
 	{
-		data1->mode = 1;
+		twp->mode = 1;
 		pwp->mj.reqaction = 0;
 	}
 

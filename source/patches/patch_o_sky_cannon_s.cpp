@@ -6,11 +6,11 @@ FastFunctionHook<void, task*> ObjectSkydeck_cannon_s_Exec_h(0x5FC7A0);
 
 static char PInCannon[PLAYER_MAX];
 
-void isPlayerinCannon(taskwk* data)
+void isPlayerinCannon(taskwk* twp)
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		if (playertwp[i] && GetDistance(&data->pos, &playertwp[i]->pos) <= 100.0f)
+		if (playertwp[i] && GetDistance(&twp->pos, &playertwp[i]->pos) <= 100.0f)
 		{
 			PInCannon[i] = 1;
 		}
@@ -21,20 +21,20 @@ void isPlayerinCannon(taskwk* data)
 	}
 }
 
-static void SDSetPlayerPos(taskwk* data)
+static void SDSetPlayerPos(taskwk* twp)
 {
 	for (int i = 0; i < PLAYER_MAX; i++)
 	{
 		if (PInCannon[i])
 		{
-			PositionPlayer(i, data->pos.x, data->pos.y, data->pos.z);
+			PositionPlayer(i, twp->pos.x, twp->pos.y, twp->pos.z);
 		}
 	}
 }
 
-static void SDSetPlayerPosDiff(taskwk* data)
+static void SDSetPlayerPosDiff(taskwk* twp)
 {
-	NJS_VECTOR pos = data->pos;
+	NJS_VECTOR pos = twp->pos;
 	pos.z += 90.0f;
 
 	for (int i = 0; i < PLAYER_MAX; i++)
@@ -62,22 +62,22 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 	int timer = 0;
 	Angle3 ang = { 0 };
 	NJS_VECTOR vector = { 0.0f, 2.5f, 5.0f };
-	auto data = a1->twp;
+	auto twp = a1->twp;
 
-	isPlayerinCannon(data);
+	isPlayerinCannon(twp);
 
-	switch (data->mode)
+	switch (twp->mode)
 	{
 	case 0:
 	case 1:
 		ObjectSkydeck_cannon_s_Exec_h.Original(a1);
-		SDSetPlayerPos(data);
+		SDSetPlayerPos(twp);
 		return;
 	case 2:
-		data->mode++;
-		data->wtimer = 0;
+		twp->mode++;
+		twp->wtimer = 0;
 		PadReadOffP(-1);
-		SDSetPlayerPosDiff(data);
+		SDSetPlayerPosDiff(twp);
 		break;
 	case 3:
 		timer = 10 * 1;
@@ -85,7 +85,7 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 		ang.z = 0;
 		ang.y = (unsigned __int64)NJM_DEG_ANG(njSin((unsigned __int64)NJM_DEG_ANG(timer)) * 70.0f);
 		PadReadOffP(-1);
-		if (data->wtimer <= 0x36u)
+		if (twp->wtimer <= 0x36u)
 		{
 			for (int i = 0; i < PLAYER_MAX; i++)
 			{
@@ -116,15 +116,15 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 				}
 			}
 
-			data->mode++;
-			data->wtimer = 0;
+			twp->mode++;
+			twp->wtimer = 0;
 			PlaySound(184, 0, 0, 0);
 		}
 		break;
 	case 4:
 		PadReadOffP(-1);
 
-		if (data->wtimer == 1)
+		if (twp->wtimer == 1)
 		{
 			for (int i = 0; i < PLAYER_MAX; i++)
 			{
@@ -146,20 +146,20 @@ void ObjectSkydeck_cannon_s_Exec_r(task* a1)
 				}
 			}
 
-			data->value.f = 40.0f;
+			twp->value.f = 40.0f;
 		}
-		else if ((data->cwp->flag & 1) == 0)
+		else if ((twp->cwp->flag & 1) == 0)
 		{
-			data->mode++;
-			data->wtimer = 0;
+			twp->mode++;
+			twp->wtimer = 0;
 			PadReadOnP(0xFFu);
 		}
 		break;
 	case 5:
 	default:
-		if (data->cwp && (data->cwp->flag & 1) && !data->cwp->hit_cwp->id)
+		if (twp->cwp && (twp->cwp->flag & 1) && !twp->cwp->hit_cwp->id)
 		{
-			data->mode = 2;
+			twp->mode = 2;
 			return;
 		}
 		break;

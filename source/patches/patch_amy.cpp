@@ -51,8 +51,8 @@ void __cdecl AmyBird_Main_r(task* obj)
 		return AmyBirdExe_h.Original(obj);
 	}
 
-	auto data = obj->twp;
-	auto pnum = data->smode;
+	auto twp = obj->twp;
+	auto pnum = twp->smode;
 	auto Player = playertwp[pnum];
 
 	if (!Player)
@@ -61,34 +61,34 @@ void __cdecl AmyBird_Main_r(task* obj)
 		return;
 	}
 
-	data->ang.y = BAMS_SubWrap(data->ang.y, 0x8000 - Player->ang.y, 1024);
-	data->ang.x += 16;
-	data->ang.z += 1024;
+	twp->ang.y = BAMS_SubWrap(twp->ang.y, 0x8000 - Player->ang.y, 1024);
+	twp->ang.x += 16;
+	twp->ang.z += 1024;
 
 	NJS_VECTOR dest;
 
-	dest.x = njCos(data->ang.x) * 3.0f + Player->pos.x;
-	dest.y = njSin(data->ang.z) + 12.0f + Player->pos.y;
-	dest.z = njSin(data->ang.x) * 3.0f + Player->pos.z;
+	dest.x = njCos(twp->ang.x) * 3.0f + Player->pos.x;
+	dest.y = njSin(twp->ang.z) + 12.0f + Player->pos.y;
+	dest.z = njSin(twp->ang.x) * 3.0f + Player->pos.z;
 
-	float distance = sqrtf(powf(dest.x - data->pos.x, 2) + powf(dest.y - data->pos.y, 2) + powf(dest.z - data->pos.z, 2));
+	float distance = sqrtf(powf(dest.x - twp->pos.x, 2) + powf(dest.y - twp->pos.y, 2) + powf(dest.z - twp->pos.z, 2));
 
 	if (distance >= 200.0f) {
-		data->pos.x = dest.x;
-		data->pos.y = dest.y;
-		data->pos.z = dest.z;
+		twp->pos.x = dest.x;
+		twp->pos.y = dest.y;
+		twp->pos.z = dest.z;
 	}
 	else
 	{
-		data->pos.x = (dest.x - data->pos.x) * 0.25f + data->pos.x;
-		data->pos.y = (dest.y - data->pos.y) * 0.25f + data->pos.y;
-		data->pos.z = (dest.z - data->pos.z) * 0.25f + data->pos.z;
+		twp->pos.x = (dest.x - twp->pos.x) * 0.25f + twp->pos.x;
+		twp->pos.y = (dest.y - twp->pos.y) * 0.25f + twp->pos.y;
+		twp->pos.z = (dest.z - twp->pos.z) * 0.25f + twp->pos.z;
 	}
 
-	data->counter.f = FrameCounterUnpaused % Birdie_Anim.motion->nbFrame;
+	twp->counter.f = FrameCounterUnpaused % Birdie_Anim.motion->nbFrame;
 	obj->disp(obj);
 
-	DrawShadow((EntityData1*)&data, 0.40000001f);
+	DrawShadow((EntityData1*)&twp, 0.40000001f);
 	LoopTaskC(obj);
 }
 
@@ -97,11 +97,11 @@ void Load_AmyBird_r(task* obj)
 	obj->exec = AmyBird_Main_r;
 	obj->disp = (TaskFuncPtr)0x4C62D0;
 	obj->dest = AmyBird_Del;
-	auto data = obj->twp;
-	auto pnum = data->smode;
-	data->pos = playertwp[pnum]->pos;
-	data->pos.y += 12.0f;
-	data->ang.y = 0x8000 - data->ang.y;
+	auto twp = obj->twp;
+	auto pnum = twp->smode;
+	twp->pos = playertwp[pnum]->pos;
+	twp->pos.y += 12.0f;
+	twp->ang.y = 0x8000 - twp->ang.y;
 }
 
 void __cdecl Init_AmyBird(task* tp)

@@ -82,21 +82,16 @@ static void __cdecl MilesJiggle_r(task* tp)
 	MilesJiggle_h.Original(tp);
 }
 
-void Miles_RunAction_r(playerwk* co2, motionwk2* data2, taskwk* data1)
+void Miles_RunAction_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 {
-	switch (data1->mode)
+	switch (twp->mode)
 	{
 	case 43:
-		KillPlayerInKart(data1, co2, 60, 28);
+		KillPlayerInKart(twp, pwp, 60, 28);
 		break;
 	}
 
-	if (co2) {
-		co2->mj.reqaction = 54;
-		co2->mj.action = 54;
-	}
-
-	Miles_RunActions_h.Original(co2, data2, data1);
+	Miles_RunActions_h.Original(pwp, mwp, twp);
 }
 
 void MilesTalesPrower_r(task* tp)

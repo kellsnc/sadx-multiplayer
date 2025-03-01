@@ -1,11 +1,11 @@
 #pragma once
 
-signed int SetCylinderNextAction(taskwk* data, motionwk2* data2, playerwk* co2);
+signed int SetCylinderNextAction(taskwk* twp, motionwk2* mwp, playerwk* pwp);
 
-void Mode_SDCylinderStd(taskwk* data, playerwk* co2);
-void Mode_SDCylinderDown(taskwk* data, playerwk* co2);
-void Mode_SDCylinderLeft(taskwk* data, playerwk* co2);
-void Mode_SDCylinderRight(taskwk* data, playerwk* co2);
+void Mode_SDCylinderStd(taskwk* twp, playerwk* pwp);
+void Mode_SDCylinderDown(taskwk* twp, playerwk* pwp);
+void Mode_SDCylinderLeft(taskwk* twp, playerwk* pwp);
+void Mode_SDCylinderRight(taskwk* twp, playerwk* pwp);
 
-void Mode_SDCylStdChanges(taskwk* data1, playerwk* co2);
-void Mode_SDCylDownChanges(taskwk* data1, playerwk* co2);
+void Mode_SDCylStdChanges(taskwk* twp, playerwk* pwp);
+void Mode_SDCylDownChanges(taskwk* twp, playerwk* pwp);

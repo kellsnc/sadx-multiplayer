@@ -676,13 +676,13 @@ static inline void CreateCrashSmoke(taskwk* twp, NJS_POINT3* point, Float scl)
 }
 
 static const void* const E102CheckInputPtr = (void*)0x480870;
-static inline int E102CheckInput(playerwk* pwp, taskwk* data, motionwk2* data2)
+static inline int E102CheckInput(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 {
 	int result;
 	__asm
 	{
-		push[data2]
-		mov esi, [data]
+		push[mwp]
+		mov esi, [twp]
 		mov edi, [pwp]
 		call E102CheckInputPtr
 		add esp, 4
@@ -720,13 +720,13 @@ static inline int E102CheckJump(playerwk* a1, taskwk* a2)
 }
 
 static const void* const AmyCheckInputPtr = (void*)0x487810;
-static inline int AmyCheckInput(playerwk* pwp, motionwk2* data2, taskwk* data)
+static inline int AmyCheckInput(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 {
 	int result;
 	__asm
 	{
-		mov esi, [data]
-		mov edi, [data2]
+		mov esi, [twp]
+		mov edi, [mwp]
 		mov ecx, [pwp]
 		call AmyCheckInputPtr
 		mov result, eax

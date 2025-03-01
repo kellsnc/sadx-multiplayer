@@ -9,24 +9,24 @@ FastFunctionHook<void, task*> Egm1_h(0x572010);
 FastFunctionHook<int> EH_PosPlayerCheck_h(0x573310);
 FastFunctionHook<int, taskwk*> EH_GetVsPlayerAng_h(0x573160);
 
-FastUsercallHookPtr<void(*)(task* tp, taskwk* data, bossextwk* egm), noret, rECX, rEAX, rESI> SetEgm1MoveRoute_h(0x5733E0);
+FastUsercallHookPtr<void(*)(task* tp, taskwk* twp, bossextwk* egm), noret, rECX, rEAX, rESI> SetEgm1MoveRoute_h(0x5733E0);
 FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> SetEgm1Ud_h(0x5736D0);
 FastUsercallHookPtr<void(*)(taskwk* twp), noret, rEAX> setEgm1Missile_h(0x573730);
 FastUsercallHookPtr<void(*)(bossextwk* egm, taskwk* twp), noret, rECX, rEAX> SetEgm1AtkRoute_h(0x5735B0);
 
 static const int timeLimit = 400;
 
-void SetEgm1AtkRoute_r(bossextwk* egm, taskwk* data)
+void SetEgm1AtkRoute_r(bossextwk* egm, taskwk* twp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return SetEgm1AtkRoute_h.Original(egm, data);
+		return SetEgm1AtkRoute_h.Original(egm, twp);
 	}
 
 	auto player = playertwp[randomPnum];
 	float diff = 20.0f;
 
-	egm->FlyRoute[0] = data->pos;
+	egm->FlyRoute[0] = twp->pos;
 	egm->FlyRoute[2].x = player->pos.x;
 	egm->FlyRoute[2].y = player->pos.y + 10.0f;
 
@@ -42,16 +42,16 @@ void SetEgm1AtkRoute_r(bossextwk* egm, taskwk* data)
 	SetRouteDelta_0(egm, 4.0f);
 }
 
-void setEgm1Missile_r(taskwk* data)
+void setEgm1Missile_r(taskwk* twp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return setEgm1Missile_h.Original(data);
+		return setEgm1Missile_h.Original(twp);
 	}
 
 	Egm1MissilesPrm egm1Mis;
 
-	egm1Mis.Parent_twp = data;
+	egm1Mis.Parent_twp = twp;
 	egm1Mis.DstPosPtr = &playertwp[randomPnum]->pos;
 	egm1Mis.FireInterval = 14;
 	egm1Mis.HomingInterval = 22;
@@ -67,14 +67,14 @@ void setEgm1Ud_r(task* a1)
 	}
 
 	auto egm = (bossextwk*)a1->awp;
-	auto data = a1->twp;
+	auto twp = a1->twp;
 	egm->UdFrq += 546;
 	egm->UdFrq = 0;
-	data->pos.y = egm->BasePosY - njSin(egm->UdFrq) * 10.0f;
-	data->ang.y = -16384
+	twp->pos.y = egm->BasePosY - njSin(egm->UdFrq) * 10.0f;
+	twp->ang.y = -16384
 		- (unsigned __int64)(atan2(
-			data->pos.z - playertwp[randomPnum]->pos.z,
-			data->pos.x - playertwp[randomPnum]->pos.x)
+			twp->pos.z - playertwp[randomPnum]->pos.z,
+			twp->pos.x - playertwp[randomPnum]->pos.x)
 			* 65536.0f
 			* 0.1591549762031479f);
 }
@@ -92,11 +92,11 @@ int __cdecl EH_GetVsPlayerAng_r(taskwk* a1)
 			* 0.1591549762031479f);
 }
 
-void SetEgm1MoveRoute_r(task* tp, taskwk* data, bossextwk* egm)
+void SetEgm1MoveRoute_r(task* tp, taskwk* twp, bossextwk* egm)
 {
 	if (!multiplayer::IsActive())
 	{
-		return SetEgm1MoveRoute_h.Original(tp, data, egm);
+		return SetEgm1MoveRoute_h.Original(tp, twp, egm);
 	}
 
 	float posZ = 0.0f;
@@ -106,7 +106,7 @@ void SetEgm1MoveRoute_r(task* tp, taskwk* data, bossextwk* egm)
 
 	auto player = playertwp[randomPnum];
 
-	egm->FlyRoute[0] = data->pos;
+	egm->FlyRoute[0] = twp->pos;
 
 	Egm1LocEnum AimArea = egm->AimArea;
 

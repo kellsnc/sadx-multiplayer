@@ -913,14 +913,14 @@ void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 	}
 }
 
-void KillPlayerInKart(taskwk* data, playerwk* co2, char mode, uint16_t anm)
+void KillPlayerInKart(taskwk* twp, playerwk* pwp, char mode, uint16_t anm)
 {
-	if ((data->flag & Status_DoNextAction) != 0)
+	if ((twp->flag & Status_DoNextAction) != 0)
 	{
-		if (data->smode == 50)
+		if (twp->smode == 50)
 		{
-			data->mode = mode;
-			co2->mj.reqaction = anm;
+			twp->mode = mode;
+			pwp->mj.reqaction = anm;
 		}
 	}
 }

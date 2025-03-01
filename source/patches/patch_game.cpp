@@ -5,7 +5,7 @@
 #include "teleport.h"
 
 // Teleport all players in multiplayer mode
-void SetPlayerInitialPosition_AllHack(taskwk* data)
+void SetPlayerInitialPosition_AllHack(taskwk* twp)
 {
 	if (multiplayer::IsActive())
 	{
@@ -13,7 +13,7 @@ void SetPlayerInitialPosition_AllHack(taskwk* data)
 	}
 	else
 	{
-		SetPlayerInitialPosition(data);
+		SetPlayerInitialPosition(twp);
 	}
 }
 
