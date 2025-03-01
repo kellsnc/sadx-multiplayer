@@ -7,6 +7,7 @@ FastFunctionHook<void, task*> Ring_h(0x450370);
 FastFunctionHook<void, task*> ObjectTPRing_h(0x61F4A0);
 FastFunctionHook<void, task*> Tobitiri_h(0x44FD10);
 FastUsercallHookPtr<Bool(*)(taskwk* twp), rEAX, rEDI> PlayerVacumedRing_h(0x44FA90);
+FastFunctionHook<void, char> DamegeRingScatter_h(DamegeRingScatter);
 
 bool GrabRingMulti(taskwk* twp, task* tp)
 {
@@ -176,12 +177,52 @@ static Bool PlayerVacumedRing_r(taskwk* twp)
 	}
 }
 
+void DamegeRingScatter_r(char pno)
+{
+	if (multiplayer::IsActive())
+	{
+		auto rings = GetNumRingM(pno);
+
+		if (rings > 0)
+		{
+			ResetNumRingP(pno);
+
+			for (int i = 0; i < min(20, rings); ++i)
+			{
+				auto tp = CreateElementalTask(LoadObj_UnknownB | LoadObj_Data1, 2, (TaskFuncPtr)0x44FD10);
+				tp->twp->pos = playertwp[pno]->pos;
+				tp->twp->ang.y = NJM_DEG_ANG(((double)(i * 350.0) / (double)rings) + (njRandom() * 360.0));
+			}
+
+			dsPlay_oneshot(0, 0, 0, 0);
+		}
+		else
+		{
+			KillHimP(pno);
+
+			if (TASKWK_CHARID(playertwp[pno]) == Characters_Gamma)
+			{
+				dsPlay_oneshot(1431, 0, 0, 0);
+			}
+			else
+			{
+				dsPlay_oneshot(23, 0, 0, 0);
+			}
+		}
+	}
+	else
+	{
+		return DamegeRingScatter_h.Original(pno);
+	}
+}
+
 void patch_ring_init()
 {
 	Ring_h.Hook(Ring_r);
 	ObjectTPRing_h.Hook(ObjectTPRing_r);
 	Tobitiri_h.Hook(Tobitiri_r);
 	PlayerVacumedRing_h.Hook(PlayerVacumedRing_r);
+	DamegeRingScatter_h.Hook(DamegeRingScatter_r);
 }
 
 RegisterPatch patch_ring(patch_ring_init);

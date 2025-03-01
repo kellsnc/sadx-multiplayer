@@ -159,20 +159,24 @@ static taskwk* __cdecl SonicCheckLSSTargetEnemy_r(taskwk* twp, playerwk* pwp)
 	}
 }
 
+// Not yet supported in multiplayer
 static void __cdecl SonicDirectAhead_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
 	SonicDirectAhead_h.Original(tp);
 }
 
+// Not yet supported in multiplayer
 static void __cdecl SonicJiggle_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 

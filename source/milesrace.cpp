@@ -2,6 +2,7 @@
 #include "multiplayer.h"
 #include "milesrace.h"
 #include "splitscreen.h"
+#include "result.h"
 
 /*
 
@@ -14,6 +15,7 @@ used for drawing since the camera runs in slot 0)
 */
 
 FastFunctionHook<void, task*> late_DispMilesMeter2P_h(0x47C260);
+FastFunctionHook<int> GetMRaceResult_h(0x47C470);
 
 DataPointer(float, AnalogRatio_High, 0x3C539E8);
 DataArray(int, AnalogTbl, 0x7E4AC4, 4);
@@ -803,8 +805,19 @@ void Set_NPC_Sonic_m(int num)
 	}
 }
 
+int GetMRaceResult_r()
+{
+	if (multiplayer::IsBattleMode())
+	{
+		return GetWinnerMulti() == TASKWK_PLAYERID(gpCharTwp);
+	}
+
+	return GetMRaceResult_h.Original();
+}
+
 void InitMilesRace()
 {
 	WriteCall((void*)0x47D9B6, LoadMoble2PControl); // patch task level for eggman ai
 	late_DispMilesMeter2P_h.Hook(late_DispMilesMeter2P_r);
+	GetMRaceResult_h.Hook(GetMRaceResult_r); //fix wrong victory pose for Tails.
 }

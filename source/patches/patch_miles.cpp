@@ -46,30 +46,36 @@ static Bool Miles_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 	return Miles_CheckInput_h.Original(twp, pwp, mwp);
 }
 
+// Not yet supported in multiplayer
 static void __cdecl MilesDirectAhead2_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
 	MilesDirectAhead2_h.Original(tp);
 }
 
+// Not yet supported in multiplayer
 static void __cdecl MilesDirectAhead_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
 	MilesDirectAhead_h.Original(tp);
 }
 
+// Not yet supported in multiplayer
 static void __cdecl MilesJiggle_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
@@ -83,6 +89,11 @@ void Miles_RunAction_r(playerwk* co2, motionwk2* data2, taskwk* data1)
 	case 43:
 		KillPlayerInKart(data1, co2, 60, 28);
 		break;
+	}
+
+	if (co2) {
+		co2->mj.reqaction = 54;
+		co2->mj.action = 54;
 	}
 
 	Miles_RunActions_h.Original(co2, data2, data1);

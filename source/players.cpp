@@ -41,9 +41,7 @@ DataPointer(ADVPOS**, vInitialPositionMR_Ptr, 0x5307AE);
 DataPointer(ADVPOS**, vInitialPositionPast_Ptr, 0x54219E);
 
 FastFunctionHook<void, taskwk*> SetPlayerInitialPosition_h(0x414810);
-FastFunctionHook<void, char> DamegeRingScatter_h(DamegeRingScatter);
 FastFunctionHook<void> SetPlayer_h(SetPlayer);
-FastFunctionHook<Bool, taskwk*> isInDeathZone_h((intptr_t)IsInDeathZone_);
 
 VariableHook<int16_t, 0x3B0F0E4> ssNumRing_m;
 VariableHook<int8_t, 0x3B0EF34> scNumPlayer_m;
@@ -55,7 +53,6 @@ static bool isCharSel = false;
 static int characters[PLAYER_MAX] = { -1, -1, -1, -1 };
 
 static constexpr uint16_t FLAG_MASK = Status_Ball | Status_Attack | Status_LightDash;
-FastFunctionHook<int> GetRaceWinnerPlayer_h(GetRaceWinnerPlayer);
 
 TaskFuncPtr charfuncs[] = {
 	SonicTheHedgehog,
@@ -298,55 +295,105 @@ void SetPlayerInitialPosition_r(taskwk* twp)
 	}
 }
 
-void DamegeRingScatter_r(char pno)
+void ResetCharactersArray()
 {
-	if (multiplayer::IsActive())
+	for (int i = 0; i < PLAYER_MAX; i++)
 	{
-		auto rings = GetNumRingM(pno);
-
-		if (rings > 0)
-		{
-			ResetNumRingP(pno);
-
-			for (int i = 0; i < min(20, rings); ++i)
-			{
-				auto tp = CreateElementalTask(LoadObj_UnknownB | LoadObj_Data1, 2, (TaskFuncPtr)0x44FD10);
-				tp->twp->pos = playertwp[pno]->pos;
-				tp->twp->ang.y = NJM_DEG_ANG(((double)(i * 350.0) / (double)rings) + (njRandom() * 360.0));
-			}
-
-			dsPlay_oneshot(0, 0, 0, 0);
-		}
-		else
-		{
-			KillHimP(pno);
-
-			if (TASKWK_CHARID(playertwp[pno]) == Characters_Gamma)
-			{
-				dsPlay_oneshot(1431, 0, 0, 0);
-			}
-			else
-			{
-				dsPlay_oneshot(23, 0, 0, 0);
-			}
-		}
-	}
-	else
-	{
-		return DamegeRingScatter_h.Original(pno);
+		characters[i] = -1;
 	}
 }
 
-// Remove ability to be hurt by players
-void RemovePlayersDamage(taskwk* twp)
+void SetCurrentCharacter(int pnum, Characters character)
 {
-	if (twp && twp->cwp)
+	characters[pnum] = character;
+}
+
+int GetCurrentCharacter(int pnum)
+{
+	return characters[pnum];
+}
+
+task* LoadPlayerTask(int pnum, int character)
+{
+	task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
+	TASKWK_CHARID(tp->twp) = character;
+	TASKWK_PLAYERID(tp->twp) = pnum;
+	playertwp[pnum] = tp->twp;
+	playermwp[pnum] = (motionwk2*)tp->mwp;
+	return tp;
+}
+
+void SetOtherPlayers()
+{
+	if (!multiplayer::IsActive())
 	{
-		for (int i = 0; i < twp->cwp->nbInfo; i++)
+		return;
+	}
+		
+	int count = 0;
+	for (int i = 1; i < PLAYER_MAX; i++)
+	{
+		int playernum = characters[i];
+
+		if (playernum >= 0)
 		{
-			twp->cwp->info[i].damage &= ~0x20u;
+			if (++count >= multiplayer::GetPlayerCount())
+				break;
+
+			if (!playertwp[i])
+			{
+				if (LoadPlayerTask(i, playernum))
+				{
+					TeleportPlayerArea(i, &playertwp[0]->pos, 5.0f);
+					playertwp[i]->ang = playertwp[0]->ang;
+				}
+			}
 		}
 	}
+}
+
+void SetPlayer_r()
+{
+	if (multiplayer::IsActive())
+	{
+		LoadPlayerTask(0, characters[0] < 0 ? CurrentCharacter : characters[0]);
+		SetOtherPlayers();
+
+		// Load game mechanics:
+		switch (CurrentCharacter)
+		{
+		case Characters_Tails:
+			if (multiplayer::IsCoopMode())
+			{
+				Set_NPC_Sonic_m(NPC_PNUM); // load opponent into slot 7
+			}
+			break;
+		case Characters_Knuckles:
+			if (!EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
+			{
+				CreateElementalTask(2u, 6, Knuckles_KakeraGame);
+			}
+			break;
+		case Characters_Big:
+			if (isCharSel)
+				CreateElementalTask(2u, 6, BigDisplayStatus);
+			break;
+		}
+
+		CreateIndicatorP();
+		SetWinnerMulti(-1);
+		TeleportPlayersToStart();
+	}
+	else
+	{
+		return SetPlayer_h.Original();
+	}
+}
+
+void InitScore_r()
+{
+	ResetNumRingM();
+	slJudge = 0;
 }
 
 #ifdef MULTI_NETPLAY
@@ -547,157 +594,18 @@ void UpdatePlayersInfo()
 #endif
 }
 
-void ResetCharactersArray()
-{
-	for (int i = 0; i < PLAYER_MAX; i++)
-	{
-		characters[i] = -1;
-	}
-}
-
-void SetCurrentCharacter(int pnum, Characters character)
-{
-	characters[pnum] = character;
-}
-
-int GetCurrentCharacter(int pnum)
-{
-	return characters[pnum];
-}
-
-task* LoadPlayerTask(int pnum, int character)
-{
-	task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
-	TASKWK_CHARID(tp->twp) = character;
-	TASKWK_PLAYERID(tp->twp) = pnum;
-	playertwp[pnum] = tp->twp;
-	playermwp[pnum] = (motionwk2*)tp->mwp;
-	return tp;
-}
-
-void SetOtherPlayers()
-{
-	if (!multiplayer::IsActive())
-	{
-		return;
-	}
-		
-	int count = 0;
-	for (int i = 1; i < PLAYER_MAX; i++)
-	{
-		int playernum = characters[i];
-
-		if (playernum >= 0)
-		{
-			if (++count >= multiplayer::GetPlayerCount())
-				break;
-
-			if (!playertwp[i])
-			{
-				if (LoadPlayerTask(i, playernum))
-				{
-					TeleportPlayerArea(i, &playertwp[0]->pos, 5.0f);
-					playertwp[i]->ang = playertwp[0]->ang;
-				}
-			}
-		}
-	}
-}
-
-void SetPlayer_r()
-{
-	if (multiplayer::IsActive())
-	{
-		LoadPlayerTask(0, characters[0] < 0 ? CurrentCharacter : characters[0]);
-		SetOtherPlayers();
-
-		// Load game mechanics:
-		switch (CurrentCharacter)
-		{
-		case Characters_Tails:
-			if (multiplayer::IsCoopMode())
-			{
-				Set_NPC_Sonic_m(NPC_PNUM); // load opponent into slot 7
-			}
-			break;
-		case Characters_Knuckles:
-			if (!EV_CheckCansel() && (ulGlobalMode == 4 || ulGlobalMode == 10 || ulGlobalMode == 9))
-			{
-				CreateElementalTask(2u, 6, Knuckles_KakeraGame);
-			}
-			break;
-		case Characters_Big:
-			if (isCharSel)
-				CreateElementalTask(2u, 6, BigDisplayStatus);
-			break;
-		}
-
-		CreateIndicatorP();
-		SetWinnerMulti(-1);
-		TeleportPlayersToStart();
-	}
-	else
-	{
-		return SetPlayer_h.Original();
-	}
-}
-
-void InitScore_r()
-{
-	ResetNumRingM();
-	slJudge = 0;
-}
-
-int GetRaceWinnerPlayer_r()
-{
-	if (multiplayer::IsCoopMode())
-	{
-		for (int i = 1; i < PLAYER_MAX; i++)
-		{
-			if (playertwp[i] && (TASKWK_CHARID(playertwp[i]) == Characters_Tails))
-				return 1;
-		}
-	}
-
-	return GetRaceWinnerPlayer_h.Original();
-}
-
-Bool isInDeathZone_r(taskwk* a1)
-{
-	if (multiplayer::IsCoopMode() && CurrentCharacter != Characters_Knuckles)
-	{
-		return 0;
-	}
-
-	return isInDeathZone_h.Original(a1);
-}
-
-bool DeleteJiggle(task* tp)
-{
-	if (multiplayer::IsActive() && !EV_MainThread_ptr)
-	{
-		FreeTask(tp);
-		return true;
-	}
-
-	return false;
-}
-
 void InitPlayerPatches()
 {
 	isCharSel = GetModuleHandle(L"SADXCharSel") != nullptr;
 
 	SetPlayerInitialPosition_h.Hook(SetPlayerInitialPosition_r);
-	DamegeRingScatter_h.Hook(DamegeRingScatter_r);
 	SetPlayer_h.Hook(SetPlayer_r);
-	isInDeathZone_h.Hook(isInDeathZone_r);
 
 	WriteJump(ResetNumPlayer, ResetNumPlayerM);
 	WriteJump(ResetNumRing, ResetNumRingM);
 	WriteJump(InitActionScore, ResetEnemyScoreM);
 	WriteJump(InitScore, InitScore_r);
-	GetRaceWinnerPlayer_h.Hook(GetRaceWinnerPlayer_r); //fix wrong victory pose for Tails.
-
+	
 #ifdef MULTI_NETPLAY
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_LOCATION, PlayerListener);
 	netplay.RegisterListener(Netplay::PACKET_PLAYER_MODE, PlayerListener);

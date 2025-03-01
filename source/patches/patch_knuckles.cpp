@@ -17,6 +17,7 @@ FastFunctionHook<void, task*> KnuxEyeTracker_h(0x475260);
 FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), rEAX, rESI, rEDI, stack4> Knux_CheckInput_h(0x476970);
 FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> Knux_RunsActions_h(Knux_RunsActions);
 FastFunctionHook<void, task*> KnucklesTheEchidna_h((intptr_t)Knuckles_Main);
+FastFunctionHook<Bool, taskwk*> KnucklesCheckOutFDPolygon_h(0x4751B0);
 
 static void __cdecl dispKnuEffectChargeScl_m(task* tp)
 {
@@ -297,20 +298,24 @@ void __cdecl KnucklesChargeEffectExe_r(task* tp)
 	}
 }
 
+// Not yet supported in multiplayer
 static void __cdecl KnuxEyeTracker_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
 	KnuxEyeTracker_h.Original(tp);
 }
 
+// Not yet supported in multiplayer
 static void __cdecl KnucklesJiggle_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
@@ -461,7 +466,10 @@ void KnucklesTheEchidna_m(task* tp)
 	switch (twp->mode)
 	{
 	case SDCannonMode:
-		CannonModePhysics(twp, mwp, pwp);
+		PGetGravity(twp, mwp, pwp);
+		PGetSpeed(twp, mwp, pwp);
+		PSetPosition(twp, mwp, pwp);
+		PResetPosition(twp, mwp, pwp);
 		break;
 	case SDCylStd:
 		Mode_SDCylinderStd(twp, pwp);
@@ -495,6 +503,19 @@ void __cdecl KnucklesTheEchidna_r(task* tp)
 	}
 }
 
+// Knuckles has code to prevent gliding outside of the level area
+// It does so by checking if Knuckles is above death planes
+// We need to disable this behavior outside of Knuckles stages
+Bool KnucklesCheckOutFDPolygon_r(taskwk* a1)
+{
+	if (multiplayer::IsActive() && CurrentCharacter != Characters_Knuckles)
+	{
+		return 0;
+	}
+
+	return KnucklesCheckOutFDPolygon_h.Original(a1);
+}
+
 void patch_knuckles_init()
 {
 	KnuEffectPutCharge0_h.Hook(KnuEffectPutCharge0_r);
@@ -507,6 +528,7 @@ void patch_knuckles_init()
 	Knux_CheckInput_h.Hook(Knux_CheckInput_r);
 	Knux_RunsActions_h.Hook(Knux_RunsActions_r);
 	KnucklesTheEchidna_h.Hook(KnucklesTheEchidna_r);
+	KnucklesCheckOutFDPolygon_h.Hook(KnucklesCheckOutFDPolygon_r);
 }
 
 RegisterPatch patch_knuckles(patch_knuckles_init);

@@ -121,30 +121,36 @@ void __cdecl Init_AmyBird(task* tp)
 	}
 }
 
+// Not yet supported in multiplayer
 static void __cdecl AmyEyeTracker_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
 	AmyEyeTracker_h.Original(tp);
 }
 
+// Not yet supported in multiplayer
 static void __cdecl AmyJiggle_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
 	AmyJiggle_h.Original(tp);
 }
 
+// Not yet supported in multiplayer
 static void __cdecl AmySkirtShape_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
@@ -310,7 +316,10 @@ void AmyRose_m(task* tp)
 	switch (twp->mode)
 	{
 	case SDCannonMode:
-		CannonModePhysics(twp, mwp, pwp);
+		PGetGravity(twp, mwp, pwp);
+		PGetSpeed(twp, mwp, pwp);
+		PSetPosition(twp, mwp, pwp);
+		PResetPosition(twp, mwp, pwp);
 		break;
 	case SDCylStd:
 		Mode_SDCylinderStd(twp, pwp);

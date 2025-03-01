@@ -18,20 +18,24 @@ FastFunctionHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp)> bigActM
 FastFunctionHook<void> sub_48CDE0_h(0x48CDE0);
 FastFunctionHook<void> sub_48CE10_h(0x48CE10);
 
+// Not yet supported in multiplayer
 void __cdecl BigEyeTracker_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
 	BigEyeTracker_h.Original(tp);
 }
 
+// Not yet supported in multiplayer
 void __cdecl Big_Jiggle_r(task* tp)
 {
-	if (DeleteJiggle(tp))
+	if (multiplayer::IsActive() && !canselEvent)
 	{
+		FreeTask(tp);
 		return;
 	}
 
@@ -236,7 +240,10 @@ void BigTheCat_m(task* tp)
 	switch (twp->mode)
 	{
 	case SDCannonMode:
-		CannonModePhysics(twp, mwp, pwp);
+		PGetGravity(twp, mwp, pwp);
+		PGetSpeed(twp, mwp, pwp);
+		PSetPosition(twp, mwp, pwp);
+		PResetPosition(twp, mwp, pwp);
 		break;
 	case SDCylStd:
 		Mode_SDCylinderStd(twp, pwp);

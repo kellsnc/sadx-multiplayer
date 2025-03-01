@@ -201,14 +201,6 @@ void __cdecl SDIntroPatch3(Uint8 charIndex, float spd, NJS_VECTOR* a3)
 	return SetParabolicMotionP(charIndex, spd, a3);
 }
 
-void CannonModePhysics(taskwk* data, motionwk2* data2, playerwk* co2)
-{
-	PGetGravity(data, data2, co2);
-	PGetSpeed(data, data2, co2);
-	PSetPosition(data, data2, co2);
-	PResetPosition(data, data2, co2);
-}
-
 void patch_sky_cannon_s_init()
 {
 	ObjectSkydeck_cannon_s_Exec_h.Hook(ObjectSkydeck_cannon_s_Exec_r);
