@@ -5,6 +5,7 @@
 #include "patch_e_cart.h"
 #include "result.h"
 #include "collision.h"
+#include "patch_player.h"
 #include "patch_o_sky_cyl_cmn.h"
 
 FastFunctionHook<void> KnuEffectPutCharge0_h(0x4C2210);
@@ -339,7 +340,7 @@ Bool Knux_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 		case PL_OP_PARABOLIC:
 			if (CurrentLevel != LevelIDs_Casinopolis)
 			{
-				twp->mode = SDCannonMode;
+				twp->mode = MD_MULTI_PARA;
 				pwp->mj.reqaction = 19;
 				return TRUE;
 			}
@@ -381,7 +382,7 @@ void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 				pwp->mj.reqaction = 27;
 			}
 			break;
-		case SDCannonMode:
+		case MD_MULTI_PARA:
 			if (!KnucklesCheckInput(twp, mwp, pwp) && (twp->flag & 3) != 0)
 			{
 				if (PCheckBreak(twp) && pwp->spd.x > 0.0f)
@@ -398,16 +399,16 @@ void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 				pwp->mj.reqaction = 2;
 			}
 			return;
-		case SDCylStd:
+		case MD_MULTI_S6A1_WAIT:
 			if (KnucklesCheckInput(twp, mwp, pwp) || KnucklesCheckJump(twp, pwp))
 			{
 				pwp->htp = 0;
 				return;
 			}
 
-			Mode_SDCylStdChanges(twp, pwp);
+			Mode_MD_MULTI_S6A1_WAITChanges(twp, pwp);
 			return;
-		case SDCylDown:
+		case MD_MULTI_S6A1_SLID:
 
 			if (KnucklesCheckInput(twp, mwp, pwp) || KnucklesCheckJump(twp, pwp))
 			{
@@ -415,10 +416,10 @@ void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 				return;
 			}
 
-			Mode_SDCylDownChanges(twp, pwp);
+			Mode_MD_MULTI_S6A1_SLIDChanges(twp, pwp);
 
 			return;
-		case SDCylLeft:
+		case MD_MULTI_S6A1_LROT:
 			if (KnucklesCheckInput(twp, mwp, pwp) || KnucklesCheckJump(twp, pwp))
 			{
 				pwp->htp = 0;
@@ -427,17 +428,17 @@ void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 
 			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 <= -3072)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
 
 				return;
 			}
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 
 			return;
-		case SDCylRight:
+		case MD_MULTI_S6A1_RROT:
 			if (KnucklesCheckInput(twp, mwp, pwp) || KnucklesCheckJump(twp, pwp))
 			{
 				pwp->htp = 0;
@@ -446,14 +447,14 @@ void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 
 			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 >= 3072)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
 				return;
 			}
 
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 			return;
 		}
 	}
@@ -469,22 +470,22 @@ void KnucklesTheEchidna_m(task* tp)
 
 	switch (twp->mode)
 	{
-	case SDCannonMode:
+	case MD_MULTI_PARA:
 		PGetGravity(twp, mwp, pwp);
 		PGetSpeed(twp, mwp, pwp);
 		PSetPosition(twp, mwp, pwp);
 		PResetPosition(twp, mwp, pwp);
 		break;
-	case SDCylStd:
+	case MD_MULTI_S6A1_WAIT:
 		Mode_SDCylinderStd(twp, pwp);
 		break;
-	case SDCylDown:
+	case MD_MULTI_S6A1_SLID:
 		Mode_SDCylinderDown(twp, pwp);
 		break;
-	case SDCylLeft:
+	case MD_MULTI_S6A1_LROT:
 		Mode_SDCylinderLeft(twp, pwp);
 		break;
-	case SDCylRight:
+	case MD_MULTI_S6A1_RROT:
 		Mode_SDCylinderRight(twp, pwp);
 		break;
 	}

@@ -4,6 +4,7 @@
 #include "gravity.h"
 #include "patch_e_cart.h"
 #include "result.h"
+#include "patch_player.h"
 #include "patch_o_sky_cyl_cmn.h"
 
 FastUsercallHookPtr<Bool(*)(playerwk* pwp, motionwk2* mwp, taskwk* twp), rEAX, rECX, rEDI, rESI> Amy_CheckInput_h(0x487810);
@@ -194,7 +195,7 @@ Bool Amy_CheckInput_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 		case PL_OP_PARABOLIC:
 			if (CurrentLevel != LevelIDs_Casinopolis)
 			{
-				twp->mode = SDCannonMode;
+				twp->mode = MD_MULTI_PARA;
 				pwp->mj.reqaction = 18; //falling
 				return TRUE;
 			}
@@ -231,7 +232,7 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 				pwp->mj.reqaction = 26;
 			}
 			break;
-		case SDCannonMode:
+		case MD_MULTI_PARA:
 			if (!AmyCheckInput(pwp, mwp, twp) && (twp->flag & 3) != 0)
 			{
 				if (PCheckBreak(twp) && pwp->spd.x > 0.0f)
@@ -248,16 +249,16 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 				pwp->mj.reqaction = 2;
 			}
 			return;
-		case SDCylStd:
+		case MD_MULTI_S6A1_WAIT:
 			if (AmyCheckInput(pwp, mwp, twp) || AmyCheckJump(pwp, twp, mwp))
 			{
 				pwp->htp = 0;
 				return;
 			}
 
-			Mode_SDCylStdChanges(twp, pwp);
+			Mode_MD_MULTI_S6A1_WAITChanges(twp, pwp);
 			return;
-		case SDCylDown:
+		case MD_MULTI_S6A1_SLID:
 
 			if (AmyCheckInput(pwp, mwp, twp) || AmyCheckJump(pwp, twp, mwp))
 			{
@@ -265,10 +266,10 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 				return;
 			}
 
-			Mode_SDCylDownChanges(twp, pwp);
+			Mode_MD_MULTI_S6A1_SLIDChanges(twp, pwp);
 
 			return;
-		case SDCylLeft:
+		case MD_MULTI_S6A1_LROT:
 			if (AmyCheckInput(pwp, mwp, twp) || AmyCheckJump(pwp, twp, mwp))
 			{
 				pwp->htp = 0;
@@ -277,17 +278,17 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 
 			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 <= -3072)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
 
 				return;
 			}
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 
 			return;
-		case SDCylRight:
+		case MD_MULTI_S6A1_RROT:
 			if (AmyCheckInput(pwp, mwp, twp) || AmyCheckJump(pwp, twp, mwp))
 			{
 				pwp->htp = 0;
@@ -296,14 +297,14 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 
 			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 >= 3072)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
 				return;
 			}
 
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 			return;
 		}
 	}
@@ -319,22 +320,22 @@ void AmyRose_m(task* tp)
 
 	switch (twp->mode)
 	{
-	case SDCannonMode:
+	case MD_MULTI_PARA:
 		PGetGravity(twp, mwp, pwp);
 		PGetSpeed(twp, mwp, pwp);
 		PSetPosition(twp, mwp, pwp);
 		PResetPosition(twp, mwp, pwp);
 		break;
-	case SDCylStd:
+	case MD_MULTI_S6A1_WAIT:
 		Mode_SDCylinderStd(twp, pwp);
 		break;
-	case SDCylDown:
+	case MD_MULTI_S6A1_SLID:
 		Mode_SDCylinderDown(twp, pwp);
 		break;
-	case SDCylLeft:
+	case MD_MULTI_S6A1_LROT:
 		Mode_SDCylinderLeft(twp, pwp);
 		break;
-	case SDCylRight:
+	case MD_MULTI_S6A1_RROT:
 		Mode_SDCylinderRight(twp, pwp);
 		break;
 	}

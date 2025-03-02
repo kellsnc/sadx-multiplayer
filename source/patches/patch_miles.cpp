@@ -3,6 +3,7 @@
 #include "FastFunctionHook.hpp"
 #include "gravity.h"
 #include "result.h"
+#include "patch_player.h"
 #include "patch_e_cart.h"
 
 FastFunctionHook<void, task*> MilesJiggle_h((intptr_t)Tails_Jiggle_Main);

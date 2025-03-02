@@ -789,6 +789,9 @@
     <ClInclude Include="hud_itembox.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
+    <ClInclude Include="patches\patch_player.h">
+      <Filter>Header Files\patches\figure</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -883,6 +886,9 @@
     </Filter>
     <Filter Include="Source Files\patches\adv03_past">
       <UniqueIdentifier>{92ca4548-7960-4041-8983-19cff790795d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\patches\figure">
+      <UniqueIdentifier>{6c44c21e-4233-448c-87fc-b8429478c58f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

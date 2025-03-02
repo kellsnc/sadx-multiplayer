@@ -7,6 +7,7 @@
 #include "gravity.h"
 #include "patch_e_cart.h"
 #include "result.h"
+#include "patch_player.h"
 #include "patch_o_sky_cyl_cmn.h"
 
 DataPointer(NJS_MATRIX, head_matrix, 0x3C53AD8); // static to E102.c
@@ -89,7 +90,7 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 				pwp->mj.reqaction = 69;
 			}
 			break;
-		case SDCannonMode:
+		case MD_MULTI_PARA:
 			if (!E102CheckInput(pwp, twp, mwp) && (twp->flag & 3) != 0)
 			{
 				if (PCheckBreak(twp) && pwp->spd.x > 0.0f)
@@ -106,16 +107,16 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 				pwp->mj.reqaction = 2;
 			}
 			return;
-		case SDCylStd:
+		case MD_MULTI_S6A1_WAIT:
 			if (E102CheckInput(pwp, twp, mwp) || E102CheckJump(pwp, twp))
 			{
 				pwp->htp = 0;
 				return;
 			}
 
-			Mode_SDCylStdChanges(twp, pwp);
+			Mode_MD_MULTI_S6A1_WAITChanges(twp, pwp);
 			return;
-		case SDCylDown:
+		case MD_MULTI_S6A1_SLID:
 
 			if (E102CheckInput(pwp, twp, mwp) || E102CheckJump(pwp, twp))
 			{
@@ -123,10 +124,10 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 				return;
 			}
 
-			Mode_SDCylDownChanges(twp, pwp);
+			Mode_MD_MULTI_S6A1_SLIDChanges(twp, pwp);
 
 			return;
-		case SDCylLeft:
+		case MD_MULTI_S6A1_LROT:
 			if (E102CheckInput(pwp, twp, mwp) || E102CheckJump(pwp, twp))
 			{
 				pwp->htp = 0;
@@ -135,7 +136,7 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 
 			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 <= -3072)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
@@ -143,9 +144,9 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 				return;
 			}
 
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 			return;
-		case SDCylRight:
+		case MD_MULTI_S6A1_RROT:
 			if (E102CheckInput(pwp, twp, mwp) || E102CheckJump(pwp, twp))
 			{
 				pwp->htp = 0;
@@ -154,14 +155,14 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 
 			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 >= 3072)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
 				return;
 			}
 
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 			return;
 		}
 	}
@@ -186,7 +187,7 @@ signed int E102_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 		case PL_OP_PARABOLIC:
 			if (CurrentLevel != LevelIDs_Casinopolis)
 			{
-				twp->mode = SDCannonMode;
+				twp->mode = MD_MULTI_PARA;
 				pwp->mj.reqaction = 7;
 				return TRUE;
 			}

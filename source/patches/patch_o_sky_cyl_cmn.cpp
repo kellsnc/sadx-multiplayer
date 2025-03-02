@@ -2,13 +2,15 @@
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
 #include "sadx_utils.h"
+#include "patch_player.h"
+#include "patch_o_sky_cyl_cmn.h"
 
 UsercallFunc(Bool, sub_5EDD60, (task* tp, Sint32 pnum), (tp, pnum), 0x5EDD60, rEAX, rEAX, stack4);
 FastFunctionHook<void, task*, Angle> dsHangPoleCom_h(0x5EDDE0);
 
 signed int SetCylinderNextAction(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
-	if (twp->mode >= SDCylStd && twp->mode <= SDCylRight)
+	if (twp->mode >= MD_MULTI_S6A1_WAIT && twp->mode <= MD_MULTI_S6A1_RROT)
 	{
 		twp->smode = 0;
 		return 0;
@@ -17,11 +19,11 @@ signed int SetCylinderNextAction(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	{
 		if (pwp->htp->twp->pos.y + pwp->htp->twp->cwp->info->center.y - pwp->htp->twp->cwp->info->b >= twp->pos.y)
 		{
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 		}
 		else
 		{
-			twp->mode = SDCylDown;
+			twp->mode = MD_MULTI_S6A1_SLID;
 		}
 
 		PClearSpeed(mwp, pwp);
@@ -101,9 +103,9 @@ void Mode_SDCylinderRight(taskwk* twp, playerwk* pwp)
 }
 
 //Functions used in character run actions (chk_mode)
-void Mode_SDCylStdChanges(taskwk* twp, playerwk* pwp)
+void Mode_MD_MULTI_S6A1_WAITChanges(taskwk* twp, playerwk* pwp)
 {
-	if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+	if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 	{
 		pwp->htp = 0;
 		return;
@@ -118,17 +120,17 @@ void Mode_SDCylStdChanges(taskwk* twp, playerwk* pwp)
 
 	if (controllerAng >= -3072)
 	{
-		twp->mode = SDCylRight;
+		twp->mode = MD_MULTI_S6A1_RROT;
 	}
 	else if (controllerAng <= 3072)
 	{
-		twp->mode = SDCylLeft;
+		twp->mode = MD_MULTI_S6A1_LROT;
 	}
 
 	return;
 }
 
-void Mode_SDCylDownChanges(taskwk* twp, playerwk* pwp)
+void Mode_MD_MULTI_S6A1_SLIDChanges(taskwk* twp, playerwk* pwp)
 {
 	auto htpTsk = pwp->htp;
 
@@ -151,14 +153,14 @@ void Mode_SDCylDownChanges(taskwk* twp, playerwk* pwp)
 
 			if (math < twp->pos.y)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
 			}
 			else
 			{
-				twp->mode = SDCylStd;
+				twp->mode = MD_MULTI_S6A1_WAIT;
 			}
 		}
 	}

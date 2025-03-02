@@ -7,6 +7,7 @@
 #include "fishing.h"
 #include "patch_e_cart.h"
 #include "result.h"
+#include "patch_player.h"
 #include "patch_o_sky_cyl_cmn.h"
 
 FastFunctionHook<void, task*> BigTheCat_h((intptr_t)Big_Main);
@@ -167,16 +168,16 @@ void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 				pwp->mj.reqaction = 99;
 			}
 			break;
-		case SDCylStd:
+		case MD_MULTI_S6A1_WAIT:
 			if (BigCheckInput(pwp, twp, mwp) || BigCheckJump(pwp, twp))
 			{
 				pwp->htp = 0;
 				break;
 			}
 
-			Mode_SDCylStdChanges(twp, pwp);
+			Mode_MD_MULTI_S6A1_WAITChanges(twp, pwp);
 			return;
-		case SDCylDown:
+		case MD_MULTI_S6A1_SLID:
 
 			if (BigCheckInput(pwp, twp, mwp) || BigCheckJump(pwp, twp))
 			{
@@ -184,10 +185,10 @@ void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 				break;
 			}
 
-			Mode_SDCylDownChanges(twp, pwp);
+			Mode_MD_MULTI_S6A1_SLIDChanges(twp, pwp);
 
 			return;
-		case SDCylLeft:
+		case MD_MULTI_S6A1_LROT:
 			if (BigCheckInput(pwp, twp, mwp) || BigCheckJump(pwp, twp))
 			{
 				pwp->htp = 0;
@@ -196,17 +197,17 @@ void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 
 			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 <= -3072)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
 
 				return;
 			}
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 
 			return;
-		case SDCylRight:
+		case MD_MULTI_S6A1_RROT:
 			if (BigCheckInput(pwp, twp, mwp) || BigCheckJump(pwp, twp))
 			{
 				pwp->htp = 0;
@@ -215,14 +216,14 @@ void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 
 			if (Controllers[TASKWK_PLAYERID(twp)].LeftStickX << 8 >= 3072)
 			{
-				if (twp->mode < SDCylStd || twp->mode > SDCylRight)
+				if (twp->mode < MD_MULTI_S6A1_WAIT || twp->mode > MD_MULTI_S6A1_RROT)
 				{
 					pwp->htp = 0;
 				}
 				return;
 			}
 
-			twp->mode = SDCylStd;
+			twp->mode = MD_MULTI_S6A1_WAIT;
 			return;
 		}
 	}
@@ -243,22 +244,22 @@ void BigTheCat_m(task* tp)
 
 	switch (twp->mode)
 	{
-	case SDCannonMode:
+	case MD_MULTI_PARA:
 		PGetGravity(twp, mwp, pwp);
 		PGetSpeed(twp, mwp, pwp);
 		PSetPosition(twp, mwp, pwp);
 		PResetPosition(twp, mwp, pwp);
 		break;
-	case SDCylStd:
+	case MD_MULTI_S6A1_WAIT:
 		Mode_SDCylinderStd(twp, pwp);
 		break;
-	case SDCylDown:
+	case MD_MULTI_S6A1_SLID:
 		Mode_SDCylinderDown(twp, pwp);
 		break;
-	case SDCylLeft:
+	case MD_MULTI_S6A1_LROT:
 		Mode_SDCylinderLeft(twp, pwp);
 		break;
-	case SDCylRight:
+	case MD_MULTI_S6A1_RROT:
 		Mode_SDCylinderRight(twp, pwp);
 		break;
 	}

@@ -130,6 +130,7 @@
     <ClInclude Include="patches\patch_e_cart.h" />
     <ClInclude Include="patches\patch_o_sky_cyl_cmn.h" />
     <ClInclude Include="packet.h" />
+    <ClInclude Include="patches\patch_player.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="race.h" />
     <ClInclude Include="RegisterPatch.hpp" />

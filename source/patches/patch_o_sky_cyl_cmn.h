@@ -7,5 +7,5 @@ void Mode_SDCylinderDown(taskwk* twp, playerwk* pwp);
 void Mode_SDCylinderLeft(taskwk* twp, playerwk* pwp);
 void Mode_SDCylinderRight(taskwk* twp, playerwk* pwp);
 
-void Mode_SDCylStdChanges(taskwk* twp, playerwk* pwp);
-void Mode_SDCylDownChanges(taskwk* twp, playerwk* pwp);
+void Mode_MD_MULTI_S6A1_WAITChanges(taskwk* twp, playerwk* pwp);
+void Mode_MD_MULTI_S6A1_SLIDChanges(taskwk* twp, playerwk* pwp);

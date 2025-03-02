@@ -1,5 +1,7 @@
 #pragma once
 
+#define BYTEn(x, n)   (*((uint8_t*)&(x)+n))
+
 float GetDistance(NJS_VECTOR* v1, NJS_VECTOR* v2);
 float GetDistance2(NJS_VECTOR* v1, NJS_VECTOR* v2);
 int GetClosestPlayerNum(NJS_POINT3* pos);
