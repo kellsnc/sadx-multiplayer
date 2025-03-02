@@ -23,6 +23,7 @@
 const HelperFunctions* gHelperFunctions;
 
 bool DreamcastConversionEnabled = false;
+bool CharacterSelectEnabled = false;
 
 extern "C"
 {
@@ -33,7 +34,13 @@ extern "C"
 
 		if (helperFunctions.Version >= 16)
 		{
-			DreamcastConversionEnabled = helperFunctions.Mods->find("sadx-dreamcast-conversion");
+			DreamcastConversionEnabled = helperFunctions.Mods->find("sadx-dreamcast-conversion") != nullptr;
+			CharacterSelectEnabled = helperFunctions.Mods->find_by_name("Character Select Mod") != nullptr;
+		}
+		else
+		{
+			DreamcastConversionEnabled = GetModuleHandle(L"DCMods_Main") != nullptr;
+			CharacterSelectEnabled = GetModuleHandle(L"SADXCharSel") != nullptr;
 		}
 
 		InitMultiplayer();

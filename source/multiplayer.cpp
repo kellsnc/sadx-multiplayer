@@ -47,8 +47,6 @@ VariableHook<int32_t, 0x3B0F104> EnemyScore_m;
 FastFunctionHook<void> SetPlayer_h(SetPlayer);
 FastFunctionHook<void, taskwk*> SetPlayerInitialPosition_h(0x414810);
 
-static bool isCharSelEnabled = false;
-
 TaskFuncPtr charfuncs[] = {
 	SonicTheHedgehog,
 	(TaskFuncPtr)Eggman_Main,
@@ -221,7 +219,7 @@ void SetPlayer_r()
 			}
 			break;
 		case Characters_Big:
-			if (isCharSelEnabled)
+			if (CharacterSelectEnabled)
 				CreateElementalTask(2u, 6, BigDisplayStatus);
 			break;
 		}
@@ -674,8 +672,6 @@ void ExecMultiplayer()
 
 void InitMultiplayer()
 {
-	isCharSelEnabled = GetModuleHandle(L"SADXCharSel") != nullptr;
-
 	SetPlayer_h.Hook(SetPlayer_r);
 	SetPlayerInitialPosition_h.Hook(SetPlayerInitialPosition_r);
 
