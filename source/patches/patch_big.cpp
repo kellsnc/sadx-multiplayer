@@ -160,8 +160,12 @@ void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 	{
 		switch (twp->mode)
 		{
-		case 55: //cart
-			KillPlayerInKart(twp, pwp, 58, 99);
+		case MD_BIG_CART: // Allow death incarts
+			if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)
+			{
+				twp->mode = MD_BIG_KILL;
+				pwp->mj.reqaction = 99;
+			}
 			break;
 		case SDCylStd:
 			if (BigCheckInput(pwp, twp, mwp) || BigCheckJump(pwp, twp))

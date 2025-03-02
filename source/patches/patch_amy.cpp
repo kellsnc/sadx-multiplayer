@@ -224,8 +224,12 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	{
 		switch (twp->mode)
 		{
-		case 48: //cart
-			KillPlayerInKart(twp, pwp, 47, 26);
+		case MD_AMY_S3A2_CART: // Allow death incarts
+			if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)
+			{
+				twp->mode = MD_AMY_KILL;
+				pwp->mj.reqaction = 26;
+			}
 			break;
 		case SDCannonMode:
 			if (!AmyCheckInput(pwp, mwp, twp) && (twp->flag & 3) != 0)

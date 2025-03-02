@@ -374,8 +374,12 @@ void __cdecl Knux_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 	{
 		switch (twp->mode)
 		{
-		case 52: //cart
-			KillPlayerInKart(twp, pwp, 51, 27);
+		case MD_KNUCK_S3A2_CART: // Allow death incarts
+			if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)
+			{
+				twp->mode = MD_KNUCK_KILL;
+				pwp->mj.reqaction = 27;
+			}
 			break;
 		case SDCannonMode:
 			if (!KnucklesCheckInput(twp, mwp, pwp) && (twp->flag & 3) != 0)

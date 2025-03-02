@@ -51,7 +51,7 @@ static void execObject_m(task* tp)
 
 		if (ptwp)
 		{
-			auto cart_tp = CartChangeForceMode(TASKWK_PLAYERID(ptwp));
+			auto cart_tp = CartChangeForceMode_m(TASKWK_PLAYERID(ptwp));
 			if (cart_tp)
 			{
 				wk->cart_tp = cart_tp;

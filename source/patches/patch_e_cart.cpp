@@ -60,7 +60,7 @@ FastFunctionHookPtr<decltype(&SetCartPos_r)> SetCartPos_h(0x796C50);
 
 task* taskOfPlayerOn_m[PLAYER_MAX];
 
-task* CartChangeForceMode(int num)
+task* CartChangeForceMode_m(int num)
 {
 	auto tp = taskOfPlayerOn_m[num];
 	if (tp)
@@ -910,18 +910,6 @@ void __cdecl SetCartPos_r(task* tp, NJS_POINT3* pos, Angle3* ang)
 	else
 	{
 		return SetCartPos_h.Original(tp, pos, ang);
-	}
-}
-
-void KillPlayerInKart(taskwk* twp, playerwk* pwp, char mode, uint16_t anm)
-{
-	if ((twp->flag & Status_DoNextAction) != 0)
-	{
-		if (twp->smode == 50)
-		{
-			twp->mode = mode;
-			pwp->mj.reqaction = anm;
-		}
 	}
 }
 

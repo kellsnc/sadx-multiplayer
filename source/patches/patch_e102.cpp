@@ -82,8 +82,12 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 
 		switch (twp->mode)
 		{
-		case 53: //cart
-			KillPlayerInKart(twp, pwp, 51, 69);
+		case MD_E102_CART: // Allow death incarts
+			if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)
+			{
+				twp->mode = MD_E102_KILL;
+				pwp->mj.reqaction = 69;
+			}
 			break;
 		case SDCannonMode:
 			if (!E102CheckInput(pwp, twp, mwp) && (twp->flag & 3) != 0)

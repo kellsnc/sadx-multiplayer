@@ -86,8 +86,12 @@ void Miles_RunAction_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 {
 	switch (twp->mode)
 	{
-	case 43:
-		KillPlayerInKart(twp, pwp, 60, 28);
+	case MD_MILES_S3A2_CART: // Allow death incarts
+		if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)
+		{
+			twp->mode = MD_MILES_KILL;
+			pwp->mj.reqaction = 28;
+		}
 		break;
 	}
 
