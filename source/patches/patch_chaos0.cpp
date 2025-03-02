@@ -4,9 +4,6 @@
 #include "camera.h"
 #include "camerafunc.h"
 #include "splitscreen.h"
-#include "patch_boss_common.h"
-
-static const int timeLimit = 300;
 
 FastFunctionHook<void, taskwk*, chaoswk*> turnToPlayer_h(0x7AE660);
 FastFunctionHook<void, task*> BossChaos0_h(0x548640);
@@ -196,7 +193,7 @@ void turnToPlayer_r(taskwk* twp, chaoswk* bwp)
 
 	float dist = 0.0f;
 
-	auto ptwp = playertwp[randomPnum];
+	auto ptwp = playertwp[GetBossTargetPlayer()];
 
 	if (ptwp)
 	{
@@ -209,7 +206,7 @@ void turnToPlayer_r(taskwk* twp, chaoswk* bwp)
 
 Angle setApartTargetPos_r(chaoswk* cwk)
 {
-	auto ptwp = playertwp[randomPnum];
+	auto ptwp = playertwp[GetBossTargetPlayer()];
 
 	if (!multiplayer::IsEnabled() || !ptwp)
 	{
@@ -226,7 +223,7 @@ Angle setApartTargetPos_r(chaoswk* cwk)
 
 void chaos0Pole_r(chaoswk* cwk, taskwk* twp)
 {
-	auto ptwp = playertwp[randomPnum];
+	auto ptwp = playertwp[GetBossTargetPlayer()];
 
 	if (!multiplayer::IsEnabled() || !ptwp)
 	{
@@ -296,7 +293,7 @@ void chaos0Pole_r(chaoswk* cwk, taskwk* twp)
 
 void chaos0Punch_r(chaoswk* cwk, taskwk* twp, bosswk* bwk)
 {
-	auto ptwp = playertwp[randomPnum];
+	auto ptwp = playertwp[GetBossTargetPlayer()];
 
 	if (twp->smode != 3)
 	{
@@ -355,9 +352,6 @@ void BossChaos0_r(task* tp)
 {
 	auto twp = tp->twp;
 
-	if (twp && !twp->mode)
-		ResetBossRNG();
-
 	auto wk = (chaoswk*)tp->awp;
 
 	if (!twp || !wk)
@@ -378,8 +372,6 @@ void BossChaos0_r(task* tp)
 			CameraSetEventCamera_m(i, wk->camera_mode, 0);
 		}
 	}
-
-	Boss_SetNextPlayerToAttack(timeLimit);
 }
 
 void patch_chaos0_init()

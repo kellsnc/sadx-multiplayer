@@ -196,3 +196,13 @@ int GetHoldingPlayerId(task* htp)
 	}
 	return 0;
 }
+
+int GetBossTargetPlayer()
+{
+	static int pnum = 0;
+	if ((ulGlobalTimer % 500) == 0)
+	{
+		pnum = rand() % multiplayer::GetPlayerCount();
+	}
+	return pnum;
+}

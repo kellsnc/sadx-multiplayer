@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "patch_boss_common.h"
 #include "result.h"
 
 FastFunctionHook<void, task*> execE101R_h(0x56C0B0);

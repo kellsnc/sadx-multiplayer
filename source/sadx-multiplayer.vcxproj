@@ -127,7 +127,6 @@
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="netplay.h" />
     <ClInclude Include="patches\patch_bigkaeru.h" />
-    <ClInclude Include="patches\patch_boss_common.h" />
     <ClInclude Include="patches\patch_e_cart.h" />
     <ClInclude Include="patches\patch_o_sky_cyl_cmn.h" />
     <ClInclude Include="packet.h" />
@@ -207,7 +206,6 @@
     <ClCompile Include="netplay.cpp" />
     <ClCompile Include="patches\patch_bigkaeru.cpp" />
     <ClCompile Include="patches\patch_big.cpp" />
-    <ClCompile Include="patches\patch_boss_common.cpp" />
     <ClCompile Include="patches\patch_chaos0.cpp" />
     <ClCompile Include="patches\patch_colli_space.cpp" />
     <ClCompile Include="patches\patch_e102shot.cpp" />

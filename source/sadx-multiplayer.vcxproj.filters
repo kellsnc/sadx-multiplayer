@@ -166,9 +166,6 @@
     <ClCompile Include="patches\patch_boss_egm1.cpp">
       <Filter>Source Files\patches\bosses</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_boss_common.cpp">
-      <Filter>Source Files\patches\bosses</Filter>
-    </ClCompile>
     <ClCompile Include="patches\patch_boss_egm2.cpp">
       <Filter>Source Files\patches\bosses</Filter>
     </ClCompile>
@@ -752,9 +749,6 @@
     </ClInclude>
     <ClInclude Include="VariableHook.hpp">
       <Filter>Header FIles\classes</Filter>
-    </ClInclude>
-    <ClInclude Include="patches\patch_boss_common.h">
-      <Filter>Header FIles\patches</Filter>
     </ClInclude>
     <ClInclude Include="GameText.hpp">
       <Filter>Header FIles\classes</Filter>

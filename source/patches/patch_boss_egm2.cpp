@@ -1,26 +1,19 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "patch_boss_common.h"
 
 // Egg Walker
 
 FastFunctionHook<void, task*> Egm2_h(0x576650);
 
-static const int timeLimit = 600;
-
 void Egm2_r(task* tp)
 {
-	if (tp->twp && !tp->twp->mode)
-		ResetBossRNG();
-
 	Egm2_h.Original(tp);
-	Boss_SetNextPlayerToAttack(timeLimit);
 }
 
 void patch_egm3_init()
 {
-	Egm2_h.Hook(Egm2_r);
+	//Egm2_h.Hook(Egm2_r);
 }
 
 #ifdef MULTI_TEST

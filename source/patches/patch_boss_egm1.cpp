@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
-#include "patch_boss_common.h"
 
 // Egg Hornet
 
@@ -23,7 +22,7 @@ void SetEgm1AtkRoute_r(bossextwk* egm, taskwk* twp)
 		return SetEgm1AtkRoute_h.Original(egm, twp);
 	}
 
-	auto player = playertwp[randomPnum];
+	auto player = playertwp[GetBossTargetPlayer()];
 	float diff = 20.0f;
 
 	egm->FlyRoute[0] = twp->pos;
@@ -52,7 +51,7 @@ void setEgm1Missile_r(taskwk* twp)
 	Egm1MissilesPrm egm1Mis;
 
 	egm1Mis.Parent_twp = twp;
-	egm1Mis.DstPosPtr = &playertwp[randomPnum]->pos;
+	egm1Mis.DstPosPtr = &playertwp[GetBossTargetPlayer()]->pos;
 	egm1Mis.FireInterval = 14;
 	egm1Mis.HomingInterval = 22;
 	egm1Mis.MissileNum = 6;
@@ -71,12 +70,8 @@ void setEgm1Ud_r(task* a1)
 	egm->UdFrq += 546;
 	egm->UdFrq = 0;
 	twp->pos.y = egm->BasePosY - njSin(egm->UdFrq) * 10.0f;
-	twp->ang.y = -16384
-		- (unsigned __int64)(atan2(
-			twp->pos.z - playertwp[randomPnum]->pos.z,
-			twp->pos.x - playertwp[randomPnum]->pos.x)
-			* 65536.0f
-			* 0.1591549762031479f);
+	twp->ang.y = -0x4000 - njArcTan2(twp->pos.z - playertwp[GetBossTargetPlayer()]->pos.z,
+		twp->pos.x - playertwp[GetBossTargetPlayer()]->pos.x);
 }
 
 int __cdecl EH_GetVsPlayerAng_r(taskwk* a1)
@@ -86,10 +81,7 @@ int __cdecl EH_GetVsPlayerAng_r(taskwk* a1)
 		return EH_GetVsPlayerAng_h.Original(a1);
 	}
 
-	return -16384
-		- (unsigned __int64)(atan2(a1->pos.z - playertwp[randomPnum]->pos.z, a1->pos.x - playertwp[randomPnum]->pos.x)
-			* 65536.0f
-			* 0.1591549762031479f);
+	return -0x4000 - njArcTan2(a1->pos.z - playertwp[GetBossTargetPlayer()]->pos.z, a1->pos.x - playertwp[GetBossTargetPlayer()]->pos.x);
 }
 
 void SetEgm1MoveRoute_r(task* tp, taskwk* twp, bossextwk* egm)
@@ -104,7 +96,7 @@ void SetEgm1MoveRoute_r(task* tp, taskwk* twp, bossextwk* egm)
 	NJS_VECTOR posFlyRoute = { 0 };
 	NJS_VECTOR newposFlyRoute = { 0 };
 
-	auto player = playertwp[randomPnum];
+	auto player = playertwp[GetBossTargetPlayer()];
 
 	egm->FlyRoute[0] = twp->pos;
 
@@ -171,9 +163,9 @@ int EH_PosPlayerCheck_r()
 	{
 		int result = 0;
 
-		if (playertwp[randomPnum]->pos.x >= 752.0f)
+		if (playertwp[GetBossTargetPlayer()]->pos.x >= 752.0f)
 		{
-			result = playertwp[randomPnum]->pos.x <= 1008.0f;
+			result = playertwp[GetBossTargetPlayer()]->pos.x <= 1008.0f;
 		}
 		else
 		{
@@ -190,16 +182,12 @@ int EH_PosPlayerCheck_r()
 
 void Egm1_r(task* tp)
 {
-	if (tp->twp && !tp->twp->mode)
-		ResetBossRNG();
-
 	Egm1_h.Original(tp);
-	Boss_SetNextPlayerToAttack(timeLimit);
 }
 
 void patch_egm1_init()
 {
-	Egm1_h.Hook(Egm1_r);
+	//Egm1_h.Hook(Egm1_r);
 	EH_PosPlayerCheck_h.Hook(EH_PosPlayerCheck_r);
 	EH_GetVsPlayerAng_h.Hook(EH_GetVsPlayerAng_r);
 	SetEgm1MoveRoute_h.Hook(SetEgm1MoveRoute_r);
