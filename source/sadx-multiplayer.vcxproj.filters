@@ -145,7 +145,7 @@
     <ClCompile Include="packet.cpp">
       <Filter>Source Files\netplay</Filter>
     </ClCompile>
-    <ClCompile Include="logic.cpp">
+    <ClCompile Include="game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="timer.cpp">
@@ -777,7 +777,7 @@
     <ClInclude Include="hud_emerald.h">
       <Filter>Header FIles\gui</Filter>
     </ClInclude>
-    <ClInclude Include="logic.h">
+    <ClInclude Include="game.h">
       <Filter>Header FIles</Filter>
     </ClInclude>
     <ClInclude Include="patches\patch_e_cart.h">

@@ -16,7 +16,7 @@
 #include "fog.h"
 #include "netplay.h"
 #include "input.h"
-#include "logic.h"
+#include "game.h"
 #include "collision.h"
 #include "event.h"
 
@@ -38,7 +38,7 @@ extern "C"
 
 		InitMultiplayer();
 		InitSplitScreen();
-		InitLogic();
+		InitGameManager();
 
 		InitCamera();
 		InitInputPatches();
@@ -63,7 +63,7 @@ extern "C"
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
 		ExecMultiplayer();
-		ExecLogic();
+		ExecGameManager();
 
 		ExecPatches();
 	}
