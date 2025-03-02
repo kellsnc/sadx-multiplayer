@@ -58,8 +58,13 @@ extern "C"
 	// Returns false if no information is avaiable
 	API bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h);
 
-	// Sets the character type of player pnum
-	API void multi_set_charid(uint32_t pnum, Characters character);
+	// Gets the character ID of player pnum. See Characters enum in Mod Loader includes.
+	// Returns -1 if not character is set
+	API int32_t multi_character_get(uint32_t pnum);
+
+	// Sets the character ID of player pnum. See Characters enum in Mod Loader includes.
+	// Once a player has a character ID, the game will load the character. Use -1 instead in "character" to disable.
+	API void multi_character_set(uint32_t pnum, int32_t character);
 
 	// Reset all player scores to 0
 	API void multi_score_reset(void);

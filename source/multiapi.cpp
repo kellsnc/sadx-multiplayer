@@ -62,7 +62,12 @@ bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h)
 	return false;
 }
 
-void multi_set_charid(uint32_t pnum, Characters character)
+int32_t multi_character_get(uint32_t pnum)
+{
+	return multiplayer::GetCharacter(pnum);
+}
+
+void multi_character_set(uint32_t pnum, int32_t character)
 {
 	multiplayer::SetCharacter(pnum, character);
 }

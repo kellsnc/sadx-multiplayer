@@ -21,7 +21,7 @@ namespace multiplayer
 	bool IsFightMode(); // Check if multiplayer is active and in VS mode
 	bool IsOnline(); // Check if in networking mode (todo: move)
 
-	void SetCharacter(int pnum, Characters character);
+	void SetCharacter(int pnum, int character);
 	int GetCharacter(int pnum);
 	void ResetCharacters();
 }

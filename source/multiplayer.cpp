@@ -134,7 +134,7 @@ namespace multiplayer
 		return online;
 	}
 
-	void SetCharacter(int pnum, Characters character)
+	void SetCharacter(int pnum, int character)
 	{
 		characters[pnum] = character;
 	}

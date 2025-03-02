@@ -174,9 +174,15 @@ bool multi_is_coop();
 ```
 Returns true if the current multiplayer mode is cooperation.
 
-**multi_set_charid**
+**multi_character_get**
 ```
-void multi_set_charid(uint32_t pnum, Characters character);
+int32_t multi_character_get(uint32_t pnum);
+```
+Returns the character ID for a specific player. `-1` means the character should not spawn or the player ID is invalid. Otherwise use the Characters enum provided by the Mod Loader.
+
+**multi_character_set**
+```
+void multi_character_set(uint32_t pnum, int32_t character);
 ```
 Set the character ID for a specific player. `-1` means the character should not spawn. Otherwise use the Characters enum provided by the Mod Loader.
 
