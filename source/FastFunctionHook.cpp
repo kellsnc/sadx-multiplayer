@@ -45,9 +45,6 @@ void* GenerateTrampoline(uint8_t* origbytes)
 
 		switch (hs.opcode)
 		{
-		case 0xC2:
-		case 0xC3: //retn
-			throw std::exception("Function is too small for hooking");
 		case 0xE8: // call
 			callloc = totalsize;
 			break;
