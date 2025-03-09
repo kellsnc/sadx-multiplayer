@@ -200,9 +200,16 @@ int GetHoldingPlayerId(task* htp)
 int GetBossTargetPlayer()
 {
 	static int pnum = 0;
-	if ((ulGlobalTimer % 500) == 0)
+	static int timer = 0;
+	if (ulGlobalTimer - timer > 500 || !playertwp[pnum])
 	{
 		pnum = rand() % multiplayer::GetPlayerCount();
+		timer = ulGlobalTimer;
+
+		while (!playertwp[pnum])
+		{
+			pnum = rand() % multiplayer::GetPlayerCount();
+		}
 	}
 	return pnum;
 }
