@@ -25,23 +25,23 @@ const HelperFunctions* gHelperFunctions;
 bool DreamcastConversionEnabled = false;
 bool CharacterSelectEnabled = false;
 
+static bool mod_initialized = false;
+
 extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
+		if (helperFunctions.Version < 16)
+		{
+			PrintDebug("[MULTI] Error: the Mod Loader API should be above version 16, please update the Mod Loader. Current API version: %i.\n", helperFunctions.Version);
+			return;
+		}
+
 		gHelperFunctions = &helperFunctions;
 		config.read(path);
 
-		if (helperFunctions.Version >= 16)
-		{
-			DreamcastConversionEnabled = helperFunctions.Mods->find("sadx-dreamcast-conversion") != nullptr;
-			CharacterSelectEnabled = helperFunctions.Mods->find_by_name("Character Select Mod") != nullptr;
-		}
-		else
-		{
-			DreamcastConversionEnabled = GetModuleHandle(L"DCMods_Main") != nullptr;
-			CharacterSelectEnabled = GetModuleHandle(L"SADXCharSel") != nullptr;
-		}
+		DreamcastConversionEnabled = helperFunctions.Mods->find("sadx-dreamcast-conversion") != nullptr;
+		CharacterSelectEnabled = helperFunctions.Mods->find_by_name("Character Select Mod") != nullptr;
 
 		InitMultiplayer();
 		InitSplitScreen();
@@ -65,21 +65,29 @@ extern "C"
 		InitCollisionPatches();
 
 		InitPatches();
+
+		mod_initialized = true;
 	}
 
 	__declspec(dllexport) void __cdecl OnFrame()
 	{
-		ExecMultiplayer();
-		ExecGameManager();
+		if (mod_initialized)
+		{
+			ExecMultiplayer();
+			ExecGameManager();
 
-		ExecPatches();
+			ExecPatches();
+		}
 	}
 
 	__declspec(dllexport) void __cdecl OnExit()
 	{
-		netplay.Exit();
+		if (mod_initialized)
+		{
+			netplay.Exit();
 
-		FreePatches();
+			FreePatches();
+		}
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };
