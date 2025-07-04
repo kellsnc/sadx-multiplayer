@@ -3,14 +3,9 @@
 #include "camera.h"
 #include "splitscreen.h"
 #include "menu.h"
-#include "hud_multi.h"
-#include "patches.h"
 #include "set.h"
-#include "levels.h"
 #include "race.h"
 #include "emeraldhunt.h"
-#include "hud_emerald.h"
-#include "hud_itembox.h"
 #include "sound.h"
 #include "result.h"
 #include "milesrace.h"
@@ -21,43 +16,46 @@
 #include "fog.h"
 #include "netplay.h"
 #include "input.h"
-#include "logic.h"
+#include "game.h"
 #include "collision.h"
 #include "event.h"
 
 const HelperFunctions* gHelperFunctions;
 
 bool DreamcastConversionEnabled = false;
+bool CharacterSelectEnabled = false;
+
+static bool mod_initialized = false;
 
 extern "C"
 {
 	__declspec(dllexport) void __cdecl Init(const char* path, const HelperFunctions& helperFunctions)
 	{
+		if (helperFunctions.Version < 16)
+		{
+			PrintDebug("[MULTI] Error: the Mod Loader API should be above version 16, please update the Mod Loader. Current API version: %i.\n", helperFunctions.Version);
+			return;
+		}
+
 		gHelperFunctions = &helperFunctions;
 		config.read(path);
 
-		if (helperFunctions.Version >= 16)
-		{
-			DreamcastConversionEnabled = helperFunctions.Mods->find("sadx-dreamcast-conversion");
-		}
+		DreamcastConversionEnabled = helperFunctions.Mods->find("sadx-dreamcast-conversion") != nullptr;
+		CharacterSelectEnabled = helperFunctions.Mods->find_by_name("Character Select Mod") != nullptr;
 
-		InitLogic();
+		InitMultiplayer();
 		InitSplitScreen();
+		InitGameManager();
+
 		InitCamera();
 		InitInputPatches();
-		InitPatches();
-		InitPlayerPatches();
 		InitMenu();
-		MultiHudInit();
 		InitSET();
-		InitLevels();
 		InitRace();
 		InitEmeraldHunt();
-		InitItemBoxHUD();
 		InitSoundPatches();
 		InitResult();
 		TestSpawn();
-		InitEmeraldRadar();
 		InitMilesRace();
 		InitFishing();
 		InitForceWorkPatches();
@@ -65,11 +63,31 @@ extern "C"
 		InitFogPatches();
 		initEvents();
 		InitCollisionPatches();
+
+		InitPatches();
+
+		mod_initialized = true;
+	}
+
+	__declspec(dllexport) void __cdecl OnFrame()
+	{
+		if (mod_initialized)
+		{
+			ExecMultiplayer();
+			ExecGameManager();
+
+			ExecPatches();
+		}
 	}
 
 	__declspec(dllexport) void __cdecl OnExit()
 	{
-		netplay.Exit();
+		if (mod_initialized)
+		{
+			netplay.Exit();
+
+			FreePatches();
+		}
 	}
 
 	__declspec(dllexport) ModInfo SADXModInfo = { ModLoaderVer };

@@ -3,12 +3,12 @@
 #include "splitscreen.h"
 #include "hud_emerald.h"
 
-Trampoline* Knuckles_KakeraGameExec_t = nullptr;
-Trampoline* Knuckles_KakeraGamePutRadar1C_t = nullptr;
+FastFunctionHook<void, task*> Knuckles_KakeraGameExec_h(0x475E50);
+FastFunctionHook<void, task*> Knuckles_KakeraGamePutRadar1C_h(0x475A70);
 
 void DrawBattleEmeRadar(int pnum, int scalors)
 {
-	auto ratio = SplitScreen::GetScreenRatio(pnum);
+	auto ratio = splitscreen::GetScreenRatio(pnum);
 
 	float screenX = HorizontalResolution * ratio->x;
 	float screenY = VerticalResolution * ratio->y;
@@ -69,36 +69,38 @@ void DrawBattleEmeRadar(int pnum, int scalors)
 
 void __cdecl Knuckles_KakeraGameExec_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
-		TARGET_DYNAMIC(Knuckles_KakeraGameExec)(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
+		Knuckles_KakeraGameExec_h.Original(tp);
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{
-		TARGET_DYNAMIC(Knuckles_KakeraGameExec)(tp);
+		Knuckles_KakeraGameExec_h.Original(tp);
 	}
 }
 
 void __cdecl Knuckles_KakeraGamePutRadar1C_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
-		TARGET_DYNAMIC(Knuckles_KakeraGamePutRadar1C)(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
+		Knuckles_KakeraGamePutRadar1C_h.Original(tp);
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{
-		TARGET_DYNAMIC(Knuckles_KakeraGamePutRadar1C)(tp);
+		Knuckles_KakeraGamePutRadar1C_h.Original(tp);
 	}
 }
 
-void InitEmeraldRadar()
+void patch_hud_emerald_init()
 {
-	Knuckles_KakeraGameExec_t = new Trampoline(0x475E50, 0x475E55, Knuckles_KakeraGameExec_r);
-	Knuckles_KakeraGamePutRadar1C_t = new Trampoline(0x475A70, 0x475A75, Knuckles_KakeraGamePutRadar1C_r);
+	Knuckles_KakeraGameExec_h.Hook(Knuckles_KakeraGameExec_r);
+	Knuckles_KakeraGamePutRadar1C_h.Hook(Knuckles_KakeraGamePutRadar1C_r);
 }
+
+RegisterPatch patch_hud_emerald(patch_hud_emerald_init);

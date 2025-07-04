@@ -1,10 +1,12 @@
 #include "pch.h"
 #include "gravity.h"
 
-// Allow per-player gravity
+// Allow gravity to be configured per player
+// Once SetUserGravity is called, the player is no longer using global gravity. Calling ResetUserGravity reverts this.
+// Mods may use multi_set_gravity, multi_get_gravity and multi_reset_gravity
 
-Trampoline* SetDefaultGravity_t = nullptr;
-Trampoline* SetUserGravityXZ_t = nullptr;
+FastFunctionHook<void> SetDefaultGravity_h(0x43B490);
+FastFunctionHook<void, Angle, Angle> SetUserGravityXZ_h(0x43B4C0);
 
 namespace gravity
 {
@@ -17,6 +19,7 @@ namespace gravity
 
 	GravityInfo globalGravity;
 
+	// Backup global gravity
 	void SaveGlobalGravity()
 	{
 		globalGravity.angGx = GravityAngle_Z;
@@ -24,6 +27,7 @@ namespace gravity
 		globalGravity.vG = Gravity;
 	}
 
+	// Replace global gravity with player's gravity
 	void SwapGlobalToUserGravity(int pnum)
 	{
 		if (GetUserGravity(pnum, &Gravity, &GravityAngle_Z, &GravityAngle_X))
@@ -32,6 +36,7 @@ namespace gravity
 		}
 	}
 
+	// Restore backed up global gravity
 	void RestoreGlobalGravity()
 	{
 		if (globalGravity.enabled)
@@ -42,6 +47,7 @@ namespace gravity
 		}
 	}
 
+	// Get custom gravity for a player if it exists, returns false if it doesn't.
 	bool GetUserGravity(int pnum, NJS_POINT3* v, Angle* angx, Angle* angz)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -63,6 +69,7 @@ namespace gravity
 		return false;
 	}
 
+	// Set custom gravity data for a specific player, no longer using global gravity.
 	void SetUserGravity(Angle angx, Angle angz, int pnum)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -81,6 +88,7 @@ namespace gravity
 		}
 	}
 
+	// Undo custom gravity data for a player, reverting to global gravity.
 	void ResetUserGravity(int pnum)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -100,10 +108,11 @@ namespace gravity
 
 static void __cdecl SetDefaultGravity_r()
 {
-	TARGET_DYNAMIC(SetDefaultGravity)();
+	SetDefaultGravity_h.Original();
 	gravity::Disable();
 }
 
+// Changing global gravity overwrites player specific ones
 static void __cdecl SetUserGravityXZ_r(Angle angx, Angle angz)
 {
 	if (angx == 0 && angz == 0)
@@ -112,13 +121,13 @@ static void __cdecl SetUserGravityXZ_r(Angle angx, Angle angz)
 	}
 	else
 	{
-		TARGET_DYNAMIC(SetUserGravityXZ)(angx, angz);
+		SetUserGravityXZ_h.Original(angx, angz);
 		gravity::Disable();
 	}
 }
 
 void InitGravityPatches()
 {
-	SetDefaultGravity_t = new Trampoline(0x43B490, 0x43B49C, SetDefaultGravity_r);
-	SetUserGravityXZ_t = new Trampoline(0x43B4C0, 0x43B4C6, SetUserGravityXZ_r);
+	SetDefaultGravity_h.Hook(SetDefaultGravity_r);
+	SetUserGravityXZ_h.Hook(SetUserGravityXZ_r);
 }

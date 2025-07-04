@@ -190,8 +190,8 @@ FunctionPointer(task*, SetDialogTask, (), 0x432C60);
 DataPointer(pathtag, pathtag_hw1_heli0807, 0x26A72D4);
 DataPointer(NJS_OBJECT, object_turnasi_oya_koa, 0x267D3B4);
 DataPointer(NJS_OBJECT, object_turnasi_oya_kob, 0x267C7AC);
-DataPointer(BOOL, tornade_flag, 0x3C5D670);
-FunctionPointer(BOOL, NearTornade, (NJS_POINT3* pos, Float* dist), 0x4BA860);
+DataPointer(Bool, tornade_flag, 0x3C5D670);
+FunctionPointer(Bool, NearTornade, (NJS_POINT3* pos, Float* dist), 0x4BA860);
 DataPointer(NJS_OBJECT, object_goaleme_blue_blue, 0xC3FDA0);
 DataPointer(NJS_OBJECT, object_goaleme_white_white, 0xC3F050);
 DataPointer(NJS_OBJECT, object_goaleme_green_green, 0xC3E300);
@@ -215,7 +215,7 @@ DataPointer(int, unk_3C49C23, 0x3C49C23);
 VoidFunc(PlayMenuBipSound, 0x6FC8A0);
 VoidFunc(PlayMenuEnterSound, 0x505810);
 VoidFunc(PlayMenuBackSound, 0x505830);
-FunctionPointer(BOOL, IsMiniGameMenuEnabled, (), 0x506460);
+FunctionPointer(Bool, IsMiniGameMenuEnabled, (), 0x506460);
 FunctionPointer(void, PlayMenuMusicID, (MusicIDs id), 0x505900);
 FunctionPointer(void, PlayMenuMusic, (int id), 0x505990);
 DataPointer(MSGC, jimakumsgc, 0x3ABDC18);
@@ -230,7 +230,7 @@ VoidFunc(CreateTunnelcol, 0x5AC2C0);
 TaskFunc(EffectSpark, 0x4CE830);
 TaskFunc(PathKassha, 0x603640);
 TaskFunc(KasshaDisplayer, 0x603590);
-FunctionPointer(BOOL, isMissionClearDisp, (), 0x414FE0);
+FunctionPointer(Bool, isMissionClearDisp, (), 0x414FE0);
 TaskFunc(KnucklesLaterSE, 0x474F50);
 TaskFunc(FragmEmeraldDigDisplay, 0x4A31D0);
 FunctionPointer(int, Knuckles_Status, (int plnmb), 0x475600);
@@ -250,7 +250,7 @@ DataPointer(taskwk*, rd_mountain_twp, 0x03C80F84);
 TaskFunc(exitFishingLure, 0x46C8D0);
 TaskFunc(dispFishingLure, 0x470580);
 FunctionPointer(int, BGM_Replay, (), 0x4256E0);
-FunctionPointer(BOOL, BigSetPosition, (NJS_POINT3* p, NJS_POINT3* v, Angle3* a, float r), 0x46F130);
+FunctionPointer(Bool, BigSetPosition, (NJS_POINT3* p, NJS_POINT3* v, Angle3* a, float r), 0x46F130);
 TaskFunc(BigDisplayHit, 0x46EBC0);
 TaskFunc(BigDisplayStatus, 0x470090);
 TaskFunc(dispBigKaeru, 0x7A6BB0);
@@ -616,7 +616,7 @@ static inline void RoboHeadUp(taskwk* twp, enemywk* ewp)
 }
 
 static const void* const RoboHeadCaptureBeamPtr = (void*)0x4A43A0;
-static inline BOOL RoboHeadCaptureBeam(task* tp)
+static inline Bool RoboHeadCaptureBeam(task* tp)
 {
 	__asm
 	{
@@ -676,13 +676,13 @@ static inline void CreateCrashSmoke(taskwk* twp, NJS_POINT3* point, Float scl)
 }
 
 static const void* const E102CheckInputPtr = (void*)0x480870;
-static inline int E102CheckInput(playerwk* pwp, taskwk* data, motionwk2* data2)
+static inline int E102CheckInput(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 {
 	int result;
 	__asm
 	{
-		push[data2]
-		mov esi, [data]
+		push[mwp]
+		mov esi, [twp]
 		mov edi, [pwp]
 		call E102CheckInputPtr
 		add esp, 4
@@ -720,13 +720,13 @@ static inline int E102CheckJump(playerwk* a1, taskwk* a2)
 }
 
 static const void* const AmyCheckInputPtr = (void*)0x487810;
-static inline int AmyCheckInput(playerwk* pwp, motionwk2* data2, taskwk* data)
+static inline int AmyCheckInput(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 {
 	int result;
 	__asm
 	{
-		mov esi, [data]
-		mov edi, [data2]
+		mov esi, [twp]
+		mov edi, [mwp]
 		mov ecx, [pwp]
 		call AmyCheckInputPtr
 		mov result, eax

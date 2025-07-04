@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "splitscreen.h"
 #include "netplay.h"
 #include "camera.h"
@@ -15,9 +15,9 @@ static SONIC_INPUT net_analogs[PLAYER_MAX]{};
 static PDS_PERIPHERAL net_pers[PLAYER_MAX]{};
 #endif
 
-FunctionHook<void, Sint8> PadReadOnP_hook(0x40EF70);
-FunctionHook<void, Sint8> PadReadOffP_hook(0x40EFA0);
-FunctionHook<void>        GetPlayersInputData_hook(0x40F170);
+FastFunctionHook<void, Sint8> PadReadOnP_hook(0x40EF70);
+FastFunctionHook<void, Sint8> PadReadOffP_hook(0x40EFA0);
+FastFunctionHook<void>        GetPlayersInputData_hook(0x40F170);
 
 static void __cdecl PadReadOnP_r(int8_t pnum)
 {
@@ -64,7 +64,7 @@ static void __cdecl PadReadOffP_r(int8_t pnum)
 // Patch analog forward calculation to use multiplayer cameras
 static void __cdecl GetPlayersInputData_r()
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		GetPlayersInputData_hook.Original();
 		return;

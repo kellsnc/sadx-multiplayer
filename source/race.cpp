@@ -11,8 +11,8 @@ Multiplayer Twinkle Circuit manager
 
 */
 
-Trampoline* TwinkleCircuitZoneTask_t = nullptr;
-Trampoline* Rd_MiniCart_t = nullptr;
+FastFunctionHook<void, task*> TwinkleCircuitZoneTask_h(0x4DBCF0);
+FastFunctionHook<void, task*> Rd_MiniCart_h(0x4DAA80);
 
 // RACE MANAGER:
 
@@ -61,7 +61,7 @@ static void DrawTimer(int time, float x, float y, float s)
 
 static void dispRaceSingle(RaceWk* rwp, int num)
 {
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 	const float scaleY = VerticalStretch * ratio->h;
 	const float scaleX = HorizontalStretch * ratio->w;
 	const float scale = min(scaleY, scaleX);
@@ -118,8 +118,8 @@ static void __cdecl dispRaceM(task* tp)
 	{
 		auto wk = (RaceWkM*)tp->mwp;
 
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
 
 		//MirenEffSaveState:
 		ghDefaultBlendingMode();
@@ -131,7 +131,7 @@ static void __cdecl dispRaceM(task* tp)
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (SplitScreen::IsScreenEnabled(i))
+			if (splitscreen::IsScreenEnabled(i))
 			{
 				dispRaceSingle(&wk->work[i], i);
 			}
@@ -143,7 +143,7 @@ static void __cdecl dispRaceM(task* tp)
 		RestoreConstantAttr();
 		ResetMaterial();
 
-		SplitScreen::RestoreViewPort();
+		splitscreen::RestoreViewPort();
 	}
 }
 
@@ -354,7 +354,7 @@ void __cdecl Rd_MiniCart_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(Rd_MiniCart)(tp);
+		Rd_MiniCart_h.Original(tp);
 	}
 }
 
@@ -442,12 +442,12 @@ static void __cdecl TwinkleCircuitZoneTask_r(task* tp) // custom name
 	}
 	else
 	{
-		TARGET_DYNAMIC(TwinkleCircuitZoneTask)(tp);
+		TwinkleCircuitZoneTask_h.Original(tp);
 	}
 }
 
 void InitRace()
 {
-	TwinkleCircuitZoneTask_t = new Trampoline(0x4DBCF0, 0x4DBCF8, TwinkleCircuitZoneTask_r);
-	Rd_MiniCart_t = new Trampoline(0x4DAA80, 0x4DAA86, Rd_MiniCart_r);
+	TwinkleCircuitZoneTask_h.Hook(TwinkleCircuitZoneTask_r);
+	Rd_MiniCart_h.Hook(Rd_MiniCart_r);
 }

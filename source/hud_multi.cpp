@@ -2,10 +2,10 @@
 #include "hud_multi.h"
 #include "splitscreen.h"
 
-Trampoline* DisplayScore_t = nullptr;
-Trampoline* DisplayTimer_t = nullptr;
-Trampoline* LoadTextureForEachGameMode_t = nullptr;
-Trampoline* ReleaseTextureForEachGameMode_t = nullptr;
+FastFunctionHook<void> DisplayScore_h(0x425F90);
+FastFunctionHook<void> DisplayTimer_h(0x427F50);
+FastFunctionHook<void, int> LoadTextureForEachGameMode_h(0x4212E0);
+FastFunctionHook<void> ReleaseTextureForEachGameMode_h(0x420F40);
 
 NJS_TEXNAME CON_MULTI_TEXNAME[18]{};
 NJS_TEXLIST CON_MULTI_TEXLIST = { arrayptrandlength(CON_MULTI_TEXNAME) };
@@ -91,13 +91,13 @@ static int ringtimer[PLAYER_MAX]{};
 void LoadTextureForEachGameMode_r(int gamemode)
 {
 	LoadPVM("CON_MULTI", &CON_MULTI_TEXLIST);
-	TARGET_DYNAMIC(LoadTextureForEachGameMode)(gamemode);
+	LoadTextureForEachGameMode_h.Original(gamemode);
 }
 
 void ReleaseTextureForEachGameMode_r()
 {
 	njReleaseTexture(&CON_MULTI_TEXLIST);
-	TARGET_DYNAMIC(ReleaseTextureForEachGameMode)();
+	ReleaseTextureForEachGameMode_h.Original();
 }
 
 void DrawWaitScreen(int num)
@@ -107,11 +107,11 @@ void DrawWaitScreen(int num)
 		return;
 	}
 
-	SplitScreen::SaveViewPort();
-	SplitScreen::ChangeViewPort(-1);
+	splitscreen::SaveViewPort();
+	splitscreen::ChangeViewPort(-1);
 
 	// Get subscreen information
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 
 	// Start position and scale
 	float scaleY = VerticalStretch * ratio->h;
@@ -147,7 +147,7 @@ void DrawWaitScreen(int num)
 	}
 
 	ResetMaterial();
-	SplitScreen::RestoreViewPort();
+	splitscreen::RestoreViewPort();
 }
 
 void MultiHudScore(int num)
@@ -257,12 +257,12 @@ void DisplayMultiHud(int num)
 		return;
 	}
 
-	SplitScreen::SaveViewPort();
-	SplitScreen::ChangeViewPort(-1);
+	splitscreen::SaveViewPort();
+	splitscreen::ChangeViewPort(-1);
 
 	SetMaterial(1.0f, 1.0f, 1.0f, 1.0f);
 
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 
 	float screenX = HorizontalResolution * ratio->x;
 	float screenY = VerticalResolution * ratio->y;
@@ -276,13 +276,13 @@ void DisplayMultiHud(int num)
 
 	float x = MULTIHUD_SPRITE.p.x = 16.0f * scale + screenX;
 
-	if (HideTimerAndRings >= 0 && (!isInHubWorld() && !IsLevelChaoGarden()))
+	if (HideTimerAndRings >= 0 && (!IsInAdventureField() && !IsLevelChaoGarden()))
 	{
 		MULTIHUD_SPRITE.p.y = 16.0f * scaleY + screenY;
 		njDrawSprite2D_ForcePriority(&MULTIHUD_SPRITE, MHudSprt_Score, 0, NJD_SPRITE_ALPHA);
 		MultiHudScore(num);
 
-		if (SplitScreen::numScreen == 0 )
+		if (splitscreen::numScreen == 0 )
 		{
 			MULTIHUD_SPRITE.p.x = x;
 			MULTIHUD_SPRITE.p.y += 24 * scale;
@@ -315,14 +315,14 @@ void DisplayMultiHud(int num)
 	}
 
 	ResetMaterial();
-	SplitScreen::RestoreViewPort();
+	splitscreen::RestoreViewPort();
 }
 
 void __cdecl DisplayScore_r()
 {
 	if (!multiplayer::IsActive())
 	{
-		TARGET_DYNAMIC(DisplayScore)();
+		DisplayScore_h.Original();
 	}
 }
 
@@ -330,14 +330,16 @@ void __cdecl DisplayTimer_r()
 {
 	if (!multiplayer::IsActive())
 	{
-		TARGET_DYNAMIC(DisplayTimer)();
+		DisplayTimer_h.Original();
 	}
 }
 
-void MultiHudInit()
+void patch_hud_init()
 {
-	DisplayScore_t = new Trampoline(0x425F90, 0x425F95, DisplayScore_r);
-	DisplayTimer_t = new Trampoline(0x427F50, 0x427F55, DisplayTimer_r);
-	LoadTextureForEachGameMode_t = new Trampoline(0x4212E0, 0x4212E5, LoadTextureForEachGameMode_r);
-	ReleaseTextureForEachGameMode_t = new Trampoline(0x420F40, 0x420F45, ReleaseTextureForEachGameMode_r);
+	DisplayScore_h.Hook(DisplayScore_r);
+	DisplayTimer_h.Hook(DisplayTimer_r);
+	LoadTextureForEachGameMode_h.Hook(LoadTextureForEachGameMode_r);
+	ReleaseTextureForEachGameMode_h.Hook(ReleaseTextureForEachGameMode_r);
 }
+
+RegisterPatch patch_hud(patch_hud_init);

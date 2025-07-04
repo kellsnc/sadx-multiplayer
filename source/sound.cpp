@@ -1,22 +1,28 @@
 #include "pch.h"
-#include "FunctionHook.h"
-#include "UsercallFunctionHandler.h"
-#include "multiplayer.h"
-#include "splitscreen.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "camera.h"
+#include "multiplayer.h"
+#include "sadx_utils.h"
 #include "sound.h"
+#include "splitscreen.h"
+#include "utils.h"
 
-FunctionHook<void> dsLoadStageSound_h(0x424C80);
+int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z);
+int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z, float rad);
+int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, float z);
+void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float rad, taskwk* pTaskwk);
 
-Trampoline* dsGetVolume_t = nullptr;
-Trampoline* dsPlay_timer_v_t = nullptr;
-Trampoline* dsPlay_timer_vq_t = nullptr;
-Trampoline* dsPlay_oneshot_v_t = nullptr;
-Trampoline* dsPlay_Dolby_timer_vq_t = nullptr;
+FastFunctionHook<void> dsLoadStageSound_h(0x424C80);
+FastUsercallHookPtr<int(*)(int), rEAX, rEAX> dsGetVolume_h(0x4244A0);
+FastFunctionHookPtr<decltype(&dsPlay_timer_v_r)> dsPlay_timer_v_h(0x424000);
+FastFunctionHookPtr<decltype(&dsPlay_timer_vq_r)> dsPlay_timer_vq_h(0x424100);
+FastFunctionHookPtr<decltype(&dsPlay_oneshot_v_r)> dsPlay_oneshot_v_h(0x424FC0);
+FastFunctionHookPtr<decltype(&dsPlay_Dolby_timer_vq_r)> dsPlay_Dolby_timer_vq_h(0x4249E0);
 
 int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z)
 {
-	if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, 40000.0f))
+	if (splitscreen::IsActive() && IsCameraInSphere(x, y, z, 40000.0f))
 	{
 		int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
 		if (num < 0)
@@ -49,13 +55,13 @@ int dsPlay_timer_v_r(int tone, int id, int pri, int volofs, int timer, float x, 
 	}
 	else
 	{
-		return TARGET_DYNAMIC(dsPlay_timer_v)(tone, id, pri, volofs, timer, x, y, z);
+		return dsPlay_timer_v_h.Original(tone, id, pri, volofs, timer, x, y, z);
 	}
 }
 
 int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x, float y, float z, float rad)
 {
-	if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, rad))
+	if (splitscreen::IsActive() && IsCameraInSphere(x, y, z, rad))
 	{
 		int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
 		if (num < 0)
@@ -89,13 +95,13 @@ int dsPlay_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float x,
 	}
 	else
 	{
-		return TARGET_DYNAMIC(dsPlay_timer_vq)(tone, id, pri, volofs, timer, x, y, z, rad);
+		return dsPlay_timer_vq_h.Original(tone, id, pri, volofs, timer, x, y, z, rad);
 	}
 }
 
 int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, float z)
 {
-	if (SplitScreen::IsActive() && IsCameraInSphere(x, y, z, 40000.0f))
+	if (splitscreen::IsActive() && IsCameraInSphere(x, y, z, 40000.0f))
 	{
 		int num = SoundQueue_GetOtherThing(tone, (EntityData1*)id); // inlined
 		if (num < 0)
@@ -128,13 +134,13 @@ int dsPlay_oneshot_v_r(int tone, int id, int pri, int volofs, float x, float y, 
 	}
 	else
 	{
-		return TARGET_DYNAMIC(dsPlay_oneshot_v)(tone, id, pri, volofs, x, y, z);
+		return dsPlay_oneshot_v_h.Original(tone, id, pri, volofs, x, y, z);
 	}
 }
 
 void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, float rad, taskwk* pTaskwk)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		if (pTaskwk && IsCameraInSphere(&pTaskwk->pos, rad))
 		{
@@ -179,33 +185,26 @@ void dsPlay_Dolby_timer_vq_r(int tone, int id, int pri, int volofs, int timer, f
 	}
 	else
 	{
-		TARGET_DYNAMIC(dsPlay_Dolby_timer_vq)(tone, id, pri, volofs, timer, rad, pTaskwk);
+		dsPlay_Dolby_timer_vq_h.Original(tone, id, pri, volofs, timer, rad, pTaskwk);
 	}
 }
 
-static int dsGetVolume_o(int ii)
-{
-	auto tgt = dsGetVolume_t->Target();
-	int r;
-	__asm
-	{
-		mov eax, [ii]
-		call tgt
-		mov r, eax
-	}
-	return r;
-}
-
+/// <summary>
+/// When split screen is enabled, base 3D sound volume on closest player
+/// Otherwise original behavior (player 1)
+/// </summary>
+/// <param name="ii">Sound entry ID</param>
+/// <returns>Volume level</returns>
 int __cdecl dsGetVolume_r(int ii)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		auto se = &sebuf[ii];
 
 		auto pnum = GetClosestPlayerNum(&se->pos);
 
 		if (pnum < 0)
-			return dsGetVolume_o(ii);
+			return dsGetVolume_h.Original(ii);
 
 		auto cam_pos = GetCameraPosition(pnum);
 		float dist = GetDistance(&se->pos, cam_pos ? cam_pos : &playertwp[pnum]->pos);
@@ -240,24 +239,18 @@ int __cdecl dsGetVolume_r(int ii)
 	}
 	else
 	{
-		return dsGetVolume_o(ii);
+		return dsGetVolume_h.Original(ii);
 	}
 }
 
-static void __declspec(naked) dsGetVolume_w()
-{
-	__asm
-	{
-		push eax
-		call dsGetVolume_r
-		add esp, 4
-		retn
-	}
-}
-
+/// <summary>
+/// When split screen is enabled, base 3D sound position on closest player
+/// Otherwise original behavior (player 1)
+/// </summary>
+/// <returns>False if original code should run (asm hook)</returns>
 static bool dsDolbySound_r()
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		return false; // call original
 	}
@@ -321,7 +314,7 @@ void dsPlay_oneshot_miles(int tone, int id, int pri, int volofs)
 	}
 	else
 	{
-		// Original behaviour:
+		// Original behaviour: (No sound if P2)
 		if (TASKWK_PLAYERID(gpCharTwp) != 1)
 		{
 			dsPlay_oneshot(tone, id, pri, volofs);
@@ -329,7 +322,11 @@ void dsPlay_oneshot_miles(int tone, int id, int pri, int volofs)
 	}
 }
 
-// Allow every character sound in multiplayer
+/// <summary>
+/// Allow all characters to have sounds in multiplayer.
+/// This works by loading every sound bank (which is possible because, for some reason, they have 16 bank slots.)
+/// The sound id lookup table is then adjusted to map to the new sound banks.
+/// </summary>
 void dsLoadStageSound_r()
 {
 	dsLoadStageSound_h.Original();
@@ -396,24 +393,29 @@ void dsLoadStageSound_r()
 	}
 }
 
+/// <summary>
+/// Sound patches for:
+/// - Allowing all characters to have sounds
+/// - Fixing 3D sounds for other players
+/// </summary>
 void InitSoundPatches()
 {
-	dsGetVolume_t = new Trampoline(0x4244A0, 0x4244A7, dsGetVolume_w);
-	dsPlay_timer_v_t = new Trampoline(0x424000, 0x424005, dsPlay_timer_v_r);
-	dsPlay_timer_vq_t = new Trampoline(0x424100, 0x424105, dsPlay_timer_vq_r);
-	dsPlay_oneshot_v_t = new Trampoline(0x424FC0, 0x424FC5, dsPlay_oneshot_v_r);
-	dsPlay_Dolby_timer_vq_t = new Trampoline(0x4249E0, 0x4249E5, dsPlay_Dolby_timer_vq_r);
-	WriteJump((void*)0x4253B1, dsDolbySound_w);
+	dsGetVolume_h.Hook(dsGetVolume_r);
+	dsPlay_timer_v_h.Hook(dsPlay_timer_v_r);
+	dsPlay_timer_vq_h.Hook(dsPlay_timer_vq_r);
+	dsPlay_oneshot_v_h.Hook(dsPlay_oneshot_v_r);
+	dsPlay_Dolby_timer_vq_h.Hook(dsPlay_Dolby_timer_vq_r);
+	WriteJump((void*)0x4253B1, dsDolbySound_w); // Mid-function hook because the original function was inlined
 
 	dsLoadStageSound_h.Hook(dsLoadStageSound_r);
 
 	// Allow 2P Tails sounds in multiplayer
-	WriteCall((void*)0x45C037, dsPlay_oneshot_miles); // jump
-	WriteData<2>((void*)0x45C02D, 0x90ui8);
-	WriteCall((void*)0x45BE01, dsPlay_oneshot_miles); // it's not always inlined!
+	WriteCall((void*)0x45BE01, dsPlay_oneshot_miles); // Non-inlined occurence
 	WriteData<2>((void*)0x45BDF4, 0x90ui8);
-	WriteCall((void*)0x45BF8D, dsPlay_oneshot_miles); //hurt
+	WriteCall((void*)0x45C037, dsPlay_oneshot_miles); // Jump
+	WriteData<2>((void*)0x45C02D, 0x90ui8);
+	WriteCall((void*)0x45BF8D, dsPlay_oneshot_miles); // Hurt
 	WriteData<2>((void*)0x45BF80, 0x90ui8);
-	WriteCall((void*)0x45BF5D, dsPlay_oneshot_miles);
+	WriteCall((void*)0x45BF5D, dsPlay_oneshot_miles); // Hurt
 	WriteData<2>((void*)0x45BF50, 0x90ui8);
 }

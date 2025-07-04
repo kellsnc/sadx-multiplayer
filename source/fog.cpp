@@ -1,11 +1,15 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "splitscreen.h"
 #include "fog.h"
 
-Trampoline* ___njFogEnable_t = nullptr;
+// Allow fog to be configured per player
+// Once SetUserFog is called, the player is no longer using global fog. Calling ResetUserFog reverts this.
+// Mods may use multi_set_fog, multi_get_fog and multi_reset_fog
+
+FastFunctionHook<void> ___njFogEnable_h(0x411AF0);
 
 namespace fog
 {
@@ -14,6 +18,7 @@ namespace fog
 		___stcFog data;
 	} static playersFog[PLAYER_MAX];
 
+	// Get custom fog for a player if it exists, returns false if it doesn't.
 	bool GetUserFog(int pnum, ___stcFog* pFog)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -31,6 +36,7 @@ namespace fog
 		return false;
 	}
 
+	// Set custom fog data for a specific player, no longer using global fog.
 	void SetUserFog(int pnum, ___stcFog* pFog)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -40,6 +46,7 @@ namespace fog
 		}
 	}
 
+	// Undo custom fog data for a player, reverting to global fog.
 	void ResetUserFog(int pnum)
 	{
 		if (pnum >= 0 && pnum < PLAYER_MAX)
@@ -49,6 +56,7 @@ namespace fog
 	}
 }
 
+// Same as setfog but with a fog data argument
 static bool setfog_m(int pnum, ___stcFog* pFog)
 {
 	if (!(gFogEmu.u8Emulation & 1))
@@ -77,14 +85,15 @@ static bool setfog_m(int pnum, ___stcFog* pFog)
 	return true;
 }
 
+// In multiplayer mode, check if a player has custom fog data and use it instead if so
 static void ___njFogEnable_m()
 {
 	if (!loop_count)
 	{
-		auto num = SplitScreen::numViewPort;
+		auto num = splitscreen::numViewPort;
 
 		___stcFog fog = gFog;
-		fog::GetUserFog(num, &fog);
+		fog::GetUserFog(num, &fog); // Overwrite fog if custom data exists
 
 		if (fog.u8Enable)
 		{
@@ -111,17 +120,17 @@ static void ___njFogEnable_m()
 
 static void __cdecl ___njFogEnable_r()
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
 		___njFogEnable_m();
 	}
 	else
 	{
-		TARGET_DYNAMIC(___njFogEnable)();
+		___njFogEnable_h.Original();
 	}
 }
 
 void InitFogPatches()
 {
-	___njFogEnable_t = new Trampoline(0x411AF0, 0x411AF5, ___njFogEnable_r);
+	___njFogEnable_h.Hook(___njFogEnable_r);
 }

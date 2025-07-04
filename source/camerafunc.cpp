@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "splitscreen.h"
 #include "sadx_utils.h"
@@ -48,7 +49,7 @@ VariableHook<Bool, 0x3C4AC98> CamPathCam2Core_AliveFlag_m;
 VariableHook<Sint32, 0x3C4AC8C> avoidMode_m;
 VariableHook<Sint32, 0x3C4ADC4> nowFrame_m;
 
-FunctionHook<void, _OBJ_CAMERAPARAM*> PathCamera1_h(0x4653E0);
+FastFunctionHook<void, _OBJ_CAMERAPARAM*> PathCamera1_h(0x4653E0);
 
 DataPointer(Sint32, demo_count, 0x3C4ACC0);
 
@@ -103,8 +104,8 @@ void gravDispose3_m(int pnum)
 		njUnitVector(&up);
 		njPushMatrix(0);
 		njUnitMatrix(0);
-		njRotateZ_(gz);
-		njRotateX_(gx);
+		ROTATEZ(0, gz);
+		ROTATEX(0, gx);
 		njCalcVector(0, &up, &up);
 		njPopMatrix(1);
 
@@ -144,7 +145,7 @@ void gravDispose3_m(int pnum)
 
 void __cdecl CameraKlamath_m(_OBJ_CAMERAPARAM* pParam)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		CameraKlamath(pParam);
 		return;
@@ -288,9 +289,9 @@ void calcCartCamTgt_m(int pnum)
 	v.z = camCartData[camcont_wp->cammode].transTgt.z;
 
 	njPushMatrix(nj_unit_matrix_);
-	njRotateZ_(CamAnyParam->camAnyParamAng.z);
-	njRotateX_(CamAnyParam->camAnyParamAng.x);
-	njRotateY_(CamAnyParam->camAnyParamAng.y);
+	ROTATEZ(0, CamAnyParam->camAnyParamAng.z);
+	ROTATEX(0, CamAnyParam->camAnyParamAng.x);
+	ROTATEY(0, CamAnyParam->camAnyParamAng.y);
 	njCalcVector(0, &v, &v);
 	njPopMatrixEx();
 
@@ -374,7 +375,7 @@ void cartCameraDemo_m(int pnum)
 
 void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		CameraCart(pParam);
 		return;
@@ -500,7 +501,7 @@ void __cdecl CameraCart_m(_OBJ_CAMERAPARAM* pParam)
 // Make this use CamAnyParam as it should have...
 void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		CameraRuinWaka1(pParam);
 		return;
@@ -536,7 +537,7 @@ void __cdecl CameraRuinWaka1_m(_OBJ_CAMERAPARAM* pParam)
 
 void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		PathCamera1_h.Original(pParam);
 		return;
@@ -581,9 +582,9 @@ void __cdecl PathCamera1_m(_OBJ_CAMERAPARAM* pParam)
 	v.z = 0.0f;
 	njPushMatrix(_nj_unit_matrix_);
 	njTranslateEx(&ptwp->pos);
-	njRotateZ_(ptwp->ang.z);
-	njRotateX_(ptwp->ang.x);
-	njRotateY_(ptwp->ang.y);
+	ROTATEZ(0, ptwp->ang.z);
+	ROTATEX(0, ptwp->ang.x);
+	ROTATEY(0, ptwp->ang.y);
 	njCalcPoint(0, &v, &orig);
 	njPopMatrixEx();
 
@@ -875,7 +876,7 @@ void __cdecl CameraAvoid_r(_OBJ_CAMERAPARAM* pParam)
 
 void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		AdjustNormal(pTaskWork, pOldTaskWork, pCameraAdjustWork);
 		return;
@@ -1014,7 +1015,7 @@ void __cdecl AdjustNormal_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUST
 
 void __cdecl AdjustForFreeCamera_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		AdjustForFreeCamera(pTaskWork, pOldTaskWork, pCameraAdjustWork);
 		return;
@@ -1224,7 +1225,7 @@ void sub_468790_m(int pnum, taskwk* twp, taskwk* ptwp, _OBJ_ADJUSTPARAM* adjwp)
 
 void __cdecl AdjustThreePoint_m(taskwk* pTaskWork, taskwk* pOldTaskWork, _OBJ_ADJUSTPARAM* pCameraAdjustWork)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
 		AdjustThreePoint(pTaskWork, pOldTaskWork, pCameraAdjustWork);
 		return;
@@ -1302,7 +1303,7 @@ void __cdecl CameraLocalPath_m(_OBJ_CAMERAPARAM* pParam)
 	++data->point;
 
 	float onpos;
-	BOOL onpath = SCPathPntnmbToOnpos(data->ptp, data->point, &onpos);
+	Bool onpath = SCPathPntnmbToOnpos(data->ptp, data->point, &onpos);
 
 	switch (data->mode)
 	{
@@ -1376,7 +1377,7 @@ void __cdecl CameraLocalPath_m(_OBJ_CAMERAPARAM* pParam)
 
 		NJS_VECTOR pos = { pi.xpos, pi.ypos, pi.zpos };
 		njPushMatrix(nj_unit_matrix_);
-		ROTATEY(0, 0x8000 - ptwp->ang.y);
+		ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 		njCalcVector(0, &pos, &pos);
 		pi.xpos = pos.x;
 		pi.ypos = pos.y;

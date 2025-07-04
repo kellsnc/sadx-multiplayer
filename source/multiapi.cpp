@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "splitscreen.h"
-#include "players.h"
+#include "multiplayer.h"
 #include "result.h"
 #include "camera.h"
 #include "gravity.h"
@@ -12,42 +12,42 @@
 
 bool splitscreen_is_active()
 {
-	return SplitScreen::IsActive();
+	return splitscreen::IsActive();
 }
 
 bool splitscreen_is_enabled()
 {
-	return SplitScreen::IsEnabled();
+	return splitscreen::IsEnabled();
 }
 
 void splitscreen_enable()
 {
-	SplitScreen::Enable();
+	splitscreen::Enable();
 }
 
 void splitscreen_disable()
 {
-	SplitScreen::Disable();
+	splitscreen::Disable();
+}
+
+uint32_t splitscreen_get_current_screen()
+{
+	return splitscreen::GetCurrentScreenNum();
 }
 
 bool viewport_is_enabled(int32_t num)
 {
-	return SplitScreen::IsScreenEnabled(num);
+	return splitscreen::IsScreenEnabled(num);
 }
 
 void viewport_set_num(int32_t num)
 {
-	SplitScreen::ChangeViewPort(num);
-}
-
-int32_t viewport_get_num()
-{
-	return SplitScreen::GetCurrentViewPortNum();
+	splitscreen::ChangeViewPort(num);
 }
 
 bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h)
 {
-	auto ratio = SplitScreen::GetScreenRatio(num);
+	auto ratio = splitscreen::GetScreenRatio(num);
 
 	if (ratio)
 	{
@@ -62,9 +62,14 @@ bool viewport_get_info(int32_t num, float* x, float* y, float* w, float* h)
 	return false;
 }
 
-void multi_set_charid(uint32_t pnum, Characters character)
+int32_t multi_character_get(uint32_t pnum)
 {
-	SetCurrentCharacter(pnum, character);
+	return multiplayer::GetCharacter(pnum);
+}
+
+void multi_character_set(uint32_t pnum, int32_t character)
+{
+	multiplayer::SetCharacter(pnum, character);
 }
 
 void multi_score_reset()

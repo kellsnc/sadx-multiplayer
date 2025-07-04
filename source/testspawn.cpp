@@ -3,8 +3,9 @@
 #include <cwchar>
 #include <ShellAPI.h>
 #include "multiplayer.h"
-#include "players.h"
 #include "netplay.h"
+
+ADVPOS* gTestSpawnStartPos = nullptr;
 
 static const std::unordered_map<std::wstring, multiplayer::mode> multi_mode_map = {
 	{ L"coop", multiplayer::mode::coop },
@@ -51,6 +52,8 @@ static Characters parse_character_id(const std::wstring& str)
 
 void TestSpawn()
 {
+	WriteJump(LoadPlayerMotionData, _advertise_prolog); // Fix missing animations with testspawn
+
 	int argc = 0;
 	LPWSTR* argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
@@ -64,22 +67,22 @@ void TestSpawn()
 
 		if (!wcscmp(argv[i], L"-p1"))
 		{
-			SetCurrentCharacter(0, parse_character_id(argv[++i]));
+			multiplayer::SetCharacter(0, parse_character_id(argv[++i]));
 		}
 
 		if (!wcscmp(argv[i], L"-p2"))
 		{
-			SetCurrentCharacter(1, parse_character_id(argv[++i]));
+			multiplayer::SetCharacter(1, parse_character_id(argv[++i]));
 		}
 
 		if (!wcscmp(argv[i], L"-p3"))
 		{
-			SetCurrentCharacter(2, parse_character_id(argv[++i]));
+			multiplayer::SetCharacter(2, parse_character_id(argv[++i]));
 		}
 
 		if (!wcscmp(argv[i], L"-p4"))
 		{
-			SetCurrentCharacter(3, parse_character_id(argv[++i]));
+			multiplayer::SetCharacter(3, parse_character_id(argv[++i]));
 		}
 
 		if (!wcscmp(argv[i], L"--position") || !wcscmp(argv[i], L"-p"))

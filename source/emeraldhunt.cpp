@@ -5,9 +5,9 @@
 #include "splitscreen.h"
 #include "emeraldhunt.h"
 
-Trampoline* Knuckles_KakeraGame_Set_PutEme_t = nullptr;
-Trampoline* Knuckles_KakeraGameInit_t = nullptr;
-Trampoline* Knuckles_KakeraGame_t = nullptr;
+FastFunctionHook<void, int, NJS_POINT3*> Knuckles_KakeraGame_Set_PutEme_h(0x477D90);
+FastFunctionHook<void> Knuckles_KakeraGameInit_h(0x475840);
+FastFunctionHook<void, task*> Knuckles_KakeraGame_h(0x476440);
 
 static int found_feme_nmb_m[PLAYER_MAX]{};
 static int scales[PLAYER_MAX]{};
@@ -18,18 +18,18 @@ static void __cdecl Knuckles_KakeraGame_MultiDisp(task* tp)
 {
 	if (!MissedFrames && HideHud >= 0 && !EV_CheckCansel())
 	{
-		if (SplitScreen::IsActive())
+		if (splitscreen::IsActive())
 		{
-			SplitScreen::SaveViewPort();
-			SplitScreen::ChangeViewPort(-1);
+			splitscreen::SaveViewPort();
+			splitscreen::ChangeViewPort(-1);
 			for (int i = 0; i < PLAYER_MAX; ++i)
 			{
-				if (SplitScreen::IsScreenEnabled(i))
+				if (splitscreen::IsScreenEnabled(i))
 				{
 					DrawBattleEmeRadar(i, scales[i]);
 				}
 			}
-			SplitScreen::RestoreViewPort();
+			splitscreen::RestoreViewPort();
 		}
 		else
 		{
@@ -118,7 +118,7 @@ static void __cdecl Knuckles_KakeraGame_MultiExec(task* tp)
 
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
-		if (SplitScreen::IsScreenEnabled(i))
+		if (splitscreen::IsScreenEnabled(i))
 		{
 			Knuckles_KakeraGame_Timer(i);
 		}
@@ -158,7 +158,7 @@ static void __cdecl Knuckles_KakeraGame_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(Knuckles_KakeraGame)(tp);
+		Knuckles_KakeraGame_h.Original(tp);
 	}
 }
 
@@ -185,7 +185,7 @@ void Knuckles_KakeraGame_Set_PutEme_m(int pnum, unsigned __int8 emeid, NJS_POINT
 {
 	if (!multiplayer::IsActive())
 	{
-		TARGET_DYNAMIC(Knuckles_KakeraGame_Set_PutEme)(emeid, emepos);
+		Knuckles_KakeraGame_Set_PutEme_h.Original(emeid, emepos);
 		return;
 	}
 
@@ -264,13 +264,13 @@ static void __cdecl Knuckles_KakeraGame_Set_PutEme_r(int emeid, NJS_POINT3* emep
 	}
 	else
 	{
-		TARGET_DYNAMIC(Knuckles_KakeraGame_Set_PutEme)(emeid, emepos);
+		Knuckles_KakeraGame_Set_PutEme_h.Original(emeid, emepos);
 	}
 }
 
 static void __cdecl Knuckles_KakeraGameInit_r()
 {
-	TARGET_DYNAMIC(Knuckles_KakeraGameInit)();
+	Knuckles_KakeraGameInit_h.Original();
 
 	is_enabled = false;
 	for (auto& i : found_feme_nmb_m)
@@ -281,7 +281,7 @@ static void __cdecl Knuckles_KakeraGameInit_r()
 
 void InitEmeraldHunt()
 {
-	Knuckles_KakeraGame_Set_PutEme_t = new Trampoline(0x477D90, 0x477D95, Knuckles_KakeraGame_Set_PutEme_r);
-	Knuckles_KakeraGameInit_t = new Trampoline(0x475840, 0x475846, Knuckles_KakeraGameInit_r);
-	Knuckles_KakeraGame_t = new Trampoline(0x476440, 0x476448, Knuckles_KakeraGame_r);
+	Knuckles_KakeraGame_Set_PutEme_h.Hook(Knuckles_KakeraGame_Set_PutEme_r);
+	Knuckles_KakeraGameInit_h.Hook(Knuckles_KakeraGameInit_r);
+	Knuckles_KakeraGame_h.Hook(Knuckles_KakeraGame_r);
 }

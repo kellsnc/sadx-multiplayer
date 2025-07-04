@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "splitscreen.h"
 #include "camerafunc.h"
@@ -19,9 +19,9 @@ struct CameraLocation
 	Angle3 ang;
 };
 
-Trampoline* CameraPause_t = nullptr;
-Trampoline* cameraDisplay_t = nullptr;
-Trampoline* Camera_t = nullptr;
+FastFunctionHook<void, task*> CameraPause_Hook(0x4373D0);
+FastFunctionHook<void, task*> cameraDisplay_Hook(0x4370F0);
+FastFunctionHook<void, task*> Camera_Hook(0x438090);
 
 VariableHook<_camcontwk, 0x3B2C660> cameraControlWork_m;
 VariableHook<_CameraSystemWork, 0x3B2CAD8> cameraSystemWork_m;
@@ -552,9 +552,9 @@ void CameraViewSet_m(int pnum)
 
 		njPushMatrix(_nj_unit_matrix_);
 
-		njRotateY_(loc.ang.y);
-		njRotateX_(loc.ang.x);
-		njRotateZ_(loc.ang.z);
+		ROTATEY(0, loc.ang.y);
+		ROTATEX(0, loc.ang.x);
+		ROTATEZ(0, loc.ang.z);
 
 		njCalcVector(0, &vs, &vd);
 		njPopMatrix(1u);
@@ -614,8 +614,8 @@ void CameraFilter_m(int pnum)
 	NJS_VECTOR v = { 0.0f, 0.0f, -1.5f };
 	njPushMatrix(_nj_unit_matrix_);
 	njTranslateV(0, &loc.pos);
-	njRotateY_(loc.ang.y);
-	njRotateX_(loc.ang.x);
+	ROTATEY(0, loc.ang.y);
+	ROTATEX(0, loc.ang.x);
 	njCalcPoint(0, &v, &v);
 
 	NJS_PLANE pl1;
@@ -736,7 +736,7 @@ void CameraFilter_m(int pnum)
 				njProjectScreen(0, &lower_pos, &pos);
 				njPopMatrix(1u);
 
-				if (auto ratio = SplitScreen::GetScreenRatio(pnum))
+				if (auto ratio = splitscreen::GetScreenRatio(pnum))
 				{
 					NJS_POINT2 rectpos[4];
 					static NJS_COLOR rectcol[4] = { 0x40000040, 0x40000040, 0x40000040, 0x40000040 };
@@ -771,26 +771,26 @@ void CameraFilter_m(int pnum)
 
 void __cdecl cameraDisplay_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		ApplyMultiCamera(SplitScreen::numScreen);
-		CameraFilter_m(SplitScreen::numScreen);
+		ApplyMultiCamera(splitscreen::numScreen);
+		CameraFilter_m(splitscreen::numScreen);
 	}
 	else
 	{
-		TARGET_DYNAMIC(cameraDisplay)(tp);
+		cameraDisplay_Hook.Original(tp);
 	}
 }
 
 void __cdecl CameraPause_r(task* tp)
 {
-	if (SplitScreen::IsActive())
+	if (splitscreen::IsActive())
 	{
-		ApplyMultiCamera(SplitScreen::numScreen);
+		ApplyMultiCamera(splitscreen::numScreen);
 	}
 	else
 	{
-		TARGET_DYNAMIC(CameraPause)(tp);
+		CameraPause_Hook.Original(tp);
 	}
 }
 
@@ -825,9 +825,9 @@ void InitCameraParam_m(int pnum)
 
 	NJS_VECTOR v = { 0.0f, 20.0f, 0.0f };
 	njPushMatrix(_nj_unit_matrix_);
-	njRotateZ_(ptwp->ang.z);
-	njRotateX_(ptwp->ang.x);
-	njRotateY_(0x4000 - ptwp->ang.y);
+	ROTATEZ(0, ptwp->ang.z);
+	ROTATEX(0, ptwp->ang.x);
+	ROTATEY(0, 0x4000 - ptwp->ang.y);
 	njCalcVector(0, &v, &v);
 	njPopMatrix(1);
 
@@ -1942,9 +1942,9 @@ void sub_436700_m(int pnum)
 
 void __cdecl Camera_r(task* tp)
 {
-	if (!SplitScreen::IsActive())
+	if (!splitscreen::IsActive())
 	{
-		return TARGET_DYNAMIC(Camera)(tp);
+		return Camera_Hook.Original(tp);
 	}
 
 	auto twp = tp->twp;
@@ -1974,7 +1974,7 @@ void __cdecl Camera_r(task* tp)
 			__PlayerStatus_last_pos_m[i] = playertwp[i] ? playertwp[i]->pos : playertwp[0]->pos;
 			__CameraInertia_last_pos_m[i] = camera_twp->pos;
 
-			if (SplitScreen::IsScreenEnabled(i) && playertwp[i])
+			if (splitscreen::IsScreenEnabled(i) && playertwp[i])
 			{
 				CameraCameraMode_m(i);
 			}
@@ -1993,7 +1993,7 @@ void __cdecl Camera_r(task* tp)
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (SplitScreen::IsScreenEnabled(i) && playertwp[i])
+			if (splitscreen::IsScreenEnabled(i) && playertwp[i])
 			{
 				if (camera_mode_m[i] == 2)
 				{
@@ -2202,9 +2202,9 @@ void ResetPerspective_m(int pnum)
 
 void InitCamera()
 {
-	Camera_t = new Trampoline(0x438090, 0x438097, Camera_r);
-	CameraPause_t = new Trampoline(0x4373D0, 0x4373D7, CameraPause_r);
-	cameraDisplay_t = new Trampoline(0x4370F0, 0x4370F5, cameraDisplay_r);
+	Camera_Hook.Hook(Camera_r);
+	CameraPause_Hook.Hook(CameraPause_r);
+	cameraDisplay_Hook.Hook(cameraDisplay_r);
 
 	WriteJump((void*)0x434870, InitFreeCamera_r);
 	WriteJump((void*)0x434880, ResetFreeCamera_r);

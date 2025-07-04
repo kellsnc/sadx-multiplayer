@@ -1,13 +1,15 @@
 #include "pch.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 
 static void ObjectCasinoTelepotExec_r(task* tp);
-TaskHook ObjectCasinoTelepotExec_t(0x5D10C0, ObjectCasinoTelepotExec_r);
+FastFunctionHook<void, task*> ObjectCasinoTelepotExec_h(0x5D10C0);
 
 static void ObjectCasinoTelepotExec_r(task* tp)
 {
 	if (!multiplayer::IsActive() || ObjectSelectedDebug((ObjectMaster*)tp))
 	{
-		return ObjectCasinoTelepotExec_t.Original(tp);
+		return ObjectCasinoTelepotExec_h.Original(tp);
 	}
 
 	if (CheckRangeOutWithR(tp, 360010.0f))
@@ -126,5 +128,10 @@ static void ObjectCasinoTelepotExec_r(task* tp)
     EntryColliList(twp);
     ++twp->wtimer;
 }
-    
 
+void patch_casino_telepot_init()
+{
+    ObjectCasinoTelepotExec_h.Hook(ObjectCasinoTelepotExec_r);
+}
+
+RegisterPatch patch_casino_telepot(patch_casino_telepot_init);

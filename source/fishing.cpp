@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 #include "multiplayer.h"
 #include "splitscreen.h"
@@ -42,25 +42,25 @@ struct lurewk // custom; todo: find symbol struct
 
 VariableHook<BIGETC, 0x3C524E8> bigetc_m;
 
-FunctionPointer(BOOL, checkturipoint2, (), 0x48D030);
+FunctionPointer(Bool, checkturipoint2, (), 0x48D030);
 FunctionPointer(int, sub_46EE90, (), 0x46EE90); // inline, get fished item
 DataPointer(CCL_INFO, lure_colli_tbl, 0x91BA7C);
 DataArray(NJS_POINT3, icecap_fpoint_tbl, 0x91BA44, 4);
 
-static auto sub_46D0D0 = GenerateUsercallWrapper<BOOL(*)(task* tp)>(rEAX, 0x46D0D0, rEAX); // inline, checks if lure touches ground
-static auto sub_46D970 = GenerateUsercallWrapper<BOOL(*)(Big_ypos* big_y_ptr, task* tp)>(rEAX, 0x46D970, rEAX, stack4); // inline, checks if lure collided with water
+static auto sub_46D0D0 = GenerateUsercallWrapper<Bool(*)(task* tp)>(rEAX, 0x46D0D0, rEAX); // inline, checks if lure touches ground
+static auto sub_46D970 = GenerateUsercallWrapper<Bool(*)(Big_ypos* big_y_ptr, task* tp)>(rEAX, 0x46D970, rEAX, stack4); // inline, checks if lure collided with water
 static auto calcFishingLureY = GenerateUsercallWrapper<void (*)(taskwk* twp, Big_ypos* big_y_ptr, char flag)>(noret, 0x46DD20, rEAX, rESI, stack4);
 static auto moveFishingRotY = GenerateUsercallWrapper<void (*)(task* tp)>(noret, 0x46E380, rEAX);
-static auto chkKabeAngle2 = GenerateUsercallWrapper<BOOL(*)(Angle3* angle3_p)>(noret, 0x46C6A0, rESI);
+static auto chkKabeAngle2 = GenerateUsercallWrapper<Bool(*)(Angle3* angle3_p)>(rEAX, 0x46C6A0, rESI);
 
-static Trampoline* dispFishWeightTexture_t = nullptr;
-static Trampoline* exitFishWeightTexture_t = nullptr;
-static Trampoline* dispFishingLure_t = nullptr;
-static Trampoline* dispFishingLureSwitch_t = nullptr;
-static Trampoline* fishingLureCtrl_t = nullptr;
-static Trampoline* SetFishingLureTask_t = nullptr;
-static Trampoline* fishingCursorCtrl_t = nullptr;
-static Trampoline* SetFishingCursorTask_t = nullptr;
+FastFunctionHook<void, task*> dispFishWeightTexture_h(0x46F580);
+FastFunctionHook<void, task*> exitFishWeightTexture_h(0x470160);
+FastFunctionHook<void, task*> dispFishingLure_h(0x470580);
+FastFunctionHook<void, task*> dispFishingLureSwitch_h(0x4703F0);
+FastFunctionHook<void, task*> fishingLureCtrl_h(0x471580);
+FastFunctionHook<task*, task*> SetFishingLureTask_h(0x471ED0);
+FastFunctionHook<void, task*> fishingCursorCtrl_h(0x46FA10);
+FastFunctionHook<task*, task*> SetFishingCursorTask_h(0x470330);
 
 BIGETC* GetBigEtc(int pnum)
 {
@@ -86,9 +86,9 @@ void CalcHookPos_m(BIGETC* etc, NJS_POINT3* ret)
 		NJS_POINT3 v = { 0.6f, -0.45f, 0.0f };
 
 		njPushMatrix(_nj_unit_matrix_);
-		ROTATEZ(0, twp->ang.z);
-		ROTATEX(0, twp->ang.x);
-		ROTATEY(0, -twp->ang.y);
+		ROTATEZ(0, 0, twp->ang.z);
+		ROTATEX(0, 0, twp->ang.x);
+		ROTATEY(0, 0, -twp->ang.y);
 		njCalcVector(0, &v, ret);
 		njPopMatrixEx();
 
@@ -197,16 +197,16 @@ static void __cdecl dispFishWeightTexture_r(task* tp)
 	{
 		dispFishWeightTexture_m(tp->twp, tp->twp->smode);
 	}
-	else if (SplitScreen::IsActive())
+	else if (splitscreen::IsActive())
 	{
-		SplitScreen::SaveViewPort();
-		SplitScreen::ChangeViewPort(-1);
-		TARGET_DYNAMIC(dispFishWeightTexture)(tp);
-		SplitScreen::RestoreViewPort();
+		splitscreen::SaveViewPort();
+		splitscreen::ChangeViewPort(-1);
+		dispFishWeightTexture_h.Original(tp);
+		splitscreen::RestoreViewPort();
 	}
 	else
 	{
-		TARGET_DYNAMIC(dispFishWeightTexture)(tp);
+		dispFishWeightTexture_h.Original(tp);
 	}
 }
 
@@ -227,7 +227,7 @@ static void __cdecl exitFishWeightTexture_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(exitFishWeightTexture)(tp);
+		exitFishWeightTexture_h.Original(tp);
 	}
 }
 
@@ -275,9 +275,9 @@ static void __cdecl dispFishingLure_m(task* tp)
 		{
 			njPushMatrixEx();
 			njTranslateEx(&twp->pos);
-			ROTATEY(0, -twp->ang.y);
-			ROTATEX(0, twp->ang.x);
-			ROTATEZ(0, twp->ang.z);
+			ROTATEY(0, 0, -twp->ang.y);
+			ROTATEX(0, 0, twp->ang.x);
+			ROTATEZ(0, 0, twp->ang.z);
 			if (twp->mode < 3.0f)
 				njTranslate(0, 0.6f, -0.3f, 0.0f);
 			njScale(0, 0.3f, 0.3f, 0.3f);
@@ -308,7 +308,7 @@ static void __cdecl dispFishingLure_r(task* tp)
 			return;
 		}
 
-		TARGET_DYNAMIC(dispFishingLure)(tp);
+		dispFishingLure_h.Original(tp);
 	}
 }
 
@@ -320,7 +320,7 @@ static void __cdecl dispFishingLureSwitch_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(dispFishingLureSwitch)(tp);
+		dispFishingLureSwitch_h.Original(tp);
 	}
 }
 #pragma endregion
@@ -606,9 +606,9 @@ static void setCatchCameraPos_m(taskwk* twp, int pnum)
 		auto ptwp = playertwp[pnum];
 		njPushMatrix(_nj_unit_matrix_);
 
-		ROTATEZ(0, ptwp->ang.z);
-		ROTATEX(0, ptwp->ang.x);
-		ROTATEY(0, 0x8000 - ptwp->ang.y);
+		ROTATEZ(0, 0, ptwp->ang.z);
+		ROTATEX(0, 0, ptwp->ang.x);
+		ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 
 		NJS_VECTOR v = { 100.0f, 0.0f, 0.0f };
 		njCalcVector(0, &v, &v);
@@ -929,7 +929,7 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 			{
 				NJS_POINT3 v = { 0.0f, 0.0f, 1.0f };
 				njPushMatrix(_nj_unit_matrix_);
-				ROTATEY(0, -twp->ang.y);
+				ROTATEY(0, 0, -twp->ang.y);
 				njCalcVector(0, &v, &v);
 				njPopMatrixEx();
 				njAddVector(&mwp->spd, &v);
@@ -958,7 +958,7 @@ static void setLureSpd_Swing_m(taskwk* twp, motionwk* mwp, BIGETC* etc, NJS_POIN
 			{
 				NJS_POINT3 v = { 0.0f, 0.0f, -1.0f };
 				njPushMatrix(_nj_unit_matrix_);
-				ROTATEY(0, -twp->ang.y);
+				ROTATEY(0, 0, -twp->ang.y);
 				njCalcVector(0, &v, &v);
 				njPopMatrixEx();
 				njAddVector(&mwp->spd, &v);
@@ -1392,9 +1392,9 @@ static void CalcLinePos_m(taskwk* twp, NJS_POINT3* ret)
 {
 	*ret = { -0.6f, 0.3f, 0.0f };
 	njPushMatrix(_nj_unit_matrix_);
-	ROTATEY(0, -twp->ang.y);
-	ROTATEX(0, twp->ang.x);
-	ROTATEZ(0, twp->ang.z);
+	ROTATEY(0, 0, -twp->ang.y);
+	ROTATEX(0, 0, twp->ang.x);
+	ROTATEZ(0, 0, twp->ang.z);
 	njCalcVector(0, ret, ret);
 	ret->x = twp->pos.x + ret->x;
 	ret->y = twp->pos.y + ret->y;
@@ -1421,9 +1421,9 @@ static void CalcRodPos_m(taskwk* ptwp, playerwk* ppwp, NJS_POINT3* rod_pos_p)
 {
 	NJS_VECTOR v = { 0.0f, ppwp->p.center_height, 0.0f };
 	njPushMatrix(_nj_unit_matrix_);
-	ROTATEZ(0, ptwp->ang.z);
-	ROTATEX(0, ptwp->ang.x);
-	ROTATEY(0, 0x8000 - ptwp->ang.y);
+	ROTATEZ(0, 0, ptwp->ang.z);
+	ROTATEX(0, 0, ptwp->ang.x);
+	ROTATEY(0, 0, 0x8000 - ptwp->ang.y);
 	njCalcVector(0, &v, rod_pos_p);
 
 	float dist = (ppwp->equipment & Upgrades_PowerRod) != 0 ? 17.0f : 16.0f;
@@ -1923,13 +1923,13 @@ static void __cdecl fishingLureCtrl_r(task* tp)
 			return;
 		}
 
-		TARGET_DYNAMIC(fishingLureCtrl)(tp);
+		fishingLureCtrl_h.Original(tp);
 	}
 }
 
 static task* __cdecl SetFishingLureTask_r(task* tp)
 {
-	auto lure_tp = TARGET_DYNAMIC(SetFishingLureTask)(tp);
+	auto lure_tp = SetFishingLureTask_h.Original(tp);
 	auto pnum = lure_tp->twp->btimer = TASKWK_PLAYERID(tp->twp);
 
 	auto etc = GetBigEtc(pnum);
@@ -2018,13 +2018,13 @@ static void __cdecl fishingCursorCtrl_r(task* tp)
 	}
 	else
 	{
-		TARGET_DYNAMIC(fishingCursorCtrl)(tp);
+		fishingCursorCtrl_h.Original(tp);
 	}
 }
 
 static task* __cdecl SetFishingCursorTask_r(task* tp)
 {
-	auto cursor_tp = TARGET_DYNAMIC(SetFishingCursorTask)(tp);
+	auto cursor_tp = SetFishingCursorTask_h.Original(tp);
 	TASKWK_PLAYERID(cursor_tp->twp) = TASKWK_PLAYERID(tp->twp);
 	return cursor_tp;
 }
@@ -2046,15 +2046,14 @@ static void BigStateInit_r()
 
 void InitFishing()
 {
-	dispFishWeightTexture_t = new Trampoline(0x46F580, 0x46F585, dispFishWeightTexture_r);
-	exitFishWeightTexture_t = new Trampoline(0x470160, 0x470165, exitFishWeightTexture_r);
-	dispFishingLure_t = new Trampoline(0x470580, 0x470588, dispFishingLure_r);
-	dispFishingLureSwitch_t = new Trampoline(0x4703F0, 0x4703F8, dispFishingLureSwitch_r);
-	fishingLureCtrl_t = new Trampoline(0x471580, 0x471589, fishingLureCtrl_r);
-
-	SetFishingLureTask_t = new Trampoline(0x471ED0, 0x471ED6, SetFishingLureTask_r);
-	fishingCursorCtrl_t = new Trampoline(0x46FA10, 0x46FA18, fishingCursorCtrl_r);
-	SetFishingCursorTask_t = new Trampoline(0x470330, 0x470336, SetFishingCursorTask_r);
+	dispFishWeightTexture_h.Hook(dispFishWeightTexture_r);
+	exitFishWeightTexture_h.Hook(exitFishWeightTexture_r);
+	dispFishingLure_h.Hook(dispFishingLure_r);
+	dispFishingLureSwitch_h.Hook(dispFishingLureSwitch_r);
+	fishingLureCtrl_h.Hook(fishingLureCtrl_r);
+	SetFishingLureTask_h.Hook(SetFishingLureTask_r);
+	fishingCursorCtrl_h.Hook(fishingCursorCtrl_r);
+	SetFishingCursorTask_h.Hook(SetFishingCursorTask_r);
 
 	WriteJump((void*)0x470120, BigStateInit_r);
 	WriteCall((void*)0x48CCE4, Big_CreateBigDisplayFishWeight_j);

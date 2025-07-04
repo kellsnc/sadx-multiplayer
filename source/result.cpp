@@ -1,5 +1,6 @@
 #include "pch.h"
-#include "result.h"
+#include "SADXModLoader.h"
+#include "FastFunctionHook.hpp"
 #include "hud_result.h"
 #include "splitscreen.h"
 #include "camerafunc.h"
@@ -7,8 +8,8 @@
 #include "milesrace.h"
 #include "result.h"
 
-static FunctionHook<void> SetFinishAction_t(SetFinishAction);
-static FunctionHook<void, task*> CalcTotalScore_t((intptr_t)0x42BCC0);
+FastFunctionHook<void> SetFinishAction_h(SetFinishAction);
+FastFunctionHook<void, task*> CalcTotalScore_h(0x42BCC0);
 
 static int gBattleResult = 0;
 
@@ -154,19 +155,19 @@ static void __cdecl SetFinishAction_r()
 		return;
 	}
 
-	SetFinishAction_t.Original();
+	SetFinishAction_h.Original();
 }
 
 static void __cdecl CalcTotalScore_r(task* tp)
 {
-	SplitScreen::SaveViewPort();
-	SplitScreen::ChangeViewPort(-1);
-	CalcTotalScore_t.Original(tp);
-	SplitScreen::RestoreViewPort();
+	splitscreen::SaveViewPort();
+	splitscreen::ChangeViewPort(-1);
+	CalcTotalScore_h.Original(tp);
+	splitscreen::RestoreViewPort();
 }
 
 void InitResult()
 {
-	SetFinishAction_t.Hook(SetFinishAction_r);
-	CalcTotalScore_t.Hook(CalcTotalScore_r);
+	SetFinishAction_h.Hook(SetFinishAction_r);
+	CalcTotalScore_h.Hook(CalcTotalScore_r);
 }

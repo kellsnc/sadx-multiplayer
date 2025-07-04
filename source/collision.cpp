@@ -1,26 +1,29 @@
 #include "pch.h"
 #include "SADXModLoader.h"
-#include "Trampoline.h"
+#include "FastFunctionHook.hpp"
 
-#include "FunctionHook.h"
 #include "UsercallFunctionHandler.h"
 
-UsercallFuncVoid(CCL_CheckHoming_h, (taskwk* twp1, taskwk* twp2, float dist2), (twp1, twp2, dist2), 0x418BE0, rECX, rEDX, stack4);
-UsercallFuncVoid(pLockingOnTargetEnemy2_h, (taskwk* twp, motionwk2* mwp, playerwk* pwp), (twp, mwp, pwp), 0x7984B0, rEDI, rEBX, stack4);
-UsercallFuncVoid(SonicHomingOnTarget_h, (taskwk* twp, playerwk* pwp, motionwk2* mwp), (twp, pwp, mwp), 0x492300, rESI, rEDI, stack4);
-UsercallFuncVoid(SonicHomeOnTarget_h, (taskwk* twp, playerwk* pwp, motionwk2* mwp), (twp, pwp, mwp), 0x494B80, rECX, rEAX, stack4);
+// Patch collisions
+// - Dynamic collision precalculations for all players
+// - Some collision checks
+// - Expand the enemy/rings collision lists for Homing Attack / LSA
+
+FastUsercallHookPtr<void(*)(taskwk* twp1, taskwk* twp2, Float dist2), noret, rECX, rEDX, stack4> CCL_CheckHoming_h(0x418BE0);
+FastUsercallHookPtr<void(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp), noret, rEDI, rEBX, stack4> pLockingOnTargetEnemy2_h(0x7984B0);
+FastUsercallHookPtr<void(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), noret, rESI, rEDI, stack4> SonicHomingOnTarget_h(0x492300);
+FastUsercallHookPtr<void(*)(taskwk* twp, playerwk* pwp, motionwk2* mwp), noret, rECX, rEAX, stack4> SonicHomeOnTarget_h(0x494B80);
+FastUsercallHookPtr<Bool(*)(taskwk* twp, playerwk* pwp), rEAX, rESI, stack4> MilesCheckFinishThrowObject_h(0x45D0F0);
+FastFunctionHook<taskwk*, taskwk*> CCL_IsHitPlayer_h(0x41CBC0);
+FastFunctionHook<void> CCL_ClearAll_h(0x41C680);
+FastFunctionHook<void> CCL_Analyze_h(0x420700);
+FastFunctionHook<void, taskwk*, motionwk2*, playerwk*> LockingOnTargetEnemy_h(0x44C1C0);
+FastFunctionHook<Bool, taskwk*> BigCheckTargetEnemy_h(0x46EE40);
+FastFunctionHook<Sint32, Uint8> GetRivalPlayerNumber_h(0x441BF0);
+FastFunctionHook<void> MakeLandCollLandEntryRangeIn_h(0x43AEF0);
+FastUsercallHookPtr<Bool(*)(taskwk* twp, motionwk2* mwp, playerwk* pwp), rEAX, rESI, stack4, stack4> KnucklesCheckFinishThrowObject_h(0x4738A0);
+
 UsercallFuncVoid(miles_oneshot, (taskwk* twp, Sint32 tone), (twp, tone), 0x45BDF0, rEAX, stack4);
-UsercallFunc(Bool, MilesCheckFinishThrowObject_h, (taskwk* twp, playerwk* pwp), (twp, pwp), 0x45D0F0, rEAX, rESI, stack4);
-
-FunctionHook<taskwk*, taskwk*> CCL_IsHitPlayer_h(0x41CBC0);
-FunctionHook<void> CCL_ClearAll_h(0x41C680);
-FunctionHook<void> CCL_Analyze_h(0x420700);
-FunctionHook<void, taskwk*, motionwk2*, playerwk*> LockingOnTargetEnemy_h(0x44C1C0);
-FunctionHook<Bool, taskwk*> BigCheckTargetEnemy_h(0x46EE40);
-FunctionHook<Sint32, Uint8> GetRivalPlayerNumber_h(0x441BF0);
-
-FunctionHook<void> MakeLandCollLandEntryRangeIn_h(0x43AEF0);
-static Trampoline* KnucklesCheckFinishThrowObject_h = nullptr;
 
 static _OBJ_LANDENTRY ri_landentry_buf_ex[256]; // 256 instead of 128
 
@@ -745,28 +748,11 @@ Bool MilesCheckFinishThrowObject_r(taskwk* twp, playerwk* pwp)
 	return 1;
 }
 
-static Bool __cdecl KnucklesCheckFinishThrowObject_origin(taskwk* twp, motionwk2* mwp, playerwk* pwp)
-{
-	auto target = KnucklesCheckFinishThrowObject_h->Target();
-
-	Bool result;
-	__asm
-	{
-		push[pwp]
-		push[mwp]
-		mov esi, [twp]
-		call target
-		add esp, 8
-		mov result, eax
-	}
-	return result;
-}
-
 Bool KnucklesCheckFinishThrowObject_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (!multiplayer::IsActive())
 	{
-		return KnucklesCheckFinishThrowObject_origin(twp, mwp, pwp);
+		return KnucklesCheckFinishThrowObject_h.Original(twp, mwp, pwp);
 	}
 
 	auto htp = pwp->htp;
@@ -854,22 +840,6 @@ Bool KnucklesCheckFinishThrowObject_r(taskwk* twp, motionwk2* mwp, playerwk* pwp
 	return 1;
 }
 
-static void __declspec(naked) KnuckleCheckFinishThrowObjectASM()
-{
-	__asm
-	{
-		push[esp + 08h] // a3
-		push[esp + 08h] // a2
-		push esi // a1
-		call KnucklesCheckFinishThrowObject_r
-		pop esi // a1
-		add esp, 4 // a2
-		add esp, 4 // a3
-		retn
-	}
-}
-
-
 void InitCollisionPatches()
 {
 	// Dyncol lookup rewrite
@@ -898,6 +868,6 @@ void InitCollisionPatches()
 	SonicHomingOnTarget_h.Hook(SonicHomingOnTarget_r);
 	SonicHomeOnTarget_h.Hook(SonicHomeOnTarget_r);
 	MilesCheckFinishThrowObject_h.Hook(MilesCheckFinishThrowObject_r);
-	KnucklesCheckFinishThrowObject_h = new Trampoline((int)0x4738A0, (int)0x4738A6, KnuckleCheckFinishThrowObjectASM);
+	KnucklesCheckFinishThrowObject_h.Hook(KnucklesCheckFinishThrowObject_r);
 	WriteJump((void*)0x43C110, PCheckTargetEnemy_r);
 }

@@ -628,7 +628,7 @@ void OpenLevelDialog(const DialogPrmType* dial, const int* list, int character, 
 
 	for (int i = 0; i < dial->CsrMax; ++i)
 	{
-		if (flgCompletedActionStage[character][tolevelnum(list[i])] == FALSE)
+		if (flgCompletedActionStage[character][GET_STAGE(list[i])] == FALSE)
 		{
 			dis_csr[dis_cnt] = i;
 			++dis_cnt;
@@ -801,7 +801,7 @@ bool menu_multi_apply_change(MultiMenuWK* wk, MD_MULTI id, int dial)
 		const int level = link[dial];
 		int actcnt = 1;
 
-		auto act = toactnum(level);
+		auto act = GET_ACT(level);
 
 		MultiMenuStageConfirmDialog.CsrMax = actcnt + 1;
 		MultiMenuStageConfirmDialog.CsrCancel = actcnt;
@@ -826,7 +826,7 @@ bool menu_multi_apply_change(MultiMenuWK* wk, MD_MULTI id, int dial)
 		}
 
 		stgacttexid = ((DialogPrmType*)DialogTp->awp->work.ptr[0])->PnlPrmPtr[dial].PvrIdx;
-		wk->stgreq = tolevelnum(level);
+		wk->stgreq = GET_STAGE(level);
 		wk->actreq = act;
 
 		menu_multi_setrndcursor();
@@ -896,7 +896,7 @@ void menu_multi_start(MultiMenuWK* wk, int act)
 
 	for (int i = 0; i < count; ++i)
 	{
-		SetCurrentCharacter(i, (Characters)menu_multi_getplayerno(selected_characters[i]));
+		multiplayer::SetCharacter(i, (Characters)menu_multi_getplayerno(selected_characters[i]));
 	}
 
 	ResetNumPlayerM();

@@ -15,17 +15,15 @@ struct IUnknown;
 #include <d3d8.h>
 
 #include "SADXModLoader.h"
-#include "Trampoline.h"
 #include "IniFile.hpp"
-#include "UsercallFunctionHandler.h"
-#include "FunctionHook.h"
 
+#include "RegisterPatch.hpp"
+#include "FastFunctionHook.hpp"
 #include "VariableHook.hpp"
 
 #include "mod.h"
 #include "sadx_utils.h"
 #include "utils.h"
-#include "players.h"
 #include "multiplayer.h"
 
 #endif //PCH_H
