@@ -48,8 +48,8 @@ void patch_rd_casino_init()
 	WriteCall((void*)0x5C0D9B, Casino_StartPos_Hack);
 	WriteCall((void*)0x5C0DCB, Casino_StartPos_Hack);
 	WriteCall((void*)0x5C0E19, Casino_StartPos_Hack);
-	//WriteCall((void*)0x5C0E77, Casino_StartPos_Hack); // pinball
-	//WriteCall((void*)0x5C0EF1, Casino_StartPos_Hack); // pinball
+	WriteCall((void*)0x5C0E77, Casino_StartPos_Hack); // pinball
+	WriteCall((void*)0x5C0EF1, Casino_StartPos_Hack); // pinball
 }
 
 RegisterPatch patch_rd_casino(patch_rd_casino_init);

@@ -34,9 +34,6 @@
     <ClCompile Include="multiplayer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_o_itembox.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="testspawn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -49,38 +46,17 @@
     <ClCompile Include="race.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_o_releasebox.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="result.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="hud_result.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_o_kaos_eme.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_o_jumppanel.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_o_frog.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_ef_spark.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="emeraldhunt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_o_eme.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="hud_emerald.cpp">
       <Filter>Source Files\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_o_togedai.cpp">
-      <Filter>Source Files\patches</Filter>
     </ClCompile>
     <ClCompile Include="milesrace.cpp">
       <Filter>Source Files</Filter>
@@ -90,21 +66,6 @@
     </ClCompile>
     <ClCompile Include="hud_fishing.cpp">
       <Filter>Source Files\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_sakana.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_bigkaeru.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_eggrob.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_o_baloon.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_mirror.cpp">
-      <Filter>Source Files\patches</Filter>
     </ClCompile>
     <ClCompile Include="forcewk.cpp">
       <Filter>Source Files</Filter>
@@ -117,9 +78,6 @@
     </ClCompile>
     <ClCompile Include="hud_itembox.cpp">
       <Filter>Source Files\gui</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_ef_barrier.cpp">
-      <Filter>Source Files\patches</Filter>
     </ClCompile>
     <ClCompile Include="gravity.cpp">
       <Filter>Source Files</Filter>
@@ -154,9 +112,6 @@
     <ClCompile Include="camerafunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_colli_space.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="event.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -168,15 +123,6 @@
     </ClCompile>
     <ClCompile Include="patches\patch_boss_egm2.cpp">
       <Filter>Source Files\patches\bosses</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_pathtask.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_rd_sandboard.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_o_rocket.cpp">
-      <Filter>Source Files\patches</Filter>
     </ClCompile>
     <ClCompile Include="patches\patch_amy.cpp">
       <Filter>Source Files\patches\figure</Filter>
@@ -487,29 +433,11 @@
     <ClCompile Include="patches\patch_rd_e101_r.cpp">
       <Filter>Source Files\patches\bosses</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_o_tikal_hint.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_extra.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="patches\patch_o_ruin_swdoor.cpp">
       <Filter>Source Files\patches\stg07_ruin</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_flicky.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="teleport.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_seqctrl.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_o_cmndushring.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_o_savepoint.cpp">
-      <Filter>Source Files\patches</Filter>
     </ClCompile>
     <ClCompile Include="patches\patch_o_windy_turibasi.cpp">
       <Filter>Source Files\patches\stg02_windy</Filter>
@@ -556,15 +484,6 @@
     <ClCompile Include="patches\patch_e102shot.cpp">
       <Filter>Source Files\patches\figure</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_ring.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_player.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_enemy.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="patches\patch_e_spinna.cpp">
       <Filter>Source Files\patches\enemy</Filter>
     </ClCompile>
@@ -580,20 +499,11 @@
     <ClCompile Include="patches\patch_tikal.cpp">
       <Filter>Source Files\patches\figure</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patch_o_spring.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
     <ClCompile Include="patches\patch_o_beach_jumpraft.cpp">
       <Filter>Source Files\patches\stg01_beach</Filter>
     </ClCompile>
     <ClCompile Include="patches\patch_chaos_misc.cpp">
       <Filter>Source Files\patches\figure</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_land.cpp">
-      <Filter>Source Files\patches</Filter>
-    </ClCompile>
-    <ClCompile Include="patches\patch_draw.cpp">
-      <Filter>Source Files\patches</Filter>
     </ClCompile>
     <ClCompile Include="patches\patch_rd_beach.cpp">
       <Filter>Source Files\patches\stg01_beach</Filter>
@@ -640,8 +550,104 @@
     <ClCompile Include="patches\patch_c_past_scenechanger.cpp">
       <Filter>Source Files\patches\adv03_past</Filter>
     </ClCompile>
+    <ClCompile Include="patches\patch_bigkaeru.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_colli_space.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_eggrob.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_enemy.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_flicky.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_mirror.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_baloon.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_cmndushring.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_eme.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_frog.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_itembox.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_jumppanel.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_kaos_eme.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_releasebox.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_rocket.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_savepoint.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_spring.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_tikal_hint.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_togedai.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_rd_sandboard.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_ring.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_sakana.cpp">
+      <Filter>Source Files\patches\objects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_draw.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
     <ClCompile Include="patches\patch_game.cpp">
       <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_extra.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_pathtask.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_player.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_land.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_ef_barrier.cpp">
+      <Filter>Source Files\patches\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_ef_spark.cpp">
+      <Filter>Source Files\patches\effects</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_seqctrl.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_pinball.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_o_startshot.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -889,6 +895,12 @@
     </Filter>
     <Filter Include="Header Files\patches\figure">
       <UniqueIdentifier>{6c44c21e-4233-448c-87fc-b8429478c58f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\objects">
+      <UniqueIdentifier>{da61bec8-0ec8-47a8-ad8b-8d3af782461d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\effects">
+      <UniqueIdentifier>{23a063bc-e902-4ed5-b541-e6bdc00e6577}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

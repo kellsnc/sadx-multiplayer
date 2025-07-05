@@ -37,7 +37,7 @@ static const std::unordered_map<std::wstring, Characters> character_name_ids_map
 	{ L"metalsonic", Characters_MetalSonic }
 };
 
-static Characters parse_character_id(const std::wstring& str)
+Characters parse_character_id(const std::wstring& str)
 {
 	std::wstring lowercase = str;
 	transform(lowercase.begin(), lowercase.end(), lowercase.begin(), ::towlower);

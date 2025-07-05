@@ -86,6 +86,17 @@ void SetRuinWaka1Data(NJS_POINT3* pos, NJS_POINT3* tgt, int pnum)
 	}
 }
 
+bool GetRuinWaka1Data(NJS_POINT3* pos, NJS_POINT3* tgt, int pnum)
+{
+	if (auto param = GetCamAnyParam(pnum))
+	{
+		if (pos) *pos = param->camAnyParamPos;
+		if (tgt) *tgt = param->camAnyParamTgt;
+		return true;
+	}
+	return false;
+}
+
 void gravDispose3_m(int pnum)
 {
 	NJS_VECTOR up = { 0.0f, 1.0f, 0.0f };
@@ -1411,6 +1422,7 @@ void SetLocalPathCamera_m(pathtag* ptp, Sint32 mode, Sint32 timer, int pnum)
 	data->timer = timer;
 	data->point = 0;
 }
+
 
 void PatchCameraFuncs()
 {
