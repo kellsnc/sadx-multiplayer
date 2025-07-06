@@ -248,8 +248,11 @@ static void NormalL(task* tp)
 	if (twp->cwp->flag & CWK_FLAG_HIT)
 	{
 		auto player = CCL_IsHitPlayer(twp);
-		pnum = player->counter.b[0];
-		ActionFlipper(twp, angle - timer, pnum);
+		if (player)
+		{
+			pnum = player->counter.b[0];
+			ActionFlipper(twp, angle - timer, pnum);
+		}
 	}
 
 	twp->timer.l = angle;
@@ -331,8 +334,11 @@ static void NormalR(task* tp)
 	if (twp->cwp->flag & CWK_FLAG_HIT)
 	{
 		auto player = CCL_IsHitPlayer(twp);
-		pnum = player->counter.b[0];
-		ActionFlipper(twp, angle - timer, pnum);
+		if (player)
+		{
+			pnum = player->counter.b[0];
+			ActionFlipper(twp, angle - timer, pnum);
+		}
 	}
 
 	twp->timer.l = angle;

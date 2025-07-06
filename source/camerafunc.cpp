@@ -90,10 +90,14 @@ bool GetRuinWaka1Data(NJS_POINT3* pos, NJS_POINT3* tgt, int pnum)
 {
 	if (auto param = GetCamAnyParam(pnum))
 	{
-		if (pos) *pos = param->camAnyParamPos;
-		if (tgt) *tgt = param->camAnyParamTgt;
+		if (pos) 
+			*pos = param->camAnyParamPos;
+		if (tgt) 
+			*tgt = param->camAnyParamTgt;
+
 		return true;
 	}
+
 	return false;
 }
 

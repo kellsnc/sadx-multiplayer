@@ -1,4 +1,6 @@
 #include "pch.h"
+#include <splitscreen.h>
+#include "patches/pinball.h"
 
 static uint8_t BallCount[PLAYER_MAX - 1]; //we don't need to do Player 1
 FastFunctionHook<void> Casino_Setup_h(0x5C0960);
@@ -53,6 +55,7 @@ void __cdecl Casino_Setup_r()
 {
 	Casino_Setup_h.Original();
 	ResetBallCount();
+	memset(PinballCameraMode, 0, sizeof(uint8_t) * PLAYER_MAX);
 }
 
 FastFunctionHook<void, task*> RdCasinoCheckAct3toAct12_h(0x5C0700);

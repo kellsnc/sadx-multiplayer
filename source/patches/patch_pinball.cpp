@@ -1,26 +1,27 @@
 #include "pch.h"
 #include "camerafunc.h"
+#include "pinball.h"
 #include <camera.h>
 
-DataPointer(int, PinballCameraMode, 0x3C748F7);
 
 DataArray(Float[9], PinballCameraTable, 0x1E78F18, 6);
 
-// Pinball in Lost World
+// Pinball
 
 #define PINBALL_PNUM(twp) twp->smode
 
 static void __cdecl CameraPinball_r(task* tp);
 FastFunctionHookPtr<decltype(&CameraPinball_r)> CameraPinball_h(0x5DCEC0);
+uint8_t PinballCameraMode[PLAYER_MAX];
 
 static void Normal_m(task* tp)
 {
 	taskwk* twp = tp->twp;
 	auto pnum = PINBALL_PNUM(twp);
 
-	if ((Uint8)twp->btimer == PinballCameraMode)
+	if ((Uint8)twp->btimer == PinballCameraMode[pnum])
 	{
-		if (PinballCameraMode & 0x80)
+		if (PinballCameraMode[pnum] & 0x80)
 		{			
 			NJS_POINT3 cam_pos, cam_tgt;
 			if (GetRuinWaka1Data(&cam_pos, &cam_tgt, pnum))
@@ -88,8 +89,8 @@ static void Normal_m(task* tp)
 				}
 				if (count == 6)
 				{
-					PinballCameraMode &= ~0x80;
-					twp->btimer = PinballCameraMode;
+					PinballCameraMode[pnum] &= ~0x80;
+					twp->btimer = PinballCameraMode[pnum];
 				}
 			}
 			SetRuinWaka1Data(&cam_pos, &cam_tgt, pnum);
@@ -97,8 +98,8 @@ static void Normal_m(task* tp)
 	}
 	else
 	{
-		twp->btimer = PinballCameraMode;
-		Uint8 camID = PinballCameraMode & 0x7F;
+		twp->btimer = PinballCameraMode[pnum];
+		Uint8 camID = PinballCameraMode[pnum] & 0x7F;
 		twp->scl.x = PinballCameraTable[camID][0];
 		twp->scl.y = PinballCameraTable[camID][1];
 		twp->scl.z = PinballCameraTable[camID][2];
@@ -119,7 +120,9 @@ static void __cdecl CameraPinball_r(task* tp)
 	cam_tgt.y = twp->timer.f;
 	cam_tgt.z = twp->value.f;
 	SetRuinWaka1Data(&cam_pos, &cam_tgt, 0);
+	PinballCameraMode[0] = 0x80;
 	tp->exec = Normal_m;
+
 
 	for (uint8_t i = 1; i < multiplayer::GetPlayerCount(); ++i)
 	{
@@ -132,7 +135,10 @@ static void __cdecl CameraPinball_r(task* tp)
 		auto ctp = CreateElementalTask(2u, LEV_4, Normal_m);
 		*ctp->twp = *tp->twp;
 		PINBALL_PNUM(ctp->twp) = i;
+		PinballCameraMode[i] = 0x80;
 	}
+
+
 }
 
 static void SetPinballMode(uint8_t pnum, uint8_t mode)

@@ -883,3 +883,17 @@ static inline Sint32 ReleaseTextureOnCasino(Sint32 id)
 	}
 	return result;
 }
+
+
+static const void* const CheckYakuLinePtr = (void*)0x5DAAF0;
+static inline Uint8 CheckYakuLine(taskwk* twp)
+{
+	Uint8 result;
+	__asm
+	{
+		mov edi, [twp]
+		call CheckYakuLinePtr
+		mov result, al
+	}
+	return result;
+}

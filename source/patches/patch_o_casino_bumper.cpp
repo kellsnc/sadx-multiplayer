@@ -37,6 +37,9 @@ static void BumperExec1(task* tp)
 	if (twp->cwp->flag & 1)
 	{
 		auto player = CCL_IsHitPlayer(twp);
+		if (!player)
+			return;
+
 		auto pnum = player->counter.b[0];
 
 		if (!(twp->flag & 0x8000))
@@ -80,16 +83,19 @@ static void ObjectBumperExecChild2(task* tp)
 	if (twp->cwp->flag & 1)
 	{
 		auto player = CCL_IsHitPlayer(twp);
-		auto pnum = player->counter.b[0];
-
-		if (!(twp->flag & 0x8000))
+		if (player)
 		{
-			SetAccelerationP(pnum, -playermwp[pnum]->spd.x, 2.0f - playermwp[pnum]->spd.y, 0.0f);
-			ptwp->flag |= 0x200;
-			ptwp->mode = 2;
-			dsPlay_oneshot(SE_CA_BUMPER, 0, 0, 0);
-			VibShot(pnum, 0);
-			ptwp->flag |= 0x8000;
+			auto pnum = player->counter.b[0];
+
+			if (!(twp->flag & 0x8000))
+			{
+				SetAccelerationP(pnum, -playermwp[pnum]->spd.x, 2.0f - playermwp[pnum]->spd.y, 0.0f);
+				ptwp->flag |= 0x200;
+				ptwp->mode = 2;
+				dsPlay_oneshot(SE_CA_BUMPER, 0, 0, 0);
+				VibShot(pnum, 0);
+				ptwp->flag |= 0x8000;
+			}
 		}
 	}
 	else

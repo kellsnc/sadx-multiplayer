@@ -23,9 +23,12 @@ static void ObjectEmergencyPExec(task* tp)
         NJS_POINT3 v = { twp->scl.y, 0.0f, 0.0f };
         Angle3 ang = { 0, twp->ang.y, 0 };
         auto player = CCL_IsHitPlayer(twp);
-        auto pnum = player->counter.b[0];
-        SetVelocityAndRotationAndNoconTimeP(pnum, &v, &ang, 0);
-        twp->counter.l = 0;
+        if (player)
+        {
+            auto pnum = player->counter.b[0];
+            SetVelocityAndRotationAndNoconTimeP(pnum, &v, &ang, 0);
+            twp->counter.l = 0;
+        }
     }
     else {
         //Touched but not ready yet, increment counter.

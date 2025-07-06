@@ -131,6 +131,7 @@
     <ClInclude Include="patches\patch_o_sky_cyl_cmn.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="patches\patch_player.h" />
+    <ClInclude Include="patches\pinball.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="race.h" />
     <ClInclude Include="RegisterPatch.hpp" />
@@ -186,7 +187,9 @@
     <ClCompile Include="patches\patch_o_casino_bumper.cpp" />
     <ClCompile Include="patches\patch_o_casino_emergency.cpp" />
     <ClCompile Include="patches\patch_o_casino_flipper.cpp" />
+    <ClCompile Include="patches\patch_o_casino_jdai.cpp" />
     <ClCompile Include="patches\patch_o_casino_mudout.cpp" />
+    <ClCompile Include="patches\patch_o_casino_roll.cpp" />
     <ClCompile Include="patches\patch_o_casino_tuuka.cpp" />
     <ClCompile Include="patches\patch_o_mysticruin_torokko.cpp" />
     <ClCompile Include="patches\patch_o_ruin_texanim.cpp" />
