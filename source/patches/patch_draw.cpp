@@ -318,6 +318,7 @@ Bool __cdecl dsCheckViewV_ExecHack(NJS_POINT3* ft, float radius)
 
 void patch_draw_init()
 {
+//	WriteJump((void*)dsCheckViewV, dsCheckViewV_r);
 	late_exec_h.Hook(late_exec_r);
 	late_setOdr_h.Hook(late_setOdr_r);
 
