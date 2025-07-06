@@ -421,6 +421,21 @@ int GetNumRingM(int pNum)
 	return ssNumRing_m[pNum];
 }
 
+int GetTotalRingsM()
+{
+	int total = 0;
+	if (multiplayer::IsActive())
+	{
+		for (uint8_t i = 0; i < multiplayer::GetPlayerCount(); i++)
+		{
+			total += GetNumRingM(i);
+		}
+
+	}
+
+	return total;
+}
+
 void AddNumRingM(int pNum, int add)
 {
 	if (multiplayer::IsActive())
@@ -462,6 +477,63 @@ void ResetNumRingM()
 void ResetNumRingP(int pNum)
 {
 	ssNumRing_m[pNum] = 0;
+}
+
+//for casino
+static void GetRingNowM(task* tp)
+{
+	taskwk* twp = tp->twp;
+	const Uint8 pnum = twp->counter.b[0];
+
+	if (twp->wtimer == 0x1234) //magicnumber 
+	{
+		if (GetNumRingM(pnum))
+		{
+			if (twp->btimer--)
+			{
+				AddNumRingM(pnum, -1);
+				return;
+			}
+		}
+		FreeTask(tp);
+		return;
+	}
+
+	if (!twp->wtimer--)
+	{
+		if (!twp->btimer--)
+		{
+			FreeTask(tp);
+			return;
+		}
+		twp->wtimer = 6;
+		AddNumRingM(pnum, 1);
+		dsPlay_oneshot(SE_RING, 0, 0, 0);
+	}
+}
+
+/// <summary>
+/// Increment ring counter.
+/// </summary>
+/// <param name="RingCount"></param>
+void SetGetRingM(Uint8 RingCount, const Uint8 pnum)
+{
+	taskwk* twp = CreateElementalTask(IM_TASKWK, LEV_3, GetRingNowM)->twp;
+	twp->wtimer = 5;
+	twp->btimer = RingCount;
+	twp->counter.b[0] = pnum;
+}
+
+/// <summary>
+/// Decrement ring counter.
+/// </summary>
+/// <param name="RingCount"></param>
+void SetDropRingM(Uint8 RingCount, const Uint8 pnum)
+{
+	taskwk* twp = CreateElementalTask(IM_TASKWK, LEV_3, GetRingNowM)->twp;
+	twp->wtimer = 0x1234;
+	twp->btimer = RingCount;
+	twp->counter.b[0] = pnum;
 }
 
 // Reset all rings instead of just P1

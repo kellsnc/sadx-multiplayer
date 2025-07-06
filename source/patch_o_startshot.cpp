@@ -2,7 +2,7 @@
 
 FastFunctionHook<void, task*> ObjectStartShotNormal_h(0x5DCC20);
 #define PINBALL_FLAG_STOPER_CAM		0x100
-DataPointer(int, PinballFlag, 0x3C748F8);
+
 
 static void Normal_r(task* tp)
 {

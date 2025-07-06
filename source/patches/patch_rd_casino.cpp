@@ -16,7 +16,30 @@ Sint32 __cdecl RdCasinoCheckAct_Hack(Uint8 pno)
 	return GetPlayerCharacterName(pno);
 }
 
-void __cdecl Casino_StartPos_Hack(Uint8 pno, Float x, Float y, Float z)
+void ResetBallCount();
+FastFunctionHook<void, task*> Rd_Casinopolis_h(0x5C0F40);
+void Rd_Casinopolis_r(task* tp)
+{
+	auto twp = tp->twp;
+
+	switch (twp->mode)
+	{
+	case 0:
+		ResetBallCount();
+		break;
+	case 2:
+		if (IsIngame() && (RdCasino_JumpAct == 3 || RdCasino_JumpAct == 4))
+		{
+			ResetBallCount();
+		}
+		break;
+	}
+
+
+	Rd_Casinopolis_h.Original(tp);
+}
+
+void Casino_StartPos_Hack(Uint8 pno, Float x, Float y, Float z)
 {
 	if (multiplayer::IsActive())
 	{
@@ -50,6 +73,8 @@ void patch_rd_casino_init()
 	WriteCall((void*)0x5C0E19, Casino_StartPos_Hack);
 	WriteCall((void*)0x5C0E77, Casino_StartPos_Hack); // pinball
 	WriteCall((void*)0x5C0EF1, Casino_StartPos_Hack); // pinball
+
+	Rd_Casinopolis_h.Hook(Rd_Casinopolis_r);
 }
 
 RegisterPatch patch_rd_casino(patch_rd_casino_init);

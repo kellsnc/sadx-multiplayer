@@ -43,6 +43,9 @@ void AddNumRingM(int pNum, int amount);
 void SetNumRingM(int pNum, int Number);
 int GetNumRingM(int pNum);
 void ResetNumRingP(int pNum);
+int GetTotalRingsM();
+void SetGetRingM(Uint8 RingCount, const Uint8 pnum);
+void SetDropRingM(Uint8 RingCount, const Uint8 pnum);
 
 void ExecMultiplayer();
 void InitMultiplayer();

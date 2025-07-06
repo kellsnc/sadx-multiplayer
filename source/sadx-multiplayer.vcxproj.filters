@@ -649,6 +649,21 @@
     <ClCompile Include="patch_o_startshot.cpp">
       <Filter>Source Files\patches\stg09_casino</Filter>
     </ClCompile>
+    <ClCompile Include="patch_ball.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_o_casino_emergency.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_o_casino_tuuka.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_o_casino_flipper.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_o_casino_bumper.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

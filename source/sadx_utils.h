@@ -400,6 +400,10 @@ FunctionPointer(bool, IsSonicShakingTree, (taskwk* twp), 0x494810);
 FunctionPointer(bool, IsKnucklesShakingTree, (taskwk* twp), 0x4767E0);
 FunctionPointer(bool, IsAmyShakingTree, (taskwk* twp), 0x487250);
 FunctionPointer(bool, IsE102ShakingTree, (taskwk* twp), 0x48CE50);
+DataPointer(int, PinballFlag, 0x3C748F8);
+DataPointer(char, ThreeCardCounter, 0x3C748EA);
+FastcallFunctionPointer(Float, njDistanceP2PL, (NJS_VECTOR* a1, NJS_LINE* a2, NJS_VECTOR* a3), 0x788D40);
+FastcallFunctionPointer(Float, njOuterProduct, (NJS_VECTOR* a1, NJS_VECTOR* a2, NJS_VECTOR* a3), 0x7889F0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -863,4 +867,19 @@ static inline void CalcPathPosRange(pathtag* pttp, Sint32 gaptop, Sint32 gapbott
 		call CalcPathPosRangePtr
 		add esp, 12
 	}
+}
+
+
+
+static const void* const ReleaseTextureOnCasinoPtr = (void*)0x5C03F0;
+static inline Sint32 ReleaseTextureOnCasino(Sint32 id)
+{
+	Sint32 result;
+	__asm
+	{
+		mov eax, [id]
+		call ReleaseTextureOnCasinoPtr
+		mov result, eax
+	}
+	return result;
 }
