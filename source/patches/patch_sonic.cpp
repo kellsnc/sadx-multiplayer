@@ -226,6 +226,8 @@ static void __cdecl SonicTheHedgehog_r(task* tp)
 	if (multiplayer::IsActive())
 	{
 		auto pnum = TASKWK_PLAYERID(tp->twp);
+		auto twp = tp->twp;
+
 		gravity::SaveGlobalGravity();
 		gravity::SwapGlobalToUserGravity(pnum);
 		SonicTheHedgehog_h.Original(tp);

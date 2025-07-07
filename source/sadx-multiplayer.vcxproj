@@ -177,6 +177,9 @@
     <ClCompile Include="patches\patch_c_past_scenechanger.cpp" />
     <ClCompile Include="patches\patch_c_ss_scenechanger.cpp" />
     <ClCompile Include="patches\patch_draw.cpp" />
+    <ClCompile Include="patches\patch_ec_egglift.cpp" />
+    <ClCompile Include="patches\patch_ec_monorail.cpp" />
+    <ClCompile Include="patches\patch_ec_scenechanger.cpp" />
     <ClCompile Include="patches\patch_enemy.cpp" />
     <ClCompile Include="patches\patch_e_buyon.cpp" />
     <ClCompile Include="patches\patch_e_spinna.cpp" />

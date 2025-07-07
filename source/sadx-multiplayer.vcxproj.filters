@@ -670,6 +670,15 @@
     <ClCompile Include="patches\patch_o_casino_jdai.cpp">
       <Filter>Source Files\patches\stg09_casino</Filter>
     </ClCompile>
+    <ClCompile Include="patches\patch_ec_scenechanger.cpp">
+      <Filter>Source Files\patches\adv01_EggCarrier</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_ec_egglift.cpp">
+      <Filter>Source Files\patches\adv01_EggCarrier</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_ec_monorail.cpp">
+      <Filter>Source Files\patches\adv01_EggCarrier</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -928,6 +937,9 @@
     </Filter>
     <Filter Include="Header Files\patches\stg09_casino">
       <UniqueIdentifier>{0118b7ff-c798-4284-87a9-26e1ce1a00e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\adv01_EggCarrier">
+      <UniqueIdentifier>{90713213-38b2-4198-95ab-6164b739f2f2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

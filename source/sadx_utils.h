@@ -405,6 +405,9 @@ DataPointer(char, ThreeCardCounter, 0x3C748EA);
 FastcallFunctionPointer(Float, njDistanceP2PL, (NJS_VECTOR* a1, NJS_LINE* a2, NJS_VECTOR* a3), 0x788D40);
 FastcallFunctionPointer(Float, njOuterProduct, (NJS_VECTOR* a1, NJS_VECTOR* a2, NJS_VECTOR* a3), 0x7889F0);
 FunctionPointer(void, PRotatedByGravityAsPinbal, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x4438A0);
+FunctionPointer(void, SetAutoPilotForXZPositionP, (unsigned __int8 a1, float a2, float a3), 0x440F30);
+FunctionPointer(Sint32, EV_Check, (int unused), 0x42FAE0);
+
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
