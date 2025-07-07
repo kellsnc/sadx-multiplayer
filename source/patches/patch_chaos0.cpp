@@ -374,6 +374,48 @@ void BossChaos0_r(task* tp)
 	}
 }
 
+//This control when Chaos can be damaged, the game does not call this function when Chaos isn't vulnerable.
+Bool chkChaos0Collision_r(taskwk* twp)
+{
+	if ((twp->flag & PL_FLAG_DAMAGE) == 0)
+		return FALSE;
+
+	NJS_POINT3 vel;
+
+	vel.x = -2.0f;
+	vel.y = 2.0f;
+	vel.z = 0.0f;
+
+	bossmtn_flag &= 0xFCu;
+
+	if (twp->smode == 4 || twp->pos.y >= 60.0f)
+	{
+		if (twp->mode != MD_CHAOS_FALL)
+		{
+			chaos_reqmode = MD_CHAOS_FALL;
+			chaos_oldmode = twp->mode;
+			chaos_nextmode = chaos_oldmode;
+		}
+	}
+	else
+	{
+		if (twp->mode != MD_CHAOS_DAMAGE)
+		{
+			chaos_reqmode = MD_CHAOS_DAMAGE;
+			chaos_oldmode = twp->mode;
+		}
+		chaos_nextmode = 16;
+	}
+
+	auto player = CCL_IsHitPlayer(twp);
+	if (player)
+	{
+		PConvertVector_P2G(player, &vel);
+		SetVelocityP(player->counter.b[0], vel.x, vel.y, vel.z);
+	}
+	return TRUE;
+}
+
 void patch_chaos0_init()
 {
 	WriteJump(drawEffectChaos0EffectB, drawEffectChaos0EffectB_r);
@@ -385,6 +427,7 @@ void patch_chaos0_init()
 	setApartTargetPos_h.Hook(setApartTargetPos_r);
 	chaos0Pole_h.Hook(chaos0Pole_r);
 	chaos0Punch_h.Hook(chaos0Punch_r);
+	WriteJump((void*)0x54A360, chkChaos0Collision_r);
 }
 
 #ifdef MULTI_TEST

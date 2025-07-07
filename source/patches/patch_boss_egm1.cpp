@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "SADXModLoader.h"
 #include "FastFunctionHook.hpp"
+#include <camera.h>
 
 // Egg Hornet
 
@@ -14,6 +15,48 @@ FastUsercallHookPtr<void(*)(taskwk* twp), noret, rEAX> setEgm1Missile_h(0x573730
 FastUsercallHookPtr<void(*)(bossextwk* egm, taskwk* twp), noret, rECX, rEAX> SetEgm1AtkRoute_h(0x5735B0);
 
 static const int timeLimit = 400;
+
+FastUsercallHookPtr<void(*)(task* tp), noret, rEAX> BossCheckDamage_h(0x571CD0);
+static void BossCheckDamage(task* tp)
+{
+	__int16 flag; 
+	bossextwk* egm1wk; 
+	taskwk* twp = tp->twp;
+	egm1wk = (bossextwk*)tp->awp;
+	flag = twp->flag;
+	if ((flag & 4) != 0 && egm1wk->HitPoint > 0)
+	{
+		auto player = CCL_IsHitPlayer(twp);
+		if (player)
+		{
+			NJS_POINT3 a2;
+			a2.x = -2.0f;
+			a2.y = 2.0f;
+			a2.z = 0.0f;
+			PConvertVector_P2G(player, &a2);
+			SetVelocityP(player->counter.b[0], a2.x, a2.y, a2.z);
+		}
+	}
+
+	BossCheckDamage_h.Original(tp);
+}
+
+FastUsercallHookPtr<void(*)(taskwk* tp), noret, rEAX> EggHornet_InitFight_h(0x571C90);
+void EggHornet_InitFight(taskwk* twp)
+{
+	EggHornet_InitFight_h.Original(twp);
+
+	if (multiplayer::IsActive())
+	{
+		if (ccsi_flag)
+		{
+			for (int i = 1; i < PLAYER_MAX; ++i) //todo rework to avoid this hacky stuff
+			{
+				//CameraSetEventCamera_m(i, CAMMD_CHAOS_STD, CAMADJ_NONE);
+			}
+		}
+	}
+}
 
 void SetEgm1AtkRoute_r(bossextwk* egm, taskwk* twp)
 {
@@ -185,6 +228,11 @@ void Egm1_r(task* tp)
 	Egm1_h.Original(tp);
 }
 
+void EggHornetDisplay(task* tp)
+{
+	tp->disp(tp);
+}
+
 void patch_egm1_init()
 {
 	//Egm1_h.Hook(Egm1_r);
@@ -194,8 +242,14 @@ void patch_egm1_init()
 	SetEgm1Ud_h.Hook(setEgm1Ud_r);
 	setEgm1Missile_h.Hook(setEgm1Missile_r);
 	SetEgm1AtkRoute_h.Hook(SetEgm1AtkRoute_r);
+	EggHornet_InitFight_h.Hook(EggHornet_InitFight);
+
+	BossCheckDamage_h.Hook(BossCheckDamage);
+	
+	WriteCall((void*)0x57204C, EggHornetDisplay);
+	WriteData<5>((int*)0x571D36, 0x90); //remove set velocity when getting hit, we will manually do it
 }
 
 #ifdef MULTI_TEST
-RegisterPatch patch_egm1(patch_egm1_init);
+	RegisterPatch patch_egm1(patch_egm1_init);
 #endif

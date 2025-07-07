@@ -679,6 +679,9 @@
     <ClCompile Include="patches\patch_ec_monorail.cpp">
       <Filter>Source Files\patches\adv01_EggCarrier</Filter>
     </ClCompile>
+    <ClCompile Include="patches\patch_boss_chaos4.cpp">
+      <Filter>Source Files\patches\bosses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
@@ -830,6 +833,9 @@
     </ClInclude>
     <ClInclude Include="patches\pinball.h">
       <Filter>Header Files\patches\stg09_casino</Filter>
+    </ClInclude>
+    <ClInclude Include="patches\patches_egm2.h">
+      <Filter>Header Files\patches</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

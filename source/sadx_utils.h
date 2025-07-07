@@ -2,7 +2,7 @@
 
 #define TASKWK_PLAYERID(a) a->counter.b[0] // Get player id from player's taskwk
 #define TASKWK_CHARID(a) a->counter.b[1] // Get character id from player's taskwk
-
+#define PL_FLAG_DAMAGE	   0x4		
 #define GET_STAGE(num) ((num) >> 8)  /* Extract stage from GetStageNumber */
 #define GET_ACT(num) ((num) & 0xFF)  /* Extract act from GetStageNumber */
 
@@ -933,4 +933,15 @@ static inline signed int AmyCheckBeInTheAir(taskwk* twp, playerwk* pwp, motionwk
 		add esp, 4
 	}
 	return result;
+}
+
+static const void* const Chaos4DisplayPtr = (void*)0x5527E0;
+static inline void Chaos4_Display(taskwk* twp, chaoswk* cwk)
+{
+	__asm
+	{
+		mov edi, [cwk]
+		mov eax, [twp]
+		call Chaos4DisplayPtr
+	}
 }
