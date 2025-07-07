@@ -404,6 +404,7 @@ DataPointer(int, PinballFlag, 0x3C748F8);
 DataPointer(char, ThreeCardCounter, 0x3C748EA);
 FastcallFunctionPointer(Float, njDistanceP2PL, (NJS_VECTOR* a1, NJS_LINE* a2, NJS_VECTOR* a3), 0x788D40);
 FastcallFunctionPointer(Float, njOuterProduct, (NJS_VECTOR* a1, NJS_VECTOR* a2, NJS_VECTOR* a3), 0x7889F0);
+FunctionPointer(void, PRotatedByGravityAsPinbal, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x4438A0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -894,6 +895,39 @@ static inline Uint8 CheckYakuLine(taskwk* twp)
 		mov edi, [twp]
 		call CheckYakuLinePtr
 		mov result, al
+	}
+	return result;
+}
+
+
+static const void* const KnucklesCheckBeInTheAirPtr = (void*)0x473B90;
+static inline signed int KnucklesCheckBeInTheAir(playerwk* pwp, taskwk* twp)
+
+{
+	signed int result;
+	__asm
+	{
+		mov ecx, [twp]
+		mov eax, [pwp]
+		call KnucklesCheckBeInTheAirPtr
+		mov result, eax
+	}
+	return result;
+}
+
+static const void* const AmyCheckBeInTheAirPtr = (void*)0x485730;
+static inline signed int AmyCheckBeInTheAir(taskwk* twp, playerwk* pwp, motionwk2* mwp)
+
+{
+	signed int result;
+	__asm
+	{
+		push[mwp]
+		mov eax, [pwp]
+		mov ecx, [twp]
+		call AmyCheckBeInTheAirPtr
+		mov result, eax
+		add esp, 4
 	}
 	return result;
 }

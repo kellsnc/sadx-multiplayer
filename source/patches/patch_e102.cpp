@@ -81,7 +81,7 @@ void E102_RunActions_r(task* tp, motionwk2* mwp, playerwk* pwp)
 	{
 		auto twp = tp->twp;
 
-		switch (twp->mode)
+		switch ((uint8_t)twp->mode)
 		{
 		case MD_E102_CART: // Allow death incarts
 			if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)
@@ -182,7 +182,7 @@ signed int E102_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 			return E102_CheckInput_h.Original(twp, pwp, mwp);
 		}
 
-		switch (twp->smode)
+		switch ((uint8_t)twp->smode)
 		{
 		case PL_OP_PARABOLIC:
 			if (CurrentLevel != LevelIDs_Casinopolis)

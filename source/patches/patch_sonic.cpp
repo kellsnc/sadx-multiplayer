@@ -195,7 +195,7 @@ static Bool Sonic_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 			return Sonic_CheckInput_hook.Original(pwp, twp, mwp);
 		}
 
-		switch (twp->smode)
+		switch ((uint8_t)twp->smode)
 		{
 		case PL_OP_PARABOLIC:
 			if (CurrentLevel == LevelIDs_Casinopolis)

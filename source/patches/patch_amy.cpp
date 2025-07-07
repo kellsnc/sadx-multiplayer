@@ -190,7 +190,7 @@ Bool Amy_CheckInput_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 			return Amy_CheckInput_h.Original(pwp, mwp, twp);
 		}
 
-		switch (twp->smode)
+		switch ((uint8_t)twp->smode)
 		{
 		case PL_OP_PARABOLIC:
 			if (CurrentLevel != LevelIDs_Casinopolis)
@@ -213,6 +213,11 @@ Bool Amy_CheckInput_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 			if (SetCylinderNextAction(twp, mwp, pwp))
 				return TRUE;
 			break;
+		case PL_OP_PINBALL:
+			twp->mode = MD_MULTI_S9A1_PINB;
+			pwp->mj.reqaction = 14;
+			twp->flag = twp->flag & ~(Status_OnPath | Status_LightDash) | Status_Attack | Status_Ball;
+			return TRUE;
 		}
 	}
 	
@@ -223,7 +228,7 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 {
 	if (multiplayer::IsActive())
 	{
-		switch (twp->mode)
+		switch ((uint8_t)twp->mode)
 		{
 		case MD_AMY_S3A2_CART: // Allow death incarts
 			if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)
@@ -306,6 +311,20 @@ void Amy_RunsActions_r(taskwk* twp, motionwk2* mwp, playerwk* pwp)
 
 			twp->mode = MD_MULTI_S6A1_WAIT;
 			return;
+		case MD_MULTI_S9A1_PINB:
+			if (!AmyCheckInput(pwp, mwp, twp) && AmyCheckBeInTheAir(twp, pwp, mwp))
+			{
+				twp->mode = MD_MULTI_S9A1_PINF;
+			}
+			break;
+		case MD_MULTI_S9A1_PINF:
+			if (!AmyCheckInput(pwp, mwp, twp) && (twp->flag & 3))
+			{
+				twp->mode = MD_MULTI_S9A1_PINB;
+				twp->ang.x = mwp->ang_aim.x;
+				twp->ang.z = mwp->ang_aim.z;
+			}
+			break;
 		}
 	}
 
@@ -318,7 +337,7 @@ void AmyRose_m(task* tp)
 	auto mwp = (motionwk2*)tp->mwp;
 	auto pwp = (playerwk*)mwp->work.ptr;
 
-	switch (twp->mode)
+	switch ((uint8_t)twp->mode)
 	{
 	case MD_MULTI_PARA:
 		PGetGravity(twp, mwp, pwp);
@@ -337,6 +356,22 @@ void AmyRose_m(task* tp)
 		break;
 	case MD_MULTI_S6A1_RROT:
 		Mode_SDCylinderRight(twp, pwp);
+		break;
+	case MD_MULTI_S9A1_PINB:
+		PRotatedByGravityAsPinbal(twp, mwp, pwp);
+		PSetPosition(twp, mwp, pwp);
+		if ((twp->flag & 1) != 0)
+		{
+			mwp->spd.y = 0.0f;
+		}
+		PResetPosition(twp, mwp, pwp);
+		break;
+	case MD_MULTI_S9A1_PINF:
+		PResetAngle(twp, mwp, pwp);
+		PGetInertia(twp, mwp, pwp);
+		PGetSpeed(twp, mwp, pwp);
+		PSetPosition(twp, mwp, pwp);
+		PResetPosition(twp, mwp, pwp);
 		break;
 	}
 

@@ -25,7 +25,7 @@ static Bool Miles_CheckInput_r(taskwk* twp, playerwk* pwp, motionwk2* mwp)
 			return Miles_CheckInput_h.Original(twp, pwp, mwp);
 		}
 
-		switch (twp->smode)
+		switch ((uint8_t)twp->smode)
 		{
 		case PL_OP_PARABOLIC:
 			if (CurrentLevel == LevelIDs_Casinopolis)
@@ -85,7 +85,7 @@ static void __cdecl MilesJiggle_r(task* tp)
 
 void Miles_RunAction_r(playerwk* pwp, motionwk2* mwp, taskwk* twp)
 {
-	switch (twp->mode)
+	switch ((uint8_t)twp->mode)
 	{
 	case MD_MILES_S3A2_CART: // Allow death incarts
 		if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)

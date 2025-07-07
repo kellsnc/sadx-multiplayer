@@ -126,7 +126,7 @@ Bool Big_CheckInput_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 			return Big_CheckInput_h.Original(pwp, twp, mwp);
 		}
 
-		switch (twp->smode)
+		switch ((uint8_t)twp->smode)
 		{
 		case PL_OP_PARABOLIC:
 			if (CurrentLevel == LevelIDs_Casinopolis)
@@ -159,7 +159,7 @@ void __cdecl BigChkMode_r(playerwk* pwp, taskwk* twp, motionwk2* mwp)
 {
 	if (multiplayer::IsActive())
 	{
-		switch (twp->mode)
+		switch ((uint8_t)twp->mode)
 		{
 		case MD_BIG_CART: // Allow death incarts
 			if ((twp->flag & Status_DoNextAction) && twp->smode == PL_OP_KILLED)
@@ -242,7 +242,7 @@ void BigTheCat_m(task* tp)
 	gravity::SaveGlobalGravity();
 	gravity::SwapGlobalToUserGravity(pnum);
 
-	switch (twp->mode)
+	switch ((uint8_t)twp->mode)
 	{
 	case MD_MULTI_PARA:
 		PGetGravity(twp, mwp, pwp);
