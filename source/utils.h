@@ -18,4 +18,4 @@ bool IsInAdventureField();
 bool IsPlayerInCart(char pnum);
 bool IsPlayerOnSnowboard(char pnum);
 int GetHoldingPlayerId(task* htp);
-int GetBossTargetPlayer();
+int GetBossTargetPlayerRandom();

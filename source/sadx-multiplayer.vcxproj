@@ -126,6 +126,7 @@
     <ClInclude Include="hud_multi.h" />
     <ClInclude Include="multiplayer.h" />
     <ClInclude Include="netplay.h" />
+    <ClInclude Include="patches\chaos_common.h" />
     <ClInclude Include="patches\patches_egm2.h" />
     <ClInclude Include="patches\patch_bigkaeru.h" />
     <ClInclude Include="patches\patch_e_cart.h" />
@@ -175,6 +176,7 @@
     <ClCompile Include="patches\patch_al_camera.cpp" />
     <ClCompile Include="patches\patch_al_minimal.cpp" />
     <ClCompile Include="patches\patch_boss_chaos4.cpp" />
+    <ClCompile Include="patches\patch_boss_chaos6.cpp" />
     <ClCompile Include="patches\patch_chaos_misc.cpp" />
     <ClCompile Include="patches\patch_c_past_scenechanger.cpp" />
     <ClCompile Include="patches\patch_c_ss_scenechanger.cpp" />

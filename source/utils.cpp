@@ -197,7 +197,7 @@ int GetHoldingPlayerId(task* htp)
 	return 0;
 }
 
-int GetBossTargetPlayer()
+int GetBossTargetPlayerRandom()
 {
 	static int pnum = 0;
 	static int timer = 0;
@@ -212,4 +212,18 @@ int GetBossTargetPlayer()
 		}
 	}
 	return pnum;
+}
+
+static int curPnum = 0;
+int GetBossTargetPlayerWithTimer(NJS_POINT3* pos)
+{
+
+	static int timer = 0;
+	if (ulGlobalTimer - timer > 500 || !playertwp[curPnum])
+	{
+		curPnum = GetTheNearestPlayerNumber(pos);
+		timer = ulGlobalTimer;
+	}
+
+	return curPnum;
 }

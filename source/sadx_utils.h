@@ -407,6 +407,8 @@ FastcallFunctionPointer(Float, njOuterProduct, (NJS_VECTOR* a1, NJS_VECTOR* a2, 
 FunctionPointer(void, PRotatedByGravityAsPinbal, (taskwk* a1, motionwk2* a2, playerwk* a3), 0x4438A0);
 FunctionPointer(void, SetAutoPilotForXZPositionP, (unsigned __int8 a1, float a2, float a3), 0x440F30);
 FunctionPointer(Sint32, EV_Check, (int unused), 0x42FAE0);
+FunctionPointer(Float, sub_557BB0, (NJS_VECTOR* a1, NJS_VECTOR* a2), 0x557BB0);
+FunctionPointer(Bool, Chaos6AttackStatus, (), 0x5590A0);
 
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;

@@ -65,7 +65,7 @@ void SetEgm1AtkRoute_r(bossextwk* egm, taskwk* twp)
 		return SetEgm1AtkRoute_h.Original(egm, twp);
 	}
 
-	auto player = playertwp[GetBossTargetPlayer()];
+	auto player = playertwp[GetBossTargetPlayerRandom()];
 	float diff = 20.0f;
 
 	egm->FlyRoute[0] = twp->pos;
@@ -94,7 +94,7 @@ void setEgm1Missile_r(taskwk* twp)
 	Egm1MissilesPrm egm1Mis;
 
 	egm1Mis.Parent_twp = twp;
-	egm1Mis.DstPosPtr = &playertwp[GetBossTargetPlayer()]->pos;
+	egm1Mis.DstPosPtr = &playertwp[GetBossTargetPlayerRandom()]->pos;
 	egm1Mis.FireInterval = 14;
 	egm1Mis.HomingInterval = 22;
 	egm1Mis.MissileNum = 6;
@@ -113,8 +113,8 @@ void setEgm1Ud_r(task* a1)
 	egm->UdFrq += 546;
 	egm->UdFrq = 0;
 	twp->pos.y = egm->BasePosY - njSin(egm->UdFrq) * 10.0f;
-	twp->ang.y = -0x4000 - njArcTan2(twp->pos.z - playertwp[GetBossTargetPlayer()]->pos.z,
-		twp->pos.x - playertwp[GetBossTargetPlayer()]->pos.x);
+	twp->ang.y = -0x4000 - njArcTan2(twp->pos.z - playertwp[GetBossTargetPlayerRandom()]->pos.z,
+		twp->pos.x - playertwp[GetBossTargetPlayerRandom()]->pos.x);
 }
 
 int __cdecl EH_GetVsPlayerAng_r(taskwk* a1)
@@ -124,7 +124,7 @@ int __cdecl EH_GetVsPlayerAng_r(taskwk* a1)
 		return EH_GetVsPlayerAng_h.Original(a1);
 	}
 
-	return -0x4000 - njArcTan2(a1->pos.z - playertwp[GetBossTargetPlayer()]->pos.z, a1->pos.x - playertwp[GetBossTargetPlayer()]->pos.x);
+	return -0x4000 - njArcTan2(a1->pos.z - playertwp[GetBossTargetPlayerRandom()]->pos.z, a1->pos.x - playertwp[GetBossTargetPlayerRandom()]->pos.x);
 }
 
 void SetEgm1MoveRoute_r(task* tp, taskwk* twp, bossextwk* egm)
@@ -139,7 +139,7 @@ void SetEgm1MoveRoute_r(task* tp, taskwk* twp, bossextwk* egm)
 	NJS_VECTOR posFlyRoute = { 0 };
 	NJS_VECTOR newposFlyRoute = { 0 };
 
-	auto player = playertwp[GetBossTargetPlayer()];
+	auto player = playertwp[GetBossTargetPlayerRandom()];
 
 	egm->FlyRoute[0] = twp->pos;
 
@@ -206,9 +206,9 @@ int EH_PosPlayerCheck_r()
 	{
 		int result = 0;
 
-		if (playertwp[GetBossTargetPlayer()]->pos.x >= 752.0f)
+		if (playertwp[GetBossTargetPlayerRandom()]->pos.x >= 752.0f)
 		{
-			result = playertwp[GetBossTargetPlayer()]->pos.x <= 1008.0f;
+			result = playertwp[GetBossTargetPlayerRandom()]->pos.x <= 1008.0f;
 		}
 		else
 		{

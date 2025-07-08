@@ -193,7 +193,7 @@ void turnToPlayer_r(taskwk* twp, chaoswk* bwp)
 
 	float dist = 0.0f;
 
-	auto ptwp = playertwp[GetBossTargetPlayer()];
+	auto ptwp = playertwp[GetBossTargetPlayerRandom()];
 
 	if (ptwp)
 	{
@@ -206,7 +206,7 @@ void turnToPlayer_r(taskwk* twp, chaoswk* bwp)
 
 Angle setApartTargetPos_r(chaoswk* cwk)
 {
-	auto ptwp = playertwp[GetBossTargetPlayer()];
+	auto ptwp = playertwp[GetBossTargetPlayerRandom()];
 
 	if (!multiplayer::IsEnabled() || !ptwp)
 	{
@@ -223,7 +223,7 @@ Angle setApartTargetPos_r(chaoswk* cwk)
 
 void chaos0Pole_r(chaoswk* cwk, taskwk* twp)
 {
-	auto ptwp = playertwp[GetBossTargetPlayer()];
+	auto ptwp = playertwp[GetBossTargetPlayerRandom()];
 
 	if (!multiplayer::IsEnabled() || !ptwp)
 	{
@@ -293,7 +293,7 @@ void chaos0Pole_r(chaoswk* cwk, taskwk* twp)
 
 void chaos0Punch_r(chaoswk* cwk, taskwk* twp, bosswk* bwk)
 {
-	auto ptwp = playertwp[GetBossTargetPlayer()];
+	auto ptwp = playertwp[GetBossTargetPlayerRandom()];
 
 	if (twp->smode != 3)
 	{
