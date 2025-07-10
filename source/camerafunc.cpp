@@ -49,6 +49,14 @@ VariableHook<Bool, 0x3C4AC98> CamPathCam2Core_AliveFlag_m;
 VariableHook<Sint32, 0x3C4AC8C> avoidMode_m;
 VariableHook<Sint32, 0x3C4ADC4> nowFrame_m;
 
+/* BOSSES */
+VariableHook<NJS_POINT3, 0x3C4ACE8> chaoscam_tgtpos_ofs_def_m;
+VariableHook<NJS_POINT3, 0x91B610> chaoscam_campos_ofs_def_m;
+VariableHook<NJS_POINT3, 0x3C4ACC4> chaoscam_tgtpos_ofs_m;
+VariableHook<Angle3, 0x3C4AC54> chaoscam_angacc_lim_def_m;
+VariableHook<Angle3, 0x91B628> chaoscam_angspd_lim_def_m;
+VariableHook<NJS_POINT3, 0x91B634> chaoscam_camspd_lim_def_m;
+
 FastFunctionHook<void, _OBJ_CAMERAPARAM*> PathCamera1_h(0x4653E0);
 
 DataPointer(Sint32, demo_count, 0x3C4ACC0);
@@ -1411,6 +1419,43 @@ void __cdecl CameraLocalPath_m(_OBJ_CAMERAPARAM* pParam)
 	}
 }
 
+void SetCameraChaosStdParam(NJS_POINT3* tgtpos_ofs, NJS_POINT3* campos_ofs)
+{
+	auto pnum = TASKWK_PLAYERID(playertwp[0]);
+
+	if (!tgtpos_ofs)
+		tgtpos_ofs = &chaoscam_tgtpos_ofs_def_m[pnum];
+	if (!campos_ofs)
+		campos_ofs = &chaoscam_campos_ofs_def_m[pnum];
+
+	chaoscam_tgtpos_ofs_def_m[pnum] = *tgtpos_ofs;
+	chaoscam_campos_ofs_def_m[pnum].x = campos_ofs->x;
+	chaoscam_campos_ofs_def_m[pnum].y = campos_ofs->y;
+	chaoscam_angacc_lim_def_m[pnum] = chaoscam_angacc_lim_def_m[pnum];
+	chaoscam_angspd_lim_def_m[pnum] = chaoscam_angspd_lim_def_m[pnum];
+	chaoscam_camspd_lim_def_m[pnum] = chaoscam_camspd_lim_def_m[pnum];
+	chaoscam_campos_ofs_def_m[pnum].z = campos_ofs->z;
+}
+
+void SetCameraChaosStdSpeed(Angle3* angacc, Angle3* angspd, NJS_POINT3* camspd)
+{
+	auto pnum = TASKWK_PLAYERID(playertwp[0]);
+
+	if (!angacc)
+		angacc = &chaoscam_angacc_lim_def_m[pnum];
+	if (!angspd)
+		angspd = &chaoscam_angspd_lim_def_m[pnum];
+	if (!camspd)
+		camspd = &chaoscam_camspd_lim_def_m[pnum];
+	chaoscam_angacc_lim_def_m[pnum] = *angacc;
+	chaoscam_angspd_lim_def_m[pnum] = *angspd;
+	chaoscam_camspd_lim_def_m[pnum].x = camspd->x;
+	chaoscam_camspd_lim_def_m[pnum].y = camspd->y;
+	chaoscam_camspd_lim_def_m[pnum].z = camspd->z;
+}
+
+
+
 void SetLocalPathCamera_m(pathtag* ptp, Sint32 mode, Sint32 timer, int pnum)
 {
 	if (pnum < 0 || pnum >= PLAYER_MAX)
@@ -1437,9 +1482,13 @@ void PatchCameraFuncs()
 	CameraMode[CAMMD_C_KLAMATH].fnCamera = CameraKlamath_m;
 	CameraMode[CAMMD_CART].fnCamera = CameraCart_m;
 	CameraMode[CAMMD_RuinWaka1].fnCamera = CameraRuinWaka1_m;
+	//CameraMode[CAMMD_CHAOS_STD].fnCamera = CameraChaosStd_m; //todo
+
 	CameraAdjust[CAMADJ_NORMAL].fnAdjust = AdjustNormal_m;
 	CameraAdjust[CAMADJ_NORMAL_S].fnAdjust = AdjustNormal_m;
 	CameraAdjust[CAMADJ_FORFREECAMERA].fnAdjust = AdjustForFreeCamera_m;
+
+
 	for (int i = CAMADJ_THREE1; i <= CAMADJ_RELATIVE6C; ++i)
 		CameraAdjust[i].fnAdjust = AdjustThreePoint_m;
 }

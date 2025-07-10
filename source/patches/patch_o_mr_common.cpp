@@ -6,7 +6,7 @@ void patch_o_mr_common_init()
 	WriteCall((void*)0x534572, GetCharacterID_r);
 	//wv entrance (set windstone flag to the right character)
 	WriteCall((void*)0x53C5C2, GetCharacterID_r);
-
+	
 	//island door
 	WriteCall((void*)0x53F302, GetCharacterID_r);
 	WriteCall((void*)0x53F3A1, GetCharacterID_r);

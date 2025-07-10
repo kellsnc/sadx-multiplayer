@@ -1464,8 +1464,12 @@ void CameraCameraMode_m(int pnum)
 
 			cameraParam.ulTimer = system.G_ulTimer;
 
-			/* Call current auto camera mode with information from camera layout */
-			cameraSystemWork_m[pnum].G_pfnCamera(&cameraParam);
+			auto p = playerpwp[0];
+			if (p)
+			{
+				/* Call current auto camera mode with information from camera layout */
+				cameraSystemWork_m[pnum].G_pfnCamera(&cameraParam);
+			}
 		}
 
 		/* Apply processed auto camera data based on direct mode */
@@ -1974,7 +1978,7 @@ void __cdecl Camera_r(task* tp)
 			__PlayerStatus_last_pos_m[i] = playertwp[i] ? playertwp[i]->pos : playertwp[0]->pos;
 			__CameraInertia_last_pos_m[i] = camera_twp->pos;
 
-			if (splitscreen::IsScreenEnabled(i) && playertwp[i])
+			if (splitscreen::IsScreenEnabled(i) && playertwp[i] && playerpwp[i])
 			{
 				CameraCameraMode_m(i);
 			}
@@ -1993,7 +1997,7 @@ void __cdecl Camera_r(task* tp)
 
 		for (int i = 0; i < PLAYER_MAX; ++i)
 		{
-			if (splitscreen::IsScreenEnabled(i) && playertwp[i])
+			if (splitscreen::IsScreenEnabled(i) && playertwp[i] && playerpwp[i])
 			{
 				if (camera_mode_m[i] == 2)
 				{

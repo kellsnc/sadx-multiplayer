@@ -155,6 +155,7 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="emeraldhunt.cpp" />
+    <ClCompile Include="patches\patch_obz.cpp" />
     <ClCompile Include="patches\patch_o_casino_shakehand.cpp" />
     <ClCompile Include="patches\patch_upgrades.cpp" />
     <ClCompile Include="patch_event.cpp" />
@@ -171,7 +172,6 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="menu_adventure.cpp" />
-    <ClCompile Include="patches\patches_character_boss.cpp" />
     <ClCompile Include="patches\patch_albhv_dakko.cpp" />
     <ClCompile Include="patches\patch_alo_fruit.cpp" />
     <ClCompile Include="patches\patch_alo_obake_head.cpp" />

@@ -32,6 +32,9 @@ void patch_o_ss_common_init()
 
 	//car blocking the sewers
 	WriteCall((void*)0x639742, GetCharacterID_r);
+
+	//ice stone
+	WriteCall((void*)0x637D29, GetCharacterID_r);
 }
 
 RegisterPatch patch_o_ss_common(patch_o_ss_common_init);

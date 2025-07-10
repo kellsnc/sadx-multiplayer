@@ -161,6 +161,22 @@ struct beamhitstr
 	xssunit hitinfo;
 };
 
+struct EVBOSS_CAMERA
+{
+	uint8_t mode;
+	NJS_POINT3 pos;
+	NJS_POINT3 inter;
+	NJS_POINT3 offset;
+	Angle3 ang;
+	Angle3 w;
+	Angle3 maxw;
+	NJS_POINT3 old_pos;
+	Angle3 old_ang;
+	task* bctp;
+	taskwk* ptwp;
+	taskwk* btwp;
+};
+
 VoidFunc(FreeQueueSound, 0x424460);
 ObjectFunc(sub_425B30, 0x425B30);
 ObjectFunc(sub_425BB0, 0x425BB0);
@@ -409,7 +425,7 @@ FunctionPointer(void, SetAutoPilotForXZPositionP, (unsigned __int8 a1, float a2,
 FunctionPointer(Sint32, EV_Check, (int unused), 0x42FAE0);
 FunctionPointer(Float, sub_557BB0, (NJS_VECTOR* a1, NJS_VECTOR* a2), 0x557BB0);
 FunctionPointer(Bool, Chaos6AttackStatus, (), 0x5590A0);
-
+FunctionPointer(Float, ghUnitVectorXZ, (const NJS_POINT3* r4, NJS_POINT3* r5), 0x4B5D30);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -947,3 +963,18 @@ static inline void Chaos4_Display(taskwk* twp, chaoswk* cwk)
 		call Chaos4DisplayPtr
 	}
 }
+
+//void __usercall CameraSmooth(taskwk *p1@<ebx>, EVBOSS_CAMERA *wk@<esi>, taskwk *btwp)
+static const void* const CameraSmoothPtr = (void*)0x4C2630;
+static inline void CameraSmooth(taskwk* p1, EVBOSS_CAMERA* wk, taskwk* btwp)
+{
+	__asm
+	{
+		push[btwp]
+		mov esi, [wk]
+		mov ebx, [p1]
+		call CameraSmoothPtr
+		add esp, 4
+	}
+}
+
