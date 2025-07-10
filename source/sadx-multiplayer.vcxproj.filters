@@ -112,9 +112,6 @@
     <ClCompile Include="camerafunc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="event.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="patches\patch_chaos0.cpp">
       <Filter>Source Files\patches\bosses</Filter>
     </ClCompile>
@@ -684,6 +681,27 @@
     </ClCompile>
     <ClCompile Include="patches\patch_boss_chaos6.cpp">
       <Filter>Source Files\patches\bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patches_character_boss.cpp">
+      <Filter>Source Files\patches\bosses</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_mysticruin_lock.cpp">
+      <Filter>Source Files\patches\adv02_mysticruin</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_mr_common.cpp">
+      <Filter>Source Files\patches\adv02_mysticruin</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_ss_common.cpp">
+      <Filter>Source Files\patches\adv00_stationsquare</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_event.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_upgrades.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_o_casino_shakehand.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

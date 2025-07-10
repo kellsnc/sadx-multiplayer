@@ -18,6 +18,18 @@ float GetDistance2(NJS_VECTOR* v1, NJS_VECTOR* v2)
 		(v2->z - v1->z) * (v2->z - v1->z);
 }
 
+//trick the game to make a character able to access every areas
+int __cdecl GetCharacterID_r(char index)
+{
+	if (multiplayer::IsActive())
+	{
+		return CurrentCharacter;
+	}
+	else {
+		return GetCharacterID(index);
+	}
+}
+
 int GetClosestPlayerNumRange(NJS_POINT3* pos, float range)
 {
 	float max = range;

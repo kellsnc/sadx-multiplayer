@@ -39,10 +39,11 @@ enum Chaos6Actions : __int32
 	MD_CHAOS6_EDIT = 0x18,
 };
 
-//need an esp adjust of +4 here for some reason...
-FastUsercallHookPtr<void(*)(chaoswk* cwk, task* tw), noret, rEDI, rECX, stack4> Chaos6Suikomi_h(0x559600);
-void Chaos6Suikomi(chaoswk* cwk, task* tp)
+//need an esp adjust of +4 here (third param, unused?)
+FastUsercallHookPtr<void(*)(chaoswk* cwk, task* tp, bosswk* bwk), noret, rEDI, rECX, stack4> Chaos6Suikomi_h(0x559600);
+void Chaos6Suikomi(chaoswk* cwk, task* tp, bosswk* bwk)
 {
+
 	static NJS_POINT3 v_2 = { -2.0, 2.0, 0.0 };
 	taskwk* twp = tp->twp;
 
@@ -104,7 +105,7 @@ void Chaos6Suikomi(chaoswk* cwk, task* tp)
 		break;
 	}
 
-	Chaos6Suikomi_h.Original(cwk, tp);
+	Chaos6Suikomi_h.Original(cwk, tp, bwk);
 }
 
 

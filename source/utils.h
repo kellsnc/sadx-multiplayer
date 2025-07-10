@@ -19,3 +19,4 @@ bool IsPlayerInCart(char pnum);
 bool IsPlayerOnSnowboard(char pnum);
 int GetHoldingPlayerId(task* htp);
 int GetBossTargetPlayerRandom();
+int __cdecl GetCharacterID_r(char index);

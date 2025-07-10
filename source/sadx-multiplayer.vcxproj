@@ -155,7 +155,9 @@
     <ClCompile Include="config.cpp" />
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="emeraldhunt.cpp" />
-    <ClCompile Include="event.cpp" />
+    <ClCompile Include="patches\patch_o_casino_shakehand.cpp" />
+    <ClCompile Include="patches\patch_upgrades.cpp" />
+    <ClCompile Include="patch_event.cpp" />
     <ClCompile Include="FastFunctionHook.cpp" />
     <ClCompile Include="fishing.cpp" />
     <ClCompile Include="fog.cpp" />
@@ -169,6 +171,7 @@
     <ClCompile Include="input.cpp" />
     <ClCompile Include="game.cpp" />
     <ClCompile Include="menu_adventure.cpp" />
+    <ClCompile Include="patches\patches_character_boss.cpp" />
     <ClCompile Include="patches\patch_albhv_dakko.cpp" />
     <ClCompile Include="patches\patch_alo_fruit.cpp" />
     <ClCompile Include="patches\patch_alo_obake_head.cpp" />
@@ -198,9 +201,12 @@
     <ClCompile Include="patches\patch_o_casino_mudout.cpp" />
     <ClCompile Include="patches\patch_o_casino_roll.cpp" />
     <ClCompile Include="patches\patch_o_casino_tuuka.cpp" />
+    <ClCompile Include="patches\patch_o_mr_common.cpp" />
+    <ClCompile Include="patches\patch_o_mysticruin_lock.cpp" />
     <ClCompile Include="patches\patch_o_mysticruin_torokko.cpp" />
     <ClCompile Include="patches\patch_o_ruin_texanim.cpp" />
     <ClCompile Include="patches\patch_o_spring.cpp" />
+    <ClCompile Include="patches\patch_o_ss_common.cpp" />
     <ClCompile Include="patches\patch_o_ss_land_texanim.cpp" />
     <ClCompile Include="patches\patch_o_startshot.cpp" />
     <ClCompile Include="patches\patch_o_windy_leaf.cpp" />

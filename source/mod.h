@@ -5,3 +5,5 @@
 extern const HelperFunctions* gHelperFunctions;
 extern bool DreamcastConversionEnabled;
 extern bool CharacterSelectEnabled;
+
+#define TaskHook FastFunctionHook<void, task*>
