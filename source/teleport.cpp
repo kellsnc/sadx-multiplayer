@@ -179,15 +179,21 @@ void TeleportPlayersToStart()
 {
 	NJS_POINT3 pos; Angle3 ang;
 	GetPlayerInitialPositionM(&pos, &ang);
-
+	
 	for (int i = 0; i < PLAYER_MAX; ++i)
 	{
 		auto ptwp = playertwp[i];
 
 		if (ptwp)
 		{
+			Float offset = 0.0f;
+			if (GetHoldingItemIDP(i)) 
+			{
+				offset = 10.0f; //fix goofy collision making item held by player despawning 
+			}
+
 			ptwp->ang = ang;
-			TeleportPlayerArea(i, &pos, 5.0f);
+			TeleportPlayerArea(i, &pos, 5.0f + offset);
 		}
 	}
 }
