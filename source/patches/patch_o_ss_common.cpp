@@ -35,6 +35,10 @@ void patch_o_ss_common_init()
 
 	//ice stone
 	WriteCall((void*)0x637D29, GetCharacterID_r);
+
+	//TP Entrance
+	WriteCall((void*)0x63EA92, GetCharacterID_r);
+	WriteCall((void*)0x63DBB2, GetCharacterID_r);
 }
 
 RegisterPatch patch_o_ss_common(patch_o_ss_common_init);
