@@ -196,8 +196,8 @@ void DamegeRingScatter_r(char pno)
 
 			dsPlay_oneshot(0, 0, 0, 0);
 		}
-		else
-		{
+		else if (playertwp[pno] && playertwp[pno]->id != 3)
+		{	
 			KillHimP(pno);
 
 			if (TASKWK_CHARID(playertwp[pno]) == Characters_Gamma)
