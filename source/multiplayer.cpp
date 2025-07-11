@@ -158,7 +158,16 @@ namespace multiplayer
 
 task* LoadPlayerTask(int pnum, int character)
 {
-	task* tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
+	task* tp;
+
+	if (ssStageNumber == LevelIDs_SkyChase1 || ssStageNumber == LevelIDs_SkyChase2)
+	{
+		tp = CreateElementalTask(LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2, 1, (TaskFuncPtr)Tornado_Main);
+	}
+	else
+	{
+		tp = CreateElementalTask((LoadObj_UnknownA | LoadObj_Data1 | LoadObj_Data2), LEV_1, charfuncs[character]);
+	}
 	TASKWK_CHARID(tp->twp) = character;
 	TASKWK_PLAYERID(tp->twp) = pnum;
 	playertwp[pnum] = tp->twp;

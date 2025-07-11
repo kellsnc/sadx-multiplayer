@@ -133,6 +133,7 @@
     <ClInclude Include="patches\patch_o_sky_cyl_cmn.h" />
     <ClInclude Include="packet.h" />
     <ClInclude Include="patches\patch_player.h" />
+    <ClInclude Include="patches\patch_sm_tornade.h" />
     <ClInclude Include="patches\pinball.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="race.h" />
@@ -157,6 +158,8 @@
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="patches\patch_obz.cpp" />
     <ClCompile Include="patches\patch_o_casino_shakehand.cpp" />
+    <ClCompile Include="patches\patch_sm_characters.cpp" />
+    <ClCompile Include="patches\patch_sm_tornade.cpp" />
     <ClCompile Include="patches\patch_upgrades.cpp" />
     <ClCompile Include="patch_event.cpp" />
     <ClCompile Include="FastFunctionHook.cpp" />
