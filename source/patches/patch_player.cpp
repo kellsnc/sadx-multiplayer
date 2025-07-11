@@ -345,7 +345,7 @@ void __cdecl GamePlayerMissed_r(task* tp)
 	auto twp = playertwp[pNum];
 	auto pwp = playerpwp[pNum];
 
-	if (!twp)
+	if (!twp || twp && twp->id == 3)
 	{
 		FreeTask(tp);
 		return;
