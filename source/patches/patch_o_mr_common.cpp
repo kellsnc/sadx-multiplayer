@@ -33,6 +33,12 @@ void patch_o_mr_common_init()
 	//Angel Island door
 	WriteCall((void*)0x53F922, GetCharacterID_r);
 
+	//jungle cart
+	WriteCall((void*)0x53DC77, GetCharacterID_r);
+
+	//icestone
+	WriteCall((void*)0x53C6B2, GetCharacterID_r);
+
 }
 
 RegisterPatch patch_o_mr_common(patch_o_mr_common_init);
