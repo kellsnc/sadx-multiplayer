@@ -426,6 +426,7 @@ FunctionPointer(Sint32, EV_Check, (int unused), 0x42FAE0);
 FunctionPointer(Float, sub_557BB0, (NJS_VECTOR* a1, NJS_VECTOR* a2), 0x557BB0);
 FunctionPointer(Bool, Chaos6AttackStatus, (), 0x5590A0);
 FunctionPointer(Float, ghUnitVectorXZ, (const NJS_POINT3* r4, NJS_POINT3* r5), 0x4B5D30);
+FunctionPointer(void, HintMainMessages, (const char** message), 0x4B79A0);
 
 static const void* const pLockingOnTargetEnemy2Ptr = (void*)0x7984B0;
 static inline void pLockingOnTargetEnemy2(motionwk2* mwp, taskwk* twp, playerwk* pwp)
@@ -974,6 +975,20 @@ static inline void CameraSmooth(taskwk* p1, EVBOSS_CAMERA* wk, taskwk* btwp)
 		mov esi, [wk]
 		mov ebx, [p1]
 		call CameraSmoothPtr
+		add esp, 4
+	}
+}
+
+//void __usercall DirectionMatrix(int frame@<ecx>, taskwk *a2@<esi>, int rotz)
+static const void* const DirectionMatrixPtr = (void*)0x627690;
+static inline void DirectionMatrix(int frame, taskwk* a2, int rotz)
+{
+	__asm
+	{
+		push[rotz]
+		mov esi, [a2]
+		mov ecx, [frame]
+		call DirectionMatrixPtr
 		add esp, 4
 	}
 }

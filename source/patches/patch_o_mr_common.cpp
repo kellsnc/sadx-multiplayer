@@ -18,6 +18,9 @@ void patch_o_mr_common_init()
 
 	//kiki cage
 	WriteCall((void*)0x53F97D, GetCharacterID_r);
+	WriteCall((void*)0x53FE54, GetCharacterID_r);
+	WriteCall((void*)0x53FE89, GetCharacterID_r);
+	WriteCall((void*)0x53FEA9, GetCharacterID_r);
 
 	//lw temple
 	WriteCall((void*)0x532E62, GetCharacterID_r);
@@ -38,6 +41,7 @@ void patch_o_mr_common_init()
 
 	//icestone
 	WriteCall((void*)0x53C6B2, GetCharacterID_r);
+	WriteCall((void*)0x532343, GetCharacterID_r); //idk some key related
 
 }
 

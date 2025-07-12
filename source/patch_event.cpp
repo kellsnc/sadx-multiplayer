@@ -105,5 +105,4 @@ void initEvents()
 
 	SeqEvent_h.Hook(SeqEvent_r);
 
-	//WriteCall((void*)0x413573, sub_44ED40_r);
 }

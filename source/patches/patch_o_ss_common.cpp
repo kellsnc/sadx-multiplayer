@@ -4,6 +4,8 @@ void patch_o_ss_common_init()
 {
 	//hostel door
 	WriteCall((void*)0x630902, GetCharacterID_r);
+	WriteCall((void*)0x630972, GetCharacterID_r);
+	WriteCall((void*)0x6309E2, GetCharacterID_r);
 
 	//train station back door
 	WriteCall((void*)0x638882, GetCharacterID_r);

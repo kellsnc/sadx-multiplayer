@@ -640,9 +640,6 @@
     <ClCompile Include="patches\patch_seqctrl.cpp">
       <Filter>Source Files\patches</Filter>
     </ClCompile>
-    <ClCompile Include="patch_ball.cpp">
-      <Filter>Source Files\patches\stg09_casino</Filter>
-    </ClCompile>
     <ClCompile Include="patches\patch_o_casino_bumper.cpp">
       <Filter>Source Files\patches\stg09_casino</Filter>
     </ClCompile>
@@ -682,9 +679,6 @@
     <ClCompile Include="patches\patch_boss_chaos6.cpp">
       <Filter>Source Files\patches\bosses</Filter>
     </ClCompile>
-    <ClCompile Include="patches\patches_character_boss.cpp">
-      <Filter>Source Files\patches\bosses</Filter>
-    </ClCompile>
     <ClCompile Include="patches\patch_o_mysticruin_lock.cpp">
       <Filter>Source Files\patches\adv02_mysticruin</Filter>
     </ClCompile>
@@ -705,6 +699,21 @@
     </ClCompile>
     <ClCompile Include="patches\patch_obz.cpp">
       <Filter>Source Files\patches\stg01_beach</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_sm_tornade.cpp">
+      <Filter>Source Files\patches\shooting</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patches_npcs.cpp">
+      <Filter>Source Files\patches</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_sm_characters.cpp">
+      <Filter>Source Files\patches\shooting</Filter>
+    </ClCompile>
+    <ClCompile Include="patch_o_ss_card.cpp">
+      <Filter>Source Files\patches\adv00_stationsquare</Filter>
+    </ClCompile>
+    <ClCompile Include="patches\patch_ball.cpp">
+      <Filter>Source Files\patches\stg09_casino</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -864,6 +873,9 @@
     <ClInclude Include="patches\chaos_common.h">
       <Filter>Header Files\patches</Filter>
     </ClInclude>
+    <ClInclude Include="patches\patch_sm_tornade.h">
+      <Filter>Header Files\patches\shooting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header FIles">
@@ -973,6 +985,12 @@
     </Filter>
     <Filter Include="Source Files\patches\adv01_EggCarrier">
       <UniqueIdentifier>{90713213-38b2-4198-95ab-6164b739f2f2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\patches\shooting">
+      <UniqueIdentifier>{e543ff9e-13fa-43b1-b804-13feb24ac110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\patches\shooting">
+      <UniqueIdentifier>{bebf5794-e709-4cd0-a6ab-d53d72f02545}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

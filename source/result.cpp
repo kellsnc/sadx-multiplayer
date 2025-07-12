@@ -140,7 +140,10 @@ static void __cdecl SetFinishAction_r()
 			Load_DelayedSound_BGM(75);
 			multiplayer::IsBattleMode() ? PlayCharaResultSound(GetWinnerMulti()) : PlayCharaResultSound(0);
 			
-			for (int i = 0; i < 8; ++i)
+			SetLocalPathCamera(&pathtag_s_camera, 3, 720);
+			ForcePlayerAction(0, PL_OP_PLACEWITHKIME);
+
+			for (int i = 1; i < 8; ++i)
 			{
 				if (playertwp[i])
 				{
