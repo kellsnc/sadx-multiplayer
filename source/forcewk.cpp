@@ -4,7 +4,7 @@
 // The force worker (what moves player on moving geometry collisions) is hardcoded for 2 players
 // We patch if for 4 players
 
-static constexpr size_t memsize = 0x1C * PLAYER_MAX;
+static constexpr size_t memsize = sizeof(forcewk) * PLAYER_MAX;
 
 FastUsercallHookPtr<void(*)(playerwk* pwp, NJS_POINT3* vec, taskwk* twp, csts* cp), noret, rEAX, rECX, rESI, stack4> PSSGCollisionForceWorkEffect_h(0x43CA40);
 
@@ -38,7 +38,7 @@ static void __cdecl PSSGCollisionForceWorkEffect_r(playerwk* pwp, NJS_POINT3* ve
 		cp->pos.z = twp->pos.z + vec->z;
 	}
 
-	if (fwp->call_back)
+	if (fwp->call_back) 
 	{
 		auto x = twp->pos;
 		twp->pos = cp->pos;
@@ -71,4 +71,5 @@ void InitForceWorkPatches()
 {
 	PSSGCollisionForceWorkEffect_h.Hook(PSSGCollisionForceWorkEffect_r);
 	WriteCall((void*)0x40B8AB, GetForceWork_r);
+	WriteData<1>((uint8_t*)0x57C33C, PLAYER_MAX); //also allocate more memory for viper platform since fwp is set manually 
 }
