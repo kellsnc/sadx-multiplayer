@@ -43,6 +43,8 @@
 #define MOVE_FLAG_WATER      0x2000 /* Colliding with water */
 #define MOVE_FLAG_WALL_FRONT 0x4000 /* Front has hit a wall (colli info in FrontWall) */
 
+#define PL_FLAG_INVINCIBLE 0x8000 
+
 static constexpr int ADVA_MODE_MULTI = 0x8;
 
 enum {
@@ -990,6 +992,18 @@ static inline void DirectionMatrix(int frame, taskwk* a2, int rotz)
 		mov ecx, [frame]
 		call DirectionMatrixPtr
 		add esp, 4
+	}
+}
+
+//void __usercall setlaser1pon(NJS_POINT3 *pos@<ebx>, Angle3 *ang@<edi>)
+static const void* const setlaser1ponPtr = (void*)0x5815E0;
+static inline void setlaser1pon(NJS_POINT3* pos, Angle3* ang)
+{
+	__asm
+	{
+		mov edi, [ang]
+		mov ebx, [pos]
+		call setlaser1ponPtr
 	}
 }
 

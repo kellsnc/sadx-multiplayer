@@ -715,6 +715,9 @@
     <ClCompile Include="patches\patch_ball.cpp">
       <Filter>Source Files\patches\stg09_casino</Filter>
     </ClCompile>
+    <ClCompile Include="patches\patch_boss_egm3.cpp">
+      <Filter>Source Files\patches\bosses</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

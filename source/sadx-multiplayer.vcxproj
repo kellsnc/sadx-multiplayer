@@ -160,6 +160,7 @@
     <ClCompile Include="emeraldhunt.cpp" />
     <ClCompile Include="patches\patches_npcs.cpp" />
     <ClCompile Include="patches\patch_ball.cpp" />
+    <ClCompile Include="patches\patch_boss_egm3.cpp" />
     <ClCompile Include="patches\patch_obz.cpp" />
     <ClCompile Include="patches\patch_o_casino_shakehand.cpp" />
     <ClCompile Include="patches\patch_sm_characters.cpp" />
