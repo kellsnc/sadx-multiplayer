@@ -43,6 +43,21 @@ void patch_o_mr_common_init()
 	WriteCall((void*)0x53C6B2, GetCharacterID_r);
 	WriteCall((void*)0x532343, GetCharacterID_r); //idk some key related
 
+	//final egg base entrance (change cmp == 1 to != 0)
+	WriteData<1>((uint8_t*)0x53EF22, 0x0);
+	WriteData<1>((uint8_t*)0x53EF24, 0x84);
+	//final egg base entrance (close door if player is too far)
+	WriteData<1>((uint8_t*)0x53EF93, 0x0);
+	WriteData<1>((uint8_t*)0x53EF95, 0x85);
+
+	//scene changer, hack change cmp == 1 to != 0
+	WriteData<1>((uint8_t*)0x5395BE, 0x0);
+	WriteData<1>((uint8_t*)0x5395BF, 0x74);
+
+	//make everyone able to stay on final egg base (finalway)
+	WriteData<1>((uint8_t*)0x5386AF, 0x0);
+	WriteData<1>((uint8_t*)0x5386B0, 0x74);
+
 }
 
 RegisterPatch patch_o_mr_common(patch_o_mr_common_init);
