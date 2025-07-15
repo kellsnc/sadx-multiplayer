@@ -189,7 +189,7 @@ void TeleportPlayersToStart()
 			Float offset = 0.0f;
 			if (GetHoldingItemIDP(i)) 
 			{
-				offset = 10.0f; //fix goofy collision making item held by player despawning 
+				offset = 8.0f; //fix goofy collision making item held by player despawning 
 			}
 
 			ptwp->ang = ang;

@@ -718,6 +718,9 @@
     <ClCompile Include="patches\patch_boss_egm3.cpp">
       <Filter>Source Files\patches\bosses</Filter>
     </ClCompile>
+    <ClCompile Include="patches\patch_o_mr_chgcave.cpp">
+      <Filter>Source Files\patches\adv02_mysticruin</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">

@@ -29,7 +29,8 @@ int __cdecl GetLockOpen_r(int kind)
 
 void patch_o_mysticruin_lock_init()
 {
-    GetLockOpen_h.Hook(GetLockOpen_r);
+    WriteCall((void*)0x53C632, GetCharacterID_r);
+ //   GetLockOpen_h.Hook(GetLockOpen_r);
 }
 
 RegisterPatch patch_o_mysticruin_lock(patch_o_mysticruin_lock_init);

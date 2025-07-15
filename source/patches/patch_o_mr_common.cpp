@@ -4,7 +4,7 @@ void patch_o_mr_common_init()
 {
 	//cave entry
 	WriteCall((void*)0x534572, GetCharacterID_r);
-	//wv entrance (set windstone flag to the right character)
+	//icecap entrance (set icestone flag to the right character)
 	WriteCall((void*)0x53C5C2, GetCharacterID_r);
 	
 	//island door

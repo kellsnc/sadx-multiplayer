@@ -163,6 +163,7 @@
     <ClCompile Include="patches\patch_boss_egm3.cpp" />
     <ClCompile Include="patches\patch_obz.cpp" />
     <ClCompile Include="patches\patch_o_casino_shakehand.cpp" />
+    <ClCompile Include="patches\patch_o_mr_chgcave.cpp" />
     <ClCompile Include="patches\patch_sm_characters.cpp" />
     <ClCompile Include="patches\patch_sm_tornade.cpp" />
     <ClCompile Include="patches\patch_upgrades.cpp" />

@@ -1007,3 +1007,17 @@ static inline void setlaser1pon(NJS_POINT3* pos, Angle3* ang)
 	}
 }
 
+
+//void __usercall create_smoke(taskwk *a1@<edi>, float a2))
+static const void* const create_smokePtr = (void*)0x5371E0;
+static inline void create_smoke(taskwk* twp, Float a2)
+{
+	__asm
+	{
+		push[a2]
+		mov edi, [twp]
+		call create_smokePtr
+		add esp, 4
+	}
+}
+
