@@ -71,5 +71,5 @@ void InitForceWorkPatches()
 {
 	PSSGCollisionForceWorkEffect_h.Hook(PSSGCollisionForceWorkEffect_r);
 	WriteCall((void*)0x40B8AB, GetForceWork_r);
-	WriteData<1>((uint8_t*)0x57C33C, PLAYER_MAX); //also allocate more memory for viper platform since fwp is set manually 
+	WriteData<1>((void*)0x57C33C, PLAYER_MAX); // also allocate more memory for viper platform since fwp is set manually 
 }
