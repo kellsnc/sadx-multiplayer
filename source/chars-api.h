@@ -102,6 +102,12 @@ extern "C"
 	* @param shouldOverride: Specify if your custom task should override the original code from Character Importer, if unsure, let it to false.
 	*/
 	API void register_task_post_disp(char_importer_post_load_cb callback, uint16_t characterIndex);
+	/**
+	* @brief Get the list of all added characters.
+	* Return a vector that contains all the characters.
+	*/
+	API std::vector<NewChar>* GetNewCharactersList();
+
 
 
 #ifdef __cplusplus
