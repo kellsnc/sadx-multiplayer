@@ -67,7 +67,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;$(SolutionDir)lib\Characters-Importer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Characters-Importer.dll</DelayLoadDLLs>
     </Link>
@@ -91,7 +91,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;$(SolutionDir)lib\Characters-Importer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Characters-Importer.dll</DelayLoadDLLs>
     </Link>
