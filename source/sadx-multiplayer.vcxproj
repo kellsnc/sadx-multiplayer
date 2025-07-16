@@ -61,14 +61,14 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\sadx-mod-loader\SADXModLoader\include;$(SolutionDir)external\sadx-mod-loader\libmodutils;$(SolutionDir)external\sadx-mod-loader\mod-loader-common\ModLoaderCommon;$(SolutionDir)external\enet\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\sadx-mod-loader\SADXModLoader\include;$(SolutionDir)external\sadx-mod-loader\libmodutils;$(SolutionDir)external\sadx-mod-loader\mod-loader-common\ModLoaderCommon;$(SolutionDir)external\enet\include;$(SolutionDir)external\Characters-Importer\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>$(SolutionDir)lib\Characters-Importer.lib;libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;Characters-Importer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;$(SolutionDir)external\Characters-Importer\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Characters-Importer.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -82,7 +82,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>$(SolutionDir)external\sadx-mod-loader\SADXModLoader\include;$(SolutionDir)external\sadx-mod-loader\libmodutils;$(SolutionDir)external\sadx-mod-loader\mod-loader-common\ModLoaderCommon;$(SolutionDir)external\enet\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)external\sadx-mod-loader\SADXModLoader\include;$(SolutionDir)external\sadx-mod-loader\libmodutils;$(SolutionDir)external\sadx-mod-loader\mod-loader-common\ModLoaderCommon;$(SolutionDir)external\enet\include;$(SolutionDir)external\Characters-Importer\include;$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -91,8 +91,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
       <ImageHasSafeExceptionHandlers>false</ImageHasSafeExceptionHandlers>
-      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libmodutils.lib;ModLoaderCommon.lib;d3dx8.lib;Characters-Importer.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(OutDir);$(ProgramFiles)\DirectX 8.1 SDK\lib;$(SolutionDir)external\Characters-Importer\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>Characters-Importer.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
